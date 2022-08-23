@@ -18,7 +18,6 @@ let
     "nvim-ts-context-commentstring"
     "telescope-nvim"
     "indent-blankline-nvim"
-    { name = "LuaSnip"; setup = false; }
     { name = "lsp-signature-nvim"; setup = false; }
   ];
 

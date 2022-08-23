@@ -52,6 +52,7 @@
     ./utils/headlines.nix
     ./utils/intellitab.nix
     ./utils/lspkind.nix
+    ./utils/luasnip.nix
     ./utils/mark-radar.nix
     ./utils/nerdcommenter.nix
     ./utils/notify.nix
