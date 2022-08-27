@@ -29,7 +29,7 @@ let
     {
       name = "hls";
       description = "Enable hls language server for Haskell";
-      packages = [ pkgs.haskellPackages.hls ];
+      packages = [ pkgs.haskell-language-server ];
     }
     {
       name = "html";
