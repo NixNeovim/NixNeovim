@@ -27,6 +27,11 @@ let
       description = "Enable gopls, for Go.";
     }
     {
+      name = "hls";
+      description = "Enable hls language server for Haskell";
+      packages = [ pkgs.haskellPackages.hls ];
+    }
+    {
       name = "html";
       description = "Enable html, for HTML";
       packages = [ pkgs.nodePackages.vscode-langservers-extracted ];
