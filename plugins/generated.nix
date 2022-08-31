@@ -19,6 +19,7 @@ let
     "telescope-nvim"
     "indent-blankline-nvim"
     "asyncrun-vim"
+    "ltex-extra-nvim"
     { name = "LuaSnip"; setup = false; }
     { name = "lsp-signature-nvim"; setup = false; }
   ];
