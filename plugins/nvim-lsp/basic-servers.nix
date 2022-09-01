@@ -1,6 +1,6 @@
 { pkgs, config, lib, ... }@args:
 let
-  helpers = import ./helpers.nix args;
+  helpers = import ./lsp-helpers.nix args;
   servers = [
     {
       name = "clangd";

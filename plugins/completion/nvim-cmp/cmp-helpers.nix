@@ -78,7 +78,9 @@ rec {
         ) attrs;
     in filter (p: !(isNull p)) packageList;
 
+  # TODO: Combine this (or all three) helper functions with helper functions of lsp-config
   # create a list off all activated sources for cmp lua config
+  # this filters all elements which sourceName field is null
   sourceConfig = attrs:
     let
       packageList = mapAttrsToList (sourceName: _option:
@@ -94,7 +96,7 @@ rec {
   # create a list off all extraConfig of activated sources for extraConfig of cmp module
   sourceExtraConfig = attrs:
     let
-      packageList = mapAttrsToList (sourceName: option:
+      packageList = mapAttrsToList (sourceName: _options:
         if isNull attrs.${sourceName} then
           null
         else if attrs.${sourceName}.enable then
