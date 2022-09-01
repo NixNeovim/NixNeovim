@@ -2,8 +2,9 @@
 
 with lib;
 with types;
-
-{
+let
+  helpers = (import ../helpers.nix { inherit lib config; });
+in {
 
   # lsp-server-config = submodule {
   #   options = {
@@ -31,12 +32,14 @@ with types;
 
         onAttach =
           ''
-          local __on_attach = function(client)
+          local __on_attach = function(client, bufnr)
+            ${servers.${serverName}.onAttachExtra}
           end
         '';
 
         wrapped-setup = "local __setup = ${runWrappers setupWrappers "{
-          on_attach = __on_attach
+          on_attach = __on_attach,
+          ${servers.${serverName}.extraConfig}
         }"}";
 
       in if isNull servers.${serverName} then ""
@@ -45,7 +48,7 @@ with types;
           do -- lsp server config ${serverName}
             ${onAttach}
             ${wrapped-setup}
-            require('lspconfig')[${serverName}].setup(__setup)
+            require('lspconfig')["${serverName}"].setup(__setup)
           end -- lsp server config ${serverName}
         ''
         else "") servers;

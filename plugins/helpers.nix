@@ -49,16 +49,24 @@ rec {
   # Black functional magic that converts a bunch of different Nix types to their
   # lua equivalents!
   toLuaObject = args:
-    if builtins.isAttrs args then
+    let
+      filterNullAttrs = attrs:
+        filterAttrs (name: value:
+          !isNull value && toLuaObject value != "{}"
+        ) args;
+    in if builtins.isAttrs args then
       if hasAttr "__raw" args then
         args.__raw
       else
-        "{" + (concatStringsSep ","
-          (mapAttrsToList
-          (n: v: if head (stringToCharacters n) == "@" then
-              toLuaObject v
-            else "[${toLuaObject n}] = " + (toLuaObject v))
-          (filterAttrs (n: v: !isNull v && toLuaObject v != "{}") args))) + "}"
+        "{" + (concatStringsSep "," (
+                  mapAttrsToList (name: value: 
+                    if head (stringToCharacters name) == "@" then
+                      toLuaObject value
+                    else
+                      "[${toLuaObject name}] = " + (toLuaObject value)
+                  ) (filterNullAttrs args)
+                )
+              ) + "}"
     else if builtins.isList args then
       "{" + concatMapStringsSep "," toLuaObject args + "}"
     else if builtins.isString args then

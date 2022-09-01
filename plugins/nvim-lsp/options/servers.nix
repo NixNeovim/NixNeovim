@@ -21,6 +21,7 @@ let
             description = "A lua function to be run when ${server.name} is attached. The argument `client` and `bufnr` are provided.";
             default = "";
           };
+          extraConfig = strOption "" "Extra config passed lsp setup function after `on_attach`";
         };
         # config = mkIf cfg.enable {
         #     programs.nixvim.extraPackages = server.packages;
@@ -30,6 +31,13 @@ let
       default = null;
     };
 
-   moduleList = forEach servers (server: { "name" = server.name; "value" = toLspModule server; });
+  
+  moduleList = forEach servers (server: 
+    let 
+      serverName =
+        if hasAttr "serverName" server then
+          server.serverName
+        else server.name;
+    in { "name" = serverName; "value" = toLspModule server; });
 
 in listToAttrs moduleList
