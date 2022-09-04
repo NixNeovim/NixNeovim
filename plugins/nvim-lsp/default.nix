@@ -4,11 +4,7 @@ let
   cfg = config.programs.nixvim.plugins.lsp;
   helpers = (import ../helpers.nix { inherit lib config; });
   lsp-helpers = (import ./lsp-helpers.nix { inherit lib config pkgs; });
-in
-{
-  # imports = [
-  #   ./basic-servers.nix
-  # ];
+in {
 
   options.programs.nixvim.plugins.lsp = {
     enable = mkEnableOption "Enable neovim's built-in LSP";
@@ -36,13 +32,18 @@ in
 
   config = let
 
+    extraPackages = lsp-helpers.lspPackages cfg.servers;
+
   in mkIf cfg.enable {
     programs.nixvim = {
+
+      inherit extraPackages;
+
       extraPlugins = [ pkgs.vimPlugins.nvim-lspconfig ];
 
       extraConfigLua =
         let
-          activatedServer = lsp-helpers.serverToLua cfg.servers cfg.setupWrappers; # create lua code for lsp server, with setup wrapper
+          activatedServer = lsp-helpers.serversToLua cfg.servers cfg.setupWrappers; # create lua code for lsp server, with setup wrapper
         in ''
           do -- LSP
             ${cfg.preConfig}

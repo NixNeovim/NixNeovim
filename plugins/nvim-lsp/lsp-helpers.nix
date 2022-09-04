@@ -3,134 +3,100 @@
 with lib;
 with types;
 let
-  helpers = (import ../helpers.nix { inherit lib config; });
-in {
+  helpers = import ../helpers.nix { inherit lib config; };
+  servers = import ./servers.nix { inherit pkgs; };
 
-  # lsp-server-config = submodule {
-  #   options = {
-  #     name = mkOption {
-  #       type = str;
-  #       description = "The server's name";
-  #     };
-  #     extraOptions = mkOption {
-  #       type = attrs;
-  #       description = "Extra options for the server";
-  #     };
-  #   };
-  # };
 
+  ## add wrapper functions to lua lsp config
+  runWrappers = wrappers: s:
+    if wrappers == [] then s
+    else (head wrappers) (runWrappers (tail wrappers) s);
+
+  enabledServers = cfg:
+    let
+      isActive = serverName: _options: !(isNull cfg.${serverName}) && cfg.${serverName}.enable;
+    in filterAttrs isActive servers;
+
+
+in rec {
+
+  # input is entry from lsp-servers list (with key/name and value) and fills in all missing information
+  fullAttrs = server: {
+    languages ? "(nothing specified)",
+    packages ? [ pkgs.${server} ],
+    serverName ? server}: { inherit languages packages serverName; };
 
   # create the lua code to activate the lsp server
-  serverToLua = servers: setupWrappers:
-    mapAttrsToList (serverName: _options:
+  serversToLua = cfg: setupWrappers:
+     mapAttrsToList (server: serverAttrs:
       let
 
-        ## add wrapper functions to lua lsp config
-        runWrappers = wrappers: s:
-          if wrappers == [] then s
-          else (head wrappers) (runWrappers (tail wrappers) s);
-
+        fullServerAttrs = fullAttrs server serverAttrs;
+        serverName = fullServerAttrs.serverName;
+          
         onAttach =
           ''
           local __on_attach = function(client, bufnr)
-            ${servers.${serverName}.onAttachExtra}
+            ${cfg.${server}.onAttachExtra}
           end
         '';
 
         wrapped-setup = "local __setup = ${runWrappers setupWrappers "{
           on_attach = __on_attach,
-          ${servers.${serverName}.extraConfig}
+          ${cfg.${server}.extraConfig}
         }"}";
-
-      in if isNull servers.${serverName} then ""
-        else if servers.${serverName}.enable then
-        ''
-          do -- lsp server config ${serverName}
+      in ''
+          do -- lsp server config ${server}
             ${onAttach}
             ${wrapped-setup}
             require('lspconfig')["${serverName}"].setup(__setup)
-          end -- lsp server config ${serverName}
-        ''
-        else "") servers;
+          end -- lsp server config ${server}
+        '') (enabledServers cfg);
 
-  # list of all available lsp server
-  servers = [
-    {
-      name = "clangd";
-      description = "Enable clangd LSP, for C/C++.";
-      packages = [ pkgs.clang-tools ];
-    }
-    {
-      name = "cssls";
-      description = "Enable cssls, for CSS";
-      packages = [ pkgs.nodePackages.vscode-langservers-extracted ];
-    }
-    {
-      name = "eslint";
-      description = "Enable eslint";
-      packages = [ pkgs.nodePackages.vscode-langservers-extracted ];
-    }
-    {
-      name = "gdscript";
-      description = "Enable gdscript, for Godot";
-      packages = [];
-    }
-    {
-      name = "gopls";
-      description = "Enable gopls, for Go.";
-    }
-    {
-      name = "hls";
-      description = "Enable hls language server for Haskell";
-      packages = [ pkgs.haskell-language-server ];
-    }
-    {
-      name = "html";
-      description = "Enable html, for HTML";
-      packages = [ pkgs.nodePackages.vscode-langservers-extracted ];
-    }
-    {
-      name = "jsonls";
-      description = "Enable jsonls, for JSON";
-      packages = [ pkgs.nodePackages.vscode-langservers-extracted ];
-    }
-    {
-      name = "ltex";
-      description = "Enable ltex-ls, for text files.";
-      packages = [ pkgs.unstable.ltex-ls ];
-    }
-    {
-      name = "pyright";
-      description = "Enable pyright, for Python.";
-    }
-    {
-      name = "rnix-lsp";
-      description = "Enable rnix LSP, for Nix";
-      serverName = "rnix";
-    }
-    {
-      name = "rust-analyzer";
-      description = "Enable rust-analyzer, for Rust.";
-      serverName = "rust_analyzer";
-      packages = [ pkgs.cargo ];
-    }
-    {
-      name = "texlab";
-      description = "Enable texlab, for latex.";
-    }
-    {
-      name = "vuels";
-      description = "Enable vuels, for Vue";
-      packages = [ pkgs.nodePackages.vue-language-server ];
-    }
-    {
-      name = "zls";
-      description = "Enable zls, for Zig.";
-    }
-  ];
+    # mapAttrsToList (serverName: _options:
+    #   let
+
+
+    #   in if isNull servers.${serverName} then ""
+    #     else if servers.${serverName}.enable then
+    #     else "") servers;
+
+  # returns a list of all packages of all activated lsp servers
+  # TODO: combine with cmp sources helper functions
+  lspPackages = cfg:
+    let
+
+      # get requried packages of lsp-server
+      getPackage = server: serverAttrs:
+        if isNull serverAttrs.packages then
+          [ pkgs.${server} ]
+        else serverAttrs.packages;
+
+      packageList = mapAttrsToList getPackage (enabledServers cfg);
+
+    in flatten packageList;
+    
+    # let
+    #   packageList = mapAttrsToList (sourceName: _option:
+    #     if isNull attrs.${sourceName} then
+    #       null
+    #     else if attrs.${sourceName}.enable then
+    #       let
+    #         value = sourceNameAndPlugin.${sourceName};
+    #         package =
+    #           if isString value then
+    #             value
+    #           else
+    #             value.package;
+    #       in pkgs.vimExtraPlugins.${package}
+    #     else
+    #       null
+    #     ) attrs;
+    # in filter (p: !(isNull p)) packageList;
+
 
   # mkLsp = { name
-  #   , description ? "Enable ${name}."
+  #   , languages ? "Enable ${name}."
   #   , serverName ? name
   #   , packages ? [ pkgs.${name} ]
   #   , ... }:
@@ -143,7 +109,7 @@ in {
   #       {
   #         options = {
   #           programs.nixvim.plugins.lsp.servers.${name} = {
-  #             enable = mkEnableOption description;
+  #             enable = mkEnableOption languages;
   #           };
   #         };
 
