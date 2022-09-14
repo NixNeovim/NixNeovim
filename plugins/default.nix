@@ -47,6 +47,7 @@
     ./utils/endwise.nix
     ./utils/floaterm.nix
     ./utils/focus.nix
+    ./utils/ghosttext.nix
     ./utils/goyo.nix
     ./utils/headlines.nix
     ./utils/intellitab.nix
