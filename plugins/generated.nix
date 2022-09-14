@@ -20,6 +20,7 @@ let
     "indent-blankline-nvim"
     "asyncrun-vim"
     "ltex-extra-nvim"
+    "firenvim"
     { name = "LuaSnip"; setup = false; }
     { name = "lsp-signature-nvim"; setup = false; }
   ];
