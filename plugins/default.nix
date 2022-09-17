@@ -60,6 +60,7 @@
     ./utils/nvim-toggler.nix
     ./utils/nvim-tree.nix
     ./utils/scrollbar.nix
+    ./utils/snippy.nix
     ./utils/specs.nix
     ./utils/stabilize.nix
     ./utils/startify.nix
