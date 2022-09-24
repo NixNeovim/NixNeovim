@@ -14,6 +14,7 @@ let
       type = types.attrs;
       default = {};
     };
+    enableAuto = boolOption false "Enable auto expanding snippets";
   };
 
   pluginOptions = helpers.toLuaOptions cfg moduleOptions;
