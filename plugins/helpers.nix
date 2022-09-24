@@ -59,7 +59,7 @@ rec {
         args.__raw
       else
         "{" + (concatStringsSep "," (
-                  mapAttrsToList (name: value: 
+                  mapAttrsToList (name: value:
                     if head (stringToCharacters name) == "@" then
                       toLuaObject value
                     else
@@ -89,8 +89,10 @@ rec {
     stringAsChars (x: if (toUpper x == x) then "_${toLower x}" else x) string;
 
   toLuaOptions = cfg: moduleOptions:
-    mapAttrs' (k: v: nameValuePair (camelToSnake k) (cfg.${k})) moduleOptions;
-
+    let
+      attrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) (cfg.${k})) moduleOptions;
+      extraAttrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) v) cfg.extraConfig;
+    in attrs // extraAttrs;
 
   # Generates maps for a lua config
   genMaps = mode: maps: let
@@ -161,6 +163,9 @@ rec {
     };
   };
 
+  # optionSet = extraAttrs: {
+  # } // extraAttrs
+
   mkLuaPlugin = {
     name,
     description,
@@ -172,9 +177,9 @@ rec {
     # ...
   }: let
     cfg = config.programs.nixvim.plugins.${name};
-  in 
+  in
 
-  assert assertMsg (length extraPlugins > 0) "Module for '${name}' did not specify a plugin in 'extraPlugins'";
+  assert assertMsg (length extraPlugins > 0) "Module for '${name}' broken: no plugin specified 'extraPlugins'";
 
   {
     options.programs.nixvim.plugins.${name} = {
@@ -184,13 +189,30 @@ rec {
         default = {};
         description = "Place any extra config here as an attibute-set";
       };
+      extraLua = mkOption {
+        type = types.str;
+        default = "";
+        description = "Place any extra lua code here that is loaded after 'extraConfig'";
+      };
     } // moduleOptions;
 
     config.programs.nixvim = mkIf cfg.enable {
       inherit extraPlugins extraPackages extraConfigVim;
       extraConfigLua =
         if stringLength extraConfigLua > 0 then
-          "do -- config scope: ${name}\n" + extraConfigLua + "\nend"
+          ''
+          -- config: ${name}
+          do
+            function setup()
+              ${extraConfigLua}
+              ${cfg.extraLua}
+            end
+            success, output = pcall(setup) -- execute 'setup()' and catch any errors
+            if not success then
+              print(output)
+            end
+          end
+          ''
         else "";
     };
   };

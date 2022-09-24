@@ -16,6 +16,9 @@
     ./completion/coq.nix
     ./completion/nvim-cmp
 
+    ./debugging/nvim-dap
+    ./debugging/nvim-dap-ui.nix
+
     ./git/fugitive.nix
     ./git/gitgutter.nix
     ./git/neogit.nix
