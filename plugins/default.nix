@@ -60,6 +60,7 @@
     ./utils/notify.nix
     ./utils/numb.nix
     ./utils/nvim-autopairs.nix
+    ./utils/nvim-jqx.nix
     ./utils/nvim-toggler.nix
     ./utils/nvim-tree.nix
     ./utils/scrollbar.nix

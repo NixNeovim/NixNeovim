@@ -34,7 +34,7 @@ mkLuaPlugin {
     # nvim-treesitter
   ];
   extraPackages = with pkgs; [ 
-    # add neovim plugin here
+    # add dependencies here
     # tree-sitter
   ];
   extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";
