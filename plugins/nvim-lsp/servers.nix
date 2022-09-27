@@ -36,6 +36,10 @@ with pkgs;
     languages = "JSON";
     packages = [ nodePackages.vscode-langservers-extracted ];
   };
+  kotlin-language-server = {
+    languages = "Kotlin";
+    packages = [ pkgs.kotlin-language-server ];
+  };
   ltex = {
     languages = "text files";
     packages = [ unstable.ltex-ls ];
