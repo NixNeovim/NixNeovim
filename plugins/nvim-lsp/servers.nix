@@ -39,6 +39,7 @@ with pkgs;
   kotlin-language-server = {
     languages = "Kotlin";
     packages = [ pkgs.kotlin-language-server ];
+    serverName = "kotlin_language_server";
   };
   ltex = {
     languages = "text files";
