@@ -21,7 +21,6 @@ let
     "asyncrun-vim"
     "ltex-extra-nvim"
     "firenvim"
-    { name = "windows"; packageName = "windows-nvim"; setup = false; }
     { name = "vim-startuptime"; setup = false; }
     { name = "LuaSnip"; setup = false; }
     { name = "lsp-signature-nvim"; setup = false; }

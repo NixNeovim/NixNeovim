@@ -75,5 +75,6 @@
     ./utils/trouble.nix
     ./utils/undotree.nix
     ./utils/vimwiki.nix
+    ./utils/windows.nix
   ];
 }
