@@ -28,6 +28,8 @@
     ./languages/treesitter.nix
     ./languages/zig.nix
 
+    ./mini
+
     ./null-ls
 
     ./nvim-lsp
