@@ -7,6 +7,7 @@ let
   helpers = import ./helpers.nix { inherit lib config; };
 
   # names inserted here must match the name of the package in pkgs.vimExtraPlugins
+  # default for setup is 'false'
   plugs = with pkgs.vimExtraPlugins; [
     "nvim-comment-frame"
     "vim-printer"
@@ -26,7 +27,7 @@ let
     { name = "lsp-signature-nvim"; setup = false; }
   ];
 
-  fillAttrs = { name, packageName ? name, setup ? true }: { inherit name packageName setup; };
+  fillAttrs = { name, packageName ? name, setup ? false }: { inherit name packageName setup; };
 
 in with helpers; {
   imports = lib.forEach plugs
@@ -34,7 +35,7 @@ in with helpers; {
     let
       
       plugin = if isString p then
-          { name = p; packageName = p; setup = true; }
+          { name = p; packageName = p; setup = false; }
         else 
           fillAttrs p;
           
