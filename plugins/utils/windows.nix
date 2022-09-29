@@ -14,6 +14,7 @@ let
     # 
     # autoStart = boolOption true "Enable this pugin at start"
     # todo:
+    # animations = boolOption true "Enable animations";
   };
 
   # pluginOptions = helpers.toLuaOptions cfg moduleOptions;
@@ -25,7 +26,6 @@ mkLuaPlugin {
   extraPlugins = with pkgs.vimExtraPlugins; [ 
     # add neovim plugin here
     windows-nvim
-    animation-nvim
     middleclass
   ];
   extraConfigLua = "require('${name}').setup()"; # ${toLuaObject pluginOptions}";
