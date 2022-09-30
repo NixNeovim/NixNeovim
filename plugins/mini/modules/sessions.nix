@@ -3,7 +3,4 @@
 with lib;
 with helpers;
 
-{
-  setup = true;
-  options = { };
-}
+{ }

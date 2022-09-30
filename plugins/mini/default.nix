@@ -9,21 +9,36 @@ let
   helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
 
+  # TODO: move to files and add options
   modules = {
-    align = import ./modules/align.nix { inherit lib helpers; };
-    sessions = import ./modules/sessions.nix { inherit lib helpers; };
-    ai = import ./modules/ai.nix { inherit lib helpers; }; # this is better if there are many options
-    comment = { setup = true; options = {}; }; # TODO: move to file and add options
-    starter = { setup = true; options = {}; }; # TODO: move to tile and add options
-    cursorword = { setup = true; options = {}; }; # TODO: move to tile and add options
-    surround = { setup = true; options = {}; }; # TODO: move to tile and add options
+    ai         = import ./modules/ai.nix { inherit lib helpers; };
+    align      = { };
+    base16     = { };
+    bufremove  = { };
+    comment    = { };
+    completion = { }; 
+    cursorword = { }; 
+    doc        = { }; 
+    fuzzy      = { }; 
+    identscope = { }; 
+    jump       = { }; 
+    jump2d     = { }; 
+    misc       = { }; 
+    pairs      = { }; 
+    sessions   = { };
+    starter    = { }; 
+    statusline = { }; 
+    surround   = { }; 
+    tabline    = { }; 
+    test       = { }; 
+    trailspace = { }; 
   };
 
   # convert module list to module set for cfg
   # - adds the enable option
   # - adds the extraConfig Option
   moduleOptions = mapAttrs (module: config: 
-      config.options // {
+      config // {
         enable = mkEnableOption "Enable mini.${module}";
           extraConfig = mkOption {
             type = types.attrs;
@@ -42,17 +57,15 @@ mkLuaPlugin {
   extraPlugins = with pkgs.vimExtraPlugins; [ 
     mini-nvim
   ];
-  # extraPackages = with pkgs; [
+  extraPackages = with pkgs; [
   #   # add dependencies here
   #   # tree-sitter
-  # ];
+  ];
   extraConfigLua = let
     setup = mapAttrsToList (module: options:
       let
-        # add extraConfig to lua Options
-        lua-options = options.options // { extraConfig = {}; };
-        # combine the lua configs with their values from the nix-module config value
-        setup = helpers.toLuaOptions cfg.${module} lua-options;
+        # combine the lua configs with their values from the nix-module config value and add extraConfig
+        setup = helpers.toLuaOptions cfg.${module} ( options // { extraConfig = {}; });
       in if cfg.${module}.enable then
         "require('${name}.${module}').setup(${helpers.toLuaObject setup})"
       else 
