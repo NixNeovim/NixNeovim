@@ -13,9 +13,10 @@ let
     align = import ./modules/align.nix { inherit lib helpers; };
     sessions = import ./modules/sessions.nix { inherit lib helpers; };
     ai = import ./modules/ai.nix { inherit lib helpers; }; # this is better if there are many options
-    comment = { setup = true; options = {}; }; # I need to add options and add file later
-    starter = { setup = true; options = {}; };
-    cursorword = { setup = true; options = {}; };
+    comment = { setup = true; options = {}; }; # TODO: move to file and add options
+    starter = { setup = true; options = {}; }; # TODO: move to tile and add options
+    cursorword = { setup = true; options = {}; }; # TODO: move to tile and add options
+    surround = { setup = true; options = {}; }; # TODO: move to tile and add options
   };
 
   # convert module list to module set for cfg
