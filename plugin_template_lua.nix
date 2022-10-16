@@ -11,7 +11,7 @@ let
 
   moduleOptions = with helpers; {
     # add module options here
-    # 
+    #
     # autoStart = boolOption true "Enable this pugin at start"
   };
 
@@ -29,11 +29,11 @@ in with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
-  extraPlugins = with pkgs.vimExtraPlugins; [ 
+  extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
     # nvim-treesitter
   ];
-  extraPackages = with pkgs; [ 
+  extraPackages = with pkgs; [
     # add dependencies here
     # tree-sitter
   ];
