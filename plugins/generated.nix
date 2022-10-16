@@ -17,7 +17,6 @@ let
     "nest-nvim"
     "plenary-nvim"
     "nvim-ts-context-commentstring"
-    "telescope-nvim"
     "indent-blankline-nvim"
     "asyncrun-vim"
     "ltex-extra-nvim"

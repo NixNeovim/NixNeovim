@@ -1,65 +1,89 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, config, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.telescope;
-  helpers = (import ../helpers.nix { inherit lib; });
-in
-{
-  imports = [
-    ./frecency.nix
-    ./fzf-native.nix
-    ./fzy-native.nix
-  ];
 
-  # TODO:add support for aditional filetypes. This requires autocommands!
+  name = "telescope";
 
-  options.programs.nixvim.plugins.telescope = {
-    enable = mkEnableOption "Enable telescope.nvim";
+  helpers = (import ../helpers.nix { inherit lib config; });
+  cfg = config.programs.nixvim.plugins.${name};
 
+  moduleOptions = with helpers; {
+    # add module options here
+    #
+    # autoStart = boolOption true "Enable this pugin at start"
+    useBat = boolOption true "Use bat as the previewer instead of cat";
     highlightTheme = mkOption {
       type = types.nullOr types.str;
       description = "The colorscheme to use for syntax highlighting";
       default = config.programs.nixvim.colorscheme;
     };
-
-    enabledExtensions = mkOption {
-      type = types.listOf types.str;
-      description = "A list of enabled extensions. Don't use this directly";
-      default = [];
-    };
-
-    extensionConfig = mkOption {
-      type = types.attrsOf types.anything;
-      description = "Configuration for the extensions. Don't use this directly";
-      default = {};
-    };
+    extensions = import ./modules/extensions.nix { inherit pkgs config lib; };
   };
 
-  config = mkIf cfg.enable {
-    programs.nixvim = {
-      extraPackages = [ pkgs.bat ];
+in with helpers;
+mkLuaPlugin {
+  inherit name moduleOptions;
+  description = "Enable ${name}.nvim";
+  extraPlugins = with pkgs.vimExtraPlugins; [
+    telescope-nvim
+    plenary-nvim
+    popup-nvim
+    telescope-manix
+  ];
+  extraPackages = with pkgs; [
+    manix
+  ] ++ optional cfg.useBat bat;
 
-      extraPlugins = with pkgs.vimPlugins; [
-        telescope-nvim
-        plenary-nvim
-        popup-nvim
-      ];
+  extraConfigLua = let
+    enabledExtensions = forEach (attrNames cfg.extensions) (extension:
+      optionalString (cfg.extensions.${extension}.enable) "telescope.load_extension('${extension}')"
+    );
+  in ''
+    local telescope = require('${name}')
 
-      extraConfigVim = mkIf (cfg.highlightTheme != null) ''
-        let $BAT_THEME = '${cfg.highlightTheme}'
-      '';
-
-      extraConfigLua = ''
-        local __telescopeExtensions = ${helpers.toLuaObject cfg.enabledExtensions}
-
-        require('telescope').setup{
-          extensions = ${helpers.toLuaObject cfg.extensionConfig}
-        }
-
-        for i, extension in ipairs(__telescopeExtensions) do
-          require('telescope').load_extension(extension)
-        end
-        '' ;
-    };
-  };
+    ${ concatStringsSep "\n" enabledExtensions }
+  '';
 }
+
+#   # imports = [
+#   #   ./frecency.nix
+#   #   ./fzf-native.nix
+#   #   ./fzy-native.nix
+#   # ];
+
+#   options.programs.nixvim.plugins.telescope = {
+#     enable = mkEnableOption "Enable telescope.nvim";
+
+#     # extensionConfig = mkOption {
+#     #   type = types.attrsOf types.anything;
+#     #   description = "Configuration for the extensions. Don't use this directly";
+#     #   default = {};
+#     # };
+#   };
+
+#   config = mkIf cfg.enable {
+#     programs.nixvim = {
+#       # extraPackages = [ pkgs.bat ];
+
+#       # extraPlugins = with pkgs.vimPlugins; [
+#       #   telescope-nvim
+#       #   plenary-nvim
+#       #   popup-nvim
+#       # ];
+
+#       extraConfigVim = mkIf (cfg.highlightTheme != null) ''
+#         let $BAT_THEME = '${cfg.highlightTheme}'
+#       '';
+
+#       #   local __telescopeExtensions = ${helpers.toLuaObject cfg.enabledExtensions}
+
+#       #   require('telescope').setup{
+#       #     extensions = ${helpers.toLuaObject cfg.extensionConfig}
+#       #   }
+
+#       #   for i, extension in ipairs(__telescopeExtensions) do
+#       #     require('telescope').load_extension(extension)
+#       #   end
+#     };
+#   };
+# }
