@@ -36,7 +36,7 @@ mkLuaPlugin {
 
   extraConfigLua = let
     enabledExtensions = forEach (attrNames cfg.extensions) (extension:
-      optionalString (cfg.extensions.${extension}.enable) "telescope.load_extension('${extension}')"
+      optionalString cfg.extensions.${extension}.enable "telescope.load_extension('${extension}')"
     );
   in ''
     local telescope = require('${name}')
