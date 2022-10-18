@@ -1,11 +1,17 @@
 { pkgs, lib, config, ... }:
 with lib;
 let
+  # imports = [
+  #   ./frecency.nix
+  #   ./fzf-native.nix
+  #   ./fzy-native.nix
+  #   ./media-files.nix
+  # ];
 
   name = "telescope";
 
   helpers = (import ../helpers.nix { inherit lib config; });
-  cfg = config.programs.nixvim.plugins.${name};
+  cfg = config.plugins.${name};
 
   moduleOptions = with helpers; {
     # add module options here
@@ -15,7 +21,7 @@ let
     highlightTheme = mkOption {
       type = types.nullOr types.str;
       description = "The colorscheme to use for syntax highlighting";
-      default = config.programs.nixvim.colorscheme;
+      default = config.colorscheme;
     };
     extensions = import ./modules/extensions.nix { inherit pkgs config lib; };
   };

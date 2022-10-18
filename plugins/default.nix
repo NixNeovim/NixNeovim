@@ -14,6 +14,7 @@
     ./colorschemes/tokyonight.nix
 
     ./completion/coq.nix
+    ./completion/copilot.nix
     ./completion/nvim-cmp
 
     ./debugging/nvim-dap
@@ -34,6 +35,7 @@
 
     ./nvim-lsp
     ./nvim-lsp/lspsaga.nix
+    ./nvim-lsp/lsp-lines.nix
 
     ./pluginmanagers/packer.nix
 

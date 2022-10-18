@@ -131,10 +131,11 @@ rec {
     extraPlugins ? [],
     extraConfigLua ? "",
     extraConfigVim ? "",
+    extraPackages ? [],
     options ? {},
     ...
   }: let
-    cfg = config.programs.nixvim.plugins.${name};
+    cfg = config.plugins.${name};
     # TODO support nested options!
     moduleOptions = (mapAttrs (k: v: v.option) options);
     # // {
@@ -150,11 +151,11 @@ rec {
       value = if cfg.${name} != null then opt.value cfg.${name} else null;
     }) options;
   in {
-    options.programs.nixvim.plugins.${name} = {
+    options.plugins.${name} = {
       enable = mkEnableOption description;
     } // moduleOptions;
 
-    config.programs.nixvim = mkIf cfg.enable {
+    config = mkIf cfg.enable {
       inherit extraPlugins extraConfigVim globals;
       extraConfigLua =
         if stringLength extraConfigLua > 0 then
@@ -182,7 +183,7 @@ rec {
   assert assertMsg (length extraPlugins > 0) "Module for '${name}' broken: no plugin specified 'extraPlugins'";
 
   {
-    options.programs.nixvim.plugins.${name} = {
+    options.plugins.${name} = {
       enable = mkEnableOption description;
       extraConfig = mkOption {
         type = types.attrs;
@@ -196,7 +197,7 @@ rec {
       };
     } // moduleOptions;
 
-    config.programs.nixvim = mkIf cfg.enable {
+    config = mkIf cfg.enable {
       inherit extraPlugins extraPackages extraConfigVim;
       extraConfigLua =
         if stringLength extraConfigLua > 0 then

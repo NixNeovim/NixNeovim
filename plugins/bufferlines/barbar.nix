@@ -7,7 +7,7 @@ let
   name = "barbar";
 
   helpers = import ../helpers.nix { inherit lib config; };
-  cfg = config.programs.nixvim.plugins.${name};
+  cfg = config.plugins.${name};
 
   moduleOptions = with helpers; {
     animation = boolOption true "Enable animations";

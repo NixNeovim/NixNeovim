@@ -1,7 +1,7 @@
 { pkgs, config, lib, ... }@args:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.nvim-cmp;
+  cfg = config.plugins.nvim-cmp;
   helpers = import ../../helpers.nix { inherit lib config; };
 
   mkNullOrOption = helpers.mkNullOrOption;
@@ -16,7 +16,7 @@ let
 
 in with helpers;
 {
-  options.programs.nixvim.plugins.nvim-cmp = {
+  options.plugins.nvim-cmp = {
     enable = mkEnableOption "Enable nvim-cmp";
 
     performance = import ./options/performance.nix { inherit lib; };
@@ -245,16 +245,34 @@ in with helpers;
       };
     in
     mkIf cfg.enable {
-      programs.nixvim = {
-        extraPlugins = [ pkgs.vimExtraPlugins.nvim-cmp ] ++ cmpLib.sourcePackages cfg.sources;
 
-        extraConfigLua = ''
-          do -- create scope to not interfere with other plugins
-            local cmp = require('cmp') -- this is needed
-            cmp.setup(${helpers.toLuaObject pluginOptions})
-            ${ cmpLib.sourceExtraConfig cfg.sources }
-          end
-        '';
-      };
+      extraPlugins = [ pkgs.vimExtraPlugins.nvim-cmp ] ++ cmpLib.sourcePackages cfg.sources;
+
+      extraConfigLua = ''
+        do -- create scope to not interfere with other plugins
+          local cmp = require('cmp') -- this is needed
+          cmp.setup(${helpers.toLuaObject pluginOptions})
+          ${ cmpLib.sourceExtraConfig cfg.sources }
+        end
+      '';
+
+      # If auto_enable_sources is set to true, figure out which are provided by the user
+      # and enable the corresponding plugins.
+      plugins =
+        let
+          flattened_sources = if (isNull cfg.sources) then [ ] else flatten cfg.sources;
+          # Take only the names from the sources provided by the user
+          found_sources = lists.unique (lists.map (source: source.name) flattened_sources);
+          # A list of known source names
+          known_source_names = attrNames cmpLib.pluginAndSourceNames;
+
+          attrs_enabled = listToAttrs (map
+            (name: {
+              name = cmpLib.pluginAndSourceNames.${name};
+              value.enable = mkIf (elem name found_sources) true;
+            })
+            known_source_names);
+        in
+        mkIf cfg.auto_enable_sources attrs_enabled;
     };
 }
