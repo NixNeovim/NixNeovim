@@ -16,28 +16,29 @@ let
     base16     = { };
     bufremove  = { };
     comment    = { };
-    completion = { }; 
-    cursorword = { }; 
-    doc        = { }; 
-    fuzzy      = { }; 
-    identscope = { }; 
-    jump       = { }; 
-    jump2d     = { }; 
-    misc       = { }; 
-    pairs      = { }; 
+    completion = { };
+    cursorword = { };
+    doc        = { };
+    fuzzy      = { };
+    identscope = { };
+    jump       = { };
+    jump2d     = { };
+    map        = { };
+    misc       = { };
+    pairs      = { };
     sessions   = { };
-    starter    = { }; 
-    statusline = { }; 
-    surround   = { }; 
-    tabline    = { }; 
-    test       = { }; 
-    trailspace = { }; 
+    starter    = { };
+    statusline = { };
+    surround   = { };
+    tabline    = { };
+    test       = { };
+    trailspace = { };
   };
 
   # convert module list to module set for cfg
   # - adds the enable option
   # - adds the extraConfig Option
-  moduleOptions = mapAttrs (module: config: 
+  moduleOptions = mapAttrs (module: config:
       config // {
         enable = mkEnableOption "Enable mini.${module}";
           extraConfig = mkOption {
@@ -54,7 +55,7 @@ in with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
-  extraPlugins = with pkgs.vimExtraPlugins; [ 
+  extraPlugins = with pkgs.vimExtraPlugins; [
     mini-nvim
   ];
   extraPackages = with pkgs; [
@@ -68,7 +69,7 @@ mkLuaPlugin {
         setup = helpers.toLuaOptions cfg.${module} ( options // { extraConfig = {}; });
       in if cfg.${module}.enable then
         "require('${name}.${module}').setup(${helpers.toLuaObject setup})"
-      else 
+      else
         ""
     ) modules;
   in concatStringsSep "\n" setup;
