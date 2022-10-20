@@ -7,13 +7,13 @@ let
 in {
   options = {
     programs.nixvim = lib.mkOption {
-      type = types.submodule ((modules pkgs) ++ [{
+      type = types.submodule ([{
         options.enable = mkEnableOption "nixvim";
       }]);
     };
   };
 
-  config = mkIf cfg.enable 
+  config = mkIf cfg.enable
     (mkMerge [
       { environment.systemPackages = [ cfg.finalPackage ]; }
       (mkIf (!cfg.wrapRc) {

@@ -255,24 +255,5 @@ in with helpers;
           ${ cmpLib.sourceExtraConfig cfg.sources }
         end
       '';
-
-      # If auto_enable_sources is set to true, figure out which are provided by the user
-      # and enable the corresponding plugins.
-      plugins =
-        let
-          flattened_sources = if (isNull cfg.sources) then [ ] else flatten cfg.sources;
-          # Take only the names from the sources provided by the user
-          found_sources = lists.unique (lists.map (source: source.name) flattened_sources);
-          # A list of known source names
-          known_source_names = attrNames cmpLib.pluginAndSourceNames;
-
-          attrs_enabled = listToAttrs (map
-            (name: {
-              name = cmpLib.pluginAndSourceNames.${name};
-              value.enable = mkIf (elem name found_sources) true;
-            })
-            known_source_names);
-        in
-        mkIf cfg.auto_enable_sources attrs_enabled;
     };
 }

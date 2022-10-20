@@ -11,22 +11,35 @@
   outputs = { self, nixpkgs, nmdSrc, vimExtraPlugins, flake-utils, ... }@inputs:
     flake-utils.lib.eachDefaultSystem (system:
       let
+
         pkgs = import nixpkgs {
           inherit system;
           overlays = [
             vimExtraPlugins.overlays.default
           ];
         };
+
+        opt = [
+          ./options/nixvim.nix
+        ];
+
       in {
+
         packages.docs = import ./docs {
-          inherit nmdSrc nixvimModules pkgs;
+          inherit nmdSrc pkgs;
           lib = nixpkgs.lib;
         };
-        # nixosModules.nixvim = import ./wrappers/nixos.nix;
-        # homeManagerModules.nixvim = import ./wrappers/hm.nix modules;
-        nixosModules.nixvim = import ./nixvim.nix { nixos = true; inherit pkgs; };
-        homeManagerModules.nixvim = import ./nixvim.nix { homeManager = true; inherit pkgs; };
-        legacyPackages.makeNixvim = import ./wrappers/standalone.nix;
+
+        # specialArgs = {
+        #   inherit opt;
+        # };
+
+
+        # nixosModules.nixvim = import ./wrappers/nixos.nix {}; # TODO
+        homeManagerModules.nixvim = import ./modules/home-manager.nix ;
+        # nixosModules.nixvim = import ./nixvim.nix { nixos = true; inherit pkgs; };
+        # homeManagerModules.nixvim = import ./nixvim.nix { homeManager = true; inherit pkgs; };
+        # legacyPackages.makeNixvim = import ./modules/standalone.nix; # TODO
       }
 
   );

@@ -15,7 +15,7 @@ rec {
 
   # value is string (package name) or a set of form '{ package = "..."; extraConfig = "..."; }'
   # the former is needed if source needs extra config like the crates-nvim source
-  sourceNameAndPlugin = {
+  pluginAndSourceNames = {
     "buffer" = "cmp-buffer";
     "calc" = "cmp-calc";
     "cmdline" = "cmp-cmdline";
