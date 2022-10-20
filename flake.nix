@@ -30,17 +30,14 @@
           lib = nixpkgs.lib;
         };
 
-        # specialArgs = {
-        #   inherit opt;
-        # };
-
-
         # nixosModules.nixvim = import ./wrappers/nixos.nix {}; # TODO
-        homeManagerModules.nixvim = import ./modules/home-manager.nix ;
+        # homeManagerModules.nixvim = import ./modules/home-manager.nix ;
         # nixosModules.nixvim = import ./nixvim.nix { nixos = true; inherit pkgs; };
         # homeManagerModules.nixvim = import ./nixvim.nix { homeManager = true; inherit pkgs; };
         # legacyPackages.makeNixvim = import ./modules/standalone.nix; # TODO
       }
 
-  );
+  ) // {
+    homeManagerModule = import ./modules/home-manager.nix;
+  };
 }
