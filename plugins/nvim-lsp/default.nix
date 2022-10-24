@@ -1,14 +1,17 @@
 { config, pkgs, lib, ... }:
+
 with lib;
+
 let
-  cfg = config.programs.nixvim.plugins.lsp;
-  helpers = (import ../helpers.nix { inherit lib config; });
-  lsp-helpers = (import ./lsp-helpers.nix { inherit lib config pkgs; });
-in {
+  
+  name = "lsp";
+  
+  helpers = import ../helpers.nix { inherit lib config; };
+  cfg = config.programs.nixvim.plugins.${name};
 
-  options.programs.nixvim.plugins.lsp = {
-    enable = mkEnableOption "Enable neovim's built-in LSP";
+  lsp-helpers = import ./lsp-helpers.nix { inherit lib config pkgs; };
 
+  moduleOptions = {
     servers = import ./options/servers.nix { inherit lib config pkgs; };
 
     onAttach = mkOption {
@@ -29,29 +32,21 @@ in {
       default = "";
     };
   };
-
-  config = let
-
-    extraPackages = lsp-helpers.lspPackages cfg.servers;
-
-  in mkIf cfg.enable {
-    programs.nixvim = {
-
-      inherit extraPackages;
-
-      extraPlugins = [ pkgs.vimPlugins.nvim-lspconfig ];
-
-      extraConfigLua =
-        let
-          activatedServer = lsp-helpers.serversToLua cfg.servers cfg.setupWrappers; # create lua code for lsp server, with setup wrapper
-        in ''
-          do -- LSP
-            ${cfg.preConfig}
-            ${concatStringsSep "\n" activatedServer}
-          end -- END LSP
-        '';
-    };
-  };
+  
+in with helpers;
+mkLuaPlugin {
+  inherit name moduleOptions;
+  description = "Enable ${lsp} plugins";
+  extraPlugins = with pkgs.vimExtraPlugins; [
+    nvim-lspconfig
+  ];
+  extraConfigLua =
+    let
+      activatedServer = lsp-helpers.serversToLua cfg.servers cfg.setupWrappers; # create lua code for lsp server, with setup wrapper
+    in ''
+      ${cfg.preConfig}
+      ${concatStringsSep "\n" activatedServer}
+    '';
 }
           # for i,server in ipairs(__lspServers) do
           #   if type(server) == "string" then
