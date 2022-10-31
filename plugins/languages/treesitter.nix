@@ -21,6 +21,18 @@ in with helpers;
         description = "Either \"all\" or a list of languages";
       };
 
+      parserInstallDir = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = "Location of the parsers to be installed by the plugin (only needed when nixGrammars is disabled)";
+      };
+
+      ignoreInstall = mkOption {
+        type = types.listOf types.str;
+        default = [ ];
+        description = "List of parsers to ignore installing (for \"all\")";
+      };
+
       disabledLanguages = mkOption {
         type = types.listOf types.str;
         default = [];
@@ -61,7 +73,28 @@ in with helpers;
         enable = cfg.enable;
         disable = if (cfg.disabledLanguages != []) then cfg.disabledLanguages else null;
 
-        custom_captures = if (cfg.customCaptures != {}) then cfg.customCaptures else null;
+          custom_captures = if (cfg.customCaptures != { }) then cfg.customCaptures else null;
+        };
+
+        incremental_selection =
+          if cfg.incrementalSelection.enable then {
+            enable = true;
+            keymaps = {
+              init_selection = cfg.incrementalSelection.keymaps.initSelection;
+              node_incremental = cfg.incrementalSelection.keymaps.nodeIncremental;
+              scope_incremental = cfg.incrementalSelection.keymaps.scopeIncremental;
+              node_decremental = cfg.incrementalSelection.keymaps.nodeDecremental;
+            };
+          } else null;
+
+        indent =
+          if cfg.indent then {
+            enable = true;
+          } else null;
+
+        ensure_installed = if cfg.nixGrammars then [ ] else cfg.ensureInstalled;
+        ignore_install = cfg.ignoreInstall;
+        parser_install_dir = cfg.parserInstallDir;
       };
 
       incremental_selection = if cfg.incrementalSelection.enable then {
@@ -84,8 +117,11 @@ in with helpers;
     };
   in mkIf cfg.enable {
     programs.nixvim = {
-      extraConfigLua = ''
+      extraConfigLua = let
+        runtimePath = optionalString (cfg.parserInstallDir != null) "vim.opt.runtimepath:append(\"${cfg.parserInstallDir}\")";
+      in ''
         require('nvim-treesitter.configs').setup(${helpers.toLuaObject pluginOptions})
+        ${runtimePath}
       '';
 
       extraPlugins = with pkgs;
