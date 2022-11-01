@@ -47,6 +47,7 @@
     ./utils/comment-nvim.nix
     ./utils/commentary.nix
     ./utils/dashboard.nix
+    ./utils/diffview.nix
     ./utils/easyescape.nix
     ./utils/emmet.nix
     ./utils/endwise.nix
