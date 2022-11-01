@@ -5,7 +5,9 @@ let
   helpers = import ../../helpers.nix { inherit lib config; };
 
   mkNullOrOption = helpers.mkNullOrOption;
-  cmpLib = import ./cmp-helpers.nix args;
+  # cmpHelpers = import ./cmp-helpers.nix args;
+  sources = import ./options/sources.nix { inherit lib config pkgs; };
+
   # functionName should be a string
   # parameters should be a list of strings
   wrapWithFunction = functionName: parameters:
@@ -21,7 +23,7 @@ in with helpers;
 
     performance = import ./options/performance.nix { inherit lib; };
     mapping = import ./options/mapping.nix { inherit lib; };
-    sources = import ./options/sources.nix { inherit lib config pkgs; };
+    sources = sources.options;
     completion = import ./options/completion.nix { inherit lib; };
 
     preselect = mkOption {
@@ -234,7 +236,7 @@ in with helpers;
           comparators = if (isNull cfg.sorting.comparators) then null else helpers.mkRaw cfg.sorting.comparators;
         };
 
-        sources = cmpLib.sourceConfig cfg.sources;
+        sources = filterAttrs (k: v: v.enable) cfg.sources; # only add activated sources to config
         snippet = {
           expand = "function(args) ${ lib.optionalString cfg.snippet.luasnip.enable "require(\"luasnip\").lsp_expand(args.body)" } end";
         };
@@ -246,13 +248,18 @@ in with helpers;
     in
     mkIf cfg.enable {
       programs.nixvim = {
-        extraPlugins = [ pkgs.vimExtraPlugins.nvim-cmp ] ++ cmpLib.sourcePackages cfg.sources;
+        extraPlugins =
+          [ pkgs.vimExtraPlugins.nvim-cmp ]
+          ++ sources.packages cfg.sources;
 
         extraConfigLua = ''
           do -- create scope to not interfere with other plugins
             local cmp = require('cmp') -- this is needed
+
             cmp.setup(${helpers.toLuaObject pluginOptions})
-            ${ cmpLib.sourceExtraConfig cfg.sources }
+
+            -- extra config of sources
+            ${toConfigString (sources.config cfg.sources)}
           end
         '';
       };

@@ -1,5 +1,7 @@
 { lib, config, ... }:
+
 with lib;
+
 rec {
 
   boolOption = default: description: mkOption {
@@ -45,6 +47,12 @@ rec {
   # vim dictionaries are, in theory, compatible with JSON
   toVimDict = args: toJSON
     (lib.filterAttrs (n: v: !isNull v) args);
+
+  # removes empty strings and applies concatStringsSep
+  toConfigString = list:
+    let
+      filtered = filter (str: str != "") list;
+    in concatStringsSep "\n" filtered;
 
   # Black functional magic that converts a bunch of different Nix types to their
   # lua equivalents!
