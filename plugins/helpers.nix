@@ -57,26 +57,32 @@ rec {
   # Black functional magic that converts a bunch of different Nix types to their
   # lua equivalents!
   toLuaObject = args:
-    let
-      filterNullAttrs = attrs:
-        filterAttrs (name: value:
-          !isNull value && toLuaObject value != "{}"
-        ) args;
-    in if builtins.isAttrs args then
-      if hasAttr "__raw" args then
-        args.__raw
+    if builtins.isAttrs args then
+      let
+        filteredArgs = filterAttrs (name: value:
+            !isNull value && toLuaObject value != "{}"
+          ) args;
+      in if hasAttr "__raw" filteredArgs then
+        filteredArgs.__raw
       else
-        "{" + (concatStringsSep "," (
-                  mapAttrsToList (name: value:
-                    if head (stringToCharacters name) == "@" then
-                      toLuaObject value
-                    else
-                      "[${toLuaObject name}] = " + (toLuaObject value)
-                  ) (filterNullAttrs args)
-                )
-              ) + "}"
+        let
+          argToLua = name: value:
+            if head (stringToCharacters name) == "@" then
+              toLuaObject value
+            else
+              "[${toLuaObject name}] = ${toLuaObject value}";
+
+          listOfValues = mapAttrsToList argToLua filteredArgs;
+        in
+          if length listOfValues == 0 then
+            "{}"
+          else
+            ''
+              {
+                ${concatStringsSep ",\n  " listOfValues}
+              }''
     else if builtins.isList args then
-      "{" + concatMapStringsSep "," toLuaObject args + "}"
+      "{ ${concatMapStringsSep "," toLuaObject args} }"
     else if builtins.isString args then
       # This should be enough!
       escapeShellArg args
