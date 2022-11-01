@@ -72,5 +72,5 @@ mkLuaPlugin {
       else
         ""
     ) modules;
-  in concatStringsSep "\n" setup;
+  in toConfigString setup;
 }
