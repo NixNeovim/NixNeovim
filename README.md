@@ -1,3 +1,7 @@
+# Forked
+
+This fork containes more modules and cleaner code
+
 # NixVim - A Neovim configuration system for nix
 ## What is it?
 NixVim is a [Neovim](https://neovim.io) distribution built around
