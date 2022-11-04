@@ -7,7 +7,7 @@ let
   enabledAdapter = cfg:
     let
       isActive = serverName: _options:
-        !(isNull cfg.${serverName}) && cfg.${serverName}.enable;
+        cfg.${serverName} != null && cfg.${serverName}.enable;
     in filterAttrs isActive servers;
 
 in rec {
