@@ -7,7 +7,7 @@ in with helpers;
 {
   options = {
     programs.nixvim.plugins.lspsaga = {
-      enable = mkEnableOption "Enable lspsava.nvim";
+      enable = mkEnableOption "Enable lspsaga.nvim";
 
       signs = {
         use = mkOption {

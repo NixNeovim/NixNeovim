@@ -33,7 +33,6 @@
     ./null-ls
 
     ./nvim-lsp
-    ./nvim-lsp/lspsaga.nix
 
     ./pluginmanagers/packer.nix
 
@@ -58,6 +57,7 @@
     ./utils/headlines.nix
     ./utils/intellitab.nix
     ./utils/lspkind.nix
+    ./utils/lspsaga.nix
     ./utils/mark-radar.nix
     ./utils/nerdcommenter.nix
     ./utils/notify.nix
