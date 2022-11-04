@@ -2,8 +2,7 @@
 with lib;
 let
   cfg = config.programs.nixvim.plugins.coq-nvim;
-  helpers = import ../helpers.nix { lib = lib; };
-  plugins = import ../plugin-defs.nix { inherit pkgs; };
+  helpers = import ../helpers.nix { inherit lib pkgs config; };
 in {
   options = {
     programs.nixvim.plugins.coq-nvim = {
@@ -32,14 +31,14 @@ in {
   in mkIf cfg.enable {
     programs.nixvim = {
       extraPlugins = [
-        plugins.coq-nvim
-      ] ++ optional cfg.installArtifacts plugins.coq-artifacts;
+        # plugins.coq-nvim
+        pkgs.vimExtraPlugins.coq-nvim
+      ] ++ optional cfg.installArtifacts pkgs.vimExtraPlugins.coq-artifacts;
       plugins.lsp = {
         preConfig = ''
           vim.g.coq_settings = ${helpers.toLuaObject settings}
-          local coq = require 'coq'
         '';
-        setupWrappers = [(s: ''coq.lsp_ensure_capabilities(${s})'')];
+        coqSupport = true;
       };
     };
   };

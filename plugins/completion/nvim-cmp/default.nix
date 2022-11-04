@@ -4,17 +4,7 @@ let
   cfg = config.programs.nixvim.plugins.nvim-cmp;
   helpers = import ../../helpers.nix { inherit lib config; };
 
-  mkNullOrOption = helpers.mkNullOrOption;
-  # cmpHelpers = import ./cmp-helpers.nix args;
   sources = import ./options/sources.nix { inherit lib config pkgs; };
-
-  # functionName should be a string
-  # parameters should be a list of strings
-  wrapWithFunction = functionName: parameters:
-    let
-      parameterString = strings.concatStringsSep "," parameters;
-    in
-    ''${functionName}(${parameterString})'';
 
 in with helpers;
 {
