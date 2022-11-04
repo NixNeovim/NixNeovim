@@ -14,14 +14,17 @@ let
           enable = mkEnableOption "";
           onAttachExtra = mkOption {
             type = types.lines;
-            description = "A lua function to be run when ${server.name} is attached. The argument `client` and `bufnr` are provided.";
+            description =
+              "A lua function to be run when ${server.name} is attached. The argument `client` and `bufnr` are provided.";
             default = "";
           };
-          extraConfig = strOption "" "Extra config passed lsp setup function after `on_attach`";
+          extraConfig = strOption ""
+            "Extra config passed lsp setup function after `on_attach`";
         };
       };
-      description = "Module for the ${name} (${attr.package}) lsp server for nvim-lsp. Languages: ${server.languages}";
-      default = {};
+      description =
+        "Module for the ${name} (${attr.package}) lsp server for nvim-lsp. Languages: ${server.languages}";
+      default = { };
     };
 
   serversSet = {
@@ -39,11 +42,9 @@ let
     };
     gdscript = {
       languages = "Godot";
-      packages = [];
+      packages = [ ];
     };
-    gopls = {
-      languages = "Go";
-    };
+    gopls = { languages = "Go"; };
     hls = {
       languages = "Haskell";
       packages = [ haskell-language-server ghc ];
@@ -65,9 +66,7 @@ let
       languages = "text files";
       packages = [ unstable.ltex-ls ];
     };
-    pyright = {
-      languages = "Python";
-    };
+    pyright = { languages = "Python"; };
     rnix-lsp = {
       languages = "Nix";
       packages = [ rnix-lsp ];
@@ -78,30 +77,26 @@ let
       serverName = "rust_analyzer";
       packages = [ cargo ];
     };
-    texlab = {
-      languages = "latex";
-    };
+    texlab = { languages = "latex"; };
     vuels = {
       languages = "Vue";
       packages = [ nodePackages.vue-language-server ];
     };
-    zls = {
-      languages = "Zig";
-    };
+    zls = { languages = "Zig"; };
   };
 
   # fill out missing information to language server definition
-  fillMissingInfo = name: {
-      languages ? "unspecified",
-      packages ? [ pkgs.vimExtraPlugins.${name} ],
-      serverName ? name
-    }: { inherit languages packages serverName; };
-
+  fillMissingInfo = name:
+    { languages ? "unspecified", packages ? [ pkgs.vimExtraPlugins.${name} ]
+    , serverName ? name }: {
+      inherit languages packages serverName;
+    };
 
   servers = mapAttrs fillMissingInfo serversSet;
 
   # filter only activated servers
-  activated = cfg-servers: filterAttrs (name: attrs: cfg-servers.${name}.enable) servers;
+  activated = cfg-servers:
+    filterAttrs (name: attrs: cfg-servers.${name}.enable) servers;
 
 in {
 
@@ -112,7 +107,8 @@ in {
 
   packages = cfg-servers:
     let
-      lists = mapAttrsToList (name: attrs: attrs.packages) (activated cfg-servers);
-    in flatten lists; ## return packages of activated sources
+      lists =
+        mapAttrsToList (name: attrs: attrs.packages) (activated cfg-servers);
+    in flatten lists; # # return packages of activated sources
 
 }

@@ -24,8 +24,7 @@ let
     }));
     default = null;
   };
-in with helpers;
-{
+in with helpers; {
   options = {
     programs.nixvim.plugins.${name} = {
       enable = mkEnableOption "Enable ${name}";
@@ -40,7 +39,7 @@ in with helpers;
     };
   };
 
-  config = let 
+  config = let
     setupOptions = {
       options = {
         # presets = {
@@ -48,11 +47,9 @@ in with helpers;
         # };
       };
     };
-    in mkIf cfg.enable {
+  in mkIf cfg.enable {
     programs.nixvim = {
-      extraPlugins = with pkgs.vimExtraPlugins; [
-        tabby-nvim
-      ];
+      extraPlugins = with pkgs.vimExtraPlugins; [ tabby-nvim ];
       extraConfigLua = ''
         require('tabby').setup${helpers.toLuaObject setupOptions}
       '';

@@ -47,8 +47,7 @@ in {
         tokyonight_italic_variables = mkIf cfg.italicVariables 1;
 
         tokyonight_transparent = mkIf cfg.transparent 1;
-        tokyonight_hide_inactive_statusline =
-          mkIf cfg.hideInactiveStatusline 1;
+        tokyonight_hide_inactive_statusline = mkIf cfg.hideInactiveStatusline 1;
         tokyonight_transparent_sidebar = mkIf cfg.transparentSidebar 1;
         tokyonight_dark_sidebar = mkIf (!cfg.darkSidebar) 0;
         tokyonight_dark_float = mkIf (!cfg.darkFloat) 0;

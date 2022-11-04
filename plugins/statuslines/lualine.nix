@@ -45,10 +45,11 @@ let
       default = null;
     };
 
-  sections_option = default: mkOption {
-    type = types.nullOr (types.listOf types.str);
-    inherit default;
-  };
+  sections_option = default:
+    mkOption {
+      type = types.nullOr (types.listOf types.str);
+      inherit default;
+    };
 in {
   options = {
     programs.nixvim.plugins.lualine = {

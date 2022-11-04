@@ -16,19 +16,22 @@ let
 
     onAttach = mkOption {
       type = types.lines;
-      description = "A lua function to be run when a new LSP buffer is attached. The argument `client` is provided.";
+      description =
+        "A lua function to be run when a new LSP buffer is attached. The argument `client` is provided.";
       default = "";
     };
 
     coqSupport = mkOption {
       type = types.bool;
-      description = "Coq requires a special LSP setup (https://github.com/ms-jpq/coq_nvim#lsp). This automatically set to true when activating the coq plugin.";
+      description =
+        "Coq requires a special LSP setup (https://github.com/ms-jpq/coq_nvim#lsp). This automatically set to true when activating the coq plugin.";
       default = false;
     };
 
     preConfig = mkOption {
       type = types.lines;
-      description = "Code to be run before loading the LSP plugin. Useful for requiring plugins";
+      description =
+        "Code to be run before loading the LSP plugin. Useful for requiring plugins";
       default = "";
     };
   };
@@ -37,15 +40,12 @@ in with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name} plugins";
-  extraPlugins = with pkgs.vimExtraPlugins; [
-    nvim-lspconfig
-  ];
-  extraConfigLua =
-    let
-      # create lua code for lsp server, with setup wrapper
-      serversLua = lsp-helpers.serversToLua cfg (servers.activated cfg.servers);
-    in ''
-      ${cfg.preConfig}
-      ${toConfigString serversLua}
-    '';
+  extraPlugins = with pkgs.vimExtraPlugins; [ nvim-lspconfig ];
+  extraConfigLua = let
+    # create lua code for lsp server, with setup wrapper
+    serversLua = lsp-helpers.serversToLua cfg (servers.activated cfg.servers);
+  in ''
+    ${cfg.preConfig}
+    ${toConfigString serversLua}
+  '';
 }

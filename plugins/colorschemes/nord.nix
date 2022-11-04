@@ -1,9 +1,7 @@
 { pkgs, config, lib, ... }:
 with lib;
-let 
-  cfg = config.programs.nixvim.colorschemes.nord;
-in
-{
+let cfg = config.programs.nixvim.colorschemes.nord;
+in {
   options = {
     programs.nixvim.colorschemes.nord = {
       enable = mkEnableOption "Enable nord";
@@ -17,8 +15,8 @@ in
       disable_background = mkEnableOption
         "Disable the setting of background color so that NeoVim can use your terminal background";
 
-      cursorline_transparent = mkEnableOption
-        "Set the cursorline transparent/visible";
+      cursorline_transparent =
+        mkEnableOption "Set the cursorline transparent/visible";
 
       enable_sidebar_background = mkEnableOption
         "Re-enables the background of the sidebar if you disabled the background of everything";

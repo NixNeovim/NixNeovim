@@ -21,8 +21,7 @@ let
     }));
     default = null;
   };
-in
-{
+in {
   options = {
     programs.nixvim.plugins.bufferline = {
       enable = mkEnableOption "Enable bufferline";
@@ -38,7 +37,8 @@ in
       };
       rightMouseCommand = mkOption {
         type = types.nullOr types.lines;
-        description = "Command or function run when right clicking on a buffer.";
+        description =
+          "Command or function run when right clicking on a buffer.";
         default = null;
       };
       leftMouseCommand = mkOption {
@@ -48,13 +48,15 @@ in
       };
       middleMouseCommand = mkOption {
         type = types.nullOr types.lines;
-        description = "Command or function run when middle clicking on a buffer.";
+        description =
+          "Command or function run when middle clicking on a buffer.";
         default = null;
       };
       indicatorIcon = mkOption {
         type = types.nullOr types.str;
-        description = "The Icon shown as a indicator for buffer. Changing it is NOT recommended, 
-        this is intended to be an escape hatch for people who cannot bear it for whatever reason.";
+        description = ''
+          The Icon shown as a indicator for buffer. Changing it is NOT recommended, 
+                  this is intended to be an escape hatch for people who cannot bear it for whatever reason.'';
         default = null;
       };
       bufferCloseIcon = mkOption {
@@ -82,7 +84,8 @@ in
       };
       nameFormatter = mkOption {
         type = types.nullOr types.lines;
-        description = "A lua function that can be used to modify the buffer's lable. The argument 'buf' containing a name, path and bufnr is supplied.";
+        description =
+          "A lua function that can be used to modify the buffer's lable. The argument 'buf' containing a name, path and bufnr is supplied.";
         default = null;
       };
       maxNameLength = mkOption {
@@ -92,7 +95,8 @@ in
       };
       maxPrefixLength = mkOption {
         type = types.nullOr types.int;
-        description = "Max length of a buffer prefix (used when a buffer is de-duplicated)";
+        description =
+          "Max length of a buffer prefix (used when a buffer is de-duplicated)";
         default = null;
       };
       tabSize = mkOption {
@@ -118,7 +122,7 @@ in
       };
       showBufferIcons = mkOption {
         type = types.nullOr types.bool;
-        default = null; 
+        default = null;
       };
       showBufferCloseIcons = mkOption {
         type = types.nullOr types.bool;
@@ -149,7 +153,13 @@ in
         default = null;
       };
       sortBy = mkOption {
-        type = types.nullOr (types.enum [ "id" "extension" "relative_directory" "directory" "tabs" ]);
+        type = types.nullOr (types.enum [
+          "id"
+          "extension"
+          "relative_directory"
+          "directory"
+          "tabs"
+        ]);
         default = null;
       };
       highlights = mkOption {
@@ -221,7 +231,7 @@ in
     };
   };
 
-  config = let 
+  config = let
     setupOptions = {
       options = {
         inherit (cfg) numbers;
@@ -253,69 +263,72 @@ in
         always_show_bufferline = cfg.alwaysShowBufferline;
         sort_by = cfg.sortBy;
       };
-      highlights = if builtins.isNull cfg.highlights then null else with cfg.highlights; {
-        inherit fill;
-        inherit background;
+      highlights = if builtins.isNull cfg.highlights then
+        null
+      else
+        with cfg.highlights; {
+          inherit fill;
+          inherit background;
 
-        inherit tab;
-        tab_selected = tabSelected;
-        tab_close = tabClose;
-        close_button = closeButton;
-        close_button_visible = closeButtonVisible;
-        close_button_selected = closeButtonSelected;
+          inherit tab;
+          tab_selected = tabSelected;
+          tab_close = tabClose;
+          close_button = closeButton;
+          close_button_visible = closeButtonVisible;
+          close_button_selected = closeButtonSelected;
 
-        buffer_visible = bufferVisible;
-        buffer_selected = bufferSelected;
+          buffer_visible = bufferVisible;
+          buffer_selected = bufferSelected;
 
-        inherit diagnostic;
-        diagnostic_visible = diagnosticVisible;
-        diagnostic_selected = diagnosticSelected;
+          inherit diagnostic;
+          diagnostic_visible = diagnosticVisible;
+          diagnostic_selected = diagnosticSelected;
 
-        inherit info;
-        info_visible = infoVisible;
-        info_selected = infoSelected;
+          inherit info;
+          info_visible = infoVisible;
+          info_selected = infoSelected;
 
-        info_diagnostic = infoDiagnostic;
-        info_diagnostic_visible = infoDiagnosticVisible;
-        info_diagnostic_selected = infoDiagnosticSelected;
+          info_diagnostic = infoDiagnostic;
+          info_diagnostic_visible = infoDiagnosticVisible;
+          info_diagnostic_selected = infoDiagnosticSelected;
 
-        inherit warning;
-        warning_visible = warningVisible;
-        warning_selected = warningSelected;
+          inherit warning;
+          warning_visible = warningVisible;
+          warning_selected = warningSelected;
 
-        warning_diagnostic = warningDiagnostic;
-        warning_diagnostic_visible = warningDiagnosticVisible;
-        warning_diagnostic_selected = warningDiagnosticSelected;
+          warning_diagnostic = warningDiagnostic;
+          warning_diagnostic_visible = warningDiagnosticVisible;
+          warning_diagnostic_selected = warningDiagnosticSelected;
 
-        inherit error;
-        error_visible = errorVisible;
-        error_selected = errorSelected;
+          inherit error;
+          error_visible = errorVisible;
+          error_selected = errorSelected;
 
-        error_dagnostic = errorDiagnostic;
-        error_diagnostic_visible = errorDiagnosticVisible;
-        error_diagnostic_selected = errorDiagnosticSelected;
+          error_dagnostic = errorDiagnostic;
+          error_diagnostic_visible = errorDiagnosticVisible;
+          error_diagnostic_selected = errorDiagnosticSelected;
 
-        inherit modified;
-        modified_visible = modifiedVisible;
-        modified_selected = modifiedSelected;
+          inherit modified;
+          modified_visible = modifiedVisible;
+          modified_selected = modifiedSelected;
 
-        inherit duplicate;
-        duplicate_visible = duplicateVisible;
-        duplicate_selected = duplicateSelected;
+          inherit duplicate;
+          duplicate_visible = duplicateVisible;
+          duplicate_selected = duplicateSelected;
 
-        inherit separator;
-        separator_visible = separatorVisible;
-        separator_selected = separatorSelected;
+          inherit separator;
+          separator_visible = separatorVisible;
+          separator_selected = separatorSelected;
 
-        indicator_selected = indicatorSelected;
+          indicator_selected = indicatorSelected;
 
-        inherit pick;
-        pick_visible = pickVisible;
-        pick_selected = pickSelected;
+          inherit pick;
+          pick_visible = pickVisible;
+          pick_selected = pickSelected;
 
-      };
+        };
     };
-    in mkIf cfg.enable {
+  in mkIf cfg.enable {
     programs.nixvim = {
       extraPlugins = with pkgs.vimExtraPlugins; [
         bufferline-nvim

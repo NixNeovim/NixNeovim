@@ -6,14 +6,23 @@ with types;
 
 {
   searchMethod = mkOption {
-    type = enum [ "cover" "cover_or_next" "cover_or_prev" "cover_or_nearest" "next" "previous" "nearest" ];
+    type = enum [
+      "cover"
+      "cover_or_next"
+      "cover_or_prev"
+      "cover_or_nearest"
+      "next"
+      "previous"
+      "nearest"
+    ];
     default = "cover_or_next";
   };
   nLines = intOption 50 "Number of lines within which textobject is searched";
   customTextobjects = mkOption {
     type = attrs;
-    default = {};
-    description = "Attribute set with textobect id as key and textobkect specification as values";
+    default = { };
+    description =
+      "Attribute set with textobect id as key and textobkect specification as values";
   };
   mappings = {
     around = strOption "a" "";

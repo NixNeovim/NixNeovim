@@ -30,18 +30,16 @@ mkLuaPlugin {
     popup-nvim
     telescope-manix
   ];
-  extraPackages = with pkgs; [
-    manix
-  ] ++ optional cfg.useBat bat;
+  extraPackages = with pkgs; [ manix ] ++ optional cfg.useBat bat;
 
   extraConfigLua = let
     enabledExtensions = forEach (attrNames cfg.extensions) (extension:
-      optionalString cfg.extensions.${extension}.enable "telescope.load_extension('${extension}')"
-    );
+      optionalString cfg.extensions.${extension}.enable
+      "telescope.load_extension('${extension}')");
   in ''
     local telescope = require('${name}')
 
-    ${ concatStringsSep "\n" enabledExtensions }
+    ${concatStringsSep "\n" enabledExtensions}
   '';
 }
 

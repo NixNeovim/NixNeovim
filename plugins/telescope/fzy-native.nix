@@ -1,9 +1,7 @@
-{ pkgs, config, lib, ...}:
+{ pkgs, config, lib, ... }:
 with lib;
-let
-  cfg = config.programs.nixvim.plugins.telescope.extensions.fzy-native;
-in
-{
+let cfg = config.programs.nixvim.plugins.telescope.extensions.fzy-native;
+in {
   options.programs.nixvim.plugins.telescope.extensions.fzy-native = {
     enable = mkEnableOption "Enable fzy-native";
 
@@ -25,9 +23,11 @@ in
       override_file_sorter = cfg.overrideFileSorter;
     };
   in mkIf cfg.enable {
-    programs.nixvim.extraPlugins = [ pkgs.vimPlugins.telescope-fzy-native-nvim ];
+    programs.nixvim.extraPlugins =
+      [ pkgs.vimPlugins.telescope-fzy-native-nvim ];
 
     programs.nixvim.plugins.telescope.enabledExtensions = [ "fzy_native" ];
-    programs.nixvim.plugins.telescope.extensionConfig."fzy_native" = configuration;
+    programs.nixvim.plugins.telescope.extensionConfig."fzy_native" =
+      configuration;
   };
 }

@@ -2,25 +2,14 @@
 let
   helpers = import ./helpers.nix args;
   serverData = {
-    code_actions = {
-    };
-    completion = {
-    };
-    diagnostics = {
-    };
+    code_actions = { };
+    completion = { };
+    diagnostics = { };
     formatting = {
-      alejandra = {
-        packages = [ pkgs.alejandra ];
-      };
-      nixfmt = {
-        packages = [ pkgs.nixfmt ];
-      };
-      prettier = {
-        packages = [ pkgs.nodePackages.prettier ];
-      };
-      flake8 = {
-        packages = [ pkgs.python3Packages.flake8 ];
-      };
+      alejandra = { packages = [ pkgs.alejandra ]; };
+      nixfmt = { packages = [ pkgs.nixfmt ]; };
+      prettier = { packages = [ pkgs.nodePackages.prettier ]; };
+      flake8 = { packages = [ pkgs.python3Packages.flake8 ]; };
     };
   };
   # Format the servers to be an array of attrs like the following example
@@ -29,10 +18,8 @@ let
   #   sourceType = "formatting";
   #   packages = [...];
   # }]
-  serverDataFormatted = lib.mapAttrsToList (sourceType: lib.mapAttrsToList (name: attrs: attrs // { inherit sourceType name; })
-  ) serverData;
+  serverDataFormatted = lib.mapAttrsToList (sourceType:
+    lib.mapAttrsToList (name: attrs: attrs // { inherit sourceType name; }))
+    serverData;
   dataFlattened = lib.flatten serverDataFormatted;
-in
-{
-  imports = lib.lists.map helpers.mkServer dataFlattened;
-}
+in { imports = lib.lists.map helpers.mkServer dataFlattened; }

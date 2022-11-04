@@ -11,7 +11,8 @@ in {
       useTruecolor = mkOption {
         type = types.bool;
         default = true;
-        description = "Whether to use truecolor for the colorschemes. If set to false, you'll need to set up base16 in your shell.";
+        description =
+          "Whether to use truecolor for the colorschemes. If set to false, you'll need to set up base16 in your shell.";
       };
 
       colorscheme = mkOption {
@@ -22,7 +23,8 @@ in {
       setUpBar = mkOption {
         type = types.bool;
         default = true;
-        description = "Whether to install the matching plugin for your statusbar. This does nothing as of yet, waiting for upstream support.";
+        description =
+          "Whether to install the matching plugin for your statusbar. This does nothing as of yet, waiting for upstream support.";
       };
     };
   };

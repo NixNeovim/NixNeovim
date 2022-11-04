@@ -1,7 +1,6 @@
 { pkgs, config, lib, ... }:
 with lib;
-let
-  cfg = config.programs.nixvim.colorschemes.onedark;
+let cfg = config.programs.nixvim.colorschemes.onedark;
 in {
   options = {
     programs.nixvim.colorschemes.onedark = {
@@ -14,9 +13,7 @@ in {
       colorscheme = "onedark";
       extraPlugins = [ pkgs.vimPlugins.onedark-vim ];
 
-      options = {
-        termguicolors = true;
-      };
+      options = { termguicolors = true; };
     };
   };
 }

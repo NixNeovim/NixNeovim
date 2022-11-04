@@ -6,19 +6,9 @@ let
 
   helpers = import ../../../helpers.nix { inherit lib config; };
 
-  luaSnipOptions = submodule {
-    options = {
-      enable = mkEnableOption "";
-    };
-  };
-  
+  luaSnipOptions = submodule { options = { enable = mkEnableOption ""; }; };
 
 in mkOption {
-  type = submodule {
-    options = {
-      luasnip = mkOption {
-        type = luaSnipOptions;
-      };
-    };
-  };
+  type =
+    submodule { options = { luasnip = mkOption { type = luaSnipOptions; }; }; };
 }

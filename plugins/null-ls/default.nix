@@ -3,11 +3,8 @@ with lib;
 let
   cfg = config.programs.nixvim.plugins.null-ls;
   helpers = import ../helpers.nix { inherit lib; };
-in
-{
-  imports = [
-    ./servers.nix
-  ];
+in {
+  imports = [ ./servers.nix ];
 
   options.programs.nixvim.plugins.null-ls = {
     enable = mkEnableOption "Enable null-ls";
@@ -21,7 +18,8 @@ in
       default = null;
       # type = with types; nullOr (either (listOf str) (listOf attrsOf str));
       type = with types; nullOr (listOf (attrsOf str));
-      description = "The list of sources to enable, should be strings of lua code. Don't use this directly";
+      description =
+        "The list of sources to enable, should be strings of lua code. Don't use this directly";
     };
 
     # sources = mkOption {

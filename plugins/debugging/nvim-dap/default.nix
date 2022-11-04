@@ -19,13 +19,9 @@ in with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
-  extraPlugins = with pkgs.vimExtraPlugins; [ 
-    nvim-dap
-  ];
-  extraPackages = with pkgs; [
-    lldb
-  ];
-  
+  extraPlugins = with pkgs.vimExtraPlugins; [ nvim-dap ];
+  extraPackages = with pkgs; [ lldb ];
+
   extraConfigLua = ''
     local dap = require('dap')
   '';

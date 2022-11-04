@@ -11,10 +11,15 @@ let
 
   moduleOptions = with helpers; {
     animation = boolOption true "Enable animations";
-    autoHide = boolOption false "Auto-hide the tab bar when there is only one buffer";
-    tabpages = boolOption true "Enable 'current/total' tabpages indicator in top right corner";
+    autoHide =
+      boolOption false "Auto-hide the tab bar when there is only one buffer";
+    tabpages = boolOption true
+      "Enable 'current/total' tabpages indicator in top right corner";
     closable = boolOption true "Enable the close button";
-    clickable = boolOption true "Enable clickable tabs\n - left-click: go to buffer\n - middle-click: delete buffer";
+    clickable = boolOption true ''
+      Enable clickable tabs
+       - left-click: go to buffer
+       - middle-click: delete buffer'';
   };
 
   pluginOptions = helpers.toLuaOptions cfg moduleOptions;
@@ -23,10 +28,7 @@ in with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
-  extraPlugins = with pkgs.vimExtraPlugins; [
-      barbar-nvim
-      nvim-web-devicons
-  ];
+  extraPlugins = with pkgs.vimExtraPlugins; [ barbar-nvim nvim-web-devicons ];
   extraConfigLua = "require('bufferline').setup ${toLuaObject pluginOptions}";
 }
 

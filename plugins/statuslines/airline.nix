@@ -4,11 +4,12 @@ let
   cfg = config.programs.nixvim.plugins.airline;
   helpers = import ../helpers.nix { inherit lib; };
 
-  sectionType = with types; nullOr (oneOf [ str (listOf str)]);
+  sectionType = with types; nullOr (oneOf [ str (listOf str) ]);
   sectionOption = mkOption {
     default = null;
     type = sectionType;
-    description = "Configuration for this section. Can be either a statusline-format string or a list of modules to be passed to airline#section#create_*.";
+    description =
+      "Configuration for this section. Can be either a statusline-format string or a list of modules to be passed to airline#section#create_*.";
   };
 in {
   options = {
@@ -24,22 +25,24 @@ in {
       onTop = mkOption {
         default = false;
         type = types.bool;
-        description = "Whether to show the statusline on the top instead of the bottom";
+        description =
+          "Whether to show the statusline on the top instead of the bottom";
       };
 
       sections = mkOption {
         description = "Statusbar sections";
         default = null;
-        type = with types; nullOr (submodule {
-          options = {
-            a = sectionOption;
-            b = sectionOption;
-            c = sectionOption;
-            x = sectionOption;
-            y = sectionOption;
-            z = sectionOption;
-          };
-        });
+        type = with types;
+          nullOr (submodule {
+            options = {
+              a = sectionOption;
+              b = sectionOption;
+              c = sectionOption;
+              x = sectionOption;
+              y = sectionOption;
+              z = sectionOption;
+            };
+          });
       };
 
       powerline = mkOption {
@@ -51,18 +54,17 @@ in {
       theme = mkOption {
         default = config.programs.nixvim.colorscheme;
         type = with types; nullOr str;
-        description = "The theme to use for vim-airline. If set, vim-airline-themes will be installed.";
+        description =
+          "The theme to use for vim-airline. If set, vim-airline-themes will be installed.";
       };
     };
   };
 
-  config = let
-    sections = {};
+  config = let sections = { };
   in mkIf cfg.enable {
     programs.nixvim = {
-      extraPlugins = with pkgs.vimPlugins; [
-        vim-airline
-      ] ++ optional (cfg.theme != null) vim-airline-themes;
+      extraPlugins = with pkgs.vimPlugins;
+        [ vim-airline ] ++ optional (cfg.theme != null) vim-airline-themes;
       globals = {
         airline.extensions = cfg.extensions;
 

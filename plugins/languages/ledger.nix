@@ -1,5 +1,6 @@
 { pkgs, lib, config, ... }@args:
-with lib; with import ../helpers.nix { inherit lib config; };
+with lib;
+with import ../helpers.nix { inherit lib config; };
 mkPlugin args {
   name = "ledger";
   description = "Enable ledger language features";
@@ -14,13 +15,15 @@ mkPlugin args {
 
     fillString = mkDefaultOpt {
       global = "ledger_fillstring";
-      description = "String used to fill the space between account name and amount in the foldtext";
+      description =
+        "String used to fill the space between account name and amount in the foldtext";
       type = types.int;
     };
 
     detailedFirst = mkDefaultOpt {
       global = "ledger_detailed_first";
-      description = "Account completion sorted by depth instead of alphabetically";
+      description =
+        "Account completion sorted by depth instead of alphabetically";
       type = types.bool;
     };
 

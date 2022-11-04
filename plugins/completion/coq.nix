@@ -11,7 +11,7 @@ in {
       installArtifacts = mkEnableOption "Install coq-artifacts";
 
       autoStart = mkOption {
-        type = with types; nullOr (oneOf [bool (enum ["shut-up"])]);
+        type = with types; nullOr (oneOf [ bool (enum [ "shut-up" ]) ]);
         default = null;
         description = "Auto-start or shut up";
       };

@@ -2,7 +2,31 @@
 with lib;
 let
   cfg = config.programs.nixvim.colorschemes.gruvbox-nvim;
-  colors = types.enum [ "bg" "red" "green" "yellow" "blue" "purple" "aqua" "gray" "fg" "bg0_h" "bg0" "bg1" "bg2" "bg3" "bg4" "gray" "orange" "bg0_s" "fg0" "fg1" "fg2" "fg3" "fg4" ];
+  colors = types.enum [
+    "bg"
+    "red"
+    "green"
+    "yellow"
+    "blue"
+    "purple"
+    "aqua"
+    "gray"
+    "fg"
+    "bg0_h"
+    "bg0"
+    "bg1"
+    "bg2"
+    "bg3"
+    "bg4"
+    "gray"
+    "orange"
+    "bg0_s"
+    "fg0"
+    "fg1"
+    "fg2"
+    "fg3"
+    "fg4"
+  ];
 in {
   options = {
     programs.nixvim.colorschemes.gruvbox-nvim = {
@@ -121,13 +145,18 @@ in {
         gruvbox_underline = mkIf cfg.underline 1;
         gruvbox_undercurl = mkIf cfg.undercurl 1;
         gruvbox_transparent_bg = mkIf cfg.transparentBg 0;
-        gruvbox_contrast_dark = mkIf (cfg.contrastDark != null) cfg.contrastDark;
-        gruvbox_contrast_light = mkIf (cfg.contrastLight != null) cfg.contrastLight;
-        gruvbox_hls_cursor = mkIf (cfg.highlightSearchCursor != null) cfg.highlightSearchCursor;
-        gruvbox_number_column = mkIf (cfg.numberColumn != null) cfg.numberColumn;
+        gruvbox_contrast_dark =
+          mkIf (cfg.contrastDark != null) cfg.contrastDark;
+        gruvbox_contrast_light =
+          mkIf (cfg.contrastLight != null) cfg.contrastLight;
+        gruvbox_hls_cursor =
+          mkIf (cfg.highlightSearchCursor != null) cfg.highlightSearchCursor;
+        gruvbox_number_column =
+          mkIf (cfg.numberColumn != null) cfg.numberColumn;
         gruvbox_sign_column = mkIf (cfg.signColumn != null) cfg.signColumn;
         gruvbox_color_column = mkIf (cfg.colorColumn != null) cfg.colorColumn;
-        gruvbox_vert_split = mkIf (cfg.vertSplitColor != null) cfg.vertSplitColor;
+        gruvbox_vert_split =
+          mkIf (cfg.vertSplitColor != null) cfg.vertSplitColor;
 
         gruvbox_italicize_comments = mkIf (!cfg.italicizeComments) 0;
         gruvbox_italicize_strings = mkIf cfg.italicizeStrings 1;
