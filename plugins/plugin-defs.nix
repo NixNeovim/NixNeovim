@@ -72,16 +72,4 @@
         --replace "_IN_VENV = _RT_PY == _EXEC_PATH" "_IN_VENV = True"
     '';
   };
-
-  coq-artifacts = pkgs.vimUtils.buildVimPlugin rec {
-    pname = "coq.artifacts";
-    version = "495429564e481cafeb044456da32c10cb631f948";
-
-    src = pkgs.fetchFromGitHub {
-      owner = "ms-jpq";
-      repo = "coq.artifacts";
-      rev = version;
-      sha256 = "sha256-AtkG2XRVZgvJzH2iLr7UT/U1+LXxenvNckdapnJV+8A=";
-    };
-  };
 }
