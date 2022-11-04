@@ -3,9 +3,9 @@ with lib;
 let
   helpers = import ../helpers.nix { inherit lib config; };
 
-  eitherAttrsStrInt = with types; let
-    strInt = either str int;
-  in either strInt (attrsOf (either strInt (attrsOf strInt)));
+  eitherAttrsStrInt = with types;
+    let strInt = either str int;
+    in either strInt (attrsOf (either strInt (attrsOf strInt)));
 in with helpers;
 mkPlugin attrs {
   name = "emmet";

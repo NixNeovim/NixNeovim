@@ -1,7 +1,7 @@
 { lib, pkgs, config, ... }@attrs:
-let
-  helpers = import ../helpers.nix { inherit lib config; };
-in with helpers; with lib;
+let helpers = import ../helpers.nix { inherit lib config; };
+in with helpers;
+with lib;
 mkPlugin attrs {
   name = "nerdcommenter";
   description = "Enable nercommenter";
@@ -27,7 +27,8 @@ mkPlugin attrs {
     };
 
     defaultAlign = mkDefaultOpt {
-      description = "Align line-wise comment delimiters flush left instead of following code indentation";
+      description =
+        "Align line-wise comment delimiters flush left instead of following code indentation";
       global = "NERDDefaultAlign";
       type = types.enum [ "none" "left" "start" "both" ];
     };

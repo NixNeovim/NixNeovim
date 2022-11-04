@@ -1,10 +1,9 @@
 { config, pkgs, lib, ... }:
 with lib;
-let 
+let
   cfg = config.programs.nixvim.plugins.floaterm;
   helpers = import ../helpers.nix { inherit lib; };
-in
-{
+in {
   options = {
     programs.nixvim.plugins.floaterm = {
       enable = mkEnableOption "Enable floaterm";
@@ -14,7 +13,8 @@ in
       };
       title = mkOption {
         type = types.nullOr types.str;
-        description = "Show floaterm info at the top left corner of the floaterm window.";
+        description =
+          "Show floaterm info at the top left corner of the floaterm window.";
         default = null;
       };
       winType = mkOption {
@@ -33,41 +33,46 @@ in
       };
       borderChars = mkOption {
         type = types.nullOr types.str;
-        description = "8 characters of the floating window border (top, right, bottom, left, topleft, topright, botright, botleft)";
+        description =
+          "8 characters of the floating window border (top, right, bottom, left, topleft, topright, botright, botleft)";
         default = null;
       };
       rootMarkers = mkOption {
         type = types.nullOr (types.listOf types.str);
-        description = "Markers used to detect the project root directory for --cwd=&lt;root&gt;";
+        description =
+          "Markers used to detect the project root directory for --cwd=&lt;root&gt;";
         default = null;
       };
       opener = mkOption {
-        type = types.nullOr (types.enum [ "edit" "split" "vsplit" "tabe" "drop" ]);
-        description = "Command used for opening a file in the outside nvim from within :terminal";
+        type =
+          types.nullOr (types.enum [ "edit" "split" "vsplit" "tabe" "drop" ]);
+        description =
+          "Command used for opening a file in the outside nvim from within :terminal";
         default = null;
       };
       autoClose = mkOption {
         type = types.nullOr (types.enum [ 0 1 2 ]);
-        description = "Whether to close floaterm window once the job gets finished.";
+        description =
+          "Whether to close floaterm window once the job gets finished.";
         default = null;
       };
       autoHide = mkOption {
         type = types.nullOr (types.enum [ 0 1 2 ]);
-        description = "Whether to hide previous floaterm before switching to or opening another one.";
+        description =
+          "Whether to hide previous floaterm before switching to or opening another one.";
         default = null;
       };
       autoInsert = mkOption {
         type = types.nullOr types.bool;
-        description = "Whether to enter Terminal-mode after opening a floaterm.";
+        description =
+          "Whether to enter Terminal-mode after opening a floaterm.";
         default = null;
       };
     };
   };
   config = mkIf cfg.enable {
     programs.nixvim = {
-      extraPlugins = with pkgs.vimPlugins; [
-        vim-floaterm
-      ];
+      extraPlugins = with pkgs.vimPlugins; [ vim-floaterm ];
       globals = {
         floaterm_shell = mkIf (cfg.shell != null) cfg.shell;
         floaterm_title = mkIf (cfg.title != null) cfg.title;

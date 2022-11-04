@@ -5,14 +5,14 @@ let
   cfg = config.programs.nixvim.plugins.stabilize;
 
   moduleOptions = with helpers; {
-    force = boolOption true "stabilize window even when current cursor position will be hidden behind new window";
+    force = boolOption true
+      "stabilize window even when current cursor position will be hidden behind new window";
   };
 
-  pluginOptions = {
-      inherit (cfg) force;
-  };
+  pluginOptions = { inherit (cfg) force; };
 
-in with lib; with helpers;
+in with lib;
+with helpers;
 mkLuaPlugin {
   inherit moduleOptions;
   name = "stabilize";

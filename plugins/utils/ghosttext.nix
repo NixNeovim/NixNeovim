@@ -16,8 +16,6 @@ in with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
-  extraPlugins = with pkgs.vimExtraPlugins; [ 
-    nvim-ghost-nvim
-  ];
+  extraPlugins = with pkgs.vimExtraPlugins; [ nvim-ghost-nvim ];
   extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";
 }

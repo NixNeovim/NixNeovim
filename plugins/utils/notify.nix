@@ -7,13 +7,13 @@ let
     type = types.nullOr types.str;
     default = null;
   };
-in 
-{
+in {
   options.programs.nixvim.plugins.notify = {
     enable = mkEnableOption "Enable notify";
 
     stages = mkOption {
-      type = types.nullOr (types.enum [ "fade_in_slide_out" "fade" "slide" "static" ]);
+      type = types.nullOr
+        (types.enum [ "fade_in_slide_out" "fade" "slide" "static" ]);
       description = "Animation style";
       default = null;
     };
@@ -24,7 +24,8 @@ in
     };
     backgroundColor = mkOption {
       type = types.nullOr types.str;
-      description = "For stages that change opacity this is treated as the highlight between the window";
+      description =
+        "For stages that change opacity this is treated as the highlight between the window";
       default = null;
     };
     minimumWidth = mkOption {
@@ -43,7 +44,7 @@ in
         };
       });
       description = "Icons for the different levels";
-      default = {};
+      default = { };
     };
   };
 

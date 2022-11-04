@@ -11,7 +11,8 @@ in {
       windowLayout = mkOption {
         type = types.nullOr types.int;
         default = null;
-        description = "Window layout for undotree. Check https://github.com/mbbill/undotree/blob/master/plugin/undotree.vim#L29 for reference";
+        description =
+          "Window layout for undotree. Check https://github.com/mbbill/undotree/blob/master/plugin/undotree.vim#L29 for reference";
       };
 
       shortIndicators = mkOption {
@@ -111,20 +112,26 @@ in {
       extraPlugins = [ pkgs.vimPlugins.undotree ];
 
       globals = {
-        undotree_WindowLayout = mkIf (cfg.windowLayout != null) cfg.windowLayout;
+        undotree_WindowLayout =
+          mkIf (cfg.windowLayout != null) cfg.windowLayout;
         undotree_ShortIndicators = mkIf cfg.shortIndicators 1;
         undotree_SplitWidth = mkIf (cfg.windowWidth != null) cfg.windowWidth;
         undotree_DiffpanelHeight = mkIf (cfg.diffHeight != null) cfg.diffHeight;
         undotree_DiffAutoOpen = mkIf (!cfg.autoOpenDiff) 0;
         undotree_SetFocusWhenToggle = mkIf cfg.focusOnToggle 1;
-        undotree_TreeNodeShape = mkIf (cfg.treeNodeShape != null) cfg.treeNodeShape;
+        undotree_TreeNodeShape =
+          mkIf (cfg.treeNodeShape != null) cfg.treeNodeShape;
         undotree_DiffCommand = mkIf (cfg.diffCommand != null) cfg.diffCommand;
         undotree_RelativeTimestamp = mkIf (!cfg.relativeTimestamp) 0;
         undotree_HighlightChangedText = mkIf (!cfg.highlightChangedText) 0;
-        undotree_HighlightChangedWithSign = mkIf (!cfg.highlightChangesWithSign) 0;
-        undotree_HighlightSyntaxAdd = mkIf (cfg.highlightSyntaxAdd != null) cfg.highlightSyntaxAdd;
-        undotree_HighlightSyntaxChange = mkIf (cfg.highlightSyntaxChange != null) cfg.highlightSyntaxAdd;
-        undotree_HighlightSyntaxDel = mkIf (cfg.highlightSyntaxDel != null) cfg.highlightSyntaxDel;
+        undotree_HighlightChangedWithSign =
+          mkIf (!cfg.highlightChangesWithSign) 0;
+        undotree_HighlightSyntaxAdd =
+          mkIf (cfg.highlightSyntaxAdd != null) cfg.highlightSyntaxAdd;
+        undotree_HighlightSyntaxChange =
+          mkIf (cfg.highlightSyntaxChange != null) cfg.highlightSyntaxAdd;
+        undotree_HighlightSyntaxDel =
+          mkIf (cfg.highlightSyntaxDel != null) cfg.highlightSyntaxDel;
         undotree_HelpLine = mkIf (!cfg.showHelpLine) 0;
         undotree_CursorLine = mkIf (!cfg.showCursorLine) 0;
       };

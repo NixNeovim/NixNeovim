@@ -11,7 +11,8 @@ let
 
   moduleOptions = with helpers; {
     diffBinaries = boolOption false "Show diffs for binaries";
-    watchIndex = boolOption true "Update views and index buffers when the git index changes";
+    watchIndex = boolOption true
+      "Update views and index buffers when the git index changes";
   };
 
   pluginOptions = helpers.toLuaOptions cfg moduleOptions;

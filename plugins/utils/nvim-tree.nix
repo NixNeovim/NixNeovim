@@ -3,8 +3,7 @@ with lib;
 let
   cfg = config.programs.nixvim.plugins.nvim-tree;
   helpers = import ../helpers.nix { inherit lib config; };
-in
-{
+in {
   options.programs.nixvim.plugins.nvim-tree = {
     enable = mkEnableOption "Enable nvim-tree";
 
@@ -14,7 +13,7 @@ in
       description = "Disable netrw";
     };
 
-    hijackNetrw = mkOption  {
+    hijackNetrw = mkOption {
       type = types.nullOr types.bool;
       default = null;
       description = "Hijack netrw";
@@ -73,11 +72,12 @@ in
       };
 
       icons = let
-        diagnosticOption = desc: mkOption {
-          type = types.nullOr types.str;
-          default = null;
-          description = desc;
-        };
+        diagnosticOption = desc:
+          mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            description = desc;
+          };
       in {
         hint = diagnosticOption "Hints";
         info = diagnosticOption "Info";
@@ -246,7 +246,8 @@ in
   in mkIf cfg.enable {
     programs.nixvim = {
       extraPlugins = with pkgs.vimExtraPlugins; [
-        nvim-tree-lua nvim-web-devicons
+        nvim-tree-lua
+        nvim-web-devicons
       ];
 
       extraConfigLua = ''

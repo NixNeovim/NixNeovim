@@ -18,24 +18,18 @@ let
 
   # pluginOptions = helpers.toLuaOptions cfg moduleOptions;
   pluginOptions = mapAttrsToList (key: _option:
-    let
-      value = cfg.${key};
+    let value = cfg.${key};
     in if isBool value then
       "jqx.${key} = ${boolToString value}"
-    else 
-      "jqx.${key} = \"${toString value}\""
-  ) moduleOptions;
+    else
+      ''jqx.${key} = "${toString value}"'') moduleOptions;
 
 in with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
-  extraPlugins = with pkgs.vimExtraPlugins; [ 
-    nvim-jqx
-  ];
-  extraPackages = with pkgs; [ 
-    jq
-  ];
+  extraPlugins = with pkgs.vimExtraPlugins; [ nvim-jqx ];
+  extraPackages = with pkgs; [ jq ];
   extraConfigLua = ''
     local jqx = require("${name}.config")
     ${concatStringsSep "\n" pluginOptions}

@@ -1,7 +1,7 @@
 { pkgs, lib, config, ... }@args:
-let
-  helpers = import ../helpers.nix { inherit lib config; };
-in with lib; with helpers;
+let helpers = import ../helpers.nix { inherit lib config; };
+in with lib;
+with helpers;
 mkPlugin args {
   name = "startify";
   description = "Enable startify";
@@ -15,37 +15,41 @@ mkPlugin args {
     };
 
     lists = mkDefaultOpt {
-      description = "Startify display lists. If it's a string, it'll be interpreted as literal lua code";
+      description =
+        "Startify display lists. If it's a string, it'll be interpreted as literal lua code";
       global = "startify_lists";
-      type = types.listOf (types.oneOf [(types.submodule {
-        options = {
-          type = mkOption {
-            type = types.str;
-            description = "The type of the list";
+      type = types.listOf (types.oneOf [
+        (types.submodule {
+          options = {
+            type = mkOption {
+              type = types.str;
+              description = "The type of the list";
+            };
+            # TODO the header should be a literal lua string!
+            header = mkOption {
+              type = types.nullOr (types.listOf types.str);
+              description = "Optional header. It's a list of strings";
+              default = null;
+            };
+            indices = mkOption {
+              type = types.nullOr (types.listOf types.str);
+              description = "Optional indices for the current list";
+              default = null;
+            };
           };
-          # TODO the header should be a literal lua string!
-          header = mkOption {
-            type = types.nullOr (types.listOf types.str);
-            description = "Optional header. It's a list of strings";
-            default = null;
-          };
-          indices = mkOption {
-            type = types.nullOr (types.listOf types.str);
-            description = "Optional indices for the current list";
-            default = null;
-          };
-        };
-      }) types.str]);
+        })
+        types.str
+      ]);
 
-      value = val: let
-        list = map (v: if builtins.isAttrs v then toLuaObject v else v) val;
-      in "{" + (concatStringsSep "," list) + "}";
+      value = val:
+        let list = map (v: if builtins.isAttrs v then toLuaObject v else v) val;
+        in "{" + (concatStringsSep "," list) + "}";
     };
 
     bookmarks = mkDefaultOpt {
       description = "A list of files or directories to bookmark.";
       global = "startify_bookmarks";
-      type = with types; listOf (oneOf [str (attrsOf str)]);
+      type = with types; listOf (oneOf [ str (attrsOf str) ]);
     };
 
     commands = mkDefaultOpt {
@@ -61,7 +65,8 @@ mkPlugin args {
     };
 
     updateOldFiles = mkDefaultOpt {
-      description = "Update v:oldfiles on-the-fly, so that :Startify is always up-to-date";
+      description =
+        "Update v:oldfiles on-the-fly, so that :Startify is always up-to-date";
       global = "startify_update_oldfiles";
       type = types.bool;
     };
@@ -97,7 +102,8 @@ mkPlugin args {
     };
 
     changeToVcsRoot = mkDefaultOpt {
-      description = "When opening a file or bookmark, change to the root directory of the VCS";
+      description =
+        "When opening a file or bookmark, change to the root directory of the VCS";
       global = "startify_change_to_vcs_root";
       type = types.bool;
     };
@@ -109,7 +115,8 @@ mkPlugin args {
     };
 
     skipList = mkDefaultOpt {
-      description = "A list of regexes that is used to filter recently used files";
+      description =
+        "A list of regexes that is used to filter recently used files";
       global = "startify_skiplist";
       type = types.listOf types.str;
     };
@@ -127,7 +134,8 @@ mkPlugin args {
     };
 
     skipListServer = mkDefaultOpt {
-      description = "Do not create the startify buffer if this is a Vim server instance with a name contained in this list";
+      description =
+        "Do not create the startify buffer if this is a Vim server instance with a name contained in this list";
       global = "startify_skiplist_server";
       type = types.listOf types.str;
     };
@@ -145,13 +153,15 @@ mkPlugin args {
     };
 
     sessionRemoveLines = mkDefaultOpt {
-      description = "Lines matching any of the patterns in this list will be removed from the session file";
+      description =
+        "Lines matching any of the patterns in this list will be removed from the session file";
       global = "startify_session_remove_lines";
       type = types.listOf types.str;
     };
 
     sessionSaveVars = mkDefaultOpt {
-      description = "List of variables for Startify to save into the session file";
+      description =
+        "List of variables for Startify to save into the session file";
       global = "startify_session_savevars";
       type = types.listOf types.str;
     };
@@ -169,7 +179,8 @@ mkPlugin args {
     };
 
     sessionSort = mkDefaultOpt {
-      description = "Sort sessions by modification time rather than alphabetically";
+      description =
+        "Sort sessions by modification time rather than alphabetically";
       global = "startify_session_sort";
       type = types.bool;
     };
@@ -206,13 +217,15 @@ mkPlugin args {
     };
 
     relativePath = mkDefaultOpt {
-      description = "If the file is in or below the current working directory, use a relative path";
+      description =
+        "If the file is in or below the current working directory, use a relative path";
       global = "startify_relative_path";
       type = types.bool;
     };
 
     useEnv = mkDefaultOpt {
-      description = "Show environment variables in path, if their name is shorter than their value";
+      description =
+        "Show environment variables in path, if their name is shorter than their value";
       global = "startify_use_env";
       type = types.bool;
     };

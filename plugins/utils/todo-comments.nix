@@ -9,7 +9,7 @@ let
   helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
 
-  keywordModule = { name, config, ...}: {
+  keywordModule = { name, config, ... }: {
     options = with helpers; {
       icon = strOption " " "Icon used for the sign and in search results";
       color = strOption "error" "Can be a hex color or a named color";
@@ -30,7 +30,8 @@ let
       description = "Keywords recognized as 'todo' comments";
       default = null;
     };
-    mergeKeywords = boolOption true "When true, custom keywords will be merged with the defaults";
+    mergeKeywords = boolOption true
+      "When true, custom keywords will be merged with the defaults";
   };
 
   pluginOptions = {
@@ -44,8 +45,6 @@ in with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
-  extraPlugins = with pkgs.vimExtraPlugins; [
-    todo-comments-nvim
-  ];
+  extraPlugins = with pkgs.vimExtraPlugins; [ todo-comments-nvim ];
   extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";
 }

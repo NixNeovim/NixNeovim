@@ -4,8 +4,7 @@ let
   cfg = config.programs.nixvim.plugins.dashboard;
 
   helpers = import ../helpers.nix { inherit lib; };
-in
-{
+in {
   options = {
     programs.nixvim.plugins.dashboard = {
       enable = mkEnableOption "Enable dashboard";
@@ -105,34 +104,33 @@ in
     };
   };
 
-  config =
-    let
-      options = {
-        custom_header = cfg.header;
-        custom_footer = cfg.footer;
-        custom_center = cfg.center;
+  config = let
+    options = {
+      custom_header = cfg.header;
+      custom_footer = cfg.footer;
+      custom_center = cfg.center;
 
-        preview_file_path = cfg.preview.file;
-        preview_file_height = cfg.preview.height;
-        preview_file_width = cfg.preview.width;
-        preview_command = cfg.preview.command;
+      preview_file_path = cfg.preview.file;
+      preview_file_height = cfg.preview.height;
+      preview_file_width = cfg.preview.width;
+      preview_command = cfg.preview.command;
 
-        hide_statusline = cfg.hideStatusline;
-        hide_tabline = cfg.hideTabline;
+      hide_statusline = cfg.hideStatusline;
+      hide_tabline = cfg.hideTabline;
 
-        session_directory = cfg.sessionDirectory;
-      };
+      session_directory = cfg.sessionDirectory;
+    };
 
-      filteredOptions = filterAttrs (_: v: v != null) options;
-    in mkIf cfg.enable {
+    filteredOptions = filterAttrs (_: v: v != null) options;
+  in mkIf cfg.enable {
     programs.nixvim = {
       extraPlugins = [ pkgs.vimPlugins.dashboard-nvim ];
       extraConfigLua = ''
         local dashboard = require("dashboard")
 
-        ${toString (mapAttrsToList (n: v:
-          "dashboard.${n} = ${helpers.toLuaObject v}\n")
-          filteredOptions)}
+        ${toString (mapAttrsToList (n: v: ''
+          dashboard.${n} = ${helpers.toLuaObject v}
+        '') filteredOptions)}
       '';
     };
   };

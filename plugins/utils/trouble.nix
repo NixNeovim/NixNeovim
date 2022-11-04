@@ -4,8 +4,7 @@ let
   cfg = config.programs.nixvim.plugins.trouble;
 
   helpers = import ../helpers.nix { inherit lib config; };
-in
-{
+in {
   options = {
     programs.nixvim.plugins.trouble = {
       enable = mkEnableOption "Enable trouble.nvim";
@@ -21,14 +20,11 @@ in
     };
   };
 
-  config =
-    let
-      options = {
-        inherit (cfg) position;
-      };
+  config = let
+    options = { inherit (cfg) position; };
 
-      filteredOptions = filterAttrs (_: v: v != null) options;
-    in mkIf cfg.enable {
+    filteredOptions = filterAttrs (_: v: v != null) options;
+  in mkIf cfg.enable {
     programs.nixvim = {
       extraPlugins = [ pkgs.vimPlugins.trouble-nvim ];
       extraConfigLua = ''

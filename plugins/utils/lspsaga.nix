@@ -3,8 +3,7 @@ with lib;
 let
   cfg = config.programs.nixvim.plugins.lspsaga;
   helpers = import ../helpers.nix { inherit lib config; };
-in with helpers;
-{
+in with helpers; {
   options = {
     programs.nixvim.plugins.lspsaga = {
       enable = mkEnableOption "Enable lspsaga.nvim";
@@ -106,11 +105,12 @@ in with helpers;
       };
 
       keys = let
-        defaultKeyOpt = desc: mkOption {
-          description = desc;
-          type = types.nullOr types.str;
-          default = null;
-        };
+        defaultKeyOpt = desc:
+          mkOption {
+            description = desc;
+            type = types.nullOr types.str;
+            default = null;
+          };
       in {
         finderAction = {
           open = defaultKeyOpt "Open from finder";
@@ -136,7 +136,8 @@ in with helpers;
       };
 
       borderStyle = mkOption {
-        type = types.nullOr (types.enum [ "single" "round" "plus" "double" "bold" ]);
+        type =
+          types.nullOr (types.enum [ "single" "round" "plus" "double" "bold" ]);
         default = null;
         description = "Border style";
       };
@@ -151,7 +152,8 @@ in with helpers;
 
   config.programs.nixvim = let
     notDefault = default: opt: if (opt != default) then opt else null;
-    notEmpty = opt: if ((filterAttrs (_: v: v != null) opt) != {}) then opt else null;
+    notEmpty = opt:
+      if ((filterAttrs (_: v: v != null) opt) != { }) then opt else null;
     notNull = opt: opt;
     lspsagaConfig = {
       use_saga_diagnostic_sign = notDefault true cfg.signs.use;
@@ -207,7 +209,7 @@ in with helpers;
     };
   in mkIf cfg.enable {
     extraPlugins = [ pkgs.vimPlugins.lspsaga-nvim ];
-    
+
     extraConfigLua = ''
       require("lspsaga").init_lsp_saga(${helpers.toLuaObject lspsagaConfig})
     '';

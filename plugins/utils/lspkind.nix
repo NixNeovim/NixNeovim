@@ -25,9 +25,7 @@ in with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
-  extraPlugins = with pkgs.vimExtraPlugins; [ 
-    lspkind-nvim
-  ];
+  extraPlugins = with pkgs.vimExtraPlugins; [ lspkind-nvim ];
 
   extraConfigLua = "require('${name}').init ${toLuaObject pluginOptions}";
 }
