@@ -17,8 +17,8 @@
       };
     in {
       packages.${system}.docs = import ./docs {
-        pkgs = pkgs;
-        lib = nixpkgs.lib;
+        inherit pkgs;
+        inherit (nixpkgs) lib;
       };
 
       nixosModules.nixvim = import ./nixvim.nix {
