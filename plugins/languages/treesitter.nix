@@ -75,7 +75,7 @@ in with helpers;
   config = let
     pluginOptions = {
       highlight = {
-        enable = cfg.enable;
+        inherit (cfg) enable;
         disable = if (cfg.disabledLanguages != []) then cfg.disabledLanguages else null;
 
           custom_captures = if (cfg.customCaptures != { }) then cfg.customCaptures else null;

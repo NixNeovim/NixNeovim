@@ -2,7 +2,7 @@
 with lib;
 let
   cfg = config.programs.nixvim.plugins.notify;
-  helpers = import ../helpers.nix { lib = lib; };
+  helpers = import ../helpers.nix { inherit lib; };
   icon = mkOption {
     type = types.nullOr types.str;
     default = null;
@@ -49,8 +49,8 @@ in
 
   config = let
     setupOptions = with cfg; {
-      stages = stages;
-      timeout = timeout;
+      inherit stages;
+      inherit timeout;
       background_color = backgroundColor;
       minimum_width = minimumWidth;
       icons = with icons; {

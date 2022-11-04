@@ -29,11 +29,10 @@ let
   #   sourceType = "formatting";
   #   packages = [...];
   # }]
-  serverDataFormatted = lib.mapAttrsToList (sourceType: sourceSet:
-    lib.mapAttrsToList (name: attrs: attrs // { inherit sourceType name; }) sourceSet
+  serverDataFormatted = lib.mapAttrsToList (sourceType: lib.mapAttrsToList (name: attrs: attrs // { inherit sourceType name; })
   ) serverData;
   dataFlattened = lib.flatten serverDataFormatted;
 in
 {
-  imports = lib.lists.map (helpers.mkServer) dataFlattened;
+  imports = lib.lists.map helpers.mkServer dataFlattened;
 }

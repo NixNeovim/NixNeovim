@@ -9,7 +9,7 @@ let
   };
 
   pluginOptions = {
-      force = cfg.force;
+      inherit (cfg) force;
   };
 
 in with lib; with helpers;

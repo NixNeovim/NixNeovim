@@ -6,37 +6,37 @@ rec {
 
   boolOption = default: description: mkOption {
     type = types.bool;
-    description = description;
-    default = default;
+    inherit description;
+    inherit default;
   };
 
   intOption = default: description: mkOption {
     type = types.int;
-    description = description;
-    default = default;
+    inherit description;
+    inherit default;
   };
 
   strOption = default: description: mkOption {
     type = types.str;
-    description = description;
-    default = default;
+    inherit description;
+    inherit default;
   };
 
   boolNullOption = description: mkOption {
     type = types.nullOr types.bool;
-    description = description;
+    inherit description;
     default = null;
   };
 
   intNullOption = description: mkOption {
     type = types.nullOr types.int;
-    description = description;
+    inherit description;
     default = null;
   };
 
   strNullOption = description: mkOption {
     type = types.nullOr types.str;
-    description = description;
+    inherit description;
     default = null;
   };
 
@@ -46,7 +46,7 @@ rec {
 
   # vim dictionaries are, in theory, compatible with JSON
   toVimDict = args: toJSON
-    (lib.filterAttrs (n: v: !isNull v) args);
+    (lib.filterAttrs (n: v: v != null) args);
 
   # removes empty strings and applies concatStringsSep
   toConfigString = list:
@@ -60,7 +60,7 @@ rec {
     if builtins.isAttrs args then
       let
         filteredArgs = filterAttrs (name: value:
-            !isNull value && toLuaObject value != "{}"
+            value != null && toLuaObject value != "{}"
           ) args;
       in if hasAttr "__raw" filteredArgs then
         filteredArgs.__raw
@@ -92,7 +92,7 @@ rec {
       "${ toString args }"
     else if builtins.isInt args then
       "${ toString args }"
-    else if isNull args then
+    else if (args == null) then
       "nil"
     else "";
 
@@ -104,8 +104,8 @@ rec {
 
   toLuaOptions = cfg: moduleOptions:
     let
-      attrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) (cfg.${k})) moduleOptions;
-      extraAttrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) v) cfg.extraConfig;
+      attrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) cfg.${k}) moduleOptions;
+      extraAttrs = mapAttrs' (k: nameValuePair (camelToSnake k)) cfg.extraConfig;
     in attrs // extraAttrs;
 
   # Generates maps for a lua config
@@ -119,17 +119,17 @@ rec {
           noremap = true;
           script = false;
           nowait = false;
-          action = action;
+          inherit action;
         }
       else action) maps;
   in builtins.attrValues (builtins.mapAttrs (key: action:
     {
-      action = action.action;
+      inherit (action) action;
       config = lib.filterAttrs (_: v: v) {
         inherit (action) silent expr unique noremap script nowait;
       };
-      key = key;
-      mode = mode;
+      inherit key;
+      inherit mode;
     }) normalized);
 
   # Creates an option with a nullable type that defaults to null.
@@ -150,7 +150,7 @@ rec {
   }: let
     cfg = config.programs.nixvim.plugins.${name};
     # TODO support nested options!
-    moduleOptions = (mapAttrs (k: v: v.option) options);
+    moduleOptions = mapAttrs (k: v: v.option) options;
     # // {
       # extraConfig = mkOption {
       #   type = types.attrs;
@@ -232,15 +232,15 @@ rec {
   };
 
   globalVal = val: if builtins.isBool val then
-    (if val == false then 0 else 1)
+    (if !val then 0 else 1)
   else val;
 
   mkDefaultOpt = { type, global, description ? null, example ? null, default ? null, value ? v: (globalVal v), ... }: {
     option = mkOption {
       type = types.nullOr type;
-      default = default;
-      description = description;
-      example = example;
+      inherit default;
+      inherit description;
+      inherit example;
     };
 
     inherit value global;

@@ -4,7 +4,7 @@ with lib;
 with types;
 
 let
-  optionsFormat = submodule ({ ... }: {
+  optionsFormat = submodule (_: {
     options = {
       action = mkOption {
         type = nonEmptyStr;

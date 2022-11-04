@@ -2,7 +2,7 @@
 with lib;
 let
   cfg = config.programs.nixvim.plugins.null-ls;
-  helpers = (import ../helpers.nix { inherit lib; });
+  helpers = import ../helpers.nix { inherit lib; };
 in
 {
   imports = [
@@ -32,7 +32,7 @@ in
 
   config = let
     options = {
-      debug = cfg.debug;
+      inherit (cfg) debug;
       sources = cfg.sourcesItems;
     };
   in mkIf cfg.enable {

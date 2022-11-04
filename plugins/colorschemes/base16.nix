@@ -32,7 +32,7 @@ in {
       colorscheme = "base16-${cfg.colorscheme}";
       extraPlugins = [ pkgs.vimPlugins.base16-vim ];
 
-      plugins.airline.theme = mkIf (cfg.setUpBar) "base16";
+      plugins.airline.theme = mkIf cfg.setUpBar "base16";
       plugins.lightline.colorscheme = null;
 
       options.termguicolors = mkIf cfg.useTruecolor true;

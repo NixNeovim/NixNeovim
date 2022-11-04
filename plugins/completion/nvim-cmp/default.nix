@@ -57,7 +57,7 @@ in with helpers;
 
     confirmation = mkOption {
       default = null;
-      type = types.nullOr (types.submodule ({ ... }: {
+      type = types.nullOr (types.submodule (_: {
         options = {
           get_commit_characters = mkOption {
             default = null;
@@ -70,7 +70,7 @@ in with helpers;
 
     formatting = mkOption {
       default = null;
-      type = types.nullOr (types.submodule ({ ... }: {
+      type = types.nullOr (types.submodule (_: {
         options = {
           fields = mkOption {
             type = types.nullOr (types.listOf types.str);
@@ -88,7 +88,7 @@ in with helpers;
 
     matching = mkOption {
       default = null;
-      type = types.nullOr (types.submodule ({ ... }: {
+      type = types.nullOr (types.submodule (_: {
         options = {
           disallow_fuzzy_matching = mkOption {
             default = null;
@@ -108,7 +108,7 @@ in with helpers;
 
     sorting = mkOption {
       default = null;
-      type = types.nullOr (types.submodule ({ ... }: {
+      type = types.nullOr (types.submodule (_: {
         options = {
           priority_weight = mkOption {
             default = null;
@@ -124,7 +124,7 @@ in with helpers;
 
     view = mkOption {
       default = null;
-      type = types.nullOr (types.submodule ({ ... }: {
+      type = types.nullOr (types.submodule (_: {
         options = {
           entries = mkOption {
             default = null;
@@ -143,11 +143,11 @@ in with helpers;
       in
       mkOption {
         default = null;
-        type = types.nullOr (types.submodule ({ ... }: {
+        type = types.nullOr (types.submodule (_: {
           options = {
             completion = mkOption {
               default = null;
-              type = types.nullOr (types.submodule ({ ... }: {
+              type = types.nullOr (types.submodule (_: {
                 options = {
                   inherit border winhighlight zindex;
                 };
@@ -156,7 +156,7 @@ in with helpers;
 
             documentation = mkOption {
               default = null;
-              type = types.nullOr (types.submodule ({ ... }: {
+              type = types.nullOr (types.submodule (_: {
                 options = {
                   inherit border winhighlight zindex;
                   max_width = mkNullOrOption types.int "Window's max width";
@@ -176,8 +176,8 @@ in with helpers;
     let
       pluginOptions = {
         enabled = cfg.enable;
-        performance = cfg.performance;
-        preselect = if (isNull cfg.preselect) then null else helpers.mkRaw "cmp.PreselectMode.${cfg.preselect}";
+        inherit (cfg) performance;
+        preselect = if (cfg.preselect == null) then null else helpers.mkRaw "cmp.PreselectMode.${cfg.preselect}";
 
         # Not very readable sorry
         # If null then null
@@ -186,13 +186,13 @@ in with helpers;
         mapping =
           let
             mappings =
-              if (isNull cfg.mapping) then null
+              if (cfg.mapping == null) then null
               else
                 mapAttrs
                   (bind: mapping: helpers.mkRaw (if isString mapping then mapping
                   else "cmp.mapping(${mapping.action}${optionalString (mapping.modes != null && length mapping.modes >= 1) ("," + (helpers.toLuaObject mapping.modes))})"))
                   cfg.mapping;
-            luaMappings = (helpers.toLuaObject mappings);
+            luaMappings = helpers.toLuaObject mappings;
             wrapped = lists.fold (presetName: prevString: ''cmp.mapping.preset.${presetName}(${prevString})'') luaMappings cfg.mappingPresets;
           in
           helpers.mkRaw wrapped;
@@ -201,29 +201,29 @@ in with helpers;
         #   expand = if (isNull cfg.snippet || isNull cfg.snippet.expand) then null else helpers.mkRaw cfg.snippet.expand;
         # };
 
-        completion = if (isNull cfg.completion) then null else {
-          keyword_length = cfg.completion.keyword_length;
-          keyword_pattern = cfg.completion.keyword_pattern;
-          autocomplete = if (isNull cfg.completion.autocomplete) then null else mkRaw cfg.completion.autocomplete;
-          completeopt = cfg.completion.completeopt;
+        completion = if (cfg.completion == null) then null else {
+          inherit (cfg.completion) keyword_length;
+          inherit (cfg.completion) keyword_pattern;
+          autocomplete = if (cfg.completion.autocomplete == null) then null else mkRaw cfg.completion.autocomplete;
+          inherit (cfg.completion) completeopt;
         };
 
-        confirmation = if (isNull cfg.confirmation) then null else {
+        confirmation = if (cfg.confirmation == null) then null else {
           get_commit_characters =
             if (isString cfg.confirmation.get_commit_characters) then helpers.mkRaw cfg.confirmation.get_commit_characters
             else cfg.confirmation.get_commit_characters;
         };
 
-        formatting = if (isNull cfg.formatting) then null else {
-          fields = cfg.formatting.fields;
-          format = if (isNull cfg.formatting.format) then null else helpers.mkRaw cfg.formatting.format;
+        formatting = if (cfg.formatting == null) then null else {
+          inherit (cfg.formatting) fields;
+          format = if (cfg.formatting.format == null) then null else helpers.mkRaw cfg.formatting.format;
         };
 
-        matching = cfg.matching;
+        inherit (cfg) matching;
 
-        sorting = if (isNull cfg.sorting) then null else {
-          priority_weight = cfg.sorting.priority_weight;
-          comparators = if (isNull cfg.sorting.comparators) then null else helpers.mkRaw cfg.sorting.comparators;
+        sorting = if (cfg.sorting == null) then null else {
+          inherit (cfg.sorting) priority_weight;
+          comparators = if (cfg.sorting.comparators == null) then null else helpers.mkRaw cfg.sorting.comparators;
         };
 
         sources = filterAttrs (k: v: v.enable) cfg.sources; # only add activated sources to config
@@ -231,9 +231,9 @@ in with helpers;
           expand = "function(args) ${ lib.optionalString cfg.snippet.luasnip.enable "require(\"luasnip\").lsp_expand(args.body)" } end";
         };
 
-        view = cfg.view;
-        window = cfg.window;
-        experimental = cfg.experimental;
+        inherit (cfg) view;
+        inherit (cfg) window;
+        inherit (cfg) experimental;
       };
     in
     mkIf cfg.enable {

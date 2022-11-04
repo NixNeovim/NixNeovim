@@ -62,14 +62,14 @@ in {
     programs.nixvim = {
       extraPlugins = with pkgs.vimPlugins; [
         vim-airline
-      ] ++ optional (!isNull cfg.theme) vim-airline-themes;
+      ] ++ optional (cfg.theme != null) vim-airline-themes;
       globals = {
         airline.extensions = cfg.extensions;
 
         airline_statusline_ontop = mkIf cfg.onTop 1;
-        airline_powerline_fonts = mkIf (cfg.powerline) 1;
+        airline_powerline_fonts = mkIf cfg.powerline 1;
 
-        airline_theme = mkIf (!isNull cfg.theme) cfg.theme;
+        airline_theme = mkIf (cfg.theme != null) cfg.theme;
       } // sections;
     };
   };

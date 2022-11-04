@@ -5,7 +5,7 @@ with types;
 
 mkOption {
   default = null;
-  type = types.nullOr (types.submodule ({ ... }: {
+  type = types.nullOr (types.submodule (_: {
     options = {
       debounce = mkOption {
         type = types.nullOr types.int;

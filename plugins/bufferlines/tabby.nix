@@ -8,7 +8,7 @@ let
   helpers = import ../helpers.nix { inherit lib config; };
 
   highlight = mkOption {
-    type = types.nullOr (types.submodule ({ ... }: {
+    type = types.nullOr (types.submodule (_: {
       options = {
         guifg = mkOption {
           type = types.nullOr types.str;

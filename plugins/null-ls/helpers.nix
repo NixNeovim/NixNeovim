@@ -37,7 +37,7 @@
               # Add source to list of sources
               plugins.null-ls.sourcesItems = let
                 sourceItem = "${sourceType}.${name}";
-                withArgs = if (isNull cfg.withArgs) then sourceItem else "${sourceItem}.with ${cfg.withArgs}";
+                withArgs = if (cfg.withArgs == null) then sourceItem else "${sourceItem}.with ${cfg.withArgs}";
                 finalString = ''require("null-ls").builtins.${withArgs}'';
               in [ (helpers.mkRaw finalString) ];
             };

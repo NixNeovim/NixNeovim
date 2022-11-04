@@ -69,17 +69,17 @@ in
         vim-floaterm
       ];
       globals = {
-        floaterm_shell = mkIf (!isNull cfg.shell) cfg.shell;
-        floaterm_title = mkIf (!isNull cfg.title) cfg.title;
-        floaterm_wintype = mkIf (!isNull cfg.winType) cfg.winType;
-        floaterm_width = mkIf (!isNull cfg.winWidth) cfg.winWidth;
-        floaterm_height = mkIf (!isNull cfg.winHeight) cfg.winHeight;
-        floaterm_borderchars = mkIf (!isNull cfg.borderChars) cfg.borderChars;
-        floaterm_rootmarkers = mkIf (!isNull cfg.rootMarkers) cfg.rootMarkers;
-        floaterm_opener = mkIf (!isNull cfg.opener) cfg.opener;
-        floaterm_autoclose = mkIf (!isNull cfg.autoClose) cfg.autoClose;
-        floaterm_autohide = mkIf (!isNull cfg.autoHide) cfg.autoHide;
-        floaterm_autoInsert = mkIf (!isNull cfg.autoInsert) cfg.autoInsert;
+        floaterm_shell = mkIf (cfg.shell != null) cfg.shell;
+        floaterm_title = mkIf (cfg.title != null) cfg.title;
+        floaterm_wintype = mkIf (cfg.winType != null) cfg.winType;
+        floaterm_width = mkIf (cfg.winWidth != null) cfg.winWidth;
+        floaterm_height = mkIf (cfg.winHeight != null) cfg.winHeight;
+        floaterm_borderchars = mkIf (cfg.borderChars != null) cfg.borderChars;
+        floaterm_rootmarkers = mkIf (cfg.rootMarkers != null) cfg.rootMarkers;
+        floaterm_opener = mkIf (cfg.opener != null) cfg.opener;
+        floaterm_autoclose = mkIf (cfg.autoClose != null) cfg.autoClose;
+        floaterm_autohide = mkIf (cfg.autoHide != null) cfg.autoHide;
+        floaterm_autoInsert = mkIf (cfg.autoInsert != null) cfg.autoInsert;
       };
     };
   };

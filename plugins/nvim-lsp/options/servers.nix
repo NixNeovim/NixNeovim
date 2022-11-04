@@ -108,7 +108,7 @@ in {
   # create nix Option for all servers
   options = mapAttrs mkServerOption servers;
 
-  activated = activated;
+  inherit activated;
 
   packages = cfg-servers:
     let

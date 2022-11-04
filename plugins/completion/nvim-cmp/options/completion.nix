@@ -4,7 +4,7 @@ with lib;
 
 mkOption {
   default = null;
-  type = types.nullOr (types.submodule ({ ... }: {
+  type = types.nullOr (types.submodule (_: {
     options = {
       keyword_length = mkOption {
         default = null;

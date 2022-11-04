@@ -24,10 +24,10 @@ in
   config =
     let
       options = {
-        position = cfg.position;
+        inherit (cfg) position;
       };
 
-      filteredOptions = filterAttrs (_: v: !isNull v) options;
+      filteredOptions = filterAttrs (_: v: v != null) options;
     in mkIf cfg.enable {
     programs.nixvim = {
       extraPlugins = [ pkgs.vimPlugins.trouble-nvim ];

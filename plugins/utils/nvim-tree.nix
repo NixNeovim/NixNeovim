@@ -212,34 +212,34 @@ in
       hijack_cursor = cfg.hijackCursor;
       update_cwd = cfg.updateCwd;
       update_to_buf_dir = {
-        enable = cfg.updateToBufDir.enable;
+        inherit (cfg.updateToBufDir) enable;
         auto_open = cfg.updateToBufDir.autoOpen;
       };
-      diagnostics = cfg.diagnostics;
+      inherit (cfg) diagnostics;
       updateFocusedFile = {
-        enable = cfg.updateFocusedFile.enable;
+        inherit (cfg.updateFocusedFile) enable;
         update_cwd = cfg.updateFocusedFile.updateCwd;
         ignore_list = cfg.updateFocusedFile.ignoreList;
       };
       system_open = cfg.systemOpen;
-      filters = cfg.filters;
-      git = cfg.git;
+      inherit (cfg) filters;
+      inherit (cfg) git;
       view = {
-        width = cfg.view.width;
-        height = cfg.view.height;
+        inherit (cfg.view) width;
+        inherit (cfg.view) height;
         hide_root_folder = cfg.view.hideRootFolder;
-        side = cfg.view.side;
+        inherit (cfg.view) side;
         auto_resize = cfg.view.autoResize;
         mappings = {
           custom_only = cfg.view.mappings.customOnly;
-          list = cfg.view.mappings.list;
+          inherit (cfg.view.mappings) list;
         };
-        number = cfg.view.number;
-        relativenumber = cfg.view.relativenumber;
-        signcolumn = cfg.view.signcolumn;
+        inherit (cfg.view) number;
+        inherit (cfg.view) relativenumber;
+        inherit (cfg.view) signcolumn;
       };
       trash = {
-        cmd = cfg.trash.cmd;
+        inherit (cfg.trash) cmd;
         require_confirm = cfg.trash.requireConfirm;
       };
     };

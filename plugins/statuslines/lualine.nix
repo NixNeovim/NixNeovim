@@ -47,7 +47,7 @@ let
 
   sections_option = default: mkOption {
     type = types.nullOr (types.listOf types.str);
-    default = default;
+    inherit default;
   };
 in {
   options = {
@@ -78,7 +78,7 @@ in {
       };
 
       sections = mkOption {
-        type = types.nullOr (types.submodule ({ ... }: {
+        type = types.nullOr (types.submodule (_: {
           options = {
             lualine_a = sections_option "mode";
             lualine_b = sections_option "branch";
@@ -94,7 +94,7 @@ in {
       };
 
       tabline = mkOption {
-        type = types.nullOr (types.submodule ({ ... }: {
+        type = types.nullOr (types.submodule (_: {
           options = {
             lualine_a = sections_option "";
             lualine_b = sections_option "";
@@ -118,16 +118,16 @@ in {
   config = let
     setupOptions = {
       options = {
-        theme = cfg.theme;
+        inherit (cfg) theme;
         section_separators = cfg.sectionSeparators;
         component_separators = cfg.componentSeparators;
         disabled_filetypes = cfg.disabledFiletypes;
         always_divide_middle = cfg.alwaysDivideMiddle;
       };
 
-      sections = cfg.sections;
-      tabline = cfg.tabline;
-      extensions = cfg.extensions;
+      inherit (cfg) sections;
+      inherit (cfg) tabline;
+      inherit (cfg) extensions;
     };
   in mkIf cfg.enable {
     programs.nixvim = {

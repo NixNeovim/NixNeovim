@@ -5,7 +5,7 @@ let
   helpers = import ../helpers.nix { inherit lib; };
 
   highlight = mkOption {
-    type = types.nullOr (types.submodule ({ ... }: {
+    type = types.nullOr (types.submodule (_: {
       options = {
         guifg = mkOption {
           type = types.nullOr types.str;
@@ -154,7 +154,7 @@ in
       };
       highlights = mkOption {
         default = null;
-        type = types.nullOr (types.submodule ({...}: {
+        type = types.nullOr (types.submodule (_: {
           options = {
             fill = highlight;
             background = highlight;
@@ -224,7 +224,7 @@ in
   config = let 
     setupOptions = {
       options = {
-        numbers = cfg.numbers;
+        inherit (cfg) numbers;
         close_command = cfg.closeCommand;
         right_mouse_command = cfg.rightMouseCommand;
         left_mouse_command = cfg.leftMouseCommand;
@@ -239,7 +239,7 @@ in
         max_name_length = cfg.maxNameLength;
         max_prefix_length = cfg.maxPrefixLength;
         tab_size = cfg.tabSize;
-        diagnostics = cfg.diagnostics;
+        inherit (cfg) diagnostics;
         diagnostics_update_in_insert = cfg.diagnosticsUpdateInInsert;
         diagnostics_indicator = cfg.diagnosticsIndicator;
         custom_filter = cfg.customFilter;
@@ -254,10 +254,10 @@ in
         sort_by = cfg.sortBy;
       };
       highlights = if builtins.isNull cfg.highlights then null else with cfg.highlights; {
-        fill = fill;
-        background = background;
+        inherit fill;
+        inherit background;
 
-        tab = tab;
+        inherit tab;
         tab_selected = tabSelected;
         tab_close = tabClose;
         close_button = closeButton;
@@ -267,11 +267,11 @@ in
         buffer_visible = bufferVisible;
         buffer_selected = bufferSelected;
 
-        diagnostic = diagnostic;
+        inherit diagnostic;
         diagnostic_visible = diagnosticVisible;
         diagnostic_selected = diagnosticSelected;
 
-        info = info;
+        inherit info;
         info_visible = infoVisible;
         info_selected = infoSelected;
 
@@ -279,7 +279,7 @@ in
         info_diagnostic_visible = infoDiagnosticVisible;
         info_diagnostic_selected = infoDiagnosticSelected;
 
-        warning = warning;
+        inherit warning;
         warning_visible = warningVisible;
         warning_selected = warningSelected;
 
@@ -287,7 +287,7 @@ in
         warning_diagnostic_visible = warningDiagnosticVisible;
         warning_diagnostic_selected = warningDiagnosticSelected;
 
-        error = error;
+        inherit error;
         error_visible = errorVisible;
         error_selected = errorSelected;
 
@@ -295,21 +295,21 @@ in
         error_diagnostic_visible = errorDiagnosticVisible;
         error_diagnostic_selected = errorDiagnosticSelected;
 
-        modified = modified;
+        inherit modified;
         modified_visible = modifiedVisible;
         modified_selected = modifiedSelected;
 
-        duplicate = duplicate;
+        inherit duplicate;
         duplicate_visible = duplicateVisible;
         duplicate_selected = duplicateSelected;
 
-        separator = separator;
+        inherit separator;
         separator_visible = separatorVisible;
         separator_selected = separatorSelected;
 
         indicator_selected = indicatorSelected;
 
-        pick = pick;
+        inherit pick;
         pick_visible = pickVisible;
         pick_selected = pickSelected;
 

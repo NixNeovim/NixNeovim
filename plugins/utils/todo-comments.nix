@@ -34,9 +34,9 @@ let
   };
 
   pluginOptions = {
-    signs = cfg.signs;
+    inherit (cfg) signs;
     sign_priority = cfg.signPriority;
-    keywords = cfg.keywords;
+    inherit (cfg) keywords;
     merge_keywords = cfg.mergeKeywords;
   };
 
@@ -44,7 +44,7 @@ in with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
-  extraPlugins = with pkgs.vimExtraPlugins; [ 
+  extraPlugins = with pkgs.vimExtraPlugins; [
     todo-comments-nvim
   ];
   extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";

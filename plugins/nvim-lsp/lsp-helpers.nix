@@ -8,7 +8,7 @@ let
   toLua = cfg: server: serverAttrs:
     let
 
-      serverName = serverAttrs.serverName;
+      inherit (serverAttrs) serverName;
         
       onAttach =
         ''
@@ -40,7 +40,6 @@ let
 in {
 
   # create the lua code to activate the lsp server
-  serversToLua = cfg: servers:
-    mapAttrsToList (toLua cfg) servers;
+  serversToLua = cfg: mapAttrsToList (toLua cfg);
 
 }

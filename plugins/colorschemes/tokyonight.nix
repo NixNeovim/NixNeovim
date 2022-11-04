@@ -38,21 +38,21 @@ in {
       extraPlugins = [ pkgs.vimPlugins.tokyonight-nvim ];
       options = { termguicolors = true; };
       globals = {
-        tokyonight_style = mkIf (!isNull cfg.style) cfg.style;
+        tokyonight_style = mkIf (cfg.style != null) cfg.style;
         tokyonight_terminal_colors = mkIf (!cfg.terminalColors) 0;
 
         tokyonight_italic_comments = mkIf (!cfg.italicComments) 0;
         tokyonight_italic_keywords = mkIf (!cfg.italicKeywords) 0;
-        tokyonight_italic_functions = mkIf (cfg.italicFunctions) 1;
-        tokyonight_italic_variables = mkIf (cfg.italicVariables) 1;
+        tokyonight_italic_functions = mkIf cfg.italicFunctions 1;
+        tokyonight_italic_variables = mkIf cfg.italicVariables 1;
 
-        tokyonight_transparent = mkIf (cfg.transparent) 1;
+        tokyonight_transparent = mkIf cfg.transparent 1;
         tokyonight_hide_inactive_statusline =
-          mkIf (cfg.hideInactiveStatusline) 1;
-        tokyonight_transparent_sidebar = mkIf (cfg.transparentSidebar) 1;
+          mkIf cfg.hideInactiveStatusline 1;
+        tokyonight_transparent_sidebar = mkIf cfg.transparentSidebar 1;
         tokyonight_dark_sidebar = mkIf (!cfg.darkSidebar) 0;
         tokyonight_dark_float = mkIf (!cfg.darkFloat) 0;
-        tokyonight_lualine_bold = mkIf (cfg.lualineBold) 1;
+        tokyonight_lualine_bold = mkIf cfg.lualineBold 1;
       };
     };
   };

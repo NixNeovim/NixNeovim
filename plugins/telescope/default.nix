@@ -4,7 +4,7 @@ let
 
   name = "telescope";
 
-  helpers = (import ../helpers.nix { inherit lib config; });
+  helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
 
   moduleOptions = with helpers; {

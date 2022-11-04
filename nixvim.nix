@@ -202,7 +202,7 @@ in
   config =
     let
       neovimConfig = pkgs.neovimUtils.makeNeovimConfig {
-        configure = cfg.configure;
+        inherit (cfg) configure;
         plugins = cfg.extraPlugins;
       };
 
@@ -265,10 +265,10 @@ in
         packages.nixvim = {
           start = filter (f: f != null) (map
             (x:
-              if x ? plugin && x.optional == true then null else (x.plugin or x))
+              if x ? plugin && x.optional then null else (x.plugin or x))
             cfg.extraPlugins);
           opt = filter (f: f != null)
-            (map (x: if x ? plugin && x.optional == true then x.plugin else null)
+            (map (x: if x ? plugin && x.optional then x.plugin else null)
               cfg.extraPlugins);
         };
       };
@@ -290,7 +290,7 @@ in
     mkIf cfg.enable (if nixos then {
       environment.systemPackages = [ wrappedNeovim ];
       programs.neovim = {
-        configure = configure;
+        inherit configure;
       };
 
       environment.etc."xdg/nvim/sysinit.vim".text = neovimConfig.neovimRcContent;
@@ -299,7 +299,7 @@ in
         programs.neovim = {
           enable = true;
           package = mkIf (cfg.package != null) cfg.package;
-          extraPackages = cfg.extraPackages;
+          inherit (cfg) extraPackages;
           extraConfig = configure.customRC;
           plugins = cfg.extraPlugins;
         };
