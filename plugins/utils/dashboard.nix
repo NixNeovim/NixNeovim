@@ -1,9 +1,13 @@
-{ config, lib, pkgs, ... }:
-with lib;
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
   cfg = config.programs.nixvim.plugins.dashboard;
 
-  helpers = import ../helpers.nix { inherit lib; };
+  helpers = import ../helpers.nix {inherit lib;};
 in {
   options = {
     programs.nixvim.plugins.dashboard = {
@@ -87,7 +91,7 @@ in {
             };
           };
         };
-        default = { };
+        default = {};
       };
 
       hideStatusline = mkOption {
@@ -122,16 +126,18 @@ in {
     };
 
     filteredOptions = filterAttrs (_: v: v != null) options;
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = [ pkgs.vimPlugins.dashboard-nvim ];
-      extraConfigLua = ''
-        local dashboard = require("dashboard")
+  in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraPlugins = [pkgs.vimPlugins.dashboard-nvim];
+        extraConfigLua = ''
+          local dashboard = require("dashboard")
 
-        ${toString (mapAttrsToList (n: v: ''
-          dashboard.${n} = ${helpers.toLuaObject v}
-        '') filteredOptions)}
-      '';
+          ${toString (mapAttrsToList (n: v: ''
+              dashboard.${n} = ${helpers.toLuaObject v}
+            '')
+            filteredOptions)}
+        '';
+      };
     };
-  };
 }

@@ -1,6 +1,10 @@
-{ pkgs, config, lib, ... }:
-with lib;
-let
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+with lib; let
   cfg = config.programs.nixvim.colorschemes.gruvbox-nvim;
   colors = types.enum [
     "bg"
@@ -38,13 +42,13 @@ in {
       undercurl = mkEnableOption "Enable undercurled text";
 
       contrastDark = mkOption {
-        type = types.nullOr (types.enum [ "soft" "medium" "hard" ]);
+        type = types.nullOr (types.enum ["soft" "medium" "hard"]);
         default = null;
         description = "Contrast for the dark mode";
       };
 
       contrastLight = mkOption {
-        type = types.nullOr (types.enum [ "soft" "medium" "hard" ]);
+        type = types.nullOr (types.enum ["soft" "medium" "hard"]);
         default = null;
         description = "Contrast for the light mode";
       };
@@ -130,14 +134,13 @@ in {
       transparentBg = mkEnableOption "Transparent background";
 
       trueColor = mkEnableOption "Enable true color support";
-
     };
   };
 
   config = mkIf cfg.enable {
     programs.nixvim = {
       colorscheme = "gruvbox";
-      extraPlugins = [ pkgs.vimPlugins.gruvbox-nvim ];
+      extraPlugins = [pkgs.vimPlugins.gruvbox-nvim];
 
       globals = {
         gruvbox_bold = mkIf (!cfg.bold) 0;

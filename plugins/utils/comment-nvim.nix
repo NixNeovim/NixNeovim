@@ -1,8 +1,12 @@
-{ config, pkgs, lib, ... }:
-with lib;
-let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib; let
   cfg = config.programs.nixvim.plugins.comment-nvim;
-  helpers = import ../helpers.nix { inherit lib; };
+  helpers = import ../helpers.nix {inherit lib;};
 in {
   options = {
     programs.nixvim.plugins.comment-nvim = {
@@ -55,8 +59,7 @@ in {
             };
           };
         }));
-        description =
-          "LHS of operator-pending mappings in NORMAL + VISUAL mode";
+        description = "LHS of operator-pending mappings in NORMAL + VISUAL mode";
         default = null;
       };
       mappings = mkOption {
@@ -64,8 +67,7 @@ in {
           options = {
             basic = mkOption {
               type = types.bool;
-              description =
-                "operator-pending mapping. Includes 'gcc', 'gcb', 'gc[count]{motion}' and 'gb[count]{motion}'";
+              description = "operator-pending mapping. Includes 'gcc', 'gcb', 'gc[count]{motion}' and 'gb[count]{motion}'";
               default = true;
             };
             extra = mkOption {
@@ -75,14 +77,12 @@ in {
             };
             extended = mkOption {
               type = types.bool;
-              description =
-                "extended mapping. Includes 'g&gt;', 'g&lt;', 'g&gt;[count]{motion}' and 'g&lt;[count]{motion}'";
+              description = "extended mapping. Includes 'g&gt;', 'g&lt;', 'g&gt;[count]{motion}' and 'g&lt;[count]{motion}'";
               default = false;
             };
           };
         }));
-        description =
-          "Create basic (operator-pending) and extended mappings for NORMAL + VISUAL mode";
+        description = "Create basic (operator-pending) and extended mappings for NORMAL + VISUAL mode";
         default = null;
       };
     };
@@ -97,11 +97,11 @@ in {
       inherit (cfg) opleader;
       inherit (cfg) mappings;
     };
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = [ pkgs.vimPlugins.comment-nvim ];
-      extraConfigLua =
-        ''require("Comment").setup${helpers.toLuaObject setupOptions}'';
+  in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraPlugins = [pkgs.vimPlugins.comment-nvim];
+        extraConfigLua = ''require("Comment").setup${helpers.toLuaObject setupOptions}'';
+      };
     };
-  };
 }

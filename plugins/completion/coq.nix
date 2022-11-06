@@ -1,8 +1,12 @@
-{ pkgs, lib, config, ... }:
-with lib;
-let
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
+with lib; let
   cfg = config.programs.nixvim.plugins.coq-nvim;
-  helpers = import ../helpers.nix { inherit lib pkgs config; };
+  helpers = import ../helpers.nix {inherit lib pkgs config;};
 in {
   options = {
     programs.nixvim.plugins.coq-nvim = {
@@ -11,7 +15,7 @@ in {
       installArtifacts = mkEnableOption "Install coq-artifacts";
 
       autoStart = mkOption {
-        type = with types; nullOr (oneOf [ bool (enum [ "shut-up" ]) ]);
+        type = with types; nullOr (oneOf [bool (enum ["shut-up"])]);
         default = null;
         description = "Auto-start or shut up";
       };
@@ -28,18 +32,21 @@ in {
       auto_start = cfg.autoStart;
       "keymap.recommended" = cfg.recommendedKeymaps;
     };
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = [
-        # plugins.coq-nvim
-        pkgs.vimExtraPlugins.coq-nvim
-      ] ++ optional cfg.installArtifacts pkgs.vimExtraPlugins.coq-artifacts;
-      plugins.lsp = {
-        preConfig = ''
-          vim.g.coq_settings = ${helpers.toLuaObject settings}
-        '';
-        coqSupport = true;
+  in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraPlugins =
+          [
+            # plugins.coq-nvim
+            pkgs.vimExtraPlugins.coq-nvim
+          ]
+          ++ optional cfg.installArtifacts pkgs.vimExtraPlugins.coq-artifacts;
+        plugins.lsp = {
+          preConfig = ''
+            vim.g.coq_settings = ${helpers.toLuaObject settings}
+          '';
+          coqSupport = true;
+        };
       };
     };
-  };
 }

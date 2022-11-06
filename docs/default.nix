@@ -1,7 +1,8 @@
-{ pkgs ? import <nixpkgs> {}
-, lib ? import <nixpkgs/lib>
-, ... }:
-let
+{
+  pkgs ? import <nixpkgs> {},
+  lib ? import <nixpkgs/lib>,
+  ...
+}: let
   nmdSrc = pkgs.fetchFromGitLab {
     name = "nmd";
     owner = "rycee";
@@ -9,25 +10,27 @@ let
     rev = "527245ff605bde88c2dd2ddae21c6479bb7cf8aa";
     sha256 = "1zi0f9y3wq4bpslx1py3sfgrgd9av41ahpandvs6rvkpisfsqqlp";
   };
-  nmd = import nmdSrc { inherit pkgs lib; };
+  nmd = import nmdSrc {inherit pkgs lib;};
   scrubbedPkgsModule = {
-    imports = [{
-      _module.args = {
-        pkgs = lib.mkForce (nmd.scrubDerivations "pkgs" pkgs);
-        pkgs_i686 = lib.mkForce { };
-      };
-    }];
+    imports = [
+      {
+        _module.args = {
+          pkgs = lib.mkForce (nmd.scrubDerivations "pkgs" pkgs);
+          pkgs_i686 = lib.mkForce {};
+        };
+      }
+    ];
   };
   buildModulesDocs = args:
     nmd.buildModulesDocs ({
-      moduleRootPaths = [ ./.. ];
-      mkModuleUrl = path:
-        "https://github.com/pta2002/nixvim/blob/master/${path}#blob-path";
-      channelName = "nixvim";
-    } // args);
+        moduleRootPaths = [./..];
+        mkModuleUrl = path: "https://github.com/pta2002/nixvim/blob/master/${path}#blob-path";
+        channelName = "nixvim";
+      }
+      // args);
   nixvimDocs = buildModulesDocs {
     modules = [
-      (import ../nixvim.nix { inherit pkgs;})
+      (import ../nixvim.nix {inherit pkgs;})
       scrubbedPkgsModule
     ];
     docBook.id = "nixvim-options";
@@ -35,16 +38,17 @@ let
 
   docs = nmd.buildDocBookDocs {
     pathName = "";
-    modulesDocs = [ nixvimDocs ];
+    modulesDocs = [nixvimDocs];
     documentsDirectory = ./.;
     documentType = "book";
     chunkToc = ''
-    <toc>
-      <d:tocentry xmlns:d="http://docbook.org/ns/docbook" linkend="book-home-manager-manual"><?dbhtml filename="index.html"?>
-        <d:tocentry linkend="ch-options"><?dbhtml filename="options.html"?></d:tocentry>
-        <d:tocentry linkend="ch-release-notes"><?dbhtml filename="release-notes.html"?></d:tocentry>
-      </d:tocentry>
-      </toc>
+      <toc>
+        <d:tocentry xmlns:d="http://docbook.org/ns/docbook" linkend="book-home-manager-manual"><?dbhtml filename="index.html"?>
+          <d:tocentry linkend="ch-options"><?dbhtml filename="options.html"?></d:tocentry>
+          <d:tocentry linkend="ch-release-notes"><?dbhtml filename="release-notes.html"?></d:tocentry>
+        </d:tocentry>
+        </toc>
     '';
   };
-in docs.html
+in
+  docs.html

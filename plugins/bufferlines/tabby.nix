@@ -1,11 +1,14 @@
-{ config, pkgs, lib, ... }:
-with lib;
-let
-
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib; let
   name = "tabby";
 
   cfg = config.programs.nixvim.plugins.${name};
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../helpers.nix {inherit lib config;};
 
   highlight = mkOption {
     type = types.nullOr (types.submodule (_: {
@@ -24,35 +27,37 @@ let
     }));
     default = null;
   };
-in with helpers; {
-  options = {
-    programs.nixvim.plugins.${name} = {
-      enable = mkEnableOption "Enable ${name}";
+in
+  with helpers; {
+    options = {
+      programs.nixvim.plugins.${name} = {
+        enable = mkEnableOption "Enable ${name}";
 
-      presets = {
-        activeWinsAtTall = boolOption;
-        activeWinsAtEnd = boolOption;
-        tabWithTopWin = boolOption;
-        activeTabWithWins = boolOption;
-        tabOnly = boolOption;
+        presets = {
+          activeWinsAtTall = boolOption;
+          activeWinsAtEnd = boolOption;
+          tabWithTopWin = boolOption;
+          activeTabWithWins = boolOption;
+          tabOnly = boolOption;
+        };
       };
     };
-  };
 
-  config = let
-    setupOptions = {
-      options = {
-        # presets = {
-        #   active_wins_at_tall = cfg.presets.activeWinsAtTall;
-        # };
+    config = let
+      setupOptions = {
+        options = {
+          # presets = {
+          #   active_wins_at_tall = cfg.presets.activeWinsAtTall;
+          # };
+        };
       };
-    };
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = with pkgs.vimExtraPlugins; [ tabby-nvim ];
-      extraConfigLua = ''
-        require('tabby').setup${helpers.toLuaObject setupOptions}
-      '';
-    };
-  };
-}
+    in
+      mkIf cfg.enable {
+        programs.nixvim = {
+          extraPlugins = with pkgs.vimExtraPlugins; [tabby-nvim];
+          extraConfigLua = ''
+            require('tabby').setup${helpers.toLuaObject setupOptions}
+          '';
+        };
+      };
+  }

@@ -1,10 +1,11 @@
-{ lib, helpers, ... }:
-
+{
+  lib,
+  helpers,
+  ...
+}:
 with lib;
 with helpers;
-with types;
-
-{
+with types; {
   searchMethod = mkOption {
     type = enum [
       "cover"
@@ -20,9 +21,8 @@ with types;
   nLines = intOption 50 "Number of lines within which textobject is searched";
   customTextobjects = mkOption {
     type = attrs;
-    default = { };
-    description =
-      "Attribute set with textobect id as key and textobkect specification as values";
+    default = {};
+    description = "Attribute set with textobect id as key and textobkect specification as values";
   };
   mappings = {
     around = strOption "a" "";

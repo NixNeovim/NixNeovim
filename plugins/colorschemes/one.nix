@@ -1,6 +1,11 @@
-{ pkgs, config, lib, ... }:
-with lib;
-let cfg = config.programs.nixvim.colorschemes.one;
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+with lib; let
+  cfg = config.programs.nixvim.colorschemes.one;
 in {
   options = {
     programs.nixvim.colorschemes.one = {
@@ -11,9 +16,9 @@ in {
   config = mkIf cfg.enable {
     programs.nixvim = {
       colorscheme = "one";
-      extraPlugins = [ pkgs.vimPlugins.vim-one ];
+      extraPlugins = [pkgs.vimPlugins.vim-one];
 
-      options = { termguicolors = true; };
+      options = {termguicolors = true;};
     };
   };
 }

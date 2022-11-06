@@ -1,9 +1,10 @@
-{ lib, helpers, ... }:
-
-with lib;
-with helpers;
-
 {
+  lib,
+  helpers,
+  ...
+}:
+with lib;
+with helpers; {
   setup = true;
-  options = { };
+  options = {};
 }

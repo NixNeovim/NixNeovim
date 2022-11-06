@@ -1,13 +1,24 @@
-{ pkgs, config, lib, ... }:
-
 {
-  mkServer = { name, sourceType
-    , description ? "Enable ${name} source, for null-ls.", packages ? [ ], ...
-    }:
-    # returns a module
-    { pkgs, config, lib, ... }@args:
-    with lib;
-    let
+  pkgs,
+  config,
+  lib,
+  ...
+}: {
+  mkServer = {
+    name,
+    sourceType,
+    description ? "Enable ${name} source, for null-ls.",
+    packages ? [],
+    ...
+  }:
+  # returns a module
+  {
+    pkgs,
+    config,
+    lib,
+    ...
+  } @ args:
+    with lib; let
       helpers = import ../helpers.nix args;
       cfg =
         config.programs.nixvim.plugins.null-ls.sources.${sourceType}.${name};
@@ -34,12 +45,12 @@
           # Add source to list of sources
           plugins.null-ls.sourcesItems = let
             sourceItem = "${sourceType}.${name}";
-            withArgs = if (cfg.withArgs == null) then
-              sourceItem
-            else
-              "${sourceItem}.with ${cfg.withArgs}";
+            withArgs =
+              if (cfg.withArgs == null)
+              then sourceItem
+              else "${sourceItem}.with ${cfg.withArgs}";
             finalString = ''require("null-ls").builtins.${withArgs}'';
-          in [ (helpers.mkRaw finalString) ];
+          in [(helpers.mkRaw finalString)];
         };
       };
     };

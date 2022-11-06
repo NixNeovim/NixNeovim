@@ -1,280 +1,295 @@
-{ pkgs, config, lib, ... }@args:
-with lib;
-let
+{
+  pkgs,
+  config,
+  lib,
+  ...
+} @ args:
+with lib; let
   cfg = config.programs.nixvim.plugins.nvim-cmp;
-  helpers = import ../../helpers.nix { inherit lib config; };
+  helpers = import ../../helpers.nix {inherit lib config;};
 
-  sources = import ./options/sources.nix { inherit lib config pkgs; };
+  sources = import ./options/sources.nix {inherit lib config pkgs;};
+in
+  with helpers; {
+    options.programs.nixvim.plugins.nvim-cmp = {
+      enable = mkEnableOption "Enable nvim-cmp";
 
-in with helpers; {
-  options.programs.nixvim.plugins.nvim-cmp = {
-    enable = mkEnableOption "Enable nvim-cmp";
+      performance = import ./options/performance.nix {inherit lib;};
+      mapping = import ./options/mapping.nix {inherit lib;};
+      sources = sources.options;
+      completion = import ./options/completion.nix {inherit lib;};
 
-    performance = import ./options/performance.nix { inherit lib; };
-    mapping = import ./options/mapping.nix { inherit lib; };
-    sources = sources.options;
-    completion = import ./options/completion.nix { inherit lib; };
+      preselect = mkOption {
+        type = types.nullOr (types.enum ["Item" "None"]);
+        default = null;
+        example = ''"Item"'';
+      };
 
-    preselect = mkOption {
-      type = types.nullOr (types.enum [ "Item" "None" ]);
-      default = null;
-      example = ''"Item"'';
-    };
-
-    snippet = import ./options/snippet.nix { inherit lib config pkgs; };
-    # snippet = mkOption {
-    #   default = null;
-    #   type = types.nullOr (types.submodule ({ ... }: {
-    #     options = {
-    #       expand = mkOption {
-    #         type = types.nullOr types.str;
-    #         example = ''
-    #           function(args)
-    #             vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-    #             -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-    #             -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-    #             -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-    #           end
-    #         '';
-    #       };
-    #     };
-    #   }));
-    # };
-
-    mappingPresets = mkOption {
-      default = [ ];
-      type = types.listOf (types.enum [
-        "insert"
-        "cmdline"
-        # Not sure if there are more or if this should just be str
-      ]);
-      description =
-        "Mapping presets to use; cmp.mapping.preset.\${mappingPreset} will be called with the configured mappings";
-      example = ''
-        [ "insert" "cmdline" ]
-      '';
-    };
-
-    confirmation = mkOption {
-      default = null;
-      type = types.nullOr (types.submodule (_: {
-        options = {
-          get_commit_characters = mkOption {
-            default = null;
-            type = types.nullOr types.str;
-            description = "Direct lua code as a string";
-          };
-        };
-      }));
-    };
-
-    formatting = mkOption {
-      default = null;
-      type = types.nullOr (types.submodule (_: {
-        options = {
-          fields = mkOption {
-            type = types.nullOr (types.listOf types.str);
-            example = ''[ "kind" "abbr" "menu" ]'';
-            default = null;
-          };
-          format = mkOption {
-            type = types.nullOr types.str;
-            description = "A lua function as a string";
-            default = null;
-          };
-        };
-      }));
-    };
-
-    matching = mkOption {
-      default = null;
-      type = types.nullOr (types.submodule (_: {
-        options = {
-          disallow_fuzzy_matching = mkOption {
-            default = null;
-            type = types.nullOr types.bool;
-          };
-          disallow_partial_matching = mkOption {
-            default = null;
-            type = types.nullOr types.bool;
-          };
-          disallow_prefix_unmatching = mkOption {
-            default = null;
-            type = types.nullOr types.bool;
-          };
-        };
-      }));
-    };
-
-    sorting = mkOption {
-      default = null;
-      type = types.nullOr (types.submodule (_: {
-        options = {
-          priority_weight = mkOption {
-            default = null;
-            type = types.nullOr types.int;
-          };
-          comparators = mkOption {
-            default = null;
-            type = types.nullOr types.str;
-          };
-        };
-      }));
-    };
-
-    view = mkOption {
-      default = null;
-      type = types.nullOr (types.submodule (_: {
-        options = {
-          entries = mkOption {
-            default = null;
-            type = with types; nullOr (either str attrs);
-          };
-        };
-      }));
-    };
-
-    window = let
-      # Reusable options
-      border = with types; mkNullOrOption (either str (listOf str)) null;
-      winhighlight = mkNullOrOption types.str null;
-      zindex = mkNullOrOption types.int null;
-    in mkOption {
-      default = null;
-      type = types.nullOr (types.submodule (_: {
-        options = {
-          completion = mkOption {
-            default = null;
-            type = types.nullOr (types.submodule
-              (_: { options = { inherit border winhighlight zindex; }; }));
-          };
-
-          documentation = mkOption {
-            default = null;
-            type = types.nullOr (types.submodule (_: {
-              options = {
-                inherit border winhighlight zindex;
-                max_width = mkNullOrOption types.int "Window's max width";
-                max_height = mkNullOrOption types.int "Window's max height";
-              };
-            }));
-          };
-        };
-      }));
-    };
-
-    # This can be kept as types.attrs since experimental features are often removed or completely changed after a while
-    experimental = mkNullOrOption types.attrs "Experimental features";
-  };
-
-  config = let
-    pluginOptions = {
-      enabled = cfg.enable;
-      inherit (cfg) performance;
-      preselect = if (cfg.preselect == null) then
-        null
-      else
-        helpers.mkRaw "cmp.PreselectMode.${cfg.preselect}";
-
-      # Not very readable sorry
-      # If null then null
-      # If an attribute is a string, just treat it as lua code for that mapping
-      # If an attribute is a module, create a mapping with cmp.mapping() using the action as the first input and the modes as the second.
-      mapping = let
-        mappings = if (cfg.mapping == null) then
-          null
-        else
-          mapAttrs (bind: mapping:
-            helpers.mkRaw (if isString mapping then
-              mapping
-            else
-              "cmp.mapping(${mapping.action}${
-                optionalString
-                (mapping.modes != null && length mapping.modes >= 1)
-                ("," + (helpers.toLuaObject mapping.modes))
-              })")) cfg.mapping;
-        luaMappings = helpers.toLuaObject mappings;
-        wrapped = lists.fold (presetName: prevString:
-          "cmp.mapping.preset.${presetName}(${prevString})") luaMappings
-          cfg.mappingPresets;
-      in helpers.mkRaw wrapped;
-
-      # snippet = {
-      #   expand = if (isNull cfg.snippet || isNull cfg.snippet.expand) then null else helpers.mkRaw cfg.snippet.expand;
+      snippet = import ./options/snippet.nix {inherit lib config pkgs;};
+      # snippet = mkOption {
+      #   default = null;
+      #   type = types.nullOr (types.submodule ({ ... }: {
+      #     options = {
+      #       expand = mkOption {
+      #         type = types.nullOr types.str;
+      #         example = ''
+      #           function(args)
+      #             vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+      #             -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+      #             -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+      #             -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+      #           end
+      #         '';
+      #       };
+      #     };
+      #   }));
       # };
 
-      completion = if (cfg.completion == null) then
-        null
-      else {
-        inherit (cfg.completion) keyword_length;
-        inherit (cfg.completion) keyword_pattern;
-        autocomplete = if (cfg.completion.autocomplete == null) then
-          null
-        else
-          mkRaw cfg.completion.autocomplete;
-        inherit (cfg.completion) completeopt;
+      mappingPresets = mkOption {
+        default = [];
+        type = types.listOf (types.enum [
+          "insert"
+          "cmdline"
+          # Not sure if there are more or if this should just be str
+        ]);
+        description = "Mapping presets to use; cmp.mapping.preset.\${mappingPreset} will be called with the configured mappings";
+        example = ''
+          [ "insert" "cmdline" ]
+        '';
       };
 
-      confirmation = if (cfg.confirmation == null) then
-        null
-      else {
-        get_commit_characters =
-          if (isString cfg.confirmation.get_commit_characters) then
-            helpers.mkRaw cfg.confirmation.get_commit_characters
-          else
-            cfg.confirmation.get_commit_characters;
+      confirmation = mkOption {
+        default = null;
+        type = types.nullOr (types.submodule (_: {
+          options = {
+            get_commit_characters = mkOption {
+              default = null;
+              type = types.nullOr types.str;
+              description = "Direct lua code as a string";
+            };
+          };
+        }));
       };
 
-      formatting = if (cfg.formatting == null) then
-        null
-      else {
-        inherit (cfg.formatting) fields;
-        format = if (cfg.formatting.format == null) then
-          null
-        else
-          helpers.mkRaw cfg.formatting.format;
+      formatting = mkOption {
+        default = null;
+        type = types.nullOr (types.submodule (_: {
+          options = {
+            fields = mkOption {
+              type = types.nullOr (types.listOf types.str);
+              example = ''[ "kind" "abbr" "menu" ]'';
+              default = null;
+            };
+            format = mkOption {
+              type = types.nullOr types.str;
+              description = "A lua function as a string";
+              default = null;
+            };
+          };
+        }));
       };
 
-      inherit (cfg) matching;
-
-      sorting = if (cfg.sorting == null) then
-        null
-      else {
-        inherit (cfg.sorting) priority_weight;
-        comparators = if (cfg.sorting.comparators == null) then
-          null
-        else
-          helpers.mkRaw cfg.sorting.comparators;
+      matching = mkOption {
+        default = null;
+        type = types.nullOr (types.submodule (_: {
+          options = {
+            disallow_fuzzy_matching = mkOption {
+              default = null;
+              type = types.nullOr types.bool;
+            };
+            disallow_partial_matching = mkOption {
+              default = null;
+              type = types.nullOr types.bool;
+            };
+            disallow_prefix_unmatching = mkOption {
+              default = null;
+              type = types.nullOr types.bool;
+            };
+          };
+        }));
       };
 
-      sources = filterAttrs (k: v: v.enable)
-        cfg.sources; # only add activated sources to config
-      snippet = {
-        expand = "function(args) ${
+      sorting = mkOption {
+        default = null;
+        type = types.nullOr (types.submodule (_: {
+          options = {
+            priority_weight = mkOption {
+              default = null;
+              type = types.nullOr types.int;
+            };
+            comparators = mkOption {
+              default = null;
+              type = types.nullOr types.str;
+            };
+          };
+        }));
+      };
+
+      view = mkOption {
+        default = null;
+        type = types.nullOr (types.submodule (_: {
+          options = {
+            entries = mkOption {
+              default = null;
+              type = with types; nullOr (either str attrs);
+            };
+          };
+        }));
+      };
+
+      window = let
+        # Reusable options
+        border = with types; mkNullOrOption (either str (listOf str)) null;
+        winhighlight = mkNullOrOption types.str null;
+        zindex = mkNullOrOption types.int null;
+      in
+        mkOption {
+          default = null;
+          type = types.nullOr (types.submodule (_: {
+            options = {
+              completion = mkOption {
+                default = null;
+                type =
+                  types.nullOr (types.submodule
+                    (_: {options = {inherit border winhighlight zindex;};}));
+              };
+
+              documentation = mkOption {
+                default = null;
+                type = types.nullOr (types.submodule (_: {
+                  options = {
+                    inherit border winhighlight zindex;
+                    max_width = mkNullOrOption types.int "Window's max width";
+                    max_height = mkNullOrOption types.int "Window's max height";
+                  };
+                }));
+              };
+            };
+          }));
+        };
+
+      # This can be kept as types.attrs since experimental features are often removed or completely changed after a while
+      experimental = mkNullOrOption types.attrs "Experimental features";
+    };
+
+    config = let
+      pluginOptions = {
+        enabled = cfg.enable;
+        inherit (cfg) performance;
+        preselect =
+          if (cfg.preselect == null)
+          then null
+          else helpers.mkRaw "cmp.PreselectMode.${cfg.preselect}";
+
+        # Not very readable sorry
+        # If null then null
+        # If an attribute is a string, just treat it as lua code for that mapping
+        # If an attribute is a module, create a mapping with cmp.mapping() using the action as the first input and the modes as the second.
+        mapping = let
+          mappings =
+            if (cfg.mapping == null)
+            then null
+            else
+              mapAttrs (bind: mapping:
+                helpers.mkRaw (
+                  if isString mapping
+                  then mapping
+                  else "cmp.mapping(${mapping.action}${
+                    optionalString
+                    (mapping.modes != null && length mapping.modes >= 1)
+                    ("," + (helpers.toLuaObject mapping.modes))
+                  })"
+                ))
+              cfg.mapping;
+          luaMappings = helpers.toLuaObject mappings;
+          wrapped =
+            lists.fold (presetName: prevString: "cmp.mapping.preset.${presetName}(${prevString})") luaMappings
+            cfg.mappingPresets;
+        in
+          helpers.mkRaw wrapped;
+
+        # snippet = {
+        #   expand = if (isNull cfg.snippet || isNull cfg.snippet.expand) then null else helpers.mkRaw cfg.snippet.expand;
+        # };
+
+        completion =
+          if (cfg.completion == null)
+          then null
+          else {
+            inherit (cfg.completion) keyword_length;
+            inherit (cfg.completion) keyword_pattern;
+            autocomplete =
+              if (cfg.completion.autocomplete == null)
+              then null
+              else mkRaw cfg.completion.autocomplete;
+            inherit (cfg.completion) completeopt;
+          };
+
+        confirmation =
+          if (cfg.confirmation == null)
+          then null
+          else {
+            get_commit_characters =
+              if (isString cfg.confirmation.get_commit_characters)
+              then helpers.mkRaw cfg.confirmation.get_commit_characters
+              else cfg.confirmation.get_commit_characters;
+          };
+
+        formatting =
+          if (cfg.formatting == null)
+          then null
+          else {
+            inherit (cfg.formatting) fields;
+            format =
+              if (cfg.formatting.format == null)
+              then null
+              else helpers.mkRaw cfg.formatting.format;
+          };
+
+        inherit (cfg) matching;
+
+        sorting =
+          if (cfg.sorting == null)
+          then null
+          else {
+            inherit (cfg.sorting) priority_weight;
+            comparators =
+              if (cfg.sorting.comparators == null)
+              then null
+              else helpers.mkRaw cfg.sorting.comparators;
+          };
+
+        sources =
+          filterAttrs (k: v: v.enable)
+          cfg.sources; # only add activated sources to config
+        snippet = {
+          expand = "function(args) ${
             lib.optionalString cfg.snippet.luasnip.enable
             ''require("luasnip").lsp_expand(args.body)''
           } end";
+        };
+
+        inherit (cfg) view;
+        inherit (cfg) window;
+        inherit (cfg) experimental;
       };
+    in
+      mkIf cfg.enable {
+        programs.nixvim = {
+          extraPlugins =
+            [pkgs.vimExtraPlugins.nvim-cmp]
+            ++ sources.packages cfg.sources;
 
-      inherit (cfg) view;
-      inherit (cfg) window;
-      inherit (cfg) experimental;
-    };
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = [ pkgs.vimExtraPlugins.nvim-cmp ]
-        ++ sources.packages cfg.sources;
+          extraConfigLua = ''
+            do -- create scope to not interfere with other plugins
+              local cmp = require('cmp') -- this is needed
 
-      extraConfigLua = ''
-        do -- create scope to not interfere with other plugins
-          local cmp = require('cmp') -- this is needed
+              cmp.setup(${helpers.toLuaObject pluginOptions})
 
-          cmp.setup(${helpers.toLuaObject pluginOptions})
-
-          -- extra config of sources
-          ${toConfigString (sources.config cfg.sources)}
-        end
-      '';
-    };
-  };
-}
+              -- extra config of sources
+              ${toConfigString (sources.config cfg.sources)}
+            end
+          '';
+        };
+      };
+  }

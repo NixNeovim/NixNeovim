@@ -1,8 +1,12 @@
-{ pkgs, config, lib, ... }:
-with lib;
-let
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+with lib; let
   cfg = config.programs.nixvim.plugins.lightline;
-  helpers = import ../helpers.nix { inherit lib; };
+  helpers = import ../helpers.nix {inherit lib;};
 in {
   options = {
     programs.nixvim.plugins.lightline = {
@@ -11,8 +15,7 @@ in {
       colorscheme = mkOption {
         type = with types; nullOr str;
         default = config.programs.nixvim.colorscheme;
-        description =
-          "The colorscheme to use for lightline. Defaults to .colorscheme.";
+        description = "The colorscheme to use for lightline. Defaults to .colorscheme.";
         example = "gruvbox";
       };
 
@@ -43,26 +46,24 @@ in {
       component = mkOption {
         default = null;
         type = with types; nullOr (attrsOf str);
-        description =
-          "Lightline component definitions. Uses 'statusline' syntax. Consult :h 'statusline' for a list of what's available.";
+        description = "Lightline component definitions. Uses 'statusline' syntax. Consult :h 'statusline' for a list of what's available.";
       };
 
       active = mkOption {
         default = null;
         type = types.nullOr (types.submodule {
-          options = let listType = with types; nullOr (listOf (listOf str));
+          options = let
+            listType = with types; nullOr (listOf (listOf str));
           in {
             left = mkOption {
               type = listType;
-              description =
-                "List of components that will show up on the left side of the bar";
+              description = "List of components that will show up on the left side of the bar";
               default = null;
             };
 
             right = mkOption {
               type = listType;
-              description =
-                "List of components that will show up on the right side of the bar";
+              description = "List of components that will show up on the right side of the bar";
               default = null;
             };
           };
@@ -81,10 +82,11 @@ in {
     configAttrs = filterAttrs (_: v: v != null) {
       inherit (cfg) colorscheme active component componentFunction modeMap;
     };
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = [ pkgs.vimPlugins.lightline-vim ];
-      globals.lightline = mkIf (configAttrs != { }) configAttrs;
+  in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraPlugins = [pkgs.vimPlugins.lightline-vim];
+        globals.lightline = mkIf (configAttrs != {}) configAttrs;
+      };
     };
-  };
 }

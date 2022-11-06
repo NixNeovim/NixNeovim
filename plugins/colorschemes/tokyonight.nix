@@ -1,8 +1,12 @@
-{ pkgs, config, lib, ... }:
-with lib;
-let
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+with lib; let
   cfg = config.programs.nixvim.colorschemes.tokyonight;
-  style = types.enum [ "storm" "night" "day" ];
+  style = types.enum ["storm" "night" "day"];
 in {
   options = {
     programs.nixvim.colorschemes.tokyonight = {
@@ -12,7 +16,8 @@ in {
         default = null;
         description = "Theme style";
       };
-      terminalColors = mkEnableOption
+      terminalColors =
+        mkEnableOption
         "Configure the colors used when opening a :terminal in Neovim";
       italicComments = mkEnableOption "Make comments italic";
       italicKeywords = mkEnableOption "Make keywords italic";
@@ -20,23 +25,28 @@ in {
       italicVariables = mkEnableOption "Make variables and identifiers italic";
       transparent =
         mkEnableOption "Enable this to disable setting the background color";
-      hideInactiveStatusline = mkEnableOption
+      hideInactiveStatusline =
+        mkEnableOption
         "Enabling this option will hide inactive statuslines and replace them with a thin border";
-      transparentSidebar = mkEnableOption
+      transparentSidebar =
+        mkEnableOption
         "Sidebar like windows like NvimTree get a transparent background";
-      darkSidebar = mkEnableOption
+      darkSidebar =
+        mkEnableOption
         "Sidebar like windows like NvimTree get a darker background";
-      darkFloat = mkEnableOption
+      darkFloat =
+        mkEnableOption
         "Float windows like the lsp diagnostics windows get a darker background";
-      lualineBold = mkEnableOption
+      lualineBold =
+        mkEnableOption
         "When true, section headers in the lualine theme will be bold";
     };
   };
   config = mkIf cfg.enable {
     programs.nixvim = {
       colorscheme = "tokyonight";
-      extraPlugins = [ pkgs.vimPlugins.tokyonight-nvim ];
-      options = { termguicolors = true; };
+      extraPlugins = [pkgs.vimPlugins.tokyonight-nvim];
+      options = {termguicolors = true;};
       globals = {
         tokyonight_style = mkIf (cfg.style != null) cfg.style;
         tokyonight_terminal_colors = mkIf (!cfg.terminalColors) 0;

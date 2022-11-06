@@ -1,8 +1,12 @@
-{ config, pkgs, lib, ... }:
-with lib;
-let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+with lib; let
   cfg = config.programs.nixvim.plugins.easyescape;
-  helpers = import ../helpers.nix { inherit lib; };
+  helpers = import ../helpers.nix {inherit lib;};
 in {
   options = {
     programs.nixvim.plugins.easyescape = {
@@ -11,7 +15,7 @@ in {
   };
   config = mkIf cfg.enable {
     programs.nixvim = {
-      extraPlugins = with pkgs.vimPlugins; [ vim-easyescape ];
+      extraPlugins = with pkgs.vimPlugins; [vim-easyescape];
     };
   };
 }

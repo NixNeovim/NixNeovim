@@ -1,8 +1,12 @@
-{ config, lib, pkgs, ... }:
-with lib;
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
   cfg = config.programs.nixvim.plugins.neogit;
-  helpers = import ../helpers.nix { inherit lib; };
+  helpers = import ../helpers.nix {inherit lib;};
 
   sectionDefaultsModule = types.submodule {
     options = {
@@ -69,7 +73,7 @@ in {
             };
           };
         };
-        default = { };
+        default = {};
       };
 
       kind = mkOption {
@@ -101,7 +105,7 @@ in {
             };
           };
         };
-        default = { };
+        default = {};
       };
 
       integrations = mkOption {
@@ -115,7 +119,7 @@ in {
             };
           };
         };
-        default = { };
+        default = {};
       };
 
       sections = mkOption {
@@ -159,7 +163,7 @@ in {
             };
           };
         };
-        default = { };
+        default = {};
       };
 
       mappings = mkOption {
@@ -195,7 +199,7 @@ in {
             };
           };
         };
-        default = { };
+        default = {};
       };
     };
   };
@@ -213,15 +217,16 @@ in {
         use_magit_keybindings = useMagitKeybindings;
         commit_popup = commitPopup;
       };
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = with pkgs.vimPlugins;
-        [ neogit plenary-nvim ]
-        ++ optional cfg.integrations.diffview diffview-nvim;
+  in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraPlugins = with pkgs.vimPlugins;
+          [neogit plenary-nvim]
+          ++ optional cfg.integrations.diffview diffview-nvim;
 
-      extraConfigLua = ''
-        require('neogit').setup(${setupOptions})
-      '';
+        extraConfigLua = ''
+          require('neogit').setup(${setupOptions})
+        '';
+      };
     };
-  };
 }

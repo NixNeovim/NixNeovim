@@ -1,27 +1,29 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
+with lib; let
+  helpers = import ../../helpers.nix {inherit lib config;};
 
-with lib;
-
-let
-
-  helpers = import ../../helpers.nix { inherit lib config; };
-
-  extensions = { manix = { }; };
+  extensions = {manix = {};};
 
   mkExtension = name: options:
     mkOption {
       type = types.submodule {
-        options = {
-          enable = mkEnableOption "Enable ${name}";
-          extraConfig = mkOption {
-            type = types.attrs;
-            default = { };
-          };
-        } // options;
+        options =
+          {
+            enable = mkEnableOption "Enable ${name}";
+            extraConfig = mkOption {
+              type = types.attrs;
+              default = {};
+            };
+          }
+          // options;
       };
       description = "TODO";
-      default = { };
+      default = {};
     };
-
-in mapAttrs mkExtension extensions
-
+in
+  mapAttrs mkExtension extensions

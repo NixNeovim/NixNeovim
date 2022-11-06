@@ -1,14 +1,16 @@
-{ lib, config, pkgs, ... }:
-
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 with lib;
-with types;
-let
+with types; let
+  helpers = import ../../../helpers.nix {inherit lib config;};
 
-  helpers = import ../../../helpers.nix { inherit lib config; };
-
-  luaSnipOptions = submodule { options = { enable = mkEnableOption ""; }; };
-
-in mkOption {
-  type =
-    submodule { options = { luasnip = mkOption { type = luaSnipOptions; }; }; };
-}
+  luaSnipOptions = submodule {options = {enable = mkEnableOption "";};};
+in
+  mkOption {
+    type =
+      submodule {options = {luasnip = mkOption {type = luaSnipOptions;};};};
+  }

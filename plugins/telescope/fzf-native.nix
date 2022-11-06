@@ -1,6 +1,11 @@
-{ pkgs, config, lib, ... }:
-with lib;
-let cfg = config.programs.nixvim.plugins.telescope.extensions.fzf-native;
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+with lib; let
+  cfg = config.programs.nixvim.plugins.telescope.extensions.fzf-native;
 in {
   options.programs.nixvim.plugins.telescope.extensions.fzf-native = {
     enable = mkEnableOption "Enable fzf-native";
@@ -22,7 +27,7 @@ in {
     };
     caseMode = mkOption {
       type =
-        types.nullOr (types.enum [ "smart_case" "ignore_case" "respect_case" ]);
+        types.nullOr (types.enum ["smart_case" "ignore_case" "respect_case"]);
       default = null;
     };
   };
@@ -34,11 +39,11 @@ in {
       override_file_sorter = cfg.overrideFileSorter;
       case_mode = cfg.caseMode;
     };
-  in mkIf cfg.enable {
-    programs.nixvim.extraPlugins =
-      [ pkgs.vimPlugins.telescope-fzf-native-nvim ];
+  in
+    mkIf cfg.enable {
+      programs.nixvim.extraPlugins = [pkgs.vimPlugins.telescope-fzf-native-nvim];
 
-    programs.nixvim.plugins.telescope.enabledExtensions = [ "fzf" ];
-    programs.nixvim.plugins.telescope.extensionConfig."fzf" = configuration;
-  };
+      programs.nixvim.plugins.telescope.enabledExtensions = ["fzf"];
+      programs.nixvim.plugins.telescope.extensionConfig."fzf" = configuration;
+    };
 }

@@ -1,8 +1,12 @@
-{ pkgs, config, lib, ... }:
-with lib;
-let
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+with lib; let
   cfg = config.programs.nixvim.plugins.nvim-tree;
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../helpers.nix {inherit lib config;};
 in {
   options.programs.nixvim.plugins.nvim-tree = {
     enable = mkEnableOption "Enable nvim-tree";
@@ -243,16 +247,17 @@ in {
         require_confirm = cfg.trash.requireConfirm;
       };
     };
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = with pkgs.vimExtraPlugins; [
-        nvim-tree-lua
-        nvim-web-devicons
-      ];
+  in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraPlugins = with pkgs.vimExtraPlugins; [
+          nvim-tree-lua
+          nvim-web-devicons
+        ];
 
-      extraConfigLua = ''
-        require('nvim-tree').setup(${helpers.toLuaObject options})
-      '';
+        extraConfigLua = ''
+          require('nvim-tree').setup(${helpers.toLuaObject options})
+        '';
+      };
     };
-  };
 }

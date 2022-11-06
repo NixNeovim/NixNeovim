@@ -1,6 +1,7 @@
-{ lib, helpers, ... }:
-
+{
+  lib,
+  helpers,
+  ...
+}:
 with lib;
-with helpers;
-
-{ }
+with helpers; {}

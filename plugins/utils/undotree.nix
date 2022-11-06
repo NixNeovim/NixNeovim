@@ -1,8 +1,12 @@
-{ pkgs, config, lib, ... }:
-with lib;
-let
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+with lib; let
   cfg = config.programs.nixvim.plugins.undotree;
-  helpers = import ../helpers.nix { inherit lib; };
+  helpers = import ../helpers.nix {inherit lib;};
 in {
   options = {
     programs.nixvim.plugins.undotree = {
@@ -11,8 +15,7 @@ in {
       windowLayout = mkOption {
         type = types.nullOr types.int;
         default = null;
-        description =
-          "Window layout for undotree. Check https://github.com/mbbill/undotree/blob/master/plugin/undotree.vim#L29 for reference";
+        description = "Window layout for undotree. Check https://github.com/mbbill/undotree/blob/master/plugin/undotree.vim#L29 for reference";
       };
 
       shortIndicators = mkOption {
@@ -109,7 +112,7 @@ in {
 
   config = mkIf cfg.enable {
     programs.nixvim = {
-      extraPlugins = [ pkgs.vimPlugins.undotree ];
+      extraPlugins = [pkgs.vimPlugins.undotree];
 
       globals = {
         undotree_WindowLayout =

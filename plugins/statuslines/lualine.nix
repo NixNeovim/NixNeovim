@@ -1,8 +1,12 @@
-{ pkgs, config, lib, ... }:
-with lib;
-let
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+with lib; let
   cfg = config.programs.nixvim.plugins.lualine;
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../helpers.nix {inherit lib config;};
   separators = mkOption {
     type = types.nullOr (types.submodule {
       options = {
@@ -30,7 +34,7 @@ let
             default = "${mode}";
           };
           icons_enabled = mkOption {
-            type = types.enum [ "True" "False" ];
+            type = types.enum ["True" "False"];
             default = "True";
             description = "displays icons in alongside component";
           };
@@ -74,8 +78,7 @@ in {
       alwaysDivideMiddle = mkOption {
         type = types.nullOr types.bool;
         default = null;
-        description =
-          "When true, left_sections (a,b,c) can't take over entire statusline";
+        description = "When true, left_sections (a,b,c) can't take over entire statusline";
       };
 
       sections = mkOption {
@@ -130,11 +133,11 @@ in {
       inherit (cfg) tabline;
       inherit (cfg) extensions;
     };
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = [ pkgs.vimPlugins.lualine-nvim ];
-      extraConfigLua =
-        ''require("lualine").setup(${helpers.toLuaObject setupOptions})'';
+  in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraPlugins = [pkgs.vimPlugins.lualine-nvim];
+        extraConfigLua = ''require("lualine").setup(${helpers.toLuaObject setupOptions})'';
+      };
     };
-  };
 }

@@ -1,7 +1,14 @@
-{ nixos ? false, nixOnDroid ? false, homeManager ? false, pkgs }:
-{ lib, config, ... }:
-with lib;
-let
+{
+  nixos ? false,
+  nixOnDroid ? false,
+  homeManager ? false,
+  pkgs,
+}: {
+  lib,
+  config,
+  ...
+}:
+with lib; let
   cfg = config.programs.nixvim;
 
   pluginWithConfigType = types.submodule {
@@ -12,9 +19,11 @@ let
         default = "";
       };
 
-      optional = mkEnableOption "optional" // {
-        description = "Don't load by default (load with :packadd)";
-      };
+      optional =
+        mkEnableOption "optional"
+        // {
+          description = "Don't load by default (load with :packadd)";
+        };
 
       plugin = mkOption {
         type = types.package;
@@ -77,15 +86,15 @@ let
     })
   ];
 
-  mapOptions = mode: mkOption {
-    description = "Mappings for ${mode} mode";
-    type = types.attrsOf mapOption;
-    default = { };
-  };
+  mapOptions = mode:
+    mkOption {
+      description = "Mappings for ${mode} mode";
+      type = types.attrsOf mapOption;
+      default = {};
+    };
 
-  helpers = import ./plugins/helpers.nix { inherit lib config; };
-in
-{
+  helpers = import ./plugins/helpers.nix {inherit lib config;};
+in {
   options = {
     programs.nixvim = {
       enable = mkEnableOption "enable NixVim";
@@ -98,7 +107,7 @@ in
 
       extraPlugins = mkOption {
         type = with types; listOf (either package pluginWithConfigType);
-        default = [ ];
+        default = [];
         description = "List of vim plugins to install.";
       };
 
@@ -134,26 +143,26 @@ in
 
       extraPackages = mkOption {
         type = types.listOf types.package;
-        default = [ ];
+        default = [];
         example = "[ pkgs.shfmt ]";
         description = "Extra packages to be made available to neovim";
       };
 
       configure = mkOption {
         type = types.attrsOf types.anything;
-        default = { };
+        default = {};
         description = "Internal option";
       };
 
       options = mkOption {
         type = types.attrsOf types.anything;
-        default = { };
+        default = {};
         description = "The configuration options, e.g. line numbers";
       };
 
       globals = mkOption {
         type = types.attrsOf types.anything;
-        default = { };
+        default = {};
         description = "Global variables";
       };
 
@@ -174,7 +183,7 @@ in
             command = mapOptions "command-line";
           };
         };
-        default = { };
+        default = {};
         description = ''
           Custom keybindings for any mode.
 
@@ -199,24 +208,31 @@ in
     ./plugins
   ];
 
-  config =
-    let
-      neovimConfig = pkgs.neovimUtils.makeNeovimConfig {
-        inherit (cfg) configure;
-        plugins = cfg.extraPlugins;
-      };
+  config = let
+    neovimConfig = pkgs.neovimUtils.makeNeovimConfig {
+      inherit (cfg) configure;
+      plugins = cfg.extraPlugins;
+    };
 
-      extraWrapperArgs = optionalString (cfg.extraPackages != [ ])
-        ''--prefix PATH : "${makeBinPath cfg.extraPackages}"'';
+    extraWrapperArgs =
+      optionalString (cfg.extraPackages != [])
+      ''--prefix PATH : "${makeBinPath cfg.extraPackages}"'';
 
-      package = if (cfg.package != null) then cfg.package else pkgs.neovim;
+    package =
+      if (cfg.package != null)
+      then cfg.package
+      else pkgs.neovim;
 
-      wrappedNeovim = pkgs.wrapNeovimUnstable package (neovimConfig // {
-        wrapperArgs = lib.escapeShellArgs neovimConfig.wrapperArgs + " "
+    wrappedNeovim = pkgs.wrapNeovimUnstable package (neovimConfig
+      // {
+        wrapperArgs =
+          lib.escapeShellArgs neovimConfig.wrapperArgs
+          + " "
           + extraWrapperArgs;
       });
 
-      luaGlobals = optionalString (cfg.globals != { }) ''
+    luaGlobals =
+      optionalString (cfg.globals != {}) ''
         -- Set up globals {{{
         local __nixvim_globals = ${helpers.toLuaObject cfg.globals}
 
@@ -224,7 +240,8 @@ in
           vim.g[k] = v
         end
         -- }}}
-      '' + optionalString (cfg.options != { }) ''
+      ''
+      + optionalString (cfg.options != {}) ''
         -- Set up options {{{
         local __nixvim_options = ${helpers.toLuaObject cfg.options}
 
@@ -232,7 +249,8 @@ in
           vim.o[k] = v
         end
         -- }}}
-      '' + optionalString (mappings != [ ]) ''
+      ''
+      + optionalString (mappings != []) ''
         -- Set up keybinds {{{
         local __nixvim_binds = ${helpers.toLuaObject mappings}
 
@@ -242,66 +260,82 @@ in
         -- }}}
       '';
 
-      configure = {
-        # Make sure that globals are set before plugins are setup.
-        # This is becuase you might want to define variables or global functions
-        # that the plugin configuration depend upon.
-        customRC = cfg.extraConfigVim + ''
+    configure = {
+      # Make sure that globals are set before plugins are setup.
+      # This is becuase you might want to define variables or global functions
+      # that the plugin configuration depend upon.
+      customRC =
+        cfg.extraConfigVim
+        + ''
           lua <<EOF
           ${cfg.extraLuaPreConfig}
           ${luaGlobals}
           ${cfg.extraConfigLua}
-        '' +
+        ''
+        +
         # Set colorscheme after setting globals.
         # Some colorschemes depends on variables being set before setting the colorscheme.
         (optionalString (cfg.colorscheme != "" && cfg.colorscheme != null) ''
           vim.cmd([[colorscheme ${cfg.colorscheme}]])
-        '') +
-        ''
-        ${cfg.extraLuaPostConfig}
-        EOF
+        '')
+        + ''
+          ${cfg.extraLuaPostConfig}
+          EOF
         '';
 
-        packages.nixvim = {
-          start = filter (f: f != null) (map
-            (x:
-              if x ? plugin && x.optional then null else (x.plugin or x))
-            cfg.extraPlugins);
-          opt = filter (f: f != null)
-            (map (x: if x ? plugin && x.optional then x.plugin else null)
-              cfg.extraPlugins);
-        };
+      packages.nixvim = {
+        start = filter (f: f != null) (map
+          (x:
+            if x ? plugin && x.optional
+            then null
+            else (x.plugin or x))
+          cfg.extraPlugins);
+        opt =
+          filter (f: f != null)
+          (map (x:
+            if x ? plugin && x.optional
+            then x.plugin
+            else null)
+          cfg.extraPlugins);
       };
+    };
 
-      mappings =
-        (helpers.genMaps "" cfg.maps.normalVisualOp) ++
-        (helpers.genMaps "n" cfg.maps.normal) ++
-        (helpers.genMaps "i" cfg.maps.insert) ++
-        (helpers.genMaps "v" cfg.maps.visual) ++
-        (helpers.genMaps "x" cfg.maps.visualOnly) ++
-        (helpers.genMaps "s" cfg.maps.select) ++
-        (helpers.genMaps "t" cfg.maps.terminal) ++
-        (helpers.genMaps "o" cfg.maps.operator) ++
-        (helpers.genMaps "l" cfg.maps.lang) ++
-        (helpers.genMaps "!" cfg.maps.insertCommand) ++
-        (helpers.genMaps "c" cfg.maps.command);
-
-    in
-    mkIf cfg.enable (if nixos then {
-      environment.systemPackages = [ wrappedNeovim ];
-      programs.neovim = {
-        inherit configure;
-      };
-
-      environment.etc."xdg/nvim/sysinit.vim".text = neovimConfig.neovimRcContent;
-    } else
-      (if homeManager then {
+    mappings =
+      (helpers.genMaps "" cfg.maps.normalVisualOp)
+      ++ (helpers.genMaps "n" cfg.maps.normal)
+      ++ (helpers.genMaps "i" cfg.maps.insert)
+      ++ (helpers.genMaps "v" cfg.maps.visual)
+      ++ (helpers.genMaps "x" cfg.maps.visualOnly)
+      ++ (helpers.genMaps "s" cfg.maps.select)
+      ++ (helpers.genMaps "t" cfg.maps.terminal)
+      ++ (helpers.genMaps "o" cfg.maps.operator)
+      ++ (helpers.genMaps "l" cfg.maps.lang)
+      ++ (helpers.genMaps "!" cfg.maps.insertCommand)
+      ++ (helpers.genMaps "c" cfg.maps.command);
+  in
+    mkIf cfg.enable (
+      if nixos
+      then {
+        environment.systemPackages = [wrappedNeovim];
         programs.neovim = {
-          enable = true;
-          package = mkIf (cfg.package != null) cfg.package;
-          inherit (cfg) extraPackages;
-          extraConfig = configure.customRC;
-          plugins = cfg.extraPlugins;
+          inherit configure;
         };
-      } else { }));
+
+        environment.etc."xdg/nvim/sysinit.vim".text = neovimConfig.neovimRcContent;
+      }
+      else
+        (
+          if homeManager
+          then {
+            programs.neovim = {
+              enable = true;
+              package = mkIf (cfg.package != null) cfg.package;
+              inherit (cfg) extraPackages;
+              extraConfig = configure.customRC;
+              plugins = cfg.extraPlugins;
+            };
+          }
+          else {}
+        )
+    );
 }
