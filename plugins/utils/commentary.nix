@@ -1,12 +1,9 @@
-{
-  pkgs,
-  config,
-  lib,
-  ...
-}:
-with lib; let
+{ pkgs, config, lib, ... }:
+with lib;
+let
   cfg = config.programs.nixvim.plugins.commentary;
-in {
+in
+{
   # TODO Add support for aditional filetypes. This requires autocommands!
 
   options = {
@@ -16,6 +13,8 @@ in {
   };
 
   config = mkIf cfg.enable {
-    programs.nixvim = {extraPlugins = [pkgs.vimPlugins.vim-commentary];};
+    programs.nixvim = {
+      extraPlugins = [ pkgs.vimPlugins.vim-commentary ];
+    };
   };
 }

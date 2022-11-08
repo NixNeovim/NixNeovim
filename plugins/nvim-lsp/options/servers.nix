@@ -1,12 +1,11 @@
-{
-  lib,
-  config,
-  pkgs,
-  ...
-}:
+{ lib, config, pkgs, ... }:
+
 with lib;
-with types; let
-  helpers = import ../../helpers.nix {inherit lib config;};
+with types;
+
+let
+
+  helpers = import ../../helpers.nix { inherit lib config; };
 
   mkServerOption = server: attr:
     mkOption {
@@ -18,9 +17,7 @@ with types; let
             description = "A lua function to be run when ${server.name} is attached. The argument `client` and `bufnr` are provided.";
             default = "";
           };
-          extraConfig =
-            strOption ""
-            "Extra config passed lsp setup function after `on_attach`";
+          extraConfig = strOption "" "Extra config passed lsp setup function after `on_attach`";
         };
       };
       description = "Module for the ${name} (${attr.package}) lsp server for nvim-lsp. Languages: ${server.languages}";
@@ -30,84 +27,92 @@ with types; let
   serversSet = {
     clangd = {
       languages = "C, C++";
-      packages = [clang-tools];
+      packages = [ clang-tools ];
     };
     cssls = {
       languages = "CSS";
-      packages = [nodePackages.vscode-langservers-extracted];
+      packages = [ nodePackages.vscode-langservers-extracted ];
     };
     eslint = {
       languages = "eslint";
-      packages = [nodePackages.vscode-langservers-extracted];
+      packages = [ nodePackages.vscode-langservers-extracted ];
     };
     gdscript = {
       languages = "Godot";
       packages = [];
     };
-    gopls = {languages = "Go";};
+    gopls = {
+      languages = "Go";
+    };
     hls = {
       languages = "Haskell";
-      packages = [haskell-language-server ghc];
+      packages = [ haskell-language-server ghc ];
     };
     html = {
       languages = "HTML";
-      packages = [nodePackages.vscode-langservers-extracted];
+      packages = [ nodePackages.vscode-langservers-extracted ];
     };
     jsonls = {
       languages = "JSON";
-      packages = [nodePackages.vscode-langservers-extracted];
+      packages = [ nodePackages.vscode-langservers-extracted ];
     };
     kotlin-language-server = {
       languages = "Kotlin";
-      packages = [pkgs.kotlin-language-server];
+      packages = [ pkgs.kotlin-language-server ];
       serverName = "kotlin_language_server";
     };
     ltex = {
       languages = "text files";
-      packages = [unstable.ltex-ls];
+      packages = [ unstable.ltex-ls ];
     };
-    pyright = {languages = "Python";};
+    pyright = {
+      languages = "Python";
+    };
     rnix-lsp = {
       languages = "Nix";
-      packages = [rnix-lsp];
+      packages = [ rnix-lsp ];
       serverName = "rnix";
     };
     rust-analyzer = {
       languages = "Rust";
       serverName = "rust_analyzer";
-      packages = [cargo];
+      packages = [ cargo ];
     };
-    texlab = {languages = "latex";};
+    texlab = {
+      languages = "latex";
+    };
     vuels = {
       languages = "Vue";
-      packages = [nodePackages.vue-language-server];
+      packages = [ nodePackages.vue-language-server ];
     };
-    zls = {languages = "Zig";};
+    zls = {
+      languages = "Zig";
+    };
   };
 
   # fill out missing information to language server definition
   fillMissingInfo = name: {
-    languages ? "unspecified",
-    packages ? [pkgs.vimExtraPlugins.${name}],
-    serverName ? name,
-  }: {
-    inherit languages packages serverName;
-  };
+      languages ? "unspecified",
+      packages ? [ pkgs.vimExtraPlugins.${name} ],
+      serverName ? name
+    }: { inherit languages packages serverName; };
+
 
   servers = mapAttrs fillMissingInfo serversSet;
 
   # filter only activated servers
-  activated = cfg-servers:
-    filterAttrs (name: attrs: cfg-servers.${name}.enable) servers;
+  activated = cfg-servers: filterAttrs (name: attrs: cfg-servers.${name}.enable) servers;
+
 in {
+
   # create nix Option for all servers
   options = mapAttrs mkServerOption servers;
 
-  inherit activated;
+  activated = activated;
 
-  packages = cfg-servers: let
-    lists =
-      mapAttrsToList (name: attrs: attrs.packages) (activated cfg-servers);
-  in
-    flatten lists; # # return packages of activated sources
+  packages = cfg-servers:
+    let
+      lists = mapAttrsToList (name: attrs: attrs.packages) (activated cfg-servers);
+    in flatten lists; ## return packages of activated sources
+
 }

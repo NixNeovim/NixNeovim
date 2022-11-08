@@ -1,12 +1,9 @@
-{
-  pkgs,
-  config,
-  lib,
-  ...
-}:
-with lib; let
+{ pkgs, config, lib, ... }:
+with lib;
+let 
   cfg = config.programs.nixvim.plugins.telescope.extensions.frecency;
-in {
+in
+{
   options.programs.nixvim.plugins.telescope.extensions.frecency = {
     enable = mkEnableOption "Enable frecency";
 
@@ -53,20 +50,18 @@ in {
       default_workspace = cfg.defaultWorkspace;
       ignore_patterns = cfg.ignorePatterns;
       show_scores = cfg.showScores;
-      inherit (cfg) workspaces;
+      workspaces = cfg.workspaces;
       show_unindexed = cfg.showUnindexed;
       devicons_disabled = cfg.deviconsDisabled;
     };
-  in
-    mkIf cfg.enable {
-      programs.nixvim.extraPackages = [pkgs.sqlite];
-      programs.nixvim.extraPlugins = with pkgs.vimPlugins; [
-        telescope-frecency-nvim
-        sqlite-lua
-      ];
+  in mkIf cfg.enable {
+    programs.nixvim.extraPackages = [ pkgs.sqlite ];
+    programs.nixvim.extraPlugins = with pkgs.vimPlugins; [ 
+      telescope-frecency-nvim
+      sqlite-lua
+    ];
 
-      programs.nixvim.plugins.telescope.enabledExtensions = ["frecency"];
-      programs.nixvim.plugins.telescope.extensionConfig."frecency" =
-        configuration;
-    };
+    programs.nixvim.plugins.telescope.enabledExtensions = [ "frecency" ];
+    programs.nixvim.plugins.telescope.extensionConfig."frecency" = configuration;
+  };
 }

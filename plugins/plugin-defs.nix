@@ -1,7 +1,8 @@
 # This is for plugins not in nixpkgs
 # e.g. intellitab.nvim
 # Ideally, in the future, this would all be specified as a flake input!
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   intellitab-nvim = pkgs.vimUtils.buildVimPlugin rec {
     pname = "intellitab-nvim";
     version = "a6c1a505865f6131866d609c52440306e9914b16";
@@ -46,7 +47,7 @@
           sha256 = "sha256-/m4Paw6AvDzTMWWCWpPnrdI4gsjIDSJPvGCMV7ufbEA=";
         };
 
-        propagatedBuildInputs = [pkgs.python3Packages.pynvim];
+        propagatedBuildInputs = [ pkgs.python3Packages.pynvim ];
       })
       (ps.buildPythonPackage rec {
         pname = "std2";

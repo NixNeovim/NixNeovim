@@ -1,10 +1,6 @@
-{
-  pkgs,
-  config,
-  lib,
-  ...
-}:
-with lib; let
+{ pkgs, config, lib, ... }:
+with lib;
+let
   cfg = config.programs.nixvim.colorschemes.base16;
   themes = import ./base16-list.nix;
 in {
@@ -34,9 +30,9 @@ in {
   config = mkIf cfg.enable {
     programs.nixvim = {
       colorscheme = "base16-${cfg.colorscheme}";
-      extraPlugins = [pkgs.vimPlugins.base16-vim];
+      extraPlugins = [ pkgs.vimPlugins.base16-vim ];
 
-      plugins.airline.theme = mkIf cfg.setUpBar "base16";
+      plugins.airline.theme = mkIf (cfg.setUpBar) "base16";
       plugins.lightline.colorscheme = null;
 
       options.termguicolors = mkIf cfg.useTruecolor true;

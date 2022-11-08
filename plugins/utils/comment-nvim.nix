@@ -1,13 +1,10 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
-with lib; let
+{ config, pkgs, lib, ... }:
+with lib;
+let
   cfg = config.programs.nixvim.plugins.comment-nvim;
-  helpers = import ../helpers.nix {inherit lib;};
-in {
+  helpers = import ../helpers.nix { inherit lib; };
+in
+{
   options = {
     programs.nixvim.plugins.comment-nvim = {
       enable = mkEnableOption "Enable comment-nvim";
@@ -27,7 +24,7 @@ in {
         default = null;
       };
       toggler = mkOption {
-        type = types.nullOr (types.submodule (_: {
+        type = types.nullOr (types.submodule ({...}: {
           options = {
             line = mkOption {
               type = types.str;
@@ -45,7 +42,7 @@ in {
         default = null;
       };
       opleader = mkOption {
-        type = types.nullOr (types.submodule (_: {
+        type = types.nullOr (types.submodule ({...}: {
           options = {
             line = mkOption {
               type = types.str;
@@ -63,7 +60,7 @@ in {
         default = null;
       };
       mappings = mkOption {
-        type = types.nullOr (types.submodule (_: {
+        type = types.nullOr (types.submodule ({...}: {
           options = {
             basic = mkOption {
               type = types.bool;
@@ -90,18 +87,18 @@ in {
 
   config = let
     setupOptions = {
-      inherit (cfg) padding;
-      inherit (cfg) sticky;
-      inherit (cfg) ignore;
-      inherit (cfg) toggler;
-      inherit (cfg) opleader;
-      inherit (cfg) mappings;
+      padding = cfg.padding;
+      sticky = cfg.sticky;
+      ignore = cfg.ignore;
+      toggler = cfg.toggler;
+      opleader = cfg.opleader;
+      mappings = cfg.mappings;
     };
-  in
-    mkIf cfg.enable {
-      programs.nixvim = {
-        extraPlugins = [pkgs.vimPlugins.comment-nvim];
-        extraConfigLua = ''require("Comment").setup${helpers.toLuaObject setupOptions}'';
-      };
+    in mkIf cfg.enable {
+    programs.nixvim = {
+      extraPlugins = [ pkgs.vimPlugins.comment-nvim ];
+      extraConfigLua =
+        ''require("Comment").setup${helpers.toLuaObject setupOptions}'';
     };
+  };
 }

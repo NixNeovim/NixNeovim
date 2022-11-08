@@ -1,12 +1,8 @@
-{
-  pkgs,
-  config,
-  lib,
-  ...
-}:
-with lib; let
+{ pkgs, config, lib, ... }:
+with lib;
+let
   cfg = config.programs.nixvim.plugins.lightline;
-  helpers = import ../helpers.nix {inherit lib;};
+  helpers = import ../helpers.nix { inherit lib; };
 in {
   options = {
     programs.nixvim.plugins.lightline = {
@@ -82,11 +78,10 @@ in {
     configAttrs = filterAttrs (_: v: v != null) {
       inherit (cfg) colorscheme active component componentFunction modeMap;
     };
-  in
-    mkIf cfg.enable {
-      programs.nixvim = {
-        extraPlugins = [pkgs.vimPlugins.lightline-vim];
-        globals.lightline = mkIf (configAttrs != {}) configAttrs;
-      };
+  in mkIf cfg.enable {
+    programs.nixvim = {
+      extraPlugins = [ pkgs.vimPlugins.lightline-vim ];
+      globals.lightline = mkIf (configAttrs != {}) configAttrs;
     };
+  };
 }

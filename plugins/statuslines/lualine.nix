@@ -1,12 +1,8 @@
-{
-  pkgs,
-  config,
-  lib,
-  ...
-}:
-with lib; let
+{ pkgs, config, lib, ... }:
+with lib;
+let
   cfg = config.programs.nixvim.plugins.lualine;
-  helpers = import ../helpers.nix {inherit lib config;};
+  helpers = import ../helpers.nix { inherit lib config; };
   separators = mkOption {
     type = types.nullOr (types.submodule {
       options = {
@@ -34,7 +30,7 @@ with lib; let
             default = "${mode}";
           };
           icons_enabled = mkOption {
-            type = types.enum ["True" "False"];
+            type = types.enum [ "True" "False" ];
             default = "True";
             description = "displays icons in alongside component";
           };
@@ -49,11 +45,10 @@ with lib; let
       default = null;
     };
 
-  sections_option = default:
-    mkOption {
-      type = types.nullOr (types.listOf types.str);
-      inherit default;
-    };
+  sections_option = default: mkOption {
+    type = types.nullOr (types.listOf types.str);
+    default = default;
+  };
 in {
   options = {
     programs.nixvim.plugins.lualine = {
@@ -79,11 +74,12 @@ in {
       alwaysDivideMiddle = mkOption {
         type = types.nullOr types.bool;
         default = null;
-        description = "When true, left_sections (a,b,c) can't take over entire statusline";
+        description =
+          "When true, left_sections (a,b,c) can't take over entire statusline";
       };
 
       sections = mkOption {
-        type = types.nullOr (types.submodule (_: {
+        type = types.nullOr (types.submodule ({ ... }: {
           options = {
             lualine_a = sections_option "mode";
             lualine_b = sections_option "branch";
@@ -99,7 +95,7 @@ in {
       };
 
       tabline = mkOption {
-        type = types.nullOr (types.submodule (_: {
+        type = types.nullOr (types.submodule ({ ... }: {
           options = {
             lualine_a = sections_option "";
             lualine_b = sections_option "";
@@ -132,11 +128,11 @@ in {
 
       inherit (cfg) sections tabline extensions;
     };
-  in
-    mkIf cfg.enable {
-      programs.nixvim = {
-        extraPlugins = [pkgs.vimPlugins.lualine-nvim];
-        extraConfigLua = ''require("lualine").setup(${helpers.toLuaObject setupOptions})'';
-      };
+  in mkIf cfg.enable {
+    programs.nixvim = {
+      extraPlugins = [ pkgs.vimPlugins.lualine-nvim ];
+      extraConfigLua =
+        ''require("lualine").setup(${helpers.toLuaObject setupOptions})'';
     };
+  };
 }

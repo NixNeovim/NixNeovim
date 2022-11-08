@@ -1,21 +1,12 @@
-{
-  lib,
-  helpers,
-  ...
-}:
+{ lib, helpers, ... }:
+
 with lib;
 with helpers;
-with types; {
+with types;
+
+{
   searchMethod = mkOption {
-    type = enum [
-      "cover"
-      "cover_or_next"
-      "cover_or_prev"
-      "cover_or_nearest"
-      "next"
-      "previous"
-      "nearest"
-    ];
+    type = enum [ "cover" "cover_or_next" "cover_or_prev" "cover_or_nearest" "next" "previous" "nearest" ];
     default = "cover_or_next";
   };
   nLines = intOption 50 "Number of lines within which textobject is searched";

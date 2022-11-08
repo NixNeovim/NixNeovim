@@ -1,12 +1,8 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
-with lib; let
+{ config, lib, pkgs, ... }:
+with lib;
+let
   cfg = config.programs.nixvim.plugins.neogit;
-  helpers = import ../helpers.nix {inherit lib;};
+  helpers = import ../helpers.nix { inherit lib; };
 
   sectionDefaultsModule = types.submodule {
     options = {
@@ -16,7 +12,8 @@ with lib; let
       };
     };
   };
-in {
+in
+{
   options = {
     programs.nixvim.plugins.neogit = {
       enable = mkEnableOption "Enable neogit";
@@ -73,7 +70,7 @@ in {
             };
           };
         };
-        default = {};
+        default = { };
       };
 
       kind = mkOption {
@@ -105,7 +102,7 @@ in {
             };
           };
         };
-        default = {};
+        default = { };
       };
 
       integrations = mkOption {
@@ -119,7 +116,7 @@ in {
             };
           };
         };
-        default = {};
+        default = { };
       };
 
       sections = mkOption {
@@ -163,7 +160,7 @@ in {
             };
           };
         };
-        default = {};
+        default = { };
       };
 
       mappings = mkOption {
@@ -199,34 +196,33 @@ in {
             };
           };
         };
-        default = {};
+        default = { };
       };
     };
   };
 
-  config = let
-    setupOptions = with cfg;
-      helpers.toLuaObject {
-        inherit kind integrations signs sections mappings;
-        disable_signs = disableSigns;
-        disable_hint = disableHint;
-        disable_context_highlighting = disableContextHighlighting;
-        disable_commit_confirmation = disableCommitConfirmation;
-        auto_refresh = autoRefresh;
-        disable_builtin_notifications = disableBuiltinNotifications;
-        use_magit_keybindings = useMagitKeybindings;
-        commit_popup = commitPopup;
-      };
-  in
-    mkIf cfg.enable {
-      programs.nixvim = {
-        extraPlugins = with pkgs.vimPlugins;
-          [neogit plenary-nvim]
-          ++ optional cfg.integrations.diffview diffview-nvim;
-
-        extraConfigLua = ''
-          require('neogit').setup(${setupOptions})
-        '';
-      };
+  config = let 
+    setupOptions = with cfg; helpers.toLuaObject {
+      inherit kind integrations signs sections mappings;
+      disable_signs = disableSigns;
+      disable_hint = disableHint;
+      disable_context_highlighting = disableContextHighlighting;
+      disable_commit_confirmation = disableCommitConfirmation;
+      auto_refresh = autoRefresh;
+      disable_builtin_notifications = disableBuiltinNotifications;
+      use_magit_keybindings = useMagitKeybindings;
+      commit_popup = commitPopup;
     };
+  in mkIf cfg.enable {
+    programs.nixvim = {
+      extraPlugins = with pkgs.vimPlugins; [
+        neogit
+        plenary-nvim
+      ] ++ optional cfg.integrations.diffview diffview-nvim;
+
+      extraConfigLua = ''
+        require('neogit').setup(${setupOptions})
+      '';
+    };
+  };
 }

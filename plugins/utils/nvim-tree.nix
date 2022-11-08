@@ -1,13 +1,10 @@
-{
-  pkgs,
-  config,
-  lib,
-  ...
-}:
-with lib; let
+{ pkgs, config, lib, ... }:
+with lib;
+let
   cfg = config.programs.nixvim.plugins.nvim-tree;
-  helpers = import ../helpers.nix {inherit lib config;};
-in {
+  helpers = import ../helpers.nix { inherit lib config; };
+in
+{
   options.programs.nixvim.plugins.nvim-tree = {
     enable = mkEnableOption "Enable nvim-tree";
 
@@ -17,7 +14,7 @@ in {
       description = "Disable netrw";
     };
 
-    hijackNetrw = mkOption {
+    hijackNetrw = mkOption  {
       type = types.nullOr types.bool;
       default = null;
       description = "Hijack netrw";
@@ -76,12 +73,11 @@ in {
       };
 
       icons = let
-        diagnosticOption = desc:
-          mkOption {
-            type = types.nullOr types.str;
-            default = null;
-            description = desc;
-          };
+        diagnosticOption = desc: mkOption {
+          type = types.nullOr types.str;
+          default = null;
+          description = desc;
+        };
       in {
         hint = diagnosticOption "Hints";
         info = diagnosticOption "Info";
@@ -216,48 +212,46 @@ in {
       hijack_cursor = cfg.hijackCursor;
       update_cwd = cfg.updateCwd;
       update_to_buf_dir = {
-        inherit (cfg.updateToBufDir) enable;
+        enable = cfg.updateToBufDir.enable;
         auto_open = cfg.updateToBufDir.autoOpen;
       };
-      inherit (cfg) diagnostics;
+      diagnostics = cfg.diagnostics;
       updateFocusedFile = {
-        inherit (cfg.updateFocusedFile) enable;
+        enable = cfg.updateFocusedFile.enable;
         update_cwd = cfg.updateFocusedFile.updateCwd;
         ignore_list = cfg.updateFocusedFile.ignoreList;
       };
       system_open = cfg.systemOpen;
-      inherit (cfg) filters;
-      inherit (cfg) git;
+      filters = cfg.filters;
+      git = cfg.git;
       view = {
-        inherit (cfg.view) width;
-        inherit (cfg.view) height;
+        width = cfg.view.width;
+        height = cfg.view.height;
         hide_root_folder = cfg.view.hideRootFolder;
-        inherit (cfg.view) side;
+        side = cfg.view.side;
         auto_resize = cfg.view.autoResize;
         mappings = {
           custom_only = cfg.view.mappings.customOnly;
-          inherit (cfg.view.mappings) list;
+          list = cfg.view.mappings.list;
         };
-        inherit (cfg.view) number;
-        inherit (cfg.view) relativenumber;
-        inherit (cfg.view) signcolumn;
+        number = cfg.view.number;
+        relativenumber = cfg.view.relativenumber;
+        signcolumn = cfg.view.signcolumn;
       };
       trash = {
-        inherit (cfg.trash) cmd;
+        cmd = cfg.trash.cmd;
         require_confirm = cfg.trash.requireConfirm;
       };
     };
-  in
-    mkIf cfg.enable {
-      programs.nixvim = {
-        extraPlugins = with pkgs.vimExtraPlugins; [
-          nvim-tree-lua
-          nvim-web-devicons
-        ];
+  in mkIf cfg.enable {
+    programs.nixvim = {
+      extraPlugins = with pkgs.vimExtraPlugins; [
+        nvim-tree-lua nvim-web-devicons
+      ];
 
-        extraConfigLua = ''
-          require('nvim-tree').setup(${helpers.toLuaObject options})
-        '';
-      };
+      extraConfigLua = ''
+        require('nvim-tree').setup(${helpers.toLuaObject options})
+      '';
     };
+  };
 }

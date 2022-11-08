@@ -1,15 +1,11 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
-with lib; let
+{ config, pkgs, lib, ... }:
+with lib;
+let
   cfg = config.programs.nixvim.plugins.bufferline;
-  helpers = import ../helpers.nix {inherit lib;};
+  helpers = import ../helpers.nix { inherit lib; };
 
   highlight = mkOption {
-    type = types.nullOr (types.submodule (_: {
+    type = types.nullOr (types.submodule ({ ... }: {
       options = {
         guifg = mkOption {
           type = types.nullOr types.str;
@@ -25,7 +21,8 @@ with lib; let
     }));
     default = null;
   };
-in {
+in
+{
   options = {
     programs.nixvim.plugins.bufferline = {
       enable = mkEnableOption "Enable bufferline";
@@ -56,9 +53,8 @@ in {
       };
       indicatorIcon = mkOption {
         type = types.nullOr types.str;
-        description = ''
-          The Icon shown as a indicator for buffer. Changing it is NOT recommended, 
-                  this is intended to be an escape hatch for people who cannot bear it for whatever reason.'';
+        description = "The Icon shown as a indicator for buffer. Changing it is NOT recommended, 
+        this is intended to be an escape hatch for people who cannot bear it for whatever reason.";
         default = null;
       };
       bufferCloseIcon = mkOption {
@@ -105,7 +101,7 @@ in {
         default = null;
       };
       diagnostics = mkOption {
-        type = types.nullOr (types.enum [false "nvim_lsp" "coc"]);
+        type = types.nullOr (types.enum [ false "nvim_lsp" "coc" ]);
         default = null;
       };
       diagnosticsUpdateInInsert = mkOption {
@@ -122,7 +118,7 @@ in {
       };
       showBufferIcons = mkOption {
         type = types.nullOr types.bool;
-        default = null;
+        default = null; 
       };
       showBufferCloseIcons = mkOption {
         type = types.nullOr types.bool;
@@ -141,7 +137,7 @@ in {
         default = null;
       };
       separatorStyle = mkOption {
-        type = types.nullOr (types.enum ["slant" "thick" "thin"]);
+        type = types.nullOr (types.enum [ "slant" "thick" "thin" ]);
         default = null;
       };
       enforceRegularTabs = mkOption {
@@ -153,18 +149,12 @@ in {
         default = null;
       };
       sortBy = mkOption {
-        type = types.nullOr (types.enum [
-          "id"
-          "extension"
-          "relative_directory"
-          "directory"
-          "tabs"
-        ]);
+        type = types.nullOr (types.enum [ "id" "extension" "relative_directory" "directory" "tabs" ]);
         default = null;
       };
       highlights = mkOption {
         default = null;
-        type = types.nullOr (types.submodule (_: {
+        type = types.nullOr (types.submodule ({...}: {
           options = {
             fill = highlight;
             background = highlight;
@@ -231,10 +221,10 @@ in {
     };
   };
 
-  config = let
+  config = let 
     setupOptions = {
       options = {
-        inherit (cfg) numbers;
+        numbers = cfg.numbers;
         close_command = cfg.closeCommand;
         right_mouse_command = cfg.rightMouseCommand;
         left_mouse_command = cfg.leftMouseCommand;
@@ -249,7 +239,7 @@ in {
         max_name_length = cfg.maxNameLength;
         max_prefix_length = cfg.maxPrefixLength;
         tab_size = cfg.tabSize;
-        inherit (cfg) diagnostics;
+        diagnostics = cfg.diagnostics;
         diagnostics_update_in_insert = cfg.diagnosticsUpdateInInsert;
         diagnostics_indicator = cfg.diagnosticsIndicator;
         custom_filter = cfg.customFilter;
@@ -263,82 +253,78 @@ in {
         always_show_bufferline = cfg.alwaysShowBufferline;
         sort_by = cfg.sortBy;
       };
-      highlights =
-        if builtins.isNull cfg.highlights
-        then null
-        else
-          with cfg.highlights; {
-            inherit fill;
-            inherit background;
+      highlights = if builtins.isNull cfg.highlights then null else with cfg.highlights; {
+        fill = fill;
+        background = background;
 
-            inherit tab;
-            tab_selected = tabSelected;
-            tab_close = tabClose;
-            close_button = closeButton;
-            close_button_visible = closeButtonVisible;
-            close_button_selected = closeButtonSelected;
+        tab = tab;
+        tab_selected = tabSelected;
+        tab_close = tabClose;
+        close_button = closeButton;
+        close_button_visible = closeButtonVisible;
+        close_button_selected = closeButtonSelected;
 
-            buffer_visible = bufferVisible;
-            buffer_selected = bufferSelected;
+        buffer_visible = bufferVisible;
+        buffer_selected = bufferSelected;
 
-            inherit diagnostic;
-            diagnostic_visible = diagnosticVisible;
-            diagnostic_selected = diagnosticSelected;
+        diagnostic = diagnostic;
+        diagnostic_visible = diagnosticVisible;
+        diagnostic_selected = diagnosticSelected;
 
-            inherit info;
-            info_visible = infoVisible;
-            info_selected = infoSelected;
+        info = info;
+        info_visible = infoVisible;
+        info_selected = infoSelected;
 
-            info_diagnostic = infoDiagnostic;
-            info_diagnostic_visible = infoDiagnosticVisible;
-            info_diagnostic_selected = infoDiagnosticSelected;
+        info_diagnostic = infoDiagnostic;
+        info_diagnostic_visible = infoDiagnosticVisible;
+        info_diagnostic_selected = infoDiagnosticSelected;
 
-            inherit warning;
-            warning_visible = warningVisible;
-            warning_selected = warningSelected;
+        warning = warning;
+        warning_visible = warningVisible;
+        warning_selected = warningSelected;
 
-            warning_diagnostic = warningDiagnostic;
-            warning_diagnostic_visible = warningDiagnosticVisible;
-            warning_diagnostic_selected = warningDiagnosticSelected;
+        warning_diagnostic = warningDiagnostic;
+        warning_diagnostic_visible = warningDiagnosticVisible;
+        warning_diagnostic_selected = warningDiagnosticSelected;
 
-            inherit error;
-            error_visible = errorVisible;
-            error_selected = errorSelected;
+        error = error;
+        error_visible = errorVisible;
+        error_selected = errorSelected;
 
-            error_dagnostic = errorDiagnostic;
-            error_diagnostic_visible = errorDiagnosticVisible;
-            error_diagnostic_selected = errorDiagnosticSelected;
+        error_dagnostic = errorDiagnostic;
+        error_diagnostic_visible = errorDiagnosticVisible;
+        error_diagnostic_selected = errorDiagnosticSelected;
 
-            inherit modified;
-            modified_visible = modifiedVisible;
-            modified_selected = modifiedSelected;
+        modified = modified;
+        modified_visible = modifiedVisible;
+        modified_selected = modifiedSelected;
 
-            inherit duplicate;
-            duplicate_visible = duplicateVisible;
-            duplicate_selected = duplicateSelected;
+        duplicate = duplicate;
+        duplicate_visible = duplicateVisible;
+        duplicate_selected = duplicateSelected;
 
-            inherit separator;
-            separator_visible = separatorVisible;
-            separator_selected = separatorSelected;
+        separator = separator;
+        separator_visible = separatorVisible;
+        separator_selected = separatorSelected;
 
-            indicator_selected = indicatorSelected;
+        indicator_selected = indicatorSelected;
 
-            inherit pick;
-            pick_visible = pickVisible;
-            pick_selected = pickSelected;
-          };
-    };
-  in
-    mkIf cfg.enable {
-      programs.nixvim = {
-        extraPlugins = with pkgs.vimExtraPlugins; [
-          bufferline-nvim
-          nvim-web-devicons
-        ];
-        options.termguicolors = true;
-        extraConfigLua = ''
-          require('bufferline').setup${helpers.toLuaObject setupOptions}
-        '';
+        pick = pick;
+        pick_visible = pickVisible;
+        pick_selected = pickSelected;
+
       };
     };
+    in mkIf cfg.enable {
+    programs.nixvim = {
+      extraPlugins = with pkgs.vimExtraPlugins; [
+        bufferline-nvim
+        nvim-web-devicons
+      ];
+      options.termguicolors = true;
+      extraConfigLua = ''
+        require('bufferline').setup${helpers.toLuaObject setupOptions}
+      '';
+    };
+  };
 }

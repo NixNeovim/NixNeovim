@@ -1,13 +1,10 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
-with lib; let
+{ config, pkgs, lib, ... }:
+with lib;
+let
   cfg = config.programs.nixvim.plugins.comment-nvim;
-  defs = import ../plugin-defs.nix {inherit pkgs;};
-in {
+  defs = import ../plugin-defs.nix { inherit pkgs; };
+in
+{
   options = {
     programs.nixvim.plugins.intellitab = {
       enable = mkEnableOption "intellitab.nvim";
@@ -16,10 +13,12 @@ in {
 
   config = mkIf cfg.enable {
     programs.nixvim = {
-      extraPlugins = [defs.intellitab-nvim];
+      extraPlugins = [ defs.intellitab-nvim ];
 
       maps.insert."<Tab>" = "<CMD>lua require([[intellitab]]).indent()<CR>";
-      plugins.treesitter = {indent = true;};
+      plugins.treesitter = {
+        indent = true;
+      };
     };
   };
 }

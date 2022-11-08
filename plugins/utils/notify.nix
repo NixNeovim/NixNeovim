@@ -1,24 +1,19 @@
-{
-  pkgs,
-  config,
-  lib,
-  ...
-}:
-with lib; let
+{ pkgs, config, lib, ... }:
+with lib;
+let
   cfg = config.programs.nixvim.plugins.notify;
-  helpers = import ../helpers.nix {inherit lib;};
+  helpers = import ../helpers.nix { lib = lib; };
   icon = mkOption {
     type = types.nullOr types.str;
     default = null;
   };
-in {
+in 
+{
   options.programs.nixvim.plugins.notify = {
     enable = mkEnableOption "Enable notify";
 
     stages = mkOption {
-      type =
-        types.nullOr
-        (types.enum ["fade_in_slide_out" "fade" "slide" "static"]);
+      type = types.nullOr (types.enum [ "fade_in_slide_out" "fade" "slide" "static" ]);
       description = "Animation style";
       default = null;
     };
@@ -54,8 +49,8 @@ in {
 
   config = let
     setupOptions = with cfg; {
-      inherit stages;
-      inherit timeout;
+      stages = stages;
+      timeout = timeout;
       background_color = backgroundColor;
       minimum_width = minimumWidth;
       icons = with icons; {
@@ -66,14 +61,13 @@ in {
         TRACE = trace;
       };
     };
-  in
-    mkIf cfg.enable {
-      programs.nixvim = {
-        extraPlugins = [pkgs.vimPlugins.nvim-notify];
-        extraConfigLua = ''
-          vim.notify = require('notify');
-          require('notify').setup(${helpers.toLuaObject setupOptions})
-        '';
-      };
+  in mkIf cfg.enable {
+    programs.nixvim = {
+      extraPlugins = [ pkgs.vimPlugins.nvim-notify ];
+      extraConfigLua = ''
+        vim.notify = require('notify');
+        require('notify').setup(${helpers.toLuaObject setupOptions})
+      '';
     };
+  };
 }
