@@ -65,6 +65,7 @@ in {
         description = "The theme to use for lualine-nvim.";
       };
 
+      globalstatus = helpers.boolOption false "Use one global line for all windows";
       sectionSeparators = separators;
       componentSeparators = separators;
 
@@ -122,16 +123,14 @@ in {
   config = let
     setupOptions = {
       options = {
-        inherit (cfg) theme;
+        inherit (cfg) theme globalstatus;
         section_separators = cfg.sectionSeparators;
         component_separators = cfg.componentSeparators;
         disabled_filetypes = cfg.disabledFiletypes;
         always_divide_middle = cfg.alwaysDivideMiddle;
       };
 
-      inherit (cfg) sections;
-      inherit (cfg) tabline;
-      inherit (cfg) extensions;
+      inherit (cfg) sections tabline extensions;
     };
   in
     mkIf cfg.enable {
