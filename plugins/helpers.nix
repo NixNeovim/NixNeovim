@@ -25,6 +25,13 @@ with lib; rec {
       inherit default;
     };
 
+  enumOption = enums: default: description:
+    mkOption {
+      type = types.enum enums;
+      inherit description;
+      inherit default;
+    };
+
   boolNullOption = description:
     mkOption {
       type = types.nullOr types.bool;

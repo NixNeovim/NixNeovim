@@ -31,7 +31,7 @@ with lib; let
     starter = {};
     statusline = {};
     surround = {};
-    tabline = {};
+    tabline = import ./modules/tabline.nix {inherit lib helpers;};
     test = {};
     trailspace = {};
   };
