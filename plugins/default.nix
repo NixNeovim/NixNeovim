@@ -1,4 +1,12 @@
-{
+with builtins;
+
+let
+  filesIn = path:
+    let content = attrNames (readDir path);
+    in map (x: ./. + "/utils/${x}") content;
+
+  utils = filesIn ./utils;
+in {
   imports = [
     ./generated.nix
 
@@ -41,43 +49,5 @@
     ./statuslines/lualine.nix
 
     ./telescope
-
-    ./utils/bufdelete.nix
-    ./utils/comment-nvim.nix
-    ./utils/commentary.nix
-    ./utils/dashboard.nix
-    ./utils/diffview.nix
-    ./utils/easyescape.nix
-    ./utils/emmet.nix
-    ./utils/endwise.nix
-    ./utils/floaterm.nix
-    ./utils/focus.nix
-    ./utils/ghosttext.nix
-    ./utils/goyo.nix
-    ./utils/headlines.nix
-    ./utils/intellitab.nix
-    ./utils/lspkind.nix
-    ./utils/lspsaga.nix
-    ./utils/mark-radar.nix
-    ./utils/nerdcommenter.nix
-    ./utils/notify.nix
-    ./utils/numb.nix
-    ./utils/nvim-autopairs.nix
-    ./utils/nvim-jqx.nix
-    ./utils/nvim-toggler.nix
-    ./utils/nvim-tree.nix
-    ./utils/scrollbar.nix
-    ./utils/snippy.nix
-    ./utils/specs.nix
-    ./utils/stabilize.nix
-    ./utils/startify.nix
-    ./utils/surround.nix
-    ./utils/tagbar.nix
-    ./utils/todo-comments.nix
-    ./utils/treesitter-context.nix
-    ./utils/trouble.nix
-    ./utils/undotree.nix
-    ./utils/vimwiki.nix
-    ./utils/windows.nix
-  ];
+  ] ++ utils;
 }
