@@ -2,6 +2,7 @@
 
 with lib;
 with types;
+with pkgs;
 
 let
 
@@ -110,6 +111,10 @@ in {
 
   activated = activated;
 
+  # input:
+  # - config.programs.nixvim.plugins.lsp.servers
+  # output:
+  # - all required packages
   packages = cfg-servers:
     let
       lists = mapAttrsToList (name: attrs: attrs.packages) (activated cfg-servers);

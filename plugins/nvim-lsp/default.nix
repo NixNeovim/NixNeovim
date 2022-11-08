@@ -40,6 +40,7 @@ mkLuaPlugin {
   extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-lspconfig
   ];
+  extraPackages = servers.packages cfg.servers;
   extraConfigLua =
     let
       # create lua code for lsp server, with setup wrapper
