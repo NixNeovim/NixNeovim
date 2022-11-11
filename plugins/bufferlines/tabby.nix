@@ -31,16 +31,16 @@ in with helpers;
       enable = mkEnableOption "Enable ${name}";
 
       presets = {
-        activeWinsAtTall = boolOption;
-        activeWinsAtEnd = boolOption;
-        tabWithTopWin = boolOption;
-        activeTabWithWins = boolOption;
-        tabOnly = boolOption;
+        activeWinsAtTall = boolOption false "";
+        activeWinsAtEnd = boolOption false "";
+        tabWithTopWin = boolOption false "";
+        activeTabWithWins = boolOption false "";
+        tabOnly = boolOption false "";
       };
     };
   };
 
-  config = let 
+  config = let
     setupOptions = {
       options = {
         # presets = {

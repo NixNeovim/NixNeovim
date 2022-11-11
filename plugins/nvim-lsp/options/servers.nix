@@ -15,13 +15,13 @@ let
           enable = mkEnableOption "";
           onAttachExtra = mkOption {
             type = types.lines;
-            description = "A lua function to be run when ${server.name} is attached. The argument `client` and `bufnr` are provided.";
+            description = "A lua function to be run when ${server} is attached. The argument `client` and `bufnr` are provided.";
             default = "";
           };
           extraConfig = strOption "" "Extra config passed lsp setup function after `on_attach`";
         };
       };
-      description = "Module for the ${name} (${attr.package}) lsp server for nvim-lsp. Languages: ${server.languages}";
+      description = "Module for the ${server} (${toString attr.packages}) lsp server for nvim-lsp. Languages: ${toString attr.languages}";
       default = {};
     };
 
