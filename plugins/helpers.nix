@@ -204,17 +204,12 @@ rec {
     luaConfig = optionalString addRequire (if (extraConfigLua == null) then
       "require('${name}').setup ${toLuaObject pluginOptions}"
     else extraConfigLua);
-  in
 
-  assert assertMsg (length extraPlugins > 0) "${errorString}: no plugin specified 'extraPlugins'";
-  assert assertMsg (stringLength name > 0) " ${errorString}: 'name' is empty";
-  assert assertMsg (!hasAttr "enable" moduleOptions) "${errorString}: Please remove the 'enable' options. This is added by 'mkLuaPLugin' automatically";
-
-  {
-    options.programs.nixvim.plugins.${name} = {
+    # These module options are addded to every module
+    generalModuleOptions = {
       enable = mkEnableOption description;
       extraConfig = mkOption { # this is added to lua in 'toLuaOptions'
-        type = types.attrs;
+        type = types.attrsOf types.anything;
         default = {};
         description = "Place any extra config here as an attibute-set";
       };
@@ -235,7 +230,15 @@ rec {
         default = "";
         description = "Place any extra lua code here that is loaded after 'extraConfig'";
       };
-    } // moduleOptions;
+    };
+  in
+
+  assert assertMsg (length extraPlugins > 0) "${errorString}: no plugin specified 'extraPlugins'";
+  assert assertMsg (stringLength name > 0) " ${errorString}: 'name' is empty";
+  assert assertMsg (!hasAttr "enable" moduleOptions) "${errorString}: Please remove the 'enable' options. This is added by 'mkLuaPLugin' automatically";
+
+  {
+    options.programs.nixvim.plugins.${name} = generalModuleOptions // moduleOptions;
 
     config.programs.nixvim = mkIf cfg.enable {
       inherit extraPlugins extraPackages extraConfigVim;
