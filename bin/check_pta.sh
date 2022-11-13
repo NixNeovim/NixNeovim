@@ -21,7 +21,7 @@ output=$(comm -23 pta_plugins me_plugins | sed -E "/${known_false_positives}/d" 
 
 gh issue create --title "Missing plugins detected" --label "bot" --body-file - << EOF
 
-I found the following missing plugins:
+I found the following plugins in pta2002's repo, but not in this one:
 
 $output
 
