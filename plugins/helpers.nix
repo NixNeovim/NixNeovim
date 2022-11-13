@@ -213,7 +213,7 @@ rec {
         default = {};
         description = "Place any extra config here as an attibute-set";
       };
-      lua = {
+      extraLua = {
         pre = mkOption {
           type = types.str;
           default = "";
@@ -225,6 +225,11 @@ rec {
           description = "Place any extra lua code here that is loaded after the plugin is loaded";
         };
       };
+      # extraLua = mkOption { # WARN: deprecated
+      #   type = types.str;
+      #   default = "";
+      #   description = "Place any extra lua code here that is loaded after 'extraConfig'";
+      # };
     };
   in
 
@@ -241,9 +246,9 @@ rec {
         -- config for plugin: ${name}
         do
           function setup()
-            ${cfg.lua.pre}
+            ${cfg.extraLua.pre}
             ${luaConfig}
-            ${cfg.lua.post}
+            ${cfg.extraLua.post}
           end
           success, output = pcall(setup) -- execute 'setup()' and catch any errors
           if not success then
