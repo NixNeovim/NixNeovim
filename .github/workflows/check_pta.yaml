@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Check if pta2002 has plugins that we do not have
     steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.NIXPKGS_TOKEN }}
+          ref: ${{ github.head_ref }}
       - run: |
           ./bin/check_pta.sh
         env:
