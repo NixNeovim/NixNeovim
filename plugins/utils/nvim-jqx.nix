@@ -22,7 +22,7 @@ let
       value = cfg.${key};
     in if isBool value then
       "jqx.${key} = ${boolToString value}"
-    else 
+    else
       "jqx.${key} = \"${toString value}\""
   ) moduleOptions;
 
@@ -30,10 +30,10 @@ in with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
-  extraPlugins = with pkgs.vimExtraPlugins; [ 
+  extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-jqx
   ];
-  extraPackages = with pkgs; [ 
+  extraPackages = with pkgs; [
     jq
   ];
   extraConfigLua = ''

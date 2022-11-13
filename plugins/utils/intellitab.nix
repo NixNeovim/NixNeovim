@@ -1,12 +1,15 @@
 { config, pkgs, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.comment-nvim;
+
+  name = "intellitab";
+
+  cfg = config.programs.nixvim.plugins.${name};
   defs = import ../plugin-defs.nix { inherit pkgs; };
 in
 {
   options = {
-    programs.nixvim.plugins.intellitab = {
+    programs.nixvim.plugins.${name} = {
       enable = mkEnableOption "intellitab.nvim";
     };
   };

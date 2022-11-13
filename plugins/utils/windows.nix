@@ -11,7 +11,7 @@ let
 
   moduleOptions = with helpers; {
     # add module options here
-    # 
+    #
     # autoStart = boolOption true "Enable this pugin at start"
     # todo:
     # animations = boolOption true "Enable animations";
@@ -23,7 +23,7 @@ in with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
-  extraPlugins = with pkgs.vimExtraPlugins; [ 
+  extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
     windows-nvim
     middleclass

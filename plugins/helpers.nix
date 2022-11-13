@@ -104,8 +104,6 @@ rec {
       "nil"
     else "";
 
-  extraConfigTo = extraConfig: { };
-
   camelToSnake = string:
     with lib;
     stringAsChars (x: if (toUpper x == x) then "_${toLower x}" else x) string;
@@ -185,33 +183,54 @@ rec {
     };
   };
 
-  # optionSet = extraAttrs: {
-  # } // extraAttrs
-
+  # helper function to create a lua based plugin # TODO: make usable with non-lua plugins
   mkLuaPlugin = {
     name,
     description,
     extraPlugins,
     extraPackages ? [],
-    extraConfigLua ? "",
+    extraConfigLua ? null,
     extraConfigVim ? "",
     moduleOptions ? {},
-    # ...
+    addRequire ? true,
   }: let
+    errorString = "Module for ${name} broken";
+
     cfg = config.programs.nixvim.plugins.${name};
+
+    pluginOptions = toLuaOptions cfg moduleOptions;
+
+    # add default require string to load plugin
+    luaConfig = optionalString addRequire (if (extraConfigLua == null) then
+      "require('${name}').setup ${toLuaObject pluginOptions}"
+    else extraConfigLua);
   in
 
-  assert assertMsg (length extraPlugins > 0) "Module for '${name}' broken: no plugin specified 'extraPlugins'";
+  assert assertMsg (length extraPlugins > 0) "${errorString}: no plugin specified 'extraPlugins'";
+  assert assertMsg (stringLength name > 0) " ${errorString}: 'name' is empty";
+  assert assertMsg (!hasAttr "enable" moduleOptions) "${errorString}: Please remove the 'enable' options. This is added by 'mkLuaPLugin' automatically";
 
   {
     options.programs.nixvim.plugins.${name} = {
       enable = mkEnableOption description;
-      extraConfig = mkOption {
+      extraConfig = mkOption { # this is added to lua in 'toLuaOptions'
         type = types.attrs;
         default = {};
         description = "Place any extra config here as an attibute-set";
       };
-      extraLua = mkOption {
+      lua = {
+        pre = mkOption {
+          type = types.str;
+          default = "";
+          description = "Place any extra lua code here that is loaded before the plugin is loaded";
+        };
+        post = mkOption {
+          type = types.str;
+          default = "";
+          description = "Place any extra lua code here that is loaded after the plugin is loaded";
+        };
+      };
+      extraLua = warn "mkLuaPlugin (${name}): 'extraLua' is deprected. Use lua.pre and lua.post" mkOption { # WARN: deprecated
         type = types.str;
         default = "";
         description = "Place any extra lua code here that is loaded after 'extraConfig'";
@@ -220,22 +239,21 @@ rec {
 
     config.programs.nixvim = mkIf cfg.enable {
       inherit extraPlugins extraPackages extraConfigVim;
-      extraConfigLua =
-        if stringLength extraConfigLua > 0 then
-          ''
-          -- config: ${name}
-          do
-            function setup()
-              ${extraConfigLua}
-              ${cfg.extraLua}
-            end
-            success, output = pcall(setup) -- execute 'setup()' and catch any errors
-            if not success then
-              print(output)
-            end
+      extraConfigLua = ''
+        -- config for plugin: ${name}
+        do
+          function setup()
+            ${cfg.lua.pre}
+            ${luaConfig}
+            ${cfg.lua.post}
+            ${cfg.extraLua}
           end
-          ''
-        else "";
+          success, output = pcall(setup) -- execute 'setup()' and catch any errors
+          if not success then
+            print(output)
+          end
+        end
+        '';
     };
   };
 
