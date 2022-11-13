@@ -12,9 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.NIXPKGS_TOKEN }}
+          token: ${{ secrets.REPO_ACCESS }}
           ref: ${{ github.head_ref }}
       - run: |
           ./bin/check_pta.sh
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.REPO_ACCESS }}
