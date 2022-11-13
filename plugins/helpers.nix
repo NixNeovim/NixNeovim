@@ -225,11 +225,6 @@ rec {
           description = "Place any extra lua code here that is loaded after the plugin is loaded";
         };
       };
-      extraLua = warn "mkLuaPlugin (${name}): 'extraLua' is deprected. Use lua.pre and lua.post" mkOption { # WARN: deprecated
-        type = types.str;
-        default = "";
-        description = "Place any extra lua code here that is loaded after 'extraConfig'";
-      };
     };
   in
 
@@ -249,7 +244,6 @@ rec {
             ${cfg.lua.pre}
             ${luaConfig}
             ${cfg.lua.post}
-            ${cfg.extraLua}
           end
           success, output = pcall(setup) -- execute 'setup()' and catch any errors
           if not success then
