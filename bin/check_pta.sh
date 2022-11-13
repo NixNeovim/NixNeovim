@@ -19,4 +19,4 @@ known_false_positives="(basic-servers.nix|cmp-helpers.nix|comment-nvim.nix)"
 # compare plugins; output those that are only present in pta_plugins
 output=$(comm -23 pta_plugins me_plugins | sed -E "/${known_false_positives}/d" | sed -E 's/^/- /')
 
-echo "I found the following missing plugins:\n $output" | gh issue create --title "Missing plugin detected" --body-file -
+echo "I found the following missing plugins: \"$output\"" | gh issue create --title "Missing plugin detected" --body-file -
