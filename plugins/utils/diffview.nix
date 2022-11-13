@@ -7,11 +7,14 @@ let
   name = "diffview";
 
   helpers = import ../helpers.nix { inherit lib config; };
+  cfg = config.programs.nixvim.plugins.${name};
 
   moduleOptions = with helpers; {
     diffBinaries = boolOption false "Show diffs for binaries";
     watchIndex = boolOption true "Update views and index buffers when the git index changes";
+    useIcons = boolOption true "Requires nvim-web-devicons";
   };
+
 
 in with helpers;
 mkLuaPlugin {
@@ -19,6 +22,10 @@ mkLuaPlugin {
   description = "Enable ${name}.nvim";
   extraPlugins = with pkgs.vimExtraPlugins; [
     diffview-nvim
+  ];
+  extraPackages = with pkgs.vimExtraPlugins; [
+    diffview-nvim
     plenary-nvim
-  ]; # ++ optional cfg.useIcons nvim-web-devicons;
+    (if cfg.useIcons then nvim-web-devicons else null)
+  ];
 }
