@@ -4,10 +4,10 @@ git clone https://github.com/pta2002/nixvim pta
 git clone https://github.com/jooooscha/nixvim me
 
 # list plugins of pta
-plugins_pta="$(find ./pta/plugins -type f -printf "%f\n" | sort)"
+plugins_pta="$(find ./pta/plugins -type f -printf "%f\n" | sort | uniq)"
 
 # list plugins of me
-plugins_me="$(find ./me/plugins -type f -printf "%f\n" | sort)"
+plugins_me="$(find ./me/plugins -type f -printf "%f\n" | sort | uniq)"
 
 # write both outputs to temporary files
 echo "$plugins_pta" > pta_plugins
