@@ -13,13 +13,13 @@ plugins_me="$(find ./me/plugins -type f -printf "%f\n" | sort | uniq)"
 echo "$plugins_pta" > pta_plugins
 echo "$plugins_me" > me_plugins
 
-known_false_positives="(basic-servers.nix|cmp-helpers.nix|comment-nvim.nix)"
+# known_false_positives="(basic-servers.nix|cmp-helpers.nix|comment-nvim.nix)"
 
 
 # compare plugins; output those that are only present in pta_plugins
-found_missing=$(comm -23 pta_plugins me_plugins | sed -E "/${known_false_positives}/d")
+found_missing=$(comm -23 pta_plugins me_plugins)
 
-known_issues=$(gh issue list --label "bot" --json "body" | jq -r ".[].body")
+known_issues=$(gh issue list --state "all" --label "bot" --json "body" | jq -r ".[].body")
 
 
 for f in $found_missing
