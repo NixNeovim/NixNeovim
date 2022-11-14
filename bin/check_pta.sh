@@ -21,21 +21,28 @@ found_missing=$(comm -23 pta_plugins me_plugins | sed -E "/${known_false_positiv
 
 known_issues=$(gh issue list --label "bot" --json "body" | jq -r ".[].body")
 
-found=false
 
 for f in $found_missing
 do
+    found=false
+
     for k in $known_issues
     do
-        if [[ "$f" == "$k" ]] then
+        if [[ "$f" == "$k" ]]
+        then
             found=true
             break
         fi
     done
 
-    if ! found then
-        gh issue create --title "$f missing detected" --label "bot" --body "$f"
+    if ! $found
+    then
+        echo "Did not find an issue for $f. Creating a new one ..."
+        gh issue create --title "Detected missing plugin: $f" --label "bot" --body "$f"
+    else
+        echo "Issue for $f already exists"
     fi
+
 
 done
 
