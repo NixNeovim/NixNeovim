@@ -17,12 +17,35 @@ known_false_positives="(basic-servers.nix|cmp-helpers.nix|comment-nvim.nix)"
 
 
 # compare plugins; output those that are only present in pta_plugins
-output=$(comm -23 pta_plugins me_plugins | sed -E "/${known_false_positives}/d" | sed -E 's/^/- /')
+found_missing=$(comm -23 pta_plugins me_plugins | sed -E "/${known_false_positives}/d")
 
-gh issue create --title "Missing plugins detected" --label "bot" --body-file - << EOF
+known_issues=$(gh issue list --label "bot" --json "body" | jq -r ".[].body")
 
-I found the following plugins in pta2002's repo, but not in this one:
+found=false
 
-$output
+for f in $found_missing
+do
+    for k in $known_issues
+    do
+        if [[ "$f" == "$k" ]] then
+            found=true
+            break
+        fi
+    done
 
-EOF
+    if ! found then
+        gh issue create --title "$f missing detected" --label "bot" --body "$f"
+    fi
+
+done
+
+
+
+
+# gh issue create --title "Missing plugins detected" --label "bot" --body-file - << EOF
+
+# I found the following plugins in pta2002's repo, but not in this one:
+
+# $output
+
+# EOF
