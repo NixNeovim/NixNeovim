@@ -240,7 +240,7 @@ in with helpers;
       programs.nixvim = {
         extraPlugins =
           [ pkgs.vimExtraPlugins.nvim-cmp ]
-          ++ sources.packages cfg.sources;
+          ++ sources.packages;
 
         extraConfigLua = ''
           do -- create scope to not interfere with other plugins
@@ -249,7 +249,7 @@ in with helpers;
             cmp.setup(${helpers.toLuaObject pluginOptions})
 
             -- extra config of sources
-            ${toConfigString (sources.config cfg.sources)}
+            ${toConfigString sources.config}
           end
         '';
       };

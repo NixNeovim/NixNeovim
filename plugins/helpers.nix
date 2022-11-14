@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ lib, config, cfg-plugin ? {}, ... }:
 
 with lib;
 
@@ -18,6 +18,12 @@ rec {
 
   strOption = default: description: mkOption {
     type = types.str;
+    description = description;
+    default = default;
+  };
+
+  attrsOption = default: description: mkOption {
+    type = types.attrsOf types.anything;
     description = description;
     default = default;
   };
@@ -67,11 +73,11 @@ rec {
   toLuaObject = args:
     if builtins.isAttrs args then
       let
-        filteredArgs = filterAttrs (name: value:
-            !isNull value && toLuaObject value != "{}"
+        nonNullArgs = filterAttrs (name: value:
+            !isNull value # && toLuaObject value != "{}"
           ) args;
-      in if hasAttr "__raw" filteredArgs then
-        filteredArgs.__raw
+      in if hasAttr "__raw" nonNullArgs then
+        nonNullArgs.__raw
       else
         let
           argToLua = name: value:
@@ -80,7 +86,7 @@ rec {
             else
               "[${toLuaObject name}] = ${toLuaObject value}";
 
-          listOfValues = mapAttrsToList argToLua filteredArgs;
+          listOfValues = mapAttrsToList argToLua nonNullArgs;
         in
           if length listOfValues == 0 then
             "{}"
@@ -225,15 +231,10 @@ rec {
           description = "Place any extra lua code here that is loaded after the plugin is loaded";
         };
       };
-      # extraLua = mkOption { # WARN: deprecated
-      #   type = types.str;
-      #   default = "";
-      #   description = "Place any extra lua code here that is loaded after 'extraConfig'";
-      # };
     };
   in
 
-  assert assertMsg (length extraPlugins > 0) "${errorString}: no plugin specified 'extraPlugins'";
+  # assert assertMsg (extraPlugins != []) "${errorString}: no plugin specified 'extraPlugins'"; # FIX: this somehow results in infinite recursion
   assert assertMsg (stringLength name > 0) " ${errorString}: 'name' is empty";
   assert assertMsg (!hasAttr "enable" moduleOptions) "${errorString}: Please remove the 'enable' options. This is added by 'mkLuaPLugin' automatically";
 
@@ -275,4 +276,26 @@ rec {
   };
 
   mkRaw = r: { __raw = r; };
+
+  ##############################################################################
+  # helper functions for plugins with sub-plugins like cmp, lsp, telescope, etc.
+
+  # filters activated options from a set
+  activated = options: filterAttrs (name: attrs: cfg-plugin.${name}.enable) options;
+
+  # returns a list of the names of all activated options
+  activatedNames = options: attrNames (activated options);
+
+  activatedPackages = options:
+    flatten (mapAttrsToList (name: attrs: attrs.packages) (activated options));
+
+  activatedLuaNames = options:
+    flatten (mapAttrsToList (name: attrs: attrs.luaName) (activated options));
+
+  activatedPlugins = options:
+    flatten (mapAttrsToList (name: attrs: attrs.plugins) (activated options));
+
+  activatedConfig = options:
+    mapAttrsToList (name: attrs: attrs.extraConfig) (activated options);
+
 }

@@ -6,18 +6,19 @@ let
 
   helpers = (import ../helpers.nix { inherit lib config; });
   cfg = config.programs.nixvim.plugins.${name};
+  extensions = import ./modules/extensions.nix { inherit pkgs config lib; };
 
   moduleOptions = with helpers; {
     # add module options here
-    #
-    # autoStart = boolOption true "Enable this pugin at start"
     useBat = boolOption true "Use bat as the previewer instead of cat";
     highlightTheme = mkOption {
       type = types.nullOr types.str;
       description = "The colorscheme to use for syntax highlighting";
       default = config.programs.nixvim.colorscheme;
     };
-    extensions = import ./modules/extensions.nix { inherit pkgs config lib; };
+    extraPickersConfig = attrsOption {} "Put extra config for the builtin pickers here";
+    extraExtensionsConfig = attrsOption {} "Put extra config for extensions here";
+    extensions = extensions.options;
   };
 
 in with helpers;
@@ -28,21 +29,22 @@ mkLuaPlugin {
     telescope-nvim
     plenary-nvim
     popup-nvim
-    telescope-manix
-  ];
+  ] ++ extensions.plugins;
+  # ];
   extraPackages = with pkgs; [
     manix
-  ] ++ optional cfg.useBat bat;
+  ] ++ optional cfg.useBat bat
+    ++ extensions.packages;
 
-  extraConfigLua = let
-    enabledExtensions = forEach (attrNames cfg.extensions) (extension:
-      optionalString cfg.extensions.${extension}.enable "telescope.load_extension('${extension}')"
-    );
-  in ''
-    local telescope = require('${name}')
+  # this looks weird but produces correctly intended lua code
+  extraConfigLua =
+    ''
+      local telescope = require('${name}')
+          telescope.setup {
+            extensions = ${ extensions.config }
+          }
 
-    ${ concatStringsSep "\n" enabledExtensions }
-  '';
+          ${ concatStringsSep "\n    " extensions.loadString } '';
 }
 
 #   # imports = [
