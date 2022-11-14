@@ -53,7 +53,7 @@ in
       default = null;
     };
 
-    updateToBufDir = {
+    hijackDirectories = {
       enable = mkOption {
         type = types.nullOr types.bool;
         default = null;
@@ -211,12 +211,12 @@ in
       open_on_tab = cfg.openOnTab;
       hijack_cursor = cfg.hijackCursor;
       update_cwd = cfg.updateCwd;
-      update_to_buf_dir = {
-        enable = cfg.updateToBufDir.enable;
-        auto_open = cfg.updateToBufDir.autoOpen;
+      hijack_directories = {
+        enable = cfg.hijackDirectories.enable;
+        auto_open = cfg.hijackDirectories.autoOpen;
       };
       diagnostics = cfg.diagnostics;
-      updateFocusedFile = {
+      update_focused_file = {
         enable = cfg.updateFocusedFile.enable;
         update_cwd = cfg.updateFocusedFile.updateCwd;
         ignore_list = cfg.updateFocusedFile.ignoreList;
