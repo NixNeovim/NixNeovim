@@ -294,8 +294,7 @@ in
       };
 
       environment.etc."xdg/nvim/sysinit.vim".text = neovimConfig.neovimRcContent;
-    } else
-      (if homeManager then {
+    } else if homeManager then {
         programs.neovim = {
           enable = true;
           package = mkIf (cfg.package != null) cfg.package;
@@ -303,5 +302,5 @@ in
           extraConfig = configure.customRC;
           plugins = cfg.extraPlugins;
         };
-      } else { }));
+      } else { });
 }

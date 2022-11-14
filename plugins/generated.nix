@@ -32,12 +32,12 @@ in with helpers; {
   imports = lib.forEach plugs
     (p:
     let
-      
+
       plugin = if isString p then
           { name = p; packageName = p; setup = false; }
-        else 
+        else
           fillAttrs p;
-          
+
       setupString = if plugin.setup then
             "require('${plugin.name}').setup()"
         else
