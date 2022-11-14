@@ -13,15 +13,16 @@ plugins_me="$(find ./me/plugins -type f -printf "%f\n" | sort | uniq)"
 echo "$plugins_pta" > pta_plugins
 echo "$plugins_me" > me_plugins
 
-# known_false_positives="(basic-servers.nix|cmp-helpers.nix|comment-nvim.nix)"
-
-
 # compare plugins; output those that are only present in pta_plugins
 found_missing=$(comm -23 pta_plugins me_plugins)
 
+# plugins for which an issue already exists (including closed ones)
 known_issues=$(gh issue list --state "all" --label "bot" --json "body" | jq -r ".[].body")
 
 
+# iterate over plugins we found missing and
+# compare them to all open issues.
+# We no matching issue was found, we create a new one
 for f in $found_missing
 do
     found=false
@@ -35,6 +36,7 @@ do
         fi
     done
 
+    # test if matching issue was found
     if ! $found
     then
         echo "Did not find an issue for $f. Creating a new one ..."
@@ -43,16 +45,4 @@ do
         echo "Issue for $f already exists"
     fi
 
-
 done
-
-
-
-
-# gh issue create --title "Missing plugins detected" --label "bot" --body-file - << EOF
-
-# I found the following plugins in pta2002's repo, but not in this one:
-
-# $output
-
-# EOF
