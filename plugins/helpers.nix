@@ -2,7 +2,14 @@
 
 with lib;
 
-rec {
+let
+  repeatChar = char: n:
+    if n == 0 then
+      ""
+    else
+      "  " + repeatChar char (n - 1); # 2 spaces
+
+in rec {
 
   boolOption = default: description: mkOption {
     type = types.bool;
@@ -71,44 +78,49 @@ rec {
   # Black functional magic that converts a bunch of different Nix types to their
   # lua equivalents!
   toLuaObject = args:
-    if builtins.isAttrs args then
-      let
-        nonNullArgs = filterAttrs (name: value:
-            !isNull value # && toLuaObject value != "{}"
-          ) args;
-      in if hasAttr "__raw" nonNullArgs then
-        nonNullArgs.__raw
-      else
-        let
-          argToLua = name: value:
-            if head (stringToCharacters name) == "@" then
-              toLuaObject value
+    let
+      # helper function that keeps track of indentation (depth)
+      toLuaObject' = depth: args:
+        let ind = repeatChar " " depth; # create indentation string
+        in if builtins.isAttrs args then
+            let
+              nonNullArgs = filterAttrs (name: value:
+                  !isNull value # && toLuaObject value != "{}"
+                ) args;
+            in if hasAttr "__raw" nonNullArgs then
+              nonNullArgs.__raw
             else
-              "[${toLuaObject name}] = ${toLuaObject value}";
+              let
+                argToLua = name: value:
+                  if head (stringToCharacters name) == "@" then
+                    toLuaObject' (depth + 1) value
+                  else
+                    "${ind}[${toLuaObject' (depth + 1) name}] = ${toLuaObject' (depth + 1) value}";
 
-          listOfValues = mapAttrsToList argToLua nonNullArgs;
-        in
-          if length listOfValues == 0 then
-            "{}"
-          else
-            ''
-              {
-                ${concatStringsSep ",\n  " listOfValues}
-              }''
-    else if builtins.isList args then
-      "{ ${concatMapStringsSep "," toLuaObject args} }"
-    else if builtins.isString args then
-      # This should be enough!
-      escapeShellArg args
-    else if builtins.isBool args then
-      "${ boolToString args }"
-    else if builtins.isFloat args then
-      "${ toString args }"
-    else if builtins.isInt args then
-      "${ toString args }"
-    else if isNull args then
-      "nil"
-    else "";
+                listOfValues = mapAttrsToList argToLua nonNullArgs;
+              in
+                if length listOfValues == 0 then
+                  "{}"
+                else
+                  ''
+                    {
+                      ${concatStringsSep ",\n  " listOfValues}
+                    ${ind}}''
+          else if builtins.isList args then
+            "${ind}{ ${concatMapStringsSep ",${ind}" (toLuaObject' depth) args} }" # concatMap not concat
+          else if builtins.isString args then
+            # This should be enough!
+            escapeShellArg args
+          else if builtins.isBool args then
+            "${ boolToString args }"
+          else if builtins.isFloat args then
+            "${ toString args }"
+          else if builtins.isInt args then
+            "${ toString args }"
+          else if isNull args then
+            "nil"
+          else "";
+    in toLuaObject' 0 args;
 
   camelToSnake = string:
     with lib;
