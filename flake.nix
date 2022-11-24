@@ -14,18 +14,13 @@
     let
       system = "x86_64-linux";
 
-      pkgs = import nixpkgs {
-        inherit system;
-      };
+      # pkgs = import nixpkgs { inherit system; };
 
     in {
-      packages.${system}.docs = import ./docs {
-        pkgs = pkgs;
-        lib = nixpkgs.lib;
-      };
-
-      # nixosModules.nixvim = import ./nixvim.nix { };
-      # homeManagerModules.nixvim = import ./nixvim.nix { homeManager = true; };
+      # packages.${system}.docs = import ./docs {
+      #   pkgs = pkgs;
+      #   lib = nixpkgs.lib;
+      # };
 
       nixosModules = rec {
         default = import ./nixvim.nix { homeManager = true; };
@@ -37,12 +32,12 @@
       #   nixvim = self.packages.${system}.default;
       # };
 
-      apps.${system} = {
-        default = {
-          type = "app";
-          program = "${self.packages.${system}.default}/bin/nvim";
-        };
-      };
+      # apps.${system} = {
+      #   default = {
+      #     type = "app";
+      #     program = "${self.packages.${system}.default}/bin/nvim";
+      #   };
+      # };
 
       # packages.${system}.default = pkgs.wrapNeovim pkgs.neovim-unwrapped {
       #   configure = {
