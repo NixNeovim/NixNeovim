@@ -110,7 +110,9 @@ in rec {
             "${ind}{ ${concatMapStringsSep ",${ind}" (toLuaObject' depth) args} }" # concatMap not concat
           else if builtins.isString args then
             # This should be enough!
-            escapeShellArg args
+            builtins.toJSON args
+          else if builtins.isPath args then
+            builtins.toJSON (toString args)
           else if builtins.isBool args then
             "${ boolToString args }"
           else if builtins.isFloat args then
