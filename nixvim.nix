@@ -195,7 +195,6 @@ in
   };
 
   imports = [
-    # pkgs.vimExtraPlugins
     ./plugins
   ];
 

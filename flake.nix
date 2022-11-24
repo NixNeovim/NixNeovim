@@ -6,15 +6,12 @@
   inputs.nmdSrc.url = "gitlab:rycee/nmd";
   inputs.nmdSrc.flake = false;
 
-  outputs = { self, nixpkgs, nmdSrc, vimExtraPlugins, ... }@inputs:
+  outputs = { self, nixpkgs, nmdSrc, ... }@inputs:
   let
     system = "x86_64-linux";
 
     pkgs = import nixpkgs {
       inherit system;
-      overlays = [
-        vimExtraPlugins.overlays.default
-      ];
     };
 
   in {
