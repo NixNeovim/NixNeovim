@@ -10,7 +10,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, nmdSrc, ... }@inputs:
+  outputs = { self, nixpkgs, nmd, ... }@inputs:
     let
       system = "x86_64-linux";
 
