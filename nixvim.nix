@@ -1,5 +1,5 @@
-{ nixos ? false, nixOnDroid ? false, homeManager ? false, pkgs }:
-{ lib, config, ... }:
+{ homeManager }: # function that returns a package
+{ lib, config, pkgs, ... }:
 with lib;
 let
   cfg = config.programs.nixvim;
@@ -285,21 +285,25 @@ in
         (helpers.genMaps "!" cfg.maps.insertCommand) ++
         (helpers.genMaps "c" cfg.maps.command);
 
-    in
-    mkIf cfg.enable (if nixos then {
-      environment.systemPackages = [ wrappedNeovim ];
-      programs.neovim = {
-        configure = configure;
-      };
+    in mkIf cfg.enable (
+      if homeManager then
+        {
+          programs.neovim = {
+            enable = true;
+            package = mkIf (cfg.package != null) cfg.package;
+            extraPackages = cfg.extraPackages;
+            extraConfig = configure.customRC;
+            plugins = cfg.extraPlugins;
+          };
+        }
+      else
+        {
+          environment.systemPackages = [ wrappedNeovim abc ];
+          programs.neovim = {
+            configure = configure;
+          };
 
-      environment.etc."xdg/nvim/sysinit.vim".text = neovimConfig.neovimRcContent;
-    } else if homeManager then {
-        programs.neovim = {
-          enable = true;
-          package = mkIf (cfg.package != null) cfg.package;
-          extraPackages = cfg.extraPackages;
-          extraConfig = configure.customRC;
-          plugins = cfg.extraPlugins;
-        };
-      } else { });
+          environment.etc."xdg/nvim/sysinit.vim".text = neovimConfig.neovimRcContent;
+        }
+    );
 }
