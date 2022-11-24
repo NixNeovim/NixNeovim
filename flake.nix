@@ -6,8 +6,6 @@
   inputs.nmdSrc.url = "gitlab:rycee/nmd";
   inputs.nmdSrc.flake = false;
 
-  inputs.vimExtraPlugins.url = "github:jooooscha/nixpkgs-vim-extra-plugins";
-
   outputs = { self, nixpkgs, nmdSrc, vimExtraPlugins, ... }@inputs:
   let
     system = "x86_64-linux";
