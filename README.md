@@ -1,5 +1,7 @@
 # Forked
 
+This is originally based on [pta2002](https://github.com/pta2002/nixvim).
+
 This fork containes more modules and cleaner code
 This fork requires `https://github.com/jooooscha/nixpkgs-vim-extra-plugins` in your inputs.
 
