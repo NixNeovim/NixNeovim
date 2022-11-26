@@ -11,12 +11,12 @@ let
   };
 
   buildModulesDocs = args:
-    # nmd.buildModulesDocs ({
-    #   moduleRootPaths = [ ./.. ];
-    #   mkModuleUrl = path:
-    #     "https://github.com/jooooscha/nixvim/blob/main/${path}#blob-path";
-    #   channelName = "nixvim";
-    # } // args);
+    nmd.buildModulesDocs ({
+      moduleRootPaths = [ ./.. ];
+      mkModuleUrl = path:
+        "https://github.com/jooooscha/nixvim/blob/main/${path}#blob-path";
+      channelName = "nixvim";
+    } // args);
 
   nixvimDocs = buildModulesDocs {
     modules = [
