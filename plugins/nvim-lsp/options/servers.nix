@@ -94,7 +94,7 @@ let
   # fill out missing information to language server definition
   fillMissingInfo = name: {
       languages ? "unspecified",
-      packages ? [ pkgs.vimExtraPlugins.${name} ],
+      packages ? [ pkgs.${name} ],
       serverName ? name
     }: { inherit languages packages serverName; };
 

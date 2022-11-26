@@ -32,7 +32,7 @@ let
           groupIndex = intNullOption "";
         };
       };
-      description = "Module for the ${name} (${attr.package}) source for nvim-cmp";
+      description = "Module for the ${name} source for nvim-cmp";
       default = {};
     };
 
