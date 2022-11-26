@@ -1,8 +1,6 @@
 { pkgs, lib, nmd, ... }:
 let
 
-  nmd = import nmd { inherit pkgs lib; };
-
   scrubbedPkgsModule = {
     imports = [{
       _module.args = {
@@ -13,16 +11,16 @@ let
   };
 
   buildModulesDocs = args:
-    nmd.buildModulesDocs ({
-      moduleRootPaths = [ ./.. ];
-      mkModuleUrl = path:
-        "https://github.com/pta2002/nixvim/blob/master/${path}#blob-path";
-      channelName = "nixvim";
-    } // args);
+    # nmd.buildModulesDocs ({
+    #   moduleRootPaths = [ ./.. ];
+    #   mkModuleUrl = path:
+    #     "https://github.com/jooooscha/nixvim/blob/main/${path}#blob-path";
+    #   channelName = "nixvim";
+    # } // args);
 
   nixvimDocs = buildModulesDocs {
     modules = [
-      (import ../nixvim.nix { pkgs = pkgs;})
+      (import ../nixvim.nix { docs = true; })
       scrubbedPkgsModule
     ];
     docBook.id = "nixvim-options";

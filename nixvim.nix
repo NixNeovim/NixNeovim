@@ -1,4 +1,4 @@
-{ homeManager }: # function that returns a package
+{ homeManager ? true, docs ? false }: # function that returns a package
 { lib, config, pkgs, ... }:
 with lib;
 let
@@ -286,7 +286,8 @@ in
         (helpers.genMaps "c" cfg.maps.command);
 
     in mkIf cfg.enable (
-      if homeManager then
+      if docs then {}
+      else if homeManager then
         {
           programs.neovim = {
             enable = true;
@@ -298,7 +299,7 @@ in
         }
       else
         {
-          environment.systemPackages = [ wrappedNeovim abc ];
+          environment.systemPackages = [ wrappedNeovim ];
           programs.neovim = {
             configure = configure;
           };
