@@ -2,7 +2,8 @@
 with lib;
 let
   cfg = config.programs.nixvim.colorschemes.one;
-in {
+in
+{
   options = {
     programs.nixvim.colorschemes.one = {
       enable = mkEnableOption "Enable vim-one";

@@ -49,7 +49,8 @@ let
     type = types.nullOr (types.listOf types.str);
     default = default;
   };
-in {
+in
+{
   options = {
     programs.nixvim.plugins.lualine = {
       enable = mkEnableOption "Enable lualine";
@@ -116,23 +117,25 @@ in {
       };
     };
   };
-  config = let
-    setupOptions = {
-      options = {
-        inherit (cfg) theme globalstatus;
-        section_separators = cfg.sectionSeparators;
-        component_separators = cfg.componentSeparators;
-        disabled_filetypes = cfg.disabledFiletypes;
-        always_divide_middle = cfg.alwaysDivideMiddle;
-      };
+  config =
+    let
+      setupOptions = {
+        options = {
+          inherit (cfg) theme globalstatus;
+          section_separators = cfg.sectionSeparators;
+          component_separators = cfg.componentSeparators;
+          disabled_filetypes = cfg.disabledFiletypes;
+          always_divide_middle = cfg.alwaysDivideMiddle;
+        };
 
-      inherit (cfg) sections tabline extensions;
+        inherit (cfg) sections tabline extensions;
+      };
+    in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraPlugins = [ pkgs.vimPlugins.lualine-nvim ];
+        extraConfigLua =
+          ''require("lualine").setup(${helpers.toLuaObject setupOptions})'';
+      };
     };
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = [ pkgs.vimPlugins.lualine-nvim ];
-      extraConfigLua =
-        ''require("lualine").setup(${helpers.toLuaObject setupOptions})'';
-    };
-  };
 }

@@ -12,7 +12,7 @@ with types;
   nLines = intOption 50 "Number of lines within which textobject is searched";
   customTextobjects = mkOption {
     type = attrs;
-    default = {};
+    default = { };
     description = "Attribute set with textobect id as key and textobkect specification as values";
   };
   mappings = {

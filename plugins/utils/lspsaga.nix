@@ -3,7 +3,8 @@ with lib;
 let
   cfg = config.programs.nixvim.plugins.lspsaga;
   helpers = import ../helpers.nix { inherit lib config; };
-in with helpers;
+in
+with helpers;
 {
   options = {
     programs.nixvim.plugins.lspsaga = {
@@ -105,27 +106,29 @@ in with helpers;
         description = "Maximum finder preview lines";
       };
 
-      keys = let
-        defaultKeyOpt = desc: mkOption {
-          description = desc;
-          type = types.nullOr types.str;
-          default = null;
-        };
-      in {
-        finderAction = {
-          open = defaultKeyOpt "Open from finder";
-          vsplit = defaultKeyOpt "Vertical split in finder";
-          split = defaultKeyOpt "Horizontal split in finder";
-          quit = defaultKeyOpt "Quit finder";
-          scrollDown = defaultKeyOpt "Scroll down finder";
-          scrollUp = defaultKeyOpt "Scroll up finder";
-        };
+      keys =
+        let
+          defaultKeyOpt = desc: mkOption {
+            description = desc;
+            type = types.nullOr types.str;
+            default = null;
+          };
+        in
+        {
+          finderAction = {
+            open = defaultKeyOpt "Open from finder";
+            vsplit = defaultKeyOpt "Vertical split in finder";
+            split = defaultKeyOpt "Horizontal split in finder";
+            quit = defaultKeyOpt "Quit finder";
+            scrollDown = defaultKeyOpt "Scroll down finder";
+            scrollUp = defaultKeyOpt "Scroll up finder";
+          };
 
-        codeAction = {
-          quit = defaultKeyOpt "Quit code actions menu";
-          exec = defaultKeyOpt "Execute code action";
+          codeAction = {
+            quit = defaultKeyOpt "Quit code actions menu";
+            exec = defaultKeyOpt "Execute code action";
+          };
         };
-      };
 
       codeActionPrompt = {
         enable = boolOption true "Enable code_action_prompt";
@@ -149,67 +152,73 @@ in with helpers;
     };
   };
 
-  config.programs.nixvim = let
-    notDefault = default: opt: if (opt != default) then opt else null;
-    notEmpty = opt: if ((filterAttrs (_: v: v != null) opt) != {}) then opt else null;
-    notNull = opt: opt;
-    lspsagaConfig = {
-      use_saga_diagnostic_sign = notDefault true cfg.signs.use;
-      error_sign = notNull cfg.signs.error;
-      warn_sign = notNull cfg.signs.warning;
-      hint_sign = notNull cfg.signs.hint;
-      infor_sign = notNull cfg.signs.info;
+  config.programs.nixvim =
+    let
+      notDefault = default: opt: if (opt != default) then opt else null;
+      notEmpty = opt: if ((filterAttrs (_: v: v != null) opt) != { }) then opt else null;
+      notNull = opt: opt;
+      lspsagaConfig = {
+        use_saga_diagnostic_sign = notDefault true cfg.signs.use;
+        error_sign = notNull cfg.signs.error;
+        warn_sign = notNull cfg.signs.warning;
+        hint_sign = notNull cfg.signs.hint;
+        infor_sign = notNull cfg.signs.info;
 
-      # TODO Fix this!
-      # error_header = notNull cfg.headers.error;
-      # warn_header = notNull cfg.headers.warning;
-      # hint_header = notNull cfg.headers.hint;
-      # infor_header = notNull cfg.headers.info;
+        # TODO Fix this!
+        # error_header = notNull cfg.headers.error;
+        # warn_header = notNull cfg.headers.warning;
+        # hint_header = notNull cfg.headers.hint;
+        # infor_header = notNull cfg.headers.info;
 
-      max_diag_msg_width = notNull cfg.maxDialogWidth;
+        max_diag_msg_width = notNull cfg.maxDialogWidth;
 
-      code_action_icon = notNull cfg.icons.codeAction;
-      finder_definition_icon = notNull cfg.icons.findDefinition;
-      finder_reference_icon = notNull cfg.icons.findReference;
-      definition_preview_icon = notNull cfg.icons.definitionPreview;
+        code_action_icon = notNull cfg.icons.codeAction;
+        finder_definition_icon = notNull cfg.icons.findDefinition;
+        finder_reference_icon = notNull cfg.icons.findReference;
+        definition_preview_icon = notNull cfg.icons.definitionPreview;
 
-      max_finder_preview_lines = notNull cfg.maxFinderPreviewLines;
+        max_finder_preview_lines = notNull cfg.maxFinderPreviewLines;
 
-      rename_prompt_prefix = notNull cfg.renamePromptPrefix;
+        rename_prompt_prefix = notNull cfg.renamePromptPrefix;
 
-      border_style = cfg.borderStyle;
+        border_style = cfg.borderStyle;
 
-      code_action_prompt = notEmpty {
-        enable = notNull cfg.codeActionPrompt.enable;
-        sign = notNull cfg.codeActionPrompt.sign;
-        enable_in_insert = notNull cfg.codeActionPrompt.enableInInsert;
-        sign_priority = notNull cfg.codeActionPrompt.signPriority;
-        virtual_text = notNull cfg.codeActionPrompt.virtualText;
+        code_action_prompt = notEmpty {
+          enable = notNull cfg.codeActionPrompt.enable;
+          sign = notNull cfg.codeActionPrompt.sign;
+          enable_in_insert = notNull cfg.codeActionPrompt.enableInInsert;
+          sign_priority = notNull cfg.codeActionPrompt.signPriority;
+          virtual_text = notNull cfg.codeActionPrompt.virtualText;
+        };
+
+        finder_action_keys =
+          let
+            keys = {
+              open = notNull cfg.keys.finderAction.open;
+              vsplit = notNull cfg.keys.finderAction.vsplit;
+              split = notNull cfg.keys.finderAction.split;
+              quit = notNull cfg.keys.finderAction.quit;
+              scroll_down = notNull cfg.keys.finderAction.scrollDown;
+              scroll_up = notNull cfg.keys.finderAction.scrollUp;
+            };
+          in
+          notEmpty keys;
+
+        code_action_keys =
+          let
+            keys = {
+              quit = notNull cfg.keys.codeAction.quit;
+              exec = notNull cfg.keys.codeAction.exec;
+            };
+          in
+          notEmpty keys;
       };
+    in
+    mkIf cfg.enable {
+      extraPlugins = [ pkgs.vimPlugins.lspsaga-nvim ];
 
-      finder_action_keys = let
-        keys = {
-          open = notNull cfg.keys.finderAction.open;
-          vsplit = notNull cfg.keys.finderAction.vsplit;
-          split = notNull cfg.keys.finderAction.split;
-          quit = notNull cfg.keys.finderAction.quit;
-          scroll_down = notNull cfg.keys.finderAction.scrollDown;
-          scroll_up = notNull cfg.keys.finderAction.scrollUp;
-        };
-      in notEmpty keys;
-
-      code_action_keys = let
-        keys = {
-          quit = notNull cfg.keys.codeAction.quit;
-          exec = notNull cfg.keys.codeAction.exec;
-        };
-      in notEmpty keys;
+      extraConfigLua = ''
+        require("lspsaga").init_lsp_saga(${helpers.toLuaObject lspsagaConfig})
+      '';
     };
-  in mkIf cfg.enable {
-    extraPlugins = [ pkgs.vimPlugins.lspsaga-nvim ];
-    
-    extraConfigLua = ''
-      require("lspsaga").init_lsp_saga(${helpers.toLuaObject lspsagaConfig})
-    '';
-  };
 }

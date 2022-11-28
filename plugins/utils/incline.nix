@@ -1,13 +1,12 @@
-{
-  pkgs,
-  lib,
-  config,
-  ...
+{ pkgs
+, lib
+, config
+, ...
 }:
 with lib; let
   name = "incline";
 
-  helpers = import ../helpers.nix {inherit lib config;};
+  helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
 
   moduleOptions = with helpers; {
@@ -26,18 +25,18 @@ with lib; let
   # This essentially converts the camalCase moduleOptions to snake_case plugin options
   pluginOptions = helpers.toLuaOptions cfg moduleOptions;
 in
-  with helpers;
-    mkLuaPlugin {
-      inherit name moduleOptions;
-      description = "Enable ${name}.nvim";
-      extraPlugins = with pkgs.vimExtraPlugins; [
-        # add neovim plugin here
-        # nvim-treesitter
-        incline-nvim
-      ];
-      extraPackages = with pkgs; [
-        # add dependencies here
-        # tree-sitter
-      ];
-      extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";
-    }
+with helpers;
+mkLuaPlugin {
+  inherit name moduleOptions;
+  description = "Enable ${name}.nvim";
+  extraPlugins = with pkgs.vimExtraPlugins; [
+    # add neovim plugin here
+    # nvim-treesitter
+    incline-nvim
+  ];
+  extraPackages = with pkgs; [
+    # add dependencies here
+    # tree-sitter
+  ];
+  extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";
+}

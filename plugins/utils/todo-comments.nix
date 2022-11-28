@@ -9,7 +9,7 @@ let
   helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
 
-  keywordModule = { name, config, ...}: {
+  keywordModule = { name, config, ... }: {
     options = with helpers; {
       icon = strOption " " "Icon used for the sign and in search results";
       color = strOption "error" "Can be a hex color or a named color";
@@ -40,11 +40,12 @@ let
     merge_keywords = cfg.mergeKeywords;
   };
 
-in with helpers;
+in
+with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
-  extraPlugins = with pkgs.vimExtraPlugins; [ 
+  extraPlugins = with pkgs.vimExtraPlugins; [
     todo-comments-nvim
   ];
   extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";

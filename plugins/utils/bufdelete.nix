@@ -13,7 +13,8 @@ let
     # add module options here
   };
 
-in with helpers;
+in
+with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";

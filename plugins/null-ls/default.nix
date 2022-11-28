@@ -30,18 +30,20 @@ in
     # };
   };
 
-  config = let
-    options = {
-      debug = cfg.debug;
-      sources = cfg.sourcesItems;
-    };
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = with pkgs.vimPlugins; [ null-ls-nvim ];
+  config =
+    let
+      options = {
+        debug = cfg.debug;
+        sources = cfg.sourcesItems;
+      };
+    in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraPlugins = with pkgs.vimPlugins; [ null-ls-nvim ];
 
-      extraConfigLua = ''
-        require("null-ls").setup(${helpers.toLuaObject options})
-      '';
+        extraConfigLua = ''
+          require("null-ls").setup(${helpers.toLuaObject options})
+        '';
+      };
     };
-  };
 }

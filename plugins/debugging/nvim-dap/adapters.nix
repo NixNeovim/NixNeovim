@@ -15,12 +15,13 @@ let
       command = strNullOption "";
       args = mkOption {
         type = listOf str;
-        default = [];
+        default = [ ];
       };
     };
   };
 
-in {
+in
+{
   rust = mkOption {
     type = nullOr adapterType;
     default = null;

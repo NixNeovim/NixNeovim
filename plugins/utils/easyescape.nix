@@ -3,7 +3,7 @@ with lib;
 let
   cfg = config.programs.nixvim.plugins.easyescape;
   helpers = import ../helpers.nix { inherit lib; };
-in 
+in
 {
   options = {
     programs.nixvim.plugins.easyescape = {

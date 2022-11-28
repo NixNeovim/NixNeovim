@@ -33,7 +33,8 @@ let
     };
   };
 
-in with helpers;
+in
+with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name} plugins";
@@ -45,7 +46,8 @@ mkLuaPlugin {
     let
       # create lua code for lsp server, with setup wrapper
       serversLua = lsp-helpers.serversToLua cfg (servers.activated cfg.servers);
-    in ''
+    in
+    ''
       ${cfg.preConfig}
       ${toConfigString serversLua}
     '';

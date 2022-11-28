@@ -2,7 +2,8 @@
 with lib;
 let
   cfg = config.programs.nixvim.colorschemes.onedark;
-in {
+in
+{
   options = {
     programs.nixvim.colorschemes.onedark = {
       enable = mkEnableOption "Enable onedark";

@@ -251,15 +251,15 @@ in
           ${luaGlobals}
           ${cfg.extraConfigLua}
         '' +
-        # Set colorscheme after setting globals.
-        # Some colorschemes depends on variables being set before setting the colorscheme.
-        (optionalString (cfg.colorscheme != "" && cfg.colorscheme != null) ''
-          vim.cmd([[colorscheme ${cfg.colorscheme}]])
-        '') +
-        ''
-        ${cfg.extraLuaPostConfig}
-        EOF
-        '';
+          # Set colorscheme after setting globals.
+          # Some colorschemes depends on variables being set before setting the colorscheme.
+          (optionalString (cfg.colorscheme != "" && cfg.colorscheme != null) ''
+            vim.cmd([[colorscheme ${cfg.colorscheme}]])
+          '') +
+          ''
+            ${cfg.extraLuaPostConfig}
+            EOF
+          '';
 
         packages.nixvim = {
           start = filter (f: f != null) (map
@@ -285,8 +285,9 @@ in
         (helpers.genMaps "!" cfg.maps.insertCommand) ++
         (helpers.genMaps "c" cfg.maps.command);
 
-    in mkIf cfg.enable (
-      if docs then {}
+    in
+    mkIf cfg.enable (
+      if docs then { }
       else if homeManager then
         {
           programs.neovim = {

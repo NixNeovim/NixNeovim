@@ -39,21 +39,23 @@ in
     };
   };
 
-  config = let
-    options = {
-      pairs_map = cfg.pairs;
-      disable_filetype = cfg.disabledFiletypes;
-      break_line_filetype = cfg.breakLineFiletypes;
-      html_break_line_filetype = cfg.htmlFiletypes;
-      ignored_next_char = cfg.ignoredNextChar;
-    };
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = [ pkgs.vimPlugins.nvim-autopairs ];
+  config =
+    let
+      options = {
+        pairs_map = cfg.pairs;
+        disable_filetype = cfg.disabledFiletypes;
+        break_line_filetype = cfg.breakLineFiletypes;
+        html_break_line_filetype = cfg.htmlFiletypes;
+        ignored_next_char = cfg.ignoredNextChar;
+      };
+    in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraPlugins = [ pkgs.vimPlugins.nvim-autopairs ];
 
-      extraConfigLua = ''
-        require('nvim-autopairs').setup(${helpers.toLuaObject options})
-      '';
+        extraConfigLua = ''
+          require('nvim-autopairs').setup(${helpers.toLuaObject options})
+        '';
+      };
     };
-  };
 }

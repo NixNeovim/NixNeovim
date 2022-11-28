@@ -38,6 +38,7 @@ let
           <d:tocentry linkend="ch-release-notes"><?dbhtml filename="release-notes.html"?></d:tocentry>
         </d:tocentry>
         </toc>
-      '';
+    '';
   };
-in docs.html
+in
+docs.html

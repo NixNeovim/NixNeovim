@@ -4,13 +4,14 @@ let
   cfg = config.programs.nixvim.plugins.airline;
   helpers = import ../helpers.nix { inherit lib; };
 
-  sectionType = with types; nullOr (oneOf [ str (listOf str)]);
+  sectionType = with types; nullOr (oneOf [ str (listOf str) ]);
   sectionOption = mkOption {
     default = null;
     type = sectionType;
     description = "Configuration for this section. Can be either a statusline-format string or a list of modules to be passed to airline#section#create_*.";
   };
-in {
+in
+{
   options = {
     programs.nixvim.plugins.airline = {
       enable = mkEnableOption "Enable airline";
@@ -56,21 +57,23 @@ in {
     };
   };
 
-  config = let
-    sections = {};
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = with pkgs.vimPlugins; [
-        vim-airline
-      ] ++ optional (!isNull cfg.theme) vim-airline-themes;
-      globals = {
-        airline.extensions = cfg.extensions;
+  config =
+    let
+      sections = { };
+    in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraPlugins = with pkgs.vimPlugins; [
+          vim-airline
+        ] ++ optional (!isNull cfg.theme) vim-airline-themes;
+        globals = {
+          airline.extensions = cfg.extensions;
 
-        airline_statusline_ontop = mkIf cfg.onTop 1;
-        airline_powerline_fonts = mkIf (cfg.powerline) 1;
+          airline_statusline_ontop = mkIf cfg.onTop 1;
+          airline_powerline_fonts = mkIf (cfg.powerline) 1;
 
-        airline_theme = mkIf (!isNull cfg.theme) cfg.theme;
-      } // sections;
+          airline_theme = mkIf (!isNull cfg.theme) cfg.theme;
+        } // sections;
+      };
     };
-  };
 }

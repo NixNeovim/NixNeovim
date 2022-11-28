@@ -26,7 +26,7 @@ let
       default = null;
     };
     toggler = mkOption {
-      type = types.nullOr (types.submodule ({...}: {
+      type = types.nullOr (types.submodule ({ ... }: {
         options = {
           line = mkOption {
             type = types.str;
@@ -44,7 +44,7 @@ let
       default = null;
     };
     opleader = mkOption {
-      type = types.nullOr (types.submodule ({...}: {
+      type = types.nullOr (types.submodule ({ ... }: {
         options = {
           line = mkOption {
             type = types.str;
@@ -62,7 +62,7 @@ let
       default = null;
     };
     mappings = mkOption {
-      type = types.nullOr (types.submodule ({...}: {
+      type = types.nullOr (types.submodule ({ ... }: {
         options = {
           basic = mkOption {
             type = types.bool;
@@ -88,7 +88,8 @@ let
 
   pluginOptions = helpers.toLuaOptions cfg moduleOptions;
 
-in with helpers;
+in
+with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";

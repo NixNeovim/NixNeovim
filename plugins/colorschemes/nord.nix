@@ -1,6 +1,6 @@
 { pkgs, config, lib, ... }:
 with lib;
-let 
+let
   cfg = config.programs.nixvim.colorschemes.nord;
 in
 {

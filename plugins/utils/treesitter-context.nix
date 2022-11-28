@@ -38,15 +38,16 @@ let
   # This essentially converts the camalCase moduleOptions to snake_case plugin options
   pluginOptions = helpers.toLuaOptions cfg moduleOptions;
 
-in with helpers;
+in
+with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
-  extraPlugins = with pkgs.vimExtraPlugins; [ 
+  extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
     nvim-treesitter-context
   ];
-  extraPackages = with pkgs; [ 
+  extraPackages = with pkgs; [
     # add neovim plugin here
     tree-sitter
   ];

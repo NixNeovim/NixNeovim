@@ -16,12 +16,13 @@ let
       description = "The colorscheme to use for syntax highlighting";
       default = config.programs.nixvim.colorscheme;
     };
-    extraPickersConfig = attrsOption {} "Put extra config for the builtin pickers here";
-    extraExtensionsConfig = attrsOption {} "Put extra config for extensions here";
+    extraPickersConfig = attrsOption { } "Put extra config for the builtin pickers here";
+    extraExtensionsConfig = attrsOption { } "Put extra config for extensions here";
     extensions = extensions.options;
   };
 
-in with helpers;
+in
+with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
@@ -34,7 +35,7 @@ mkLuaPlugin {
   extraPackages = with pkgs; [
     manix
   ] ++ optional cfg.useBat bat
-    ++ extensions.packages;
+  ++ extensions.packages;
 
   # this looks weird but produces correctly intended lua code
   extraConfigLua =

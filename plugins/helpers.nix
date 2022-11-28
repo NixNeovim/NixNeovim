@@ -1,4 +1,4 @@
-{ lib, config, cfg-plugin ? {}, ... }:
+{ lib, config, cfg-plugin ? { }, ... }:
 
 with lib;
 
@@ -9,7 +9,8 @@ let
     else
       "  " + repeatChar char (n - 1); # 2 spaces
 
-in rec {
+in
+rec {
 
   boolOption = default: description: mkOption {
     type = types.bool;
@@ -73,7 +74,8 @@ in rec {
   toConfigString = list:
     let
       filtered = filter (str: str != "") list;
-    in concatStringsSep "\n" filtered;
+    in
+    concatStringsSep "\n" filtered;
 
   # Black functional magic that converts a bunch of different Nix types to their
   # lua equivalents!
@@ -83,46 +85,50 @@ in rec {
       toLuaObject' = depth: args:
         let ind = repeatChar " " depth; # create indentation string
         in if builtins.isAttrs args then
+          let
+            nonNullArgs = filterAttrs
+              (name: value:
+                !isNull value # && toLuaObject value != "{}"
+              )
+              args;
+          in
+          if hasAttr "__raw" nonNullArgs then
+            nonNullArgs.__raw
+          else
             let
-              nonNullArgs = filterAttrs (name: value:
-                  !isNull value # && toLuaObject value != "{}"
-                ) args;
-            in if hasAttr "__raw" nonNullArgs then
-              nonNullArgs.__raw
-            else
-              let
-                argToLua = name: value:
-                  if head (stringToCharacters name) == "@" then
-                    toLuaObject' (depth + 1) value
-                  else
-                    "${ind}[${toLuaObject' (depth + 1) name}] = ${toLuaObject' (depth + 1) value}";
-
-                listOfValues = mapAttrsToList argToLua nonNullArgs;
-              in
-                if length listOfValues == 0 then
-                  "{}"
+              argToLua = name: value:
+                if head (stringToCharacters name) == "@" then
+                  toLuaObject' (depth + 1) value
                 else
-                  ''
-                    {
-                      ${concatStringsSep ",\n  " listOfValues}
-                    ${ind}}''
-          else if builtins.isList args then
-            "${ind}{ ${concatMapStringsSep ",${ind}" (toLuaObject' depth) args} }" # concatMap not concat
-          else if builtins.isString args then
-            # This should be enough!
-            builtins.toJSON args
-          else if builtins.isPath args then
-            builtins.toJSON (toString args)
-          else if builtins.isBool args then
-            "${ boolToString args }"
-          else if builtins.isFloat args then
-            "${ toString args }"
-          else if builtins.isInt args then
-            "${ toString args }"
-          else if isNull args then
-            "nil"
-          else "";
-    in toLuaObject' 0 args;
+                  "${ind}[${toLuaObject' (depth + 1) name}] = ${toLuaObject' (depth + 1) value}";
+
+              listOfValues = mapAttrsToList argToLua nonNullArgs;
+            in
+            if length listOfValues == 0 then
+              "{}"
+            else
+              ''
+                {
+                  ${concatStringsSep ",\n  " listOfValues}
+                ${ind}}''
+        else if builtins.isList args then
+          "${ind}{ ${concatMapStringsSep ",${ind}" (toLuaObject' depth) args} }" # concatMap not concat
+        else if builtins.isString args then
+        # This should be enough!
+          builtins.toJSON args
+        else if builtins.isPath args then
+          builtins.toJSON (toString args)
+        else if builtins.isBool args then
+          "${ boolToString args }"
+        else if builtins.isFloat args then
+          "${ toString args }"
+        else if builtins.isInt args then
+          "${ toString args }"
+        else if isNull args then
+          "nil"
+        else "";
+    in
+    toLuaObject' 0 args;
 
   camelToSnake = string:
     with lib;
@@ -132,31 +138,38 @@ in rec {
     let
       attrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) (cfg.${k})) moduleOptions;
       extraAttrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) v) cfg.extraConfig;
-    in attrs // extraAttrs;
+    in
+    attrs // extraAttrs;
 
   # Generates maps for a lua config
-  genMaps = mode: maps: let
-    normalized = builtins.mapAttrs (key: action:
-      if builtins.isString action then
+  genMaps = mode: maps:
+    let
+      normalized = builtins.mapAttrs
+        (key: action:
+          if builtins.isString action then
+            {
+              silent = false;
+              expr = false;
+              unique = false;
+              noremap = true;
+              script = false;
+              nowait = false;
+              action = action;
+            }
+          else action)
+        maps;
+    in
+    builtins.attrValues (builtins.mapAttrs
+      (key: action:
         {
-          silent = false;
-          expr = false;
-          unique = false;
-          noremap = true;
-          script = false;
-          nowait = false;
-          action = action;
-        }
-      else action) maps;
-  in builtins.attrValues (builtins.mapAttrs (key: action:
-    {
-      action = action.action;
-      config = lib.filterAttrs (_: v: v) {
-        inherit (action) silent expr unique noremap script nowait;
-      };
-      key = key;
-      mode = mode;
-    }) normalized);
+          action = action.action;
+          config = lib.filterAttrs (_: v: v) {
+            inherit (action) silent expr unique noremap script nowait;
+          };
+          key = key;
+          mode = mode;
+        })
+      normalized);
 
   # Creates an option with a nullable type that defaults to null.
   mkNullOrOption = type: desc: lib.mkOption {
@@ -165,118 +178,125 @@ in rec {
     description = desc;
   };
 
-  mkPlugin = { config, lib, ... }: {
-    name,
-    description,
-    extraPlugins ? [],
-    extraConfigLua ? "",
-    extraConfigVim ? "",
-    options ? {},
-    ...
-  }: let
-    cfg = config.programs.nixvim.plugins.${name};
-    # TODO support nested options!
-    moduleOptions = (mapAttrs (k: v: v.option) options);
-    # // {
+  mkPlugin = { config, lib, ... }: { name
+                                   , description
+                                   , extraPlugins ? [ ]
+                                   , extraConfigLua ? ""
+                                   , extraConfigVim ? ""
+                                   , options ? { }
+                                   , ...
+                                   }:
+    let
+      cfg = config.programs.nixvim.plugins.${name};
+      # TODO support nested options!
+      moduleOptions = (mapAttrs (k: v: v.option) options);
+      # // {
       # extraConfig = mkOption {
       #   type = types.attrs;
       #   default = {};
       #   description = "Place any extra config here as an attibute-set";
       # };
-    # };
+      # };
 
-    globals = mapAttrs' (name: opt: {
-      name = opt.global;
-      value = if cfg.${name} != null then opt.value cfg.${name} else null;
-    }) options;
-  in {
-    options.programs.nixvim.plugins.${name} = {
-      enable = mkEnableOption description;
-    } // moduleOptions;
+      globals = mapAttrs'
+        (name: opt: {
+          name = opt.global;
+          value = if cfg.${name} != null then opt.value cfg.${name} else null;
+        })
+        options;
+    in
+    {
+      options.programs.nixvim.plugins.${name} = {
+        enable = mkEnableOption description;
+      } // moduleOptions;
 
-    config.programs.nixvim = mkIf cfg.enable {
-      inherit extraPlugins extraConfigVim globals;
-      extraConfigLua =
-        if stringLength extraConfigLua > 0 then
-          "do -- config scope: ${name}\n" + extraConfigLua + "\nend"
-        else "";
+      config.programs.nixvim = mkIf cfg.enable {
+        inherit extraPlugins extraConfigVim globals;
+        extraConfigLua =
+          if stringLength extraConfigLua > 0 then
+            "do -- config scope: ${name}\n" + extraConfigLua + "\nend"
+          else "";
+      };
     };
-  };
 
   # helper function to create a lua based plugin # TODO: make usable with non-lua plugins
-  mkLuaPlugin = {
-    name,
-    description,
-    extraPlugins,
-    extraPackages ? [],
-    extraConfigLua ? null,
-    extraConfigVim ? "",
-    moduleOptions ? {},
-    addRequire ? true,
-  }: let
-    errorString = "Module for ${name} broken";
+  mkLuaPlugin =
+    { name
+    , description
+    , extraPlugins
+    , extraPackages ? [ ]
+    , extraConfigLua ? null
+    , extraConfigVim ? ""
+    , moduleOptions ? { }
+    , addRequire ? true
+    ,
+    }:
+    let
+      errorString = "Module for ${name} broken";
 
-    cfg = config.programs.nixvim.plugins.${name};
+      cfg = config.programs.nixvim.plugins.${name};
 
-    pluginOptions = toLuaOptions cfg moduleOptions;
+      pluginOptions = toLuaOptions cfg moduleOptions;
 
-    # add default require string to load plugin
-    luaConfig = optionalString addRequire (if (extraConfigLua == null) then
-      "require('${name}').setup ${toLuaObject pluginOptions}"
-    else extraConfigLua);
+      # add default require string to load plugin
+      luaConfig = optionalString addRequire (if (extraConfigLua == null) then
+        "require('${name}').setup ${toLuaObject pluginOptions}"
+      else extraConfigLua);
 
-    # These module options are addded to every module
-    generalModuleOptions = {
-      enable = mkEnableOption description;
-      extraConfig = mkOption { # this is added to lua in 'toLuaOptions'
-        type = types.attrsOf types.anything;
-        default = {};
-        description = "Place any extra config here as an attibute-set";
-      };
-      extraLua = {
-        pre = mkOption {
-          type = types.str;
-          default = "";
-          description = "Place any extra lua code here that is loaded before the plugin is loaded";
+      # These module options are addded to every module
+      generalModuleOptions = {
+        enable = mkEnableOption description;
+        extraConfig = mkOption {
+          # this is added to lua in 'toLuaOptions'
+          type = types.attrsOf types.anything;
+          default = { };
+          description = "Place any extra config here as an attibute-set";
         };
-        post = mkOption {
-          type = types.str;
-          default = "";
-          description = "Place any extra lua code here that is loaded after the plugin is loaded";
+        extraLua = {
+          pre = mkOption {
+            type = types.str;
+            default = "";
+            description = "Place any extra lua code here that is loaded before the plugin is loaded";
+          };
+          post = mkOption {
+            type = types.str;
+            default = "";
+            description = "Place any extra lua code here that is loaded after the plugin is loaded";
+          };
         };
       };
-    };
-  in
+    in
 
-  # assert assertMsg (extraPlugins != []) "${errorString}: no plugin specified 'extraPlugins'"; # FIX: this somehow results in infinite recursion
-  assert assertMsg (stringLength name > 0) " ${errorString}: 'name' is empty";
-  assert assertMsg (!hasAttr "enable" moduleOptions) "${errorString}: Please remove the 'enable' options. This is added by 'mkLuaPLugin' automatically";
+    # assert assertMsg (extraPlugins != []) "${errorString}: no plugin specified 'extraPlugins'"; # FIX: this somehow results in infinite recursion
+    assert assertMsg (stringLength name > 0) " ${errorString}: 'name' is empty";
+    assert assertMsg (!hasAttr "enable" moduleOptions) "${errorString}: Please remove the 'enable' options. This is added by 'mkLuaPLugin' automatically";
 
-  {
-    options.programs.nixvim.plugins.${name} = generalModuleOptions // moduleOptions;
+    {
+      options.programs.nixvim.plugins.${name} = generalModuleOptions // moduleOptions;
 
-    config.programs.nixvim = mkIf cfg.enable {
-      inherit extraPlugins extraPackages extraConfigVim;
-      extraConfigLua = ''
-        -- config for plugin: ${name}
-        do
-          function setup()
-            ${cfg.extraLua.pre}
-            ${luaConfig}
-            ${cfg.extraLua.post}
+      config.programs.nixvim = mkIf cfg.enable {
+        inherit extraPlugins extraPackages extraConfigVim;
+        extraConfigLua = ''
+          -- config for plugin: ${name}
+          do
+            function setup()
+              ${cfg.extraLua.pre}
+              ${luaConfig}
+              ${cfg.extraLua.post}
+            end
+            success, output = pcall(setup) -- execute 'setup()' and catch any errors
+            if not success then
+              print(output)
+            end
           end
-          success, output = pcall(setup) -- execute 'setup()' and catch any errors
-          if not success then
-            print(output)
-          end
-        end
         '';
+      };
     };
-  };
 
-  globalVal = val: if builtins.isBool val then
-    (if val == false then 0 else 1)
-  else val;
+  globalVal = val:
+    if builtins.isBool val then
+      (if val == false then 0 else 1)
+    else val;
 
   mkDefaultOpt = { type, global, description ? null, example ? null, default ? null, value ? v: (globalVal v), ... }: {
     option = mkOption {

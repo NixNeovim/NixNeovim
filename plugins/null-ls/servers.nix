@@ -2,12 +2,9 @@
 let
   helpers = import ./helpers.nix args;
   serverData = {
-    code_actions = {
-    };
-    completion = {
-    };
-    diagnostics = {
-    };
+    code_actions = { };
+    completion = { };
+    diagnostics = { };
     formatting = {
       alejandra = {
         packages = [ pkgs.alejandra ];
@@ -29,9 +26,11 @@ let
   #   sourceType = "formatting";
   #   packages = [...];
   # }]
-  serverDataFormatted = lib.mapAttrsToList (sourceType: sourceSet:
-    lib.mapAttrsToList (name: attrs: attrs // { inherit sourceType name; }) sourceSet
-  ) serverData;
+  serverDataFormatted = lib.mapAttrsToList
+    (sourceType: sourceSet:
+      lib.mapAttrsToList (name: attrs: attrs // { inherit sourceType name; }) sourceSet
+    )
+    serverData;
   dataFlattened = lib.flatten serverDataFormatted;
 in
 {

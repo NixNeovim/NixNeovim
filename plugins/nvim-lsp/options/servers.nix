@@ -22,7 +22,7 @@ let
         };
       };
       description = "Module for the ${server} (${toString attr.packages}) lsp server for nvim-lsp. Languages: ${toString attr.languages}";
-      default = {};
+      default = { };
     };
 
   serversSet = {
@@ -40,7 +40,7 @@ let
     };
     gdscript = {
       languages = "Godot";
-      packages = [];
+      packages = [ ];
     };
     gopls = {
       languages = "Go";
@@ -92,11 +92,10 @@ let
   };
 
   # fill out missing information to language server definition
-  fillMissingInfo = name: {
-      languages ? "unspecified",
-      packages ? [ pkgs.${name} ],
-      serverName ? name
-    }: { inherit languages packages serverName; };
+  fillMissingInfo = name: { languages ? "unspecified"
+                          , packages ? [ pkgs.${name} ]
+                          , serverName ? name
+                          }: { inherit languages packages serverName; };
 
 
   servers = mapAttrs fillMissingInfo serversSet;
@@ -104,7 +103,8 @@ let
   # filter only activated servers
   activated = cfg-servers: filterAttrs (name: attrs: cfg-servers.${name}.enable) servers;
 
-in {
+in
+{
 
   # create nix Option for all servers
   options = mapAttrs mkServerOption servers;
@@ -118,6 +118,7 @@ in {
   packages = cfg-servers:
     let
       lists = mapAttrsToList (name: attrs: attrs.packages) (activated cfg-servers);
-    in flatten lists; ## return packages of activated sources
+    in
+    flatten lists; ## return packages of activated sources
 
 }

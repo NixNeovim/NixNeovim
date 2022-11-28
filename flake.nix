@@ -20,7 +20,8 @@
 
       lib = pkgs.lib;
 
-    in {
+    in
+    {
       packages.${system}.docs = import ./docs {
         inherit pkgs;
         lib = nixpkgs.lib;

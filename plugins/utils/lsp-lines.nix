@@ -14,7 +14,8 @@ let
     onlyCurrentLine = boolOption false "Show virtual lines only for the current line's diagnostics";
   };
 
-in with helpers;
+in
+with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
@@ -23,13 +24,13 @@ mkLuaPlugin {
     lsp-lines-nvim
   ];
   extraConfigLua = ''
-      require('lsp_lines').setup()
+    require('lsp_lines').setup()
 
-      -- Disable virtual_text since it's redundant due to lsp_lines.
-      vim.diagnostic.config({
-        virtual_text = false,
-      })
+    -- Disable virtual_text since it's redundant due to lsp_lines.
+    vim.diagnostic.config({
+      virtual_text = false,
+    })
 
-      ${optionalString cfg.onlyCurrentLine "vim.diagnostic.config({ virtual_lines = { only_current_line = true } })"}
+    ${optionalString cfg.onlyCurrentLine "vim.diagnostic.config({ virtual_lines = { only_current_line = true } })"}
   '';
 }

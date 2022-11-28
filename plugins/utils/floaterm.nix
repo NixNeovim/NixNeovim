@@ -1,6 +1,6 @@
 { config, pkgs, lib, ... }:
 with lib;
-let 
+let
   cfg = config.programs.nixvim.plugins.floaterm;
   helpers = import ../helpers.nix { inherit lib; };
 in

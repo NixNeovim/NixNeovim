@@ -13,13 +13,14 @@ let
       };
       modes = mkOption {
         default = null;
-        type = nullOr (listOf (enum [ "i" "c" "s"]));
+        type = nullOr (listOf (enum [ "i" "c" "s" ]));
         example = ''[ "i" "s" ]'';
       };
     };
   });
 
-in mkOption {
+in
+mkOption {
   type = nullOr (attrsOf (either str optionsFormat));
   default = null;
   example = ''

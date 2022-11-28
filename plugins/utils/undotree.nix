@@ -3,7 +3,8 @@ with lib;
 let
   cfg = config.programs.nixvim.plugins.undotree;
   helpers = import ../helpers.nix { inherit lib; };
-in {
+in
+{
   options = {
     programs.nixvim.plugins.undotree = {
       enable = mkEnableOption "Enable undotree";

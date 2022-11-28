@@ -12,18 +12,19 @@ let
   moduleOptions = with helpers; {
     mappings = mkOption {
       type = types.attrs;
-      default = {};
+      default = { };
     };
     enableAuto = boolOption false "Enable auto expanding snippets";
   };
 
   pluginOptions = helpers.toLuaOptions cfg moduleOptions;
 
-in with helpers;
+in
+with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
-  extraPlugins = with pkgs.vimExtraPlugins; [ 
+  extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-snippy
   ];
   extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";

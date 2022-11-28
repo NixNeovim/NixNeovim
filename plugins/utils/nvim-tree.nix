@@ -14,7 +14,7 @@ in
       description = "Disable netrw";
     };
 
-    hijackNetrw = mkOption  {
+    hijackNetrw = mkOption {
       type = types.nullOr types.bool;
       default = null;
       description = "Hijack netrw";
@@ -72,18 +72,20 @@ in
         description = "Enable diagnostics";
       };
 
-      icons = let
-        diagnosticOption = desc: mkOption {
-          type = types.nullOr types.str;
-          default = null;
-          description = desc;
+      icons =
+        let
+          diagnosticOption = desc: mkOption {
+            type = types.nullOr types.str;
+            default = null;
+            description = desc;
+          };
+        in
+        {
+          hint = diagnosticOption "Hints";
+          info = diagnosticOption "Info";
+          warning = diagnosticOption "Warning";
+          error = diagnosticOption "Error";
         };
-      in {
-        hint = diagnosticOption "Hints";
-        info = diagnosticOption "Info";
-        warning = diagnosticOption "Warning";
-        error = diagnosticOption "Error";
-      };
     };
 
     updateFocusedFile = {
@@ -201,57 +203,60 @@ in
     };
   };
 
-  config = let
-    options = {
-      disable_netrw = cfg.disableNetrw;
-      hijack_netrw = cfg.hijackNetrw;
-      open_on_setup = cfg.openOnSetup;
-      ignore_ft_on_setup = cfg.ignoreFtOnSetup;
-      auto_close = cfg.autoClose;
-      open_on_tab = cfg.openOnTab;
-      hijack_cursor = cfg.hijackCursor;
-      update_cwd = cfg.updateCwd;
-      hijack_directories = {
-        enable = cfg.hijackDirectories.enable;
-        auto_open = cfg.hijackDirectories.autoOpen;
-      };
-      diagnostics = cfg.diagnostics;
-      update_focused_file = {
-        enable = cfg.updateFocusedFile.enable;
-        update_cwd = cfg.updateFocusedFile.updateCwd;
-        ignore_list = cfg.updateFocusedFile.ignoreList;
-      };
-      system_open = cfg.systemOpen;
-      filters = cfg.filters;
-      git = cfg.git;
-      view = {
-        width = cfg.view.width;
-        height = cfg.view.height;
-        hide_root_folder = cfg.view.hideRootFolder;
-        side = cfg.view.side;
-        auto_resize = cfg.view.autoResize;
-        mappings = {
-          custom_only = cfg.view.mappings.customOnly;
-          list = cfg.view.mappings.list;
+  config =
+    let
+      options = {
+        disable_netrw = cfg.disableNetrw;
+        hijack_netrw = cfg.hijackNetrw;
+        open_on_setup = cfg.openOnSetup;
+        ignore_ft_on_setup = cfg.ignoreFtOnSetup;
+        auto_close = cfg.autoClose;
+        open_on_tab = cfg.openOnTab;
+        hijack_cursor = cfg.hijackCursor;
+        update_cwd = cfg.updateCwd;
+        hijack_directories = {
+          enable = cfg.hijackDirectories.enable;
+          auto_open = cfg.hijackDirectories.autoOpen;
         };
-        number = cfg.view.number;
-        relativenumber = cfg.view.relativenumber;
-        signcolumn = cfg.view.signcolumn;
+        diagnostics = cfg.diagnostics;
+        update_focused_file = {
+          enable = cfg.updateFocusedFile.enable;
+          update_cwd = cfg.updateFocusedFile.updateCwd;
+          ignore_list = cfg.updateFocusedFile.ignoreList;
+        };
+        system_open = cfg.systemOpen;
+        filters = cfg.filters;
+        git = cfg.git;
+        view = {
+          width = cfg.view.width;
+          height = cfg.view.height;
+          hide_root_folder = cfg.view.hideRootFolder;
+          side = cfg.view.side;
+          auto_resize = cfg.view.autoResize;
+          mappings = {
+            custom_only = cfg.view.mappings.customOnly;
+            list = cfg.view.mappings.list;
+          };
+          number = cfg.view.number;
+          relativenumber = cfg.view.relativenumber;
+          signcolumn = cfg.view.signcolumn;
+        };
+        trash = {
+          cmd = cfg.trash.cmd;
+          require_confirm = cfg.trash.requireConfirm;
+        };
       };
-      trash = {
-        cmd = cfg.trash.cmd;
-        require_confirm = cfg.trash.requireConfirm;
-      };
-    };
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = with pkgs.vimExtraPlugins; [
-        nvim-tree-lua nvim-web-devicons
-      ];
+    in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraPlugins = with pkgs.vimExtraPlugins; [
+          nvim-tree-lua
+          nvim-web-devicons
+        ];
 
-      extraConfigLua = ''
-        require('nvim-tree').setup(${helpers.toLuaObject options})
-      '';
+        extraConfigLua = ''
+          require('nvim-tree').setup(${helpers.toLuaObject options})
+        '';
+      };
     };
-  };
 }

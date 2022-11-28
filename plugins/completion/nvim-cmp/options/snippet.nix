@@ -11,9 +11,10 @@ let
       enable = mkEnableOption "";
     };
   };
-  
 
-in mkOption {
+
+in
+mkOption {
   type = submodule {
     options = {
       luasnip = mkOption {

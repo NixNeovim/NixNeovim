@@ -19,7 +19,8 @@ let
 
   # pluginOptions = helpers.toLuaOptions cfg moduleOptions;
 
-in with helpers;
+in
+with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";

@@ -1,7 +1,8 @@
 { pkgs, lib, config, ... }@args:
 let
   helpers = import ../helpers.nix { inherit lib config; };
-in with lib; with helpers;
+in
+with lib; with helpers;
 mkPlugin args {
   name = "startify";
   description = "Enable startify";
@@ -17,35 +18,40 @@ mkPlugin args {
     lists = mkDefaultOpt {
       description = "Startify display lists. If it's a string, it'll be interpreted as literal lua code";
       global = "startify_lists";
-      type = types.listOf (types.oneOf [(types.submodule {
-        options = {
-          type = mkOption {
-            type = types.str;
-            description = "The type of the list";
+      type = types.listOf (types.oneOf [
+        (types.submodule {
+          options = {
+            type = mkOption {
+              type = types.str;
+              description = "The type of the list";
+            };
+            # TODO the header should be a literal lua string!
+            header = mkOption {
+              type = types.nullOr (types.listOf types.str);
+              description = "Optional header. It's a list of strings";
+              default = null;
+            };
+            indices = mkOption {
+              type = types.nullOr (types.listOf types.str);
+              description = "Optional indices for the current list";
+              default = null;
+            };
           };
-          # TODO the header should be a literal lua string!
-          header = mkOption {
-            type = types.nullOr (types.listOf types.str);
-            description = "Optional header. It's a list of strings";
-            default = null;
-          };
-          indices = mkOption {
-            type = types.nullOr (types.listOf types.str);
-            description = "Optional indices for the current list";
-            default = null;
-          };
-        };
-      }) types.str]);
+        })
+        types.str
+      ]);
 
-      value = val: let
-        list = map (v: if builtins.isAttrs v then toLuaObject v else v) val;
-      in "{" + (concatStringsSep "," list) + "}";
+      value = val:
+        let
+          list = map (v: if builtins.isAttrs v then toLuaObject v else v) val;
+        in
+        "{" + (concatStringsSep "," list) + "}";
     };
 
     bookmarks = mkDefaultOpt {
       description = "A list of files or directories to bookmark.";
       global = "startify_bookmarks";
-      type = with types; listOf (oneOf [str (attrsOf str)]);
+      type = with types; listOf (oneOf [ str (attrsOf str) ]);
     };
 
     commands = mkDefaultOpt {

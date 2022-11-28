@@ -9,10 +9,11 @@ let
   };
 
   pluginOptions = {
-      force = cfg.force;
+    force = cfg.force;
   };
 
-in with lib; with helpers;
+in
+with lib; with helpers;
 mkLuaPlugin {
   inherit moduleOptions;
   name = "stabilize";

@@ -3,7 +3,8 @@ with lib;
 let
   cfg = config.programs.nixvim.colorschemes.tokyonight;
   style = types.enum [ "storm" "night" "day" ];
-in {
+in
+{
   options = {
     programs.nixvim.colorschemes.tokyonight = {
       enable = mkEnableOption "Enable tokyonight";

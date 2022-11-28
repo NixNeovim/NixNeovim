@@ -6,7 +6,8 @@ let
     in map (x: ./. + "/utils/${x}") content;
 
   utils = filesIn ./utils;
-in {
+in
+{
   imports = [
     ./generated.nix
 

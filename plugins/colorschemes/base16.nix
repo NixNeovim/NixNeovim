@@ -3,7 +3,8 @@ with lib;
 let
   cfg = config.programs.nixvim.colorschemes.base16;
   themes = import ./base16-list.nix;
-in {
+in
+{
   options = {
     programs.nixvim.colorschemes.base16 = {
       enable = mkEnableOption "Enable base16";

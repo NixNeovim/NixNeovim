@@ -7,7 +7,8 @@ let
   cfg = config.programs.nixvim.plugins.treesitter;
   helpers = import ../helpers.nix { inherit lib config; };
 
-in with helpers;
+in
+with helpers;
 {
   options = {
     programs.nixvim.plugins.treesitter = {
@@ -39,13 +40,13 @@ in with helpers;
 
       disabledLanguages = mkOption {
         type = types.listOf types.str;
-        default = [];
+        default = [ ];
         description = "A list of languages to disable";
       };
 
       customCaptures = mkOption {
         type = types.attrsOf types.str;
-        default = {};
+        default = { };
         description = "Custom capture group highlighting";
       };
 
@@ -55,7 +56,8 @@ in with helpers;
             type = types.str;
             inherit default;
           };
-        in {
+        in
+        {
           enable = mkEnableOption "Incremental selection based on the named nodes from the grammar";
           keymaps = {
             initSelection = keymap "gnn";
@@ -72,11 +74,12 @@ in with helpers;
     };
   };
 
-  config = let
-    pluginOptions = {
-      highlight = {
-        enable = cfg.enable;
-        disable = if (cfg.disabledLanguages != []) then cfg.disabledLanguages else null;
+  config =
+    let
+      pluginOptions = {
+        highlight = {
+          enable = cfg.enable;
+          disable = if (cfg.disabledLanguages != [ ]) then cfg.disabledLanguages else null;
 
           custom_captures = if (cfg.customCaptures != { }) then cfg.customCaptures else null;
         };
@@ -124,27 +127,30 @@ in with helpers;
       sync_install = cfg.syncInstall;
       auto_install = cfg.autoInstall;
 
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraConfigLua = let
-        runtimePath = optionalString (cfg.parserInstallDir != null) "vim.opt.runtimepath:append(\"${cfg.parserInstallDir}\")";
-      in ''
-        require('nvim-treesitter.configs').setup(${helpers.toLuaObject pluginOptions})
-        ${runtimePath}
-      '';
+    in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraConfigLua =
+          let
+            runtimePath = optionalString (cfg.parserInstallDir != null) "vim.opt.runtimepath:append(\"${cfg.parserInstallDir}\")";
+          in
+          ''
+            require('nvim-treesitter.configs').setup(${helpers.toLuaObject pluginOptions})
+            ${runtimePath}
+          '';
 
-      extraPlugins = with pkgs;
-        if cfg.nixGrammars then
-          [ (vimExtraPlugins.nvim-treesitter.withPlugins(_: tree-sitter.allGrammars)) ]
-        else
-          [ vimPlugins.nvim-treesitter ];
+        extraPlugins = with pkgs;
+          if cfg.nixGrammars then
+            [ (vimExtraPlugins.nvim-treesitter.withPlugins (_: tree-sitter.allGrammars)) ]
+          else
+            [ vimPlugins.nvim-treesitter ];
 
-      extraPackages = [ pkgs.tree-sitter pkgs.nodejs ];
+        extraPackages = [ pkgs.tree-sitter pkgs.nodejs ];
 
-      options = mkIf cfg.folding {
-        foldmethod = "expr";
-        foldexpr = "nvim_treesitter#foldexpr()";
+        options = mkIf cfg.folding {
+          foldmethod = "expr";
+          foldexpr = "nvim_treesitter#foldexpr()";
+        };
       };
     };
-  };
 }

@@ -24,7 +24,8 @@ let
     }));
     default = null;
   };
-in with helpers;
+in
+with helpers;
 {
   options = {
     programs.nixvim.plugins.${name} = {
@@ -40,22 +41,24 @@ in with helpers;
     };
   };
 
-  config = let
-    setupOptions = {
-      options = {
-        # presets = {
-        #   active_wins_at_tall = cfg.presets.activeWinsAtTall;
-        # };
+  config =
+    let
+      setupOptions = {
+        options = {
+          # presets = {
+          #   active_wins_at_tall = cfg.presets.activeWinsAtTall;
+          # };
+        };
+      };
+    in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraPlugins = with pkgs.vimExtraPlugins; [
+          tabby-nvim
+        ];
+        extraConfigLua = ''
+          require('tabby').setup${helpers.toLuaObject setupOptions}
+        '';
       };
     };
-    in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = with pkgs.vimExtraPlugins; [
-        tabby-nvim
-      ];
-      extraConfigLua = ''
-        require('tabby').setup${helpers.toLuaObject setupOptions}
-      '';
-    };
-  };
 }

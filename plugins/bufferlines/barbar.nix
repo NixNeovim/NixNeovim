@@ -19,13 +19,14 @@ let
 
   pluginOptions = helpers.toLuaOptions cfg moduleOptions;
 
-in with helpers;
+in
+with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";
   extraPlugins = with pkgs.vimExtraPlugins; [
-      barbar-nvim
-      nvim-web-devicons
+    barbar-nvim
+    nvim-web-devicons
   ];
   extraConfigLua = "require('bufferline').setup ${toLuaObject pluginOptions}";
 }

@@ -7,7 +7,7 @@ let
     type = types.nullOr types.str;
     default = null;
   };
-in 
+in
 {
   options.programs.nixvim.plugins.notify = {
     enable = mkEnableOption "Enable notify";
@@ -43,31 +43,33 @@ in
         };
       });
       description = "Icons for the different levels";
-      default = {};
+      default = { };
     };
   };
 
-  config = let
-    setupOptions = with cfg; {
-      stages = stages;
-      timeout = timeout;
-      background_color = backgroundColor;
-      minimum_width = minimumWidth;
-      icons = with icons; {
-        ERROR = error;
-        WARN = warn;
-        INFO = info;
-        DEBUG = debug;
-        TRACE = trace;
+  config =
+    let
+      setupOptions = with cfg; {
+        stages = stages;
+        timeout = timeout;
+        background_color = backgroundColor;
+        minimum_width = minimumWidth;
+        icons = with icons; {
+          ERROR = error;
+          WARN = warn;
+          INFO = info;
+          DEBUG = debug;
+          TRACE = trace;
+        };
+      };
+    in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraPlugins = [ pkgs.vimPlugins.nvim-notify ];
+        extraConfigLua = ''
+          vim.notify = require('notify');
+          require('notify').setup(${helpers.toLuaObject setupOptions})
+        '';
       };
     };
-  in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = [ pkgs.vimPlugins.nvim-notify ];
-      extraConfigLua = ''
-        vim.notify = require('notify');
-        require('notify').setup(${helpers.toLuaObject setupOptions})
-      '';
-    };
-  };
 }

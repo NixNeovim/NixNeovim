@@ -28,12 +28,13 @@ in
       };
 
       filteredOptions = filterAttrs (_: v: !isNull v) options;
-    in mkIf cfg.enable {
-    programs.nixvim = {
-      extraPlugins = [ pkgs.vimPlugins.trouble-nvim ];
-      extraConfigLua = ''
-        require("trouble").setup${helpers.toLuaObject filteredOptions}
-      '';
+    in
+    mkIf cfg.enable {
+      programs.nixvim = {
+        extraPlugins = [ pkgs.vimPlugins.trouble-nvim ];
+        extraConfigLua = ''
+          require("trouble").setup${helpers.toLuaObject filteredOptions}
+        '';
+      };
     };
-  };
 }

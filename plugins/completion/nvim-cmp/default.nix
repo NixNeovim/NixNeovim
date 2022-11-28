@@ -6,7 +6,8 @@ let
 
   sources = import ./options/sources.nix { inherit lib config pkgs; };
 
-in with helpers;
+in
+with helpers;
 {
   options.programs.nixvim.plugins.nvim-cmp = {
     enable = mkEnableOption "Enable nvim-cmp";

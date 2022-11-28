@@ -17,16 +17,20 @@ let
   };
 
   # pluginOptions = helpers.toLuaOptions cfg moduleOptions;
-  pluginOptions = mapAttrsToList (key: _option:
-    let
-      value = cfg.${key};
-    in if isBool value then
-      "jqx.${key} = ${boolToString value}"
-    else
-      "jqx.${key} = \"${toString value}\""
-  ) moduleOptions;
+  pluginOptions = mapAttrsToList
+    (key: _option:
+      let
+        value = cfg.${key};
+      in
+      if isBool value then
+        "jqx.${key} = ${boolToString value}"
+      else
+        "jqx.${key} = \"${toString value}\""
+    )
+    moduleOptions;
 
-in with helpers;
+in
+with helpers;
 mkLuaPlugin {
   inherit name moduleOptions;
   description = "Enable ${name}.nvim";

@@ -32,20 +32,24 @@ let
             enable = mkEnableOption "Enable ${name}";
             extraConfig = mkOption {
               type = types.attrs;
-              default = {};
+              default = { };
             };
           };
-        in defaultOptions // extensionConfig.options;
+        in
+        defaultOptions // extensionConfig.options;
     };
     description = "Enable the ${name} telescope extension";
-    default = {};
+    default = { };
   };
 
-  extensions = mapAttrs (
-      name: { plugins, luaName ? name, packages ? {}, extraConfig ? {}, options ? {} }:
+  extensions = mapAttrs
+    (
+      name: { plugins, luaName ? name, packages ? { }, extraConfig ? { }, options ? { } }:
         { inherit plugins luaName packages extraConfig options; }
-    ) extensionsSet;
-in with helpers; {
+    )
+    extensionsSet;
+in
+with helpers; {
 
   # nix module options for all soruces
   options = mapAttrs mkExtension extensions;
@@ -60,17 +64,20 @@ in with helpers; {
   loadString = forEach (activatedLuaNames extensions) (ext: "telescope.load_extension('${ext}')");
 
   config = helpers.toLuaObject (
-    mapAttrs' (name: attrs:
-      {
-        name = attrs.luaName;
-        value = mapAttrs' (optName: _:
-            {
-              name = camelToSnake optName;
-              value = cfg-plugin.${name}.${optName};
-            }
-          ) attrs.options;
-      }
-    )
-    (helpers.activated extensions));
+    mapAttrs'
+      (name: attrs:
+        {
+          name = attrs.luaName;
+          value = mapAttrs'
+            (optName: _:
+              {
+                name = camelToSnake optName;
+                value = cfg-plugin.${name}.${optName};
+              }
+            )
+            attrs.options;
+        }
+      )
+      (helpers.activated extensions));
 
 }
