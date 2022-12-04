@@ -5,7 +5,7 @@ with lib;
 let
 
   name = "PLUGIN_NAME";
-  plugin-url = "PLUGIN_URL";
+  pluginUrl = "PLUGIN_URL";
 
   helpers = import ../helpers.nix { inherit lib config; };
 
@@ -16,8 +16,7 @@ let
 in
 with helpers;
 mkLuaPlugin {
-  inherit name moduleOptions;
-  description = "Enable ${name}.nvim (${plugin-url})";
+  inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
     # nvim-treesitter

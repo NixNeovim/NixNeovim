@@ -222,8 +222,10 @@ rec {
   # helper function to create a lua based plugin # TODO: make usable with non-lua plugins
   mkLuaPlugin =
     { name
-    , description
+    , pluginUrl ? ""
     , extraPlugins
+    , description ? "" # deprecated, use extraDescription
+    , extraDescription ? ""
     , extraPackages ? [ ]
     , extraConfigLua ? null
     , extraConfigVim ? ""
@@ -233,11 +235,29 @@ rec {
     ,
     }:
     let
-      errorString = "Module for ${name} broken";
+      # simple functions to improve error messages
+      errorString = "Module for ${name} is broken";
+      warnString = "Module for ${name}";
+
+      # helper function to check if the given url is valid
+      validUrl = url:
+          hasPrefix "https://" url;
 
       cfg = config.programs.nixvim.plugins.${name};
 
       pluginOptions = toLuaOptions cfg moduleOptions;
+
+      fullDescription =
+        let
+          link = if validUrl pluginUrl then
+            "<link xlink:href=\"${pluginUrl}\">${name}</link>"
+          else name; # if no link given
+        in
+        ''
+          Enable the ${link} plugin. </para><para>
+
+          ${extraDescription}
+        '';
 
       # add default require string to load plugin
       luaConfig = optionalString addRequire (if (extraConfigLua == null) then
@@ -246,7 +266,7 @@ rec {
 
       # These module options are addded to every module
       generalModuleOptions = {
-        enable = mkEnableOption description;
+        enable = boolOption false fullDescription;
         extraConfig = mkOption {
           # this is added to lua in 'toLuaOptions'
           type = types.attrsOf types.anything;
@@ -271,8 +291,9 @@ rec {
     # assert assertMsg (extraPlugins != []) "${errorString}: no plugin specified 'extraPlugins'"; # FIX: this somehow results in infinite recursion
     assert assertMsg (stringLength name > 0) " ${errorString}: 'name' is empty";
     assert assertMsg (!hasAttr "enable" moduleOptions) "${errorString}: Please remove the 'enable' options. This is added by 'mkLuaPLugin' automatically";
-    assert assertMsg (!hasSuffix "PLUGIN_URL)" description) "${errorString}: Please add an url to the module description";
 
+    warnIf (description != "") "${warnString}: 'description' is deprecated, please use extraDescription"
+    warnIf (!validUrl pluginUrl) "${warnString}: Please add the 'pluginUrl' (like 'https://...')"
     {
       options.programs.nixvim.plugins.${name} = generalModuleOptions // moduleOptions;
 
