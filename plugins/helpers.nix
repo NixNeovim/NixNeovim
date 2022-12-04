@@ -248,6 +248,8 @@ rec {
       pluginOptions = toLuaOptions cfg moduleOptions;
 
       fullDescription =
+        warnIf (description != "") "${warnString}: 'description' is deprecated, please use extraDescription"
+        warnIf (!validUrl pluginUrl) "${warnString}: Please add the 'pluginUrl' (like 'https://...')" (
         let
           link = if validUrl pluginUrl then
             "<link xlink:href=\"${pluginUrl}\">${name}</link>"
@@ -257,7 +259,7 @@ rec {
           Enable the ${link} plugin. </para><para>
 
           ${extraDescription}
-        '';
+        '');
 
       # add default require string to load plugin
       luaConfig = optionalString addRequire (if (extraConfigLua == null) then
@@ -292,8 +294,6 @@ rec {
     assert assertMsg (stringLength name > 0) " ${errorString}: 'name' is empty";
     assert assertMsg (!hasAttr "enable" moduleOptions) "${errorString}: Please remove the 'enable' options. This is added by 'mkLuaPLugin' automatically";
 
-    warnIf (description != "") "${warnString}: 'description' is deprecated, please use extraDescription"
-    warnIf (!validUrl pluginUrl) "${warnString}: Please add the 'pluginUrl' (like 'https://...')"
     {
       options.programs.nixvim.plugins.${name} = generalModuleOptions // moduleOptions;
 
