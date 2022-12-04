@@ -1,4 +1,4 @@
-{ homeManager ? true, docs ? false }: # function that returns a package
+{ homeManager ? true, isDocsBuild ? false }: # function that returns a package
 { lib, config, pkgs, ... }:
 with lib;
 let
@@ -83,7 +83,7 @@ let
     default = { };
   };
 
-  helpers = import ./plugins/helpers.nix { inherit lib config; };
+  helpers = import ./plugins/helpers.nix { inherit lib config isDocsBuild; };
 in
 {
   options = {
@@ -287,7 +287,7 @@ in
 
     in
     mkIf cfg.enable (
-      if docs then { }
+      if isDocsBuild then { }
       else if homeManager then
         {
           programs.neovim = {

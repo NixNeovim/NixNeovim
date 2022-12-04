@@ -20,7 +20,7 @@ let
 
   nixvimDocs = buildModulesDocs {
     modules = [
-      (import ../nixvim.nix { docs = true; })
+      (import ../nixvim.nix { isDocsBuild = true; })
       scrubbedPkgsModule
     ];
     docBook.id = "nixvim-options";
