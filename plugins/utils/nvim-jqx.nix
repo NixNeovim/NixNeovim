@@ -5,6 +5,7 @@ with lib;
 let
 
   name = "nvim-jqx";
+  pluginUrl = "https://github.com/gennaro-tedesco/nvim-jqx";
 
   helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
@@ -32,8 +33,7 @@ let
 in
 with helpers;
 mkLuaPlugin {
-  inherit name moduleOptions;
-  description = "Enable ${name}.nvim";
+  inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-jqx
   ];

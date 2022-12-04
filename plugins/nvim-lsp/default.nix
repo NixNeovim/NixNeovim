@@ -5,6 +5,7 @@ with lib;
 let
 
   name = "lsp";
+  pluginUrl = "https://github.com/neovim/nvim-lspconfig";
 
   helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
@@ -36,8 +37,7 @@ let
 in
 with helpers;
 mkLuaPlugin {
-  inherit name moduleOptions;
-  description = "Enable ${name} plugins";
+  inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-lspconfig
   ];

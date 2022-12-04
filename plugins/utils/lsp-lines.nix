@@ -5,6 +5,7 @@ with lib;
 let
 
   name = "lsp-lines";
+  pluginUrl = "https://sr.ht/~whynothugo/lsp_lines.nvim/";
 
   helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
@@ -17,10 +18,8 @@ let
 in
 with helpers;
 mkLuaPlugin {
-  inherit name moduleOptions;
-  description = "Enable ${name}.nvim";
+  inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
-    # add neovim plugin here
     lsp-lines-nvim
   ];
   extraConfigLua = ''

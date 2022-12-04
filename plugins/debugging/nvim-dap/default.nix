@@ -5,6 +5,7 @@ with lib;
 let
 
   name = "nvim-dap";
+  pluginUrl = "https://github.com/mfussenegger/nvim-dap";
 
   helpers = import ../../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
@@ -18,8 +19,7 @@ let
 in
 with helpers;
 mkLuaPlugin {
-  inherit name moduleOptions;
-  description = "Enable ${name}.nvim";
+  inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-dap
   ];

@@ -5,6 +5,7 @@ with lib;
 let
 
   name = "diffview";
+  pluginUrl = "https://github.com/sindrets/diffview.nvim";
 
   helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
@@ -19,8 +20,7 @@ let
 in
 with helpers;
 mkLuaPlugin {
-  inherit name moduleOptions;
-  description = "Enable ${name}.nvim";
+  inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     diffview-nvim
   ];

@@ -5,13 +5,14 @@ with lib;
 let
 
   name = "treesitter-context";
+  pluginUrl = "https://github.com/nvim-treesitter/nvim-treesitter-context";
 
   helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
 
   moduleOptions = with helpers; with types; {
     # add module options here
-    # 
+    #
     # autoStart = boolOption true "Enable this pugin at start"
     maxLines = intNullOption "Define the limit of context lines. 0 means no limit";
     trimScope = typeOption (enum [ "inner" "outer" ]) "outer" "When max_lines is reached, which lines to discard";
@@ -41,8 +42,7 @@ let
 in
 with helpers;
 mkLuaPlugin {
-  inherit name moduleOptions;
-  description = "Enable ${name}.nvim";
+  inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
     nvim-treesitter-context

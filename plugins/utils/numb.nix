@@ -5,6 +5,7 @@ with lib;
 let
 
   name = "numb";
+  pluginUrl = "https://github.com/nacro90/numb.nvim";
 
   helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
@@ -23,16 +24,9 @@ let
 in
 with helpers;
 mkLuaPlugin {
-  inherit name moduleOptions;
-  description = "Enable ${name}.nvim";
+  inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
-    # add neovim plugin here
-    # nvim-treesitter
     numb-nvim
-  ];
-  extraPackages = with pkgs; [
-    # add neovim plugin here
-    # tree-sitter
   ];
   extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";
 }

@@ -3,6 +3,7 @@ with lib;
 let
 
   name = "telescope";
+  pluginUrl = "https://github.com/nvim-telescope/telescope.nvim";
 
   helpers = (import ../helpers.nix { inherit lib config; });
   cfg = config.programs.nixvim.plugins.${name};
@@ -24,8 +25,7 @@ let
 in
 with helpers;
 mkLuaPlugin {
-  inherit name moduleOptions;
-  description = "Enable ${name}.nvim";
+  inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     telescope-nvim
     plenary-nvim

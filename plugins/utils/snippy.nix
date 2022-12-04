@@ -5,6 +5,7 @@ with lib;
 let
 
   name = "snippy";
+  pluginUrl = "https://github.com/dcampos/nvim-snippy";
 
   helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
@@ -22,8 +23,7 @@ let
 in
 with helpers;
 mkLuaPlugin {
-  inherit name moduleOptions;
-  description = "Enable ${name}.nvim";
+  inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-snippy
   ];

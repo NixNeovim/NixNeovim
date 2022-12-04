@@ -5,6 +5,7 @@ with lib;
 let
 
   name = "comment";
+  pluginUrl = "https://github.com/numToStr/Comment.nvim";
 
   helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
@@ -91,8 +92,7 @@ let
 in
 with helpers;
 mkLuaPlugin {
-  inherit name moduleOptions;
-  description = "Enable ${name}.nvim";
+  inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     Comment-nvim
   ];

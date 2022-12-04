@@ -5,13 +5,14 @@ with lib;
 let
 
   name = "nvim-toggler";
+  pluginUrl = "https://github.com/nguyenvukhang/nvim-toggler";
 
   helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
 
   moduleOptions = with helpers; {
     inverses = typeOption types.attrs { } "Add set of items to toggle like `['vim'] = 'emacs'`";
-    removeDefaultKeybinds = boolOption false "Removes the default <leader>i keymap";
+    removeDefaultKeybinds = boolOption false "Removes the default leader-i keymap";
   };
 
   pluginOptions = helpers.toLuaOptions cfg moduleOptions;
@@ -19,8 +20,7 @@ let
 in
 with helpers;
 mkLuaPlugin {
-  inherit name moduleOptions;
-  description = "Enable ${name}.nvim";
+  inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-toggler
   ];

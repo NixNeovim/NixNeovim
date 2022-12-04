@@ -5,6 +5,7 @@ with lib;
 let
 
   name = "ghosttext";
+  pluginUrl = "https://github.com/subnut/nvim-ghost.nvim";
 
   helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
@@ -15,8 +16,7 @@ let
 in
 with helpers;
 mkLuaPlugin {
-  inherit name moduleOptions;
-  description = "Enable ${name}.nvim";
+  inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-ghost-nvim
   ];

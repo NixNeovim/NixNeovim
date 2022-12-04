@@ -5,7 +5,7 @@ with lib;
 let
 
   name = "treesitter";
-  plugin-url = "https://github.com/nvim-treesitter/nvim-treesitter";
+  pluginUrl = "https://github.com/nvim-treesitter/nvim-treesitter";
 
   helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
@@ -50,8 +50,7 @@ let
 in
 with helpers;
 mkLuaPlugin {
-  inherit name moduleOptions;
-  description = "Enable ${name}.nvim (${plugin-url})";
+  inherit name moduleOptions pluginUrl;
 
   extraPlugins = with pkgs;
     if cfg.installAllGrammars then

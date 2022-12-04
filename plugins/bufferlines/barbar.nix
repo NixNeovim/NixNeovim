@@ -5,6 +5,7 @@ with lib;
 let
 
   name = "barbar";
+  pluginUrl = "https://github.com/romgrk/barbar.nvim";
 
   helpers = import ../helpers.nix { inherit lib config; };
   cfg = config.programs.nixvim.plugins.${name};
@@ -22,8 +23,7 @@ let
 in
 with helpers;
 mkLuaPlugin {
-  inherit name moduleOptions;
-  description = "Enable ${name}.nvim";
+  inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     barbar-nvim
     nvim-web-devicons
