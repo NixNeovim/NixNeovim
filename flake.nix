@@ -41,7 +41,6 @@
             unstable = import nixpkgs { inherit system; };
           })
         ] self super;
-      # overlays.default = inputs.vim-extra-plugins.overlays.default;
 
 
       # apps.${system} = {
