@@ -64,7 +64,7 @@ let
     };
     ltex = {
       languages = "text files";
-      packages = [ unstable.ltex-ls ];
+      packages = [ ltex-ls ];
     };
     pyright = {
       languages = "Python";
