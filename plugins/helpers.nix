@@ -229,6 +229,7 @@ rec {
     , extraConfigVim ? ""
     , moduleOptions ? { }
     , addRequire ? true
+    , extraOptions ? {}
     ,
     }:
     let
@@ -270,6 +271,7 @@ rec {
     # assert assertMsg (extraPlugins != []) "${errorString}: no plugin specified 'extraPlugins'"; # FIX: this somehow results in infinite recursion
     assert assertMsg (stringLength name > 0) " ${errorString}: 'name' is empty";
     assert assertMsg (!hasAttr "enable" moduleOptions) "${errorString}: Please remove the 'enable' options. This is added by 'mkLuaPLugin' automatically";
+    assert assertMsg (!hasSuffix "PLUGIN_URL)" description) "${errorString}: Please add an url to the module description";
 
     {
       options.programs.nixvim.plugins.${name} = generalModuleOptions // moduleOptions;
@@ -290,6 +292,8 @@ rec {
             end
           end
         '';
+
+        options = extraOptions;
       };
     };
 

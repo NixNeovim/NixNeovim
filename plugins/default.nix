@@ -34,7 +34,6 @@ in
 
     ./languages/ledger.nix
     ./languages/nix.nix
-    ./languages/treesitter.nix
     ./languages/zig.nix
 
     ./mini
