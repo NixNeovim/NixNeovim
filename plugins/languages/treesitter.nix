@@ -7,6 +7,11 @@ let
   cfg = config.programs.nixvim.plugins.treesitter;
   helpers = import ../helpers.nix { inherit lib config; };
 
+  keymapOption = default: mkOption {
+    type = types.str;
+    inherit default;
+  };
+
 in
 with helpers;
 {
@@ -14,108 +19,40 @@ with helpers;
     programs.nixvim.plugins.treesitter = {
       enable = mkEnableOption "Enable tree-sitter syntax highlighting";
 
-      installAllGrammars = boolOption true "Install all grammars using nix (recommended)";
-
-      # parserInstallDir = mkOption {
-      #   type = types.nullOr types.str;
-      #   default = null;
-      #   description = "Location of the parsers to be installed by the plugin (only needed when nixGrammars is disabled)";
-      # };
-
-      # ignoreInstall = mkOption {
-      #   type = types.listOf types.str;
-      #   default = [ ];
-      #   description = "List of parsers to ignore installing (for \"all\")";
-      # };
-
-      # disabledLanguages = mkOption {
-      #   type = types.listOf types.str;
-      #   default = [ ];
-      #   description = "A list of languages to disable";
-      # };
-
-      customCaptures = mkOption {
-        type = types.attrsOf types.str;
-        default = { };
-        description = "Custom capture group highlighting";
-      };
-
-      incrementalSelection =
-        let
-          keymap = default: mkOption {
-            type = types.str;
-            inherit default;
-          };
-        in
-        {
-          enable = mkEnableOption "Incremental selection based on the named nodes from the grammar";
-          keymaps = {
-            initSelection = keymap "gnn";
-            nodeIncremental = keymap "grn";
-            scopeIncremental = keymap "grc";
-            nodeDecremental = keymap "grm";
-          };
-        };
+      installAllGrammars = boolOption true "Install all grammars using nix (recommended, make sure no other grammars are installed)";
 
       indent = boolOption false "Enable tree-sitter based indentation (This is the equivalent to indent { enable = true } in the original lua config)";
       folding = boolOption false "Enable tree-sitter based folding";
-      # syncInstall = boolOption false "Do not install languages asyncroniously";
-      # autoInstall = boolOption true "Install languages automatically";
+
+      incrementalSelection = {
+        enable = mkEnableOption "Incremental selection based on the named nodes from the grammar";
+        keymaps = {
+            initSelection = keymapOption "gnn";
+            nodeIncremental = keymapOption "grn";
+            scopeIncremental = keymapOption "grc";
+            nodeDecremental = keymapOption "grm";
+          };
+      };
     };
   };
 
   config =
     let
       pluginOptions = {
-        highlight = {
-          enable = cfg.enable;
-          # disable = if (cfg.disabledLanguages != [ ]) then cfg.disabledLanguages else null;
+        highlight = { enable = cfg.enable; };
+        indent = { enable = cfg.indent; };
 
-          custom_captures = if (cfg.customCaptures != { }) then cfg.customCaptures else null;
+        incremental_selection = {
+          enable = cfg.incrementalSelection.enable;
+          keymaps = with cfg.incrementalSelection.keymaps; {
+            init_selection = initSelection;
+            node_incremental = nodeIncremental;
+            scope_incremental = scopeIncremental;
+            node_decremental = nodeDecremental;
+          };
         };
 
-        incremental_selection =
-          if cfg.incrementalSelection.enable then {
-            enable = true;
-            keymaps = {
-              init_selection = cfg.incrementalSelection.keymaps.initSelection;
-              node_incremental = cfg.incrementalSelection.keymaps.nodeIncremental;
-              scope_incremental = cfg.incrementalSelection.keymaps.scopeIncremental;
-              node_decremental = cfg.incrementalSelection.keymaps.nodeDecremental;
-            };
-          } else null;
-
-        indent =
-          if cfg.indent then {
-            enable = true;
-          } else null;
-
-        # ensure_installed = if cfg.nixGrammars then [ ] else cfg.ensureInstalled;
-        # ignore_install = cfg.ignoreInstall;
-        # parser_install_dir = cfg.parserInstallDir;
       };
-
-      incremental_selection =
-        if cfg.incrementalSelection.enable then
-          {
-            enable = true;
-            keymaps = {
-              init_selection = cfg.incrementalSelection.keymaps.initSelection;
-              node_incremental = cfg.incrementalSelection.keymaps.nodeIncremental;
-              scope_incremental = cfg.incrementalSelection.keymaps.scopeIncremental;
-              node_decremental = cfg.incrementalSelection.keymaps.nodeDecremental;
-            };
-          }
-        else null;
-
-      indent =
-        if cfg.indent then
-          { enable = true; }
-        else null;
-
-      # ensure_installed = cfg.ensureInstalled;
-      # sync_install = cfg.syncInstall;
-      # auto_install = cfg.autoInstall;
 
     in
     mkIf cfg.enable {
