@@ -10,7 +10,6 @@
     };
 
     vim-extra-plugins.url = "github:jooooscha/nixpkgs-vim-extra-plugins";
-    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
   };
 
   outputs = { self, nixpkgs, nmd, ... }@inputs:
@@ -20,8 +19,6 @@
       pkgs = import nixpkgs { inherit system; overlays = [ inputs.vim-extra-plugins.overlays.default ]; };
 
       lib = pkgs.lib;
-
-      unstable = import unstable { inherit system; };
 
     in
     {
@@ -36,6 +33,16 @@
         homeManager = self.nixosModules.default;
         nixos = import ./nixvim.nix { homeManager = false; };
       };
+
+      overlays.default = self: super:
+        lib.composeManyExtensions [
+          inputs.vim-extra-plugins.overlays.default
+          (self: super: {
+            unstable = import nixpkgs { inherit system; };
+          })
+        ] self super;
+      # overlays.default = inputs.vim-extra-plugins.overlays.default;
+
 
       # apps.${system} = {
       #   default = {
