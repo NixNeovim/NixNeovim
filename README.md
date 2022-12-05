@@ -14,25 +14,31 @@ This makes your Neovim config reproducible, and easier to manage.
 To use the modules, add this flake to the inputs of your nix configuration.
 
 ```nix
+{
 inputs.nixvim.url = "github:jooooscha/nixvim";
+}
 ```
 
 Then, apply the overlay and import the modules.
 This is needed, because NixVim uses [nixpkgs-vim-extra-plugins](https://github.com/jooooscha/nixpkgs-vim-extra-plugins) to get access to more Neovim plugins.
 
 ```nix
+{
 nixpkgs.overlays = [
     nixvim.overlays.default
 ];
+}
 ```
 
 And import the module to your Home Manager (recommended) or NixOS configuration.
 
 ```nix
+{
 imports = [
     nixvim.nixosModules.default # with Home Manager
     # nixvim.nixosModules.nixos # without Home Manager
 ];
+}
 ```
 
 ## Example Config
@@ -75,7 +81,7 @@ A wiki for all options will be available in the near future.
     # You can add missing plugins here
     # `pkgs.vimExtraPlugins` is added by the overlay you added at the beginning
     # For a list of available plugins, look here: [available plugins](https://github.com/jooooscha/nixpkgs-vim-extra-plugins/blob/main/plugins.md)
-    extraPlugins = [ pkgs.vimExtraPlugins.<plugin> ]
+    extraPlugins = [ pkgs.vimExtraPlugins.<plugin> ];
   };
 }
 ```
