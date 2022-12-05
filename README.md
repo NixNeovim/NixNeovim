@@ -58,6 +58,9 @@ A wiki for all options will be available in the near future.
         ${lib.strings.fileContents ./init.lua}
       EOF
     '';
+    
+    # NixVim contains some colorschemes
+    colorschemes.gruvbox.enable = true;
 
     # to install plugins just activate their modules
     plugins = {
