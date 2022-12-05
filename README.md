@@ -86,12 +86,11 @@ A wiki for all options will be available in the near future.
 }
 ```
 
-# Documentation
+## Documentation
 
 Can already be generated using `nix build .#docs`, but it is not yet avilable online.
 
-
-## Old Readme
+## ⚠ Old Readme ⚠
 
 The rest of this readme is still in its original state from the fork.
 It has not yet been updated, and may contain wrong information.
