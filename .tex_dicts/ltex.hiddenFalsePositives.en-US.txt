@@ -1,0 +1,1 @@
+{"rule":"DASH_RULE","sentence":"^\\Q# NixVim - A Neovim configuration system for nix\n## What is it?\\E$"}
