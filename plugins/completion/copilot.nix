@@ -13,7 +13,7 @@ let
   moduleOptions = with helpers; {
     # add module options here
 
-    filestypes = mkOption {
+    filetypes = mkOption {
       type = types.attrsOf types.bool;
       description = "Attribute set of file types";
       default = { };
@@ -47,8 +47,8 @@ mkLuaPlugin {
           "let g:copilot_proxy = ${cfg.proxy}"
         else "";
     in ''
-      let g:copilot_node_command = ${pkgs.node-16_x}/bin/node
-      let g:copilot_filetypes = ${cfg.filetypes}
+      let g:copilot_node_command = "${pkgs.nodejs-16_x}/bin/node"
+      let g:copilot_filetypes = ${toVimDict cfg.filetypes}
       ${proxy}
     '';
 }
