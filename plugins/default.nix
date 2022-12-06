@@ -1,19 +1,22 @@
 with builtins;
 
 let
+  # filesIn = path-name: path: # TODO: this should be possible with only one argument
   filesIn = path:
-    let content = attrNames (readDir path);
-    in map (x: ./. + "/utils/${x}") content;
+    let content = attrNames (readDir (./. + "/${path}"));
+    in map (x: ./. + "/${path}/${x}") content;
 
-  utils = filesIn ./utils;
+  utils = filesIn "utils";
+  completion = filesIn "completion";
+  bufferlines = filesIn "bufferlines";
 in
 {
-  imports = [
+  imports =
+    utils ++
+    completion ++
+    bufferlines ++
+    [
     ./generated.nix
-
-    ./bufferlines/barbar.nix
-    ./bufferlines/bufferline.nix
-    ./bufferlines/tabby.nix
 
     ./colorschemes/base16.nix
     ./colorschemes/gruvbox.nix
@@ -21,9 +24,6 @@ in
     ./colorschemes/one.nix
     ./colorschemes/onedark.nix
     ./colorschemes/tokyonight.nix
-
-    ./completion/coq.nix
-    ./completion/nvim-cmp
 
     ./debugging/nvim-dap
     ./debugging/nvim-dap-ui.nix
@@ -49,5 +49,5 @@ in
     ./statuslines/lualine.nix
 
     ./telescope
-  ] ++ utils;
+  ];
 }

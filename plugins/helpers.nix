@@ -67,7 +67,7 @@ rec {
   };
 
   # vim dictionaries are, in theory, compatible with JSON
-  toVimDict = args: toJSON
+  toVimDict = args: builtins.toJSON
     (lib.filterAttrs (n: v: !isNull v) args);
 
   # removes empty strings and applies concatStringsSep
@@ -232,7 +232,6 @@ rec {
     , moduleOptions ? { }   # options available in the module
     , defaultRequire ? true # add default requrie string?
     , extraOptions ? {}     # extra vim options like line numbers, etc
-    ,
     }:
     let
       # simple functions to improve error messages
@@ -299,7 +298,10 @@ rec {
 
       config.programs.nixvim = mkIf cfg.enable {
         inherit extraPlugins extraPackages extraConfigVim;
-        extraConfigLua = ''
+
+        extraConfigLua = optionalString
+          (cfg.extraLua.pre != "" && cfg.extraLua.post != "" && luaConfig != "")
+          ''
           -- config for plugin: ${name}
           do
             function setup()
