@@ -300,7 +300,7 @@ rec {
         inherit extraPlugins extraPackages extraConfigVim;
 
         extraConfigLua = optionalString
-          (cfg.extraLua.pre != "" && cfg.extraLua.post != "" && luaConfig != "")
+          (cfg.extraLua.pre != "" || cfg.extraLua.post != "" || luaConfig != "")
           ''
           -- config for plugin: ${name}
           do
