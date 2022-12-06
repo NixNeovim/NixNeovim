@@ -221,17 +221,17 @@ rec {
 
   # helper function to create a lua based plugin # TODO: make usable with non-lua plugins
   mkLuaPlugin =
-    { name
-    , pluginUrl ? ""
-    , extraPlugins
-    , description ? "" # deprecated, use extraDescription
-    , extraDescription ? ""
-    , extraPackages ? [ ]
-    , extraConfigLua ? null
-    , extraConfigVim ? ""
-    , moduleOptions ? { }
-    , addRequire ? true
-    , extraOptions ? {}
+    { name                  # name of the plugin module
+    , pluginUrl ? ""        # link to plugin project page
+    , extraPlugins          # plugin packages
+    , description ? ""      # deprecated, use extraDescription
+    , extraDescription ? "" # description added to the enable function
+    , extraPackages ? [ ]   # non-plugin packages
+    , extraConfigLua ? null # lua config added to the init.vim
+    , extraConfigVim ? ""   # vim config added to the init.vim
+    , moduleOptions ? { }   # options available in the module
+    , defaultRequire ? true # add default requrie string?
+    , extraOptions ? {}     # extra vim options like line numbers, etc
     ,
     }:
     let
@@ -262,7 +262,7 @@ rec {
         '');
 
       # add default require string to load plugin
-      luaConfig = optionalString addRequire (if (extraConfigLua == null) then
+      luaConfig = optionalString defaultRequire (if (extraConfigLua == null) then
         "require('${name}').setup ${toLuaObject pluginOptions}"
       else extraConfigLua);
 
@@ -316,7 +316,7 @@ rec {
 
         options = extraOptions;
       };
-    };
+    }; # closes mkLuaPlugin
 
   globalVal = val:
     if builtins.isBool val then

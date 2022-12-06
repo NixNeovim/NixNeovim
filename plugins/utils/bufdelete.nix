@@ -21,5 +21,5 @@ mkLuaPlugin {
     # add neovim plugin here
     bufdelete-nvim
   ];
-  addRequire = false;
+  defaultRequire = false;
 }
