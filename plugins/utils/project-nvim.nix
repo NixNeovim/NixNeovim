@@ -38,7 +38,7 @@ let
     };
 
     datapath = mkOption {
-      type = types.either types.str helpers.rawType;
+      type = types.str;
       default = "vim.fn.stdpath(\"data\")";
     };
 
