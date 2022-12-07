@@ -13,10 +13,10 @@
       with lib;
       let
         helpers = import ../helpers.nix args;
-        cfg = config.programs.nixvim.plugins.null-ls.sources.${sourceType}.${name};
+        cfg = config.programs.nixneovim.plugins.null-ls.sources.${sourceType}.${name};
       in
       {
-        options.programs.nixvim.plugins.null-ls.sources.${sourceType}.${name} = {
+        options.programs.nixneovim.plugins.null-ls.sources.${sourceType}.${name} = {
           enable = mkEnableOption description;
 
           # TODO: withArgs can exist outside of the module in a generalized manner
@@ -32,7 +32,7 @@
         };
 
         config = mkIf cfg.enable {
-          programs.nixvim = {
+          programs.nixneovim = {
             extraPackages = packages;
 
             # Add source to list of sources

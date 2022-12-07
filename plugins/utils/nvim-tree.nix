@@ -1,11 +1,11 @@
 { pkgs, config, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.nvim-tree;
+  cfg = config.programs.nixneovim.plugins.nvim-tree;
   helpers = import ../helpers.nix { inherit lib config; };
 in
 {
-  options.programs.nixvim.plugins.nvim-tree = {
+  options.programs.nixneovim.plugins.nvim-tree = {
     enable = mkEnableOption "Enable nvim-tree";
 
     disableNetrw = mkOption {
@@ -248,7 +248,7 @@ in
       };
     in
     mkIf cfg.enable {
-      programs.nixvim = {
+      programs.nixneovim = {
         extraPlugins = with pkgs.vimExtraPlugins; [
           nvim-tree-lua
           nvim-web-devicons

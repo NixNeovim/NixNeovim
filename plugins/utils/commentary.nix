@@ -1,19 +1,19 @@
 { pkgs, config, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.commentary;
+  cfg = config.programs.nixneovim.plugins.commentary;
 in
 {
   # TODO Add support for aditional filetypes. This requires autocommands!
 
   options = {
-    programs.nixvim.plugins.commentary = {
+    programs.nixneovim.plugins.commentary = {
       enable = mkEnableOption "Enable commentary";
     };
   };
 
   config = mkIf cfg.enable {
-    programs.nixvim = {
+    programs.nixneovim = {
       extraPlugins = [ pkgs.vimPlugins.vim-commentary ];
     };
   };

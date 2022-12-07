@@ -1,12 +1,12 @@
 { pkgs, config, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.colorschemes.base16;
+  cfg = config.programs.nixneovim.colorschemes.base16;
   themes = import ./base16-list.nix;
 in
 {
   options = {
-    programs.nixvim.colorschemes.base16 = {
+    programs.nixneovim.colorschemes.base16 = {
       enable = mkEnableOption "Enable base16";
 
       useTruecolor = mkOption {
@@ -29,7 +29,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.nixvim = {
+    programs.nixneovim = {
       colorscheme = "base16-${cfg.colorscheme}";
       extraPlugins = [ pkgs.vimPlugins.base16-vim ];
 

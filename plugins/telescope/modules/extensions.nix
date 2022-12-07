@@ -6,7 +6,7 @@ with pkgs.vimExtraPlugins;
 
 let
 
-  cfg-plugin = config.programs.nixvim.plugins.telescope.extensions;
+  cfg-plugin = config.programs.nixneovim.plugins.telescope.extensions;
   helpers = import ../../helpers.nix { inherit lib config cfg-plugin; };
 
   extensionsSet = {

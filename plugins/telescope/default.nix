@@ -6,7 +6,7 @@ let
   pluginUrl = "https://github.com/nvim-telescope/telescope.nvim";
 
   helpers = (import ../helpers.nix { inherit lib config; });
-  cfg = config.programs.nixvim.plugins.${name};
+  cfg = config.programs.nixneovim.plugins.${name};
   extensions = import ./modules/extensions.nix { inherit pkgs config lib; };
 
   moduleOptions = with helpers; {
@@ -15,7 +15,7 @@ let
     highlightTheme = mkOption {
       type = types.nullOr types.str;
       description = "The colorscheme to use for syntax highlighting";
-      default = config.programs.nixvim.colorscheme;
+      default = config.programs.nixneovim.colorscheme;
     };
     extraPickersConfig = attrsOption { } "Put extra config for the builtin pickers here";
     extraExtensionsConfig = attrsOption { } "Put extra config for extensions here";
@@ -54,7 +54,7 @@ mkLuaPlugin {
 #   #   ./fzy-native.nix
 #   # ];
 
-#   options.programs.nixvim.plugins.telescope = {
+#   options.programs.nixneovim.plugins.telescope = {
 #     enable = mkEnableOption "Enable telescope.nvim";
 
 #     # extensionConfig = mkOption {
@@ -65,7 +65,7 @@ mkLuaPlugin {
 #   };
 
 #   config = mkIf cfg.enable {
-#     programs.nixvim = {
+#     programs.nixneovim = {
 #       # extraPackages = [ pkgs.bat ];
 
 #       # extraPlugins = with pkgs.vimPlugins; [

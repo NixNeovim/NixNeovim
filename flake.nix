@@ -29,9 +29,9 @@
       };
 
       nixosModules = rec {
-        default = import ./nixvim.nix { homeManager = true; };
+        default = import ./nixneovim.nix { homeManager = true; };
         homeManager = self.nixosModules.default;
-        nixos = import ./nixvim.nix { homeManager = false; };
+        nixos = import ./nixeovim.nix { homeManager = false; };
       };
 
       overlays.default = self: super:

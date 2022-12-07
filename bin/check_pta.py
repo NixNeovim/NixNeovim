@@ -34,7 +34,7 @@ def compare_lists(files_a, files_b):
 
 def main():
     pta_files = get_files("pta2002/nixvim")
-    me_files = get_files("jooooscha/nixvim")
+    me_files = get_files("nixneovim/nixneovim")
     print("done")
 
 

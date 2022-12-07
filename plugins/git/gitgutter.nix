@@ -1,12 +1,12 @@
 { pkgs, config, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.gitgutter;
+  cfg = config.programs.nixneovim.plugins.gitgutter;
   helpers = import ../helpers.nix { inherit lib; };
 in
 {
   options = {
-    programs.nixvim.plugins.gitgutter = {
+    programs.nixneovim.plugins.gitgutter = {
       enable = mkEnableOption "Enable gitgutter";
 
       recommendedSettings = mkOption {
@@ -170,7 +170,7 @@ in
       grepCommand = if builtins.isAttrs cfg.grep then cfg.grep.command else cfg.grep;
     in
     mkIf cfg.enable {
-      programs.nixvim = {
+      programs.nixneovim = {
         extraPlugins = [ pkgs.vimPlugins.gitgutter ];
 
         options = mkIf cfg.recommendedSettings {

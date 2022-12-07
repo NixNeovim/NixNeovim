@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.bufferline;
+  cfg = config.programs.nixneovim.plugins.bufferline;
   helpers = import ../helpers.nix { inherit lib; };
 
   highlight = mkOption {
@@ -24,7 +24,7 @@ let
 in
 {
   options = {
-    programs.nixvim.plugins.bufferline = {
+    programs.nixneovim.plugins.bufferline = {
       enable = mkEnableOption "Enable bufferline";
       numbers = mkOption {
         type = types.nullOr types.lines;
@@ -318,7 +318,7 @@ in
       };
     in
     mkIf cfg.enable {
-      programs.nixvim = {
+      programs.nixneovim = {
         extraPlugins = with pkgs.vimExtraPlugins; [
           bufferline-nvim
           nvim-web-devicons

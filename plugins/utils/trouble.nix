@@ -1,13 +1,13 @@
 { config, lib, pkgs, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.trouble;
+  cfg = config.programs.nixneovim.plugins.trouble;
 
   helpers = import ../helpers.nix { inherit lib config; };
 in
 {
   options = {
-    programs.nixvim.plugins.trouble = {
+    programs.nixneovim.plugins.trouble = {
       enable = mkEnableOption "Enable trouble.nvim";
 
       position = mkOption {
@@ -30,7 +30,7 @@ in
       filteredOptions = filterAttrs (_: v: !isNull v) options;
     in
     mkIf cfg.enable {
-      programs.nixvim = {
+      programs.nixneovim = {
         extraPlugins = [ pkgs.vimPlugins.trouble-nvim ];
         extraConfigLua = ''
           require("trouble").setup${helpers.toLuaObject filteredOptions}

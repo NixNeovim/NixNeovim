@@ -14,21 +14,21 @@ let
     nmd.buildModulesDocs ({
       moduleRootPaths = [ ./.. ];
       mkModuleUrl = path:
-        "https://github.com/jooooscha/nixvim/blob/main/${path}#blob-path";
-      channelName = "nixvim";
+        "https://github.com/jooooscha/nixneovim/blob/main/${path}#blob-path";
+      channelName = "nixneovim";
     } // args);
 
-  nixvimDocs = buildModulesDocs {
+  nixneovimDocs = buildModulesDocs {
     modules = [
-      (import ../nixvim.nix { isDocsBuild = true; })
+      (import ../nixneovim.nix { isDocsBuild = true; })
       scrubbedPkgsModule
     ];
-    docBook.id = "nixvim-options";
+    docBook.id = "nixneovim-options";
   };
 
   docs = nmd.buildDocBookDocs {
     pathName = "";
-    modulesDocs = [ nixvimDocs ];
+    modulesDocs = [ nixneovimDocs ];
     documentsDirectory = ./.;
     documentType = "book";
     chunkToc = ''

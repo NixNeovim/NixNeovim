@@ -6,7 +6,7 @@ with pkgs.vimExtraPlugins;
 
 let
 
-  cfg-plugin = config.programs.nixvim.plugins.nvim-cmp.sources;
+  cfg-plugin = config.programs.nixneovim.plugins.nvim-cmp.sources;
   helpers = import ../../../helpers.nix { inherit lib config cfg-plugin; };
 
   # template for source options

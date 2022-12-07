@@ -187,7 +187,7 @@ rec {
                                    , ...
                                    }:
     let
-      cfg = config.programs.nixvim.plugins.${name};
+      cfg = config.programs.nixneovim.plugins.${name};
       # TODO support nested options!
       moduleOptions = (mapAttrs (k: v: v.option) options);
       # // {
@@ -206,11 +206,11 @@ rec {
         options;
     in
     {
-      options.programs.nixvim.plugins.${name} = {
+      options.programs.nixneovim.plugins.${name} = {
         enable = mkEnableOption description;
       } // moduleOptions;
 
-      config.programs.nixvim = mkIf cfg.enable {
+      config.programs.nixneovim = mkIf cfg.enable {
         inherit extraPlugins extraConfigVim globals;
         extraConfigLua =
           if stringLength extraConfigLua > 0 then
@@ -242,7 +242,7 @@ rec {
       validUrl = url:
           hasPrefix "https://" url;
 
-      cfg = config.programs.nixvim.plugins.${name};
+      cfg = config.programs.nixneovim.plugins.${name};
 
       pluginOptions = toLuaOptions cfg moduleOptions;
 
@@ -294,9 +294,9 @@ rec {
     assert assertMsg (!hasAttr "enable" moduleOptions) "${errorString}: Please remove the 'enable' options. This is added by 'mkLuaPLugin' automatically";
 
     {
-      options.programs.nixvim.plugins.${name} = generalModuleOptions // moduleOptions;
+      options.programs.nixneovim.plugins.${name} = generalModuleOptions // moduleOptions;
 
-      config.programs.nixvim = mkIf cfg.enable {
+      config.programs.nixneovim = mkIf cfg.enable {
         inherit extraPlugins extraPackages extraConfigVim;
 
         extraConfigLua = optionalString

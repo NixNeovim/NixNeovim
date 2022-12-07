@@ -1,10 +1,10 @@
 { pkgs, config, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.telescope.extensions.fzf-native;
+  cfg = config.programs.nixneovim.plugins.telescope.extensions.fzf-native;
 in
 {
-  options.programs.nixvim.plugins.telescope.extensions.fzf-native = {
+  options.programs.nixneovim.plugins.telescope.extensions.fzf-native = {
     enable = mkEnableOption "Enable fzf-native";
 
     fuzzy = mkOption {
@@ -38,9 +38,9 @@ in
       };
     in
     mkIf cfg.enable {
-      programs.nixvim.extraPlugins = [ pkgs.vimPlugins.telescope-fzf-native-nvim ];
+      programs.nixneovim.extraPlugins = [ pkgs.vimPlugins.telescope-fzf-native-nvim ];
 
-      programs.nixvim.plugins.telescope.enabledExtensions = [ "fzf" ];
-      programs.nixvim.plugins.telescope.extensionConfig."fzf" = configuration;
+      programs.nixneovim.plugins.telescope.enabledExtensions = [ "fzf" ];
+      programs.nixneovim.plugins.telescope.extensionConfig."fzf" = configuration;
     };
 }

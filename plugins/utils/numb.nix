@@ -8,7 +8,7 @@ let
   pluginUrl = "https://github.com/nacro90/numb.nvim";
 
   helpers = import ../helpers.nix { inherit lib config; };
-  cfg = config.programs.nixvim.plugins.${name};
+  cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; {
     showNumbers = boolOption true "Enable 'number' for the window while peeking";

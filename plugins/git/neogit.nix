@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.neogit;
+  cfg = config.programs.nixneovim.plugins.neogit;
   helpers = import ../helpers.nix { inherit lib; };
 
   sectionDefaultsModule = types.submodule {
@@ -15,7 +15,7 @@ let
 in
 {
   options = {
-    programs.nixvim.plugins.neogit = {
+    programs.nixneovim.plugins.neogit = {
       enable = mkEnableOption "Enable neogit";
 
       disableSigns = mkOption {
@@ -216,7 +216,7 @@ in
       };
     in
     mkIf cfg.enable {
-      programs.nixvim = {
+      programs.nixneovim = {
         extraPlugins = with pkgs.vimPlugins; [
           neogit
           plenary-nvim

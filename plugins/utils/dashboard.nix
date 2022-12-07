@@ -1,13 +1,13 @@
 { config, lib, pkgs, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.dashboard;
+  cfg = config.programs.nixneovim.plugins.dashboard;
 
   helpers = import ../helpers.nix { inherit lib; };
 in
 {
   options = {
-    programs.nixvim.plugins.dashboard = {
+    programs.nixneovim.plugins.dashboard = {
       enable = mkEnableOption "Enable dashboard";
 
       header = mkOption {
@@ -126,7 +126,7 @@ in
       filteredOptions = filterAttrs (_: v: !isNull v) options;
     in
     mkIf cfg.enable {
-      programs.nixvim = {
+      programs.nixneovim = {
         extraPlugins = [ pkgs.vimPlugins.dashboard-nvim ];
         extraConfigLua = ''
           local dashboard = require("dashboard")

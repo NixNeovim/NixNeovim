@@ -1,11 +1,11 @@
 { pkgs, config, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.nvim-autopairs;
+  cfg = config.programs.nixneovim.plugins.nvim-autopairs;
   helpers = import ../helpers.nix { lib = lib; };
 in
 {
-  options.programs.nixvim.plugins.nvim-autopairs = {
+  options.programs.nixneovim.plugins.nvim-autopairs = {
     enable = mkEnableOption "Enable nvim-autopairs";
 
     pairs = mkOption {
@@ -50,7 +50,7 @@ in
       };
     in
     mkIf cfg.enable {
-      programs.nixvim = {
+      programs.nixneovim = {
         extraPlugins = [ pkgs.vimPlugins.nvim-autopairs ];
 
         extraConfigLua = ''

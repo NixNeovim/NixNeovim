@@ -1,12 +1,12 @@
 { pkgs, config, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.packer;
+  cfg = config.programs.nixneovim.plugins.packer;
   helpers = import ../helpers.nix { lib = lib; };
 in
 {
   options = {
-    programs.nixvim.plugins.packer = {
+    programs.nixneovim.plugins.packer = {
       enable = mkEnableOption "Enable packer.nvim";
 
       plugins = mkOption {
@@ -60,7 +60,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.nixvim = {
+    programs.nixneovim = {
       extraPlugins = [ (pkgs.vimPlugins.packer-nvim.overrideAttrs (_: { pname = "packer.nvim"; })) ];
       extraPackages = [ pkgs.git ];
 

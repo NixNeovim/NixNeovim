@@ -1,12 +1,12 @@
 { pkgs, config, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.colorschemes.tokyonight;
+  cfg = config.programs.nixneovim.colorschemes.tokyonight;
   style = types.enum [ "storm" "night" "day" ];
 in
 {
   options = {
-    programs.nixvim.colorschemes.tokyonight = {
+    programs.nixneovim.colorschemes.tokyonight = {
       enable = mkEnableOption "Enable tokyonight";
       style = mkOption {
         type = types.nullOr style;
@@ -34,7 +34,7 @@ in
     };
   };
   config = mkIf cfg.enable {
-    programs.nixvim = {
+    programs.nixneovim = {
       colorscheme = "tokyonight";
       extraPlugins = [ pkgs.vimPlugins.tokyonight-nvim ];
       options = { termguicolors = true; };

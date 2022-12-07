@@ -2,12 +2,12 @@
 
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.mark-radar;
+  cfg = config.programs.nixneovim.plugins.mark-radar;
   helpers = import ../helpers.nix { inherit lib; };
   defs = import ../plugin-defs.nix { inherit pkgs; };
 in
 {
-  options.programs.nixvim.plugins.mark-radar = {
+  options.programs.nixneovim.plugins.mark-radar = {
     enable = mkEnableOption "Enable mark-radar";
 
     highlight_background = mkOption {
@@ -40,7 +40,7 @@ in
       };
     in
     mkIf cfg.enable {
-      programs.nixvim = {
+      programs.nixneovim = {
         extraPlugins = [ defs.mark-radar ];
 
         extraConfigLua = ''

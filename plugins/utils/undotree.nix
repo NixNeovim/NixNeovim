@@ -1,12 +1,12 @@
 { pkgs, config, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.undotree;
+  cfg = config.programs.nixneovim.plugins.undotree;
   helpers = import ../helpers.nix { inherit lib; };
 in
 {
   options = {
-    programs.nixvim.plugins.undotree = {
+    programs.nixneovim.plugins.undotree = {
       enable = mkEnableOption "Enable undotree";
 
       windowLayout = mkOption {
@@ -108,7 +108,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.nixvim = {
+    programs.nixneovim = {
       extraPlugins = [ pkgs.vimPlugins.undotree ];
 
       globals = {

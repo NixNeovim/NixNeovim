@@ -112,7 +112,7 @@ in
   activated = activated;
 
   # input:
-  # - config.programs.nixvim.plugins.lsp.servers
+  # - config.programs.nixneovim.plugins.lsp.servers
   # output:
   # - all required packages
   packages = cfg-servers:

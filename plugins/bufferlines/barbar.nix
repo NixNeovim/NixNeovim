@@ -8,7 +8,7 @@ let
   pluginUrl = "https://github.com/romgrk/barbar.nvim";
 
   helpers = import ../helpers.nix { inherit lib config; };
-  cfg = config.programs.nixvim.plugins.${name};
+  cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; {
     animation = boolOption true "Enable animations";

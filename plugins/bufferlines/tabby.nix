@@ -4,7 +4,7 @@ let
 
   name = "tabby";
 
-  cfg = config.programs.nixvim.plugins.${name};
+  cfg = config.programs.nixneovim.plugins.${name};
   helpers = import ../helpers.nix { inherit lib config; };
 
   highlight = mkOption {
@@ -28,7 +28,7 @@ in
 with helpers;
 {
   options = {
-    programs.nixvim.plugins.${name} = {
+    programs.nixneovim.plugins.${name} = {
       enable = mkEnableOption "Enable ${name}";
 
       presets = {
@@ -52,7 +52,7 @@ with helpers;
       };
     in
     mkIf cfg.enable {
-      programs.nixvim = {
+      programs.nixneovim = {
         extraPlugins = with pkgs.vimExtraPlugins; [
           tabby-nvim
         ];

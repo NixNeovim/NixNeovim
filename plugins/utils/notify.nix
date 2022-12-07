@@ -1,7 +1,7 @@
 { pkgs, config, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.notify;
+  cfg = config.programs.nixneovim.plugins.notify;
   helpers = import ../helpers.nix { lib = lib; };
   icon = mkOption {
     type = types.nullOr types.str;
@@ -9,7 +9,7 @@ let
   };
 in
 {
-  options.programs.nixvim.plugins.notify = {
+  options.programs.nixneovim.plugins.notify = {
     enable = mkEnableOption "Enable notify";
 
     stages = mkOption {
@@ -64,7 +64,7 @@ in
       };
     in
     mkIf cfg.enable {
-      programs.nixvim = {
+      programs.nixneovim = {
         extraPlugins = [ pkgs.vimPlugins.nvim-notify ];
         extraConfigLua = ''
           vim.notify = require('notify');

@@ -1,11 +1,11 @@
 { pkgs, config, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.specs;
+  cfg = config.programs.nixneovim.plugins.specs;
   helpers = import ../helpers.nix { inherit lib; };
 in
 {
-  options.programs.nixvim.plugins.specs = {
+  options.programs.nixneovim.plugins.specs = {
     enable = mkEnableOption "Enable specs-nvim";
 
     show_jumps = mkOption {
@@ -131,7 +131,7 @@ in
       };
     in
     mkIf cfg.enable {
-      programs.nixvim = {
+      programs.nixneovim = {
         extraPlugins = [ pkgs.vimPlugins.specs-nvim ];
 
         extraConfigLua = ''

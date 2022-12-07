@@ -8,7 +8,7 @@ let
   pluginUrl = "https://github.com/nvim-treesitter/nvim-treesitter-context";
 
   helpers = import ../helpers.nix { inherit lib config; };
-  cfg = config.programs.nixvim.plugins.${name};
+  cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; with types; {
     # add module options here

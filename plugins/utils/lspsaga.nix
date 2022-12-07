@@ -1,13 +1,13 @@
 { pkgs, lib, config, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.lspsaga;
+  cfg = config.programs.nixneovim.plugins.lspsaga;
   helpers = import ../helpers.nix { inherit lib config; };
 in
 with helpers;
 {
   options = {
-    programs.nixvim.plugins.lspsaga = {
+    programs.nixneovim.plugins.lspsaga = {
       enable = mkEnableOption "Enable lspsaga.nvim";
 
       signs = {
@@ -152,7 +152,7 @@ with helpers;
     };
   };
 
-  config.programs.nixvim =
+  config.programs.nixneovim =
     let
       notDefault = default: opt: if (opt != default) then opt else null;
       notEmpty = opt: if ((filterAttrs (_: v: v != null) opt) != { }) then opt else null;

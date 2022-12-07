@@ -8,7 +8,7 @@ let
   pluginUrl = "https://sr.ht/~whynothugo/lsp_lines.nvim/";
 
   helpers = import ../helpers.nix { inherit lib config; };
-  cfg = config.programs.nixvim.plugins.${name};
+  cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; {
     # add module options here

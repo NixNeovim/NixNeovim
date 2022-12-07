@@ -1,17 +1,17 @@
 { pkgs, config, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.colorschemes.onedark;
+  cfg = config.programs.nixneovim.colorschemes.onedark;
 in
 {
   options = {
-    programs.nixvim.colorschemes.onedark = {
+    programs.nixneovim.colorschemes.onedark = {
       enable = mkEnableOption "Enable onedark";
     };
   };
 
   config = mkIf cfg.enable {
-    programs.nixvim = {
+    programs.nixneovim = {
       colorscheme = "onedark";
       extraPlugins = [ pkgs.vimPlugins.onedark-vim ];
 

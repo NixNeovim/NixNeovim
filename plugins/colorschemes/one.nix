@@ -1,17 +1,17 @@
 { pkgs, config, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.colorschemes.one;
+  cfg = config.programs.nixneovim.colorschemes.one;
 in
 {
   options = {
-    programs.nixvim.colorschemes.one = {
+    programs.nixneovim.colorschemes.one = {
       enable = mkEnableOption "Enable vim-one";
     };
   };
 
   config = mkIf cfg.enable {
-    programs.nixvim = {
+    programs.nixneovim = {
       colorscheme = "one";
       extraPlugins = [ pkgs.vimPlugins.vim-one ];
 

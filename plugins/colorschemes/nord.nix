@@ -1,11 +1,11 @@
 { pkgs, config, lib, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim.colorschemes.nord;
+  cfg = config.programs.nixneovim.colorschemes.nord;
 in
 {
   options = {
-    programs.nixvim.colorschemes.nord = {
+    programs.nixneovim.colorschemes.nord = {
       enable = mkEnableOption "Enable nord";
 
       contrast = mkEnableOption
@@ -32,7 +32,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.nixvim = {
+    programs.nixneovim = {
       colorscheme = "nord";
       extraPlugins = [ pkgs.vimPlugins.nord-nvim ];
 

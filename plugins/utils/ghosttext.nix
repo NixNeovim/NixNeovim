@@ -8,7 +8,7 @@ let
   pluginUrl = "https://github.com/subnut/nvim-ghost.nvim";
 
   helpers = import ../helpers.nix { inherit lib config; };
-  cfg = config.programs.nixvim.plugins.${name};
+  cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; { };
   pluginOptions = helpers.toLuaOptions cfg moduleOptions;

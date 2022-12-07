@@ -1,7 +1,7 @@
 { pkgs, config, lib, ... }@args:
 with lib;
 let
-  cfg = config.programs.nixvim.plugins.nvim-cmp;
+  cfg = config.programs.nixneovim.plugins.nvim-cmp;
   helpers = import ../../helpers.nix { inherit lib config; };
 
   sources = import ./options/sources.nix { inherit lib config pkgs; };
@@ -9,7 +9,7 @@ let
 in
 with helpers;
 {
-  options.programs.nixvim.plugins.nvim-cmp = {
+  options.programs.nixneovim.plugins.nvim-cmp = {
     enable = mkEnableOption "Enable nvim-cmp";
 
     performance = import ./options/performance.nix { inherit lib; };
@@ -238,7 +238,7 @@ with helpers;
       };
     in
     mkIf cfg.enable {
-      programs.nixvim = {
+      programs.nixneovim = {
         extraPlugins =
           [ pkgs.vimExtraPlugins.nvim-cmp ]
           ++ sources.packages;

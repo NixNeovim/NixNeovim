@@ -4,18 +4,18 @@ let
 
   name = "intellitab";
 
-  cfg = config.programs.nixvim.plugins.${name};
+  cfg = config.programs.nixneovim.plugins.${name};
   defs = import ../plugin-defs.nix { inherit pkgs; };
 in
 {
   options = {
-    programs.nixvim.plugins.${name} = {
+    programs.nixneovim.plugins.${name} = {
       enable = mkEnableOption "intellitab.nvim";
     };
   };
 
   config = mkIf cfg.enable {
-    programs.nixvim = {
+    programs.nixneovim = {
       extraPlugins = [ defs.intellitab-nvim ];
 
       maps.insert."<Tab>" = "<CMD>lua require([[intellitab]]).indent()<CR>";

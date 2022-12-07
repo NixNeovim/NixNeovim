@@ -2,3 +2,4 @@ NixVim
 Neovim
 NixOS
 nixvim
+NixNeovim

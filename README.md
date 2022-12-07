@@ -3,7 +3,7 @@
 This is originally based on [pta2002/nixvim](https://github.com/pta2002/nixvim).
 However, this fork contains more modules and cleaner code.
 
-# NixVim - A Neovim configuration system for nix
+# NixNeovim - A Neovim configuration module for nix
 
 This flake provides modules for NixOS and Home Manager, which provide the `nixvim` configuration options.
 Using `nixvim`, you can configure Neovim, including plugins, through nix.
@@ -15,7 +15,7 @@ To use the modules, add this flake to the inputs of your nix configuration.
 
 ```nix
 {
-inputs.nixvim.url = "github:jooooscha/nixvim";
+inputs.nixvim.url = "github:nixneovim/nixneovim";
 }
 ```
 

@@ -8,7 +8,7 @@ let
   pluginUrl = "https://github.com/neovim/nvim-lspconfig";
 
   helpers = import ../helpers.nix { inherit lib config; };
-  cfg = config.programs.nixvim.plugins.${name};
+  cfg = config.programs.nixneovim.plugins.${name};
   lsp-helpers = import ./lsp-helpers.nix { inherit lib config pkgs; };
   servers = import ./options/servers.nix { inherit lib config pkgs; };
 

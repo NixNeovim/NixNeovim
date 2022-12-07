@@ -8,7 +8,7 @@ let
   pluginUrl = "https://github.com/folke/todo-comments.nvim";
 
   helpers = import ../helpers.nix { inherit lib config; };
-  cfg = config.programs.nixvim.plugins.${name};
+  cfg = config.programs.nixneovim.plugins.${name};
 
   keywordModule = { name, config, ... }: {
     options = with helpers; {

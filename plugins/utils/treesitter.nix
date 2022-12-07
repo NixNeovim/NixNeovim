@@ -8,7 +8,7 @@ let
   pluginUrl = "https://github.com/nvim-treesitter/nvim-treesitter";
 
   helpers = import ../helpers.nix { inherit lib config; };
-  cfg = config.programs.nixvim.plugins.${name};
+  cfg = config.programs.nixneovim.plugins.${name};
 
   keymapOption = default: mkOption {
     type = types.str;

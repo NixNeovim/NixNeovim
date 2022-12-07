@@ -2,7 +2,7 @@
 { lib, config, pkgs, ... }:
 with lib;
 let
-  cfg = config.programs.nixvim;
+  cfg = config.programs.nixneovim;
 
   pluginWithConfigType = types.submodule {
     options = {
@@ -87,8 +87,8 @@ let
 in
 {
   options = {
-    programs.nixvim = {
-      enable = mkEnableOption "enable NixVim";
+    programs.nixneovim = {
+      enable = mkEnableOption "enable nixneovim";
 
       package = mkOption {
         type = types.nullOr types.package;
@@ -217,25 +217,25 @@ in
 
       luaGlobals = optionalString (cfg.globals != { }) ''
         -- Set up globals {{{
-        local __nixvim_globals = ${helpers.toLuaObject cfg.globals}
+        local __nixneovim_globals = ${helpers.toLuaObject cfg.globals}
 
-        for k,v in pairs(__nixvim_globals) do
+        for k,v in pairs(__nixneovim_globals) do
           vim.g[k] = v
         end
         -- }}}
       '' + optionalString (cfg.options != { }) ''
         -- Set up options {{{
-        local __nixvim_options = ${helpers.toLuaObject cfg.options}
+        local __nixneovim_options = ${helpers.toLuaObject cfg.options}
 
-        for k,v in pairs(__nixvim_options) do
+        for k,v in pairs(__nixneovim_options) do
           vim.o[k] = v
         end
         -- }}}
       '' + optionalString (mappings != [ ]) ''
         -- Set up keybinds {{{
-        local __nixvim_binds = ${helpers.toLuaObject mappings}
+        local __nixneovim_binds = ${helpers.toLuaObject mappings}
 
-        for i, map in ipairs(__nixvim_binds) do
+        for i, map in ipairs(__nixneovim_binds) do
           vim.api.nvim_set_keymap(map.mode, map.key, map.action, map.config)
         end
         -- }}}
@@ -261,7 +261,7 @@ in
             EOF
           '';
 
-        packages.nixvim = {
+        packages.nixneovim = {
           start = filter (f: f != null) (map
             (x:
               if x ? plugin && x.optional == true then null else (x.plugin or x))
