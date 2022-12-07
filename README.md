@@ -92,7 +92,9 @@ A wiki for all options will be available in the near future.
 
 ## Documentation
 
-Can already be generated using `nix build .#docs`, but it is not yet avilable online.
+[NixNeovim Documentation](https://nixneovim.github.io/options.html)
+
+You can generate the docs using `nix build .#docs`
 
 ## Contribution
 
