@@ -92,7 +92,7 @@ A wiki for all options will be available in the near future.
 ## Roadmap
 
 - [ ] Further cleanup code
-- [ ] Port more modules to `mkLuaPlugin` functions
+- [ ] Port more modules to `mkLuaPlugin` function
 - [ ] Add some form of tests
 
 ## Documentation
