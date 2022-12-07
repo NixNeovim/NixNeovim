@@ -1,13 +1,14 @@
-# Forked
-
-This is originally based on [pta2002/nixvim](https://github.com/pta2002/nixvim).
-However, this fork contains more modules and cleaner code.
 
 # NixNeovim - A Neovim configuration module for nix
 
 This flake provides modules for NixOS and Home Manager, which provide the `nixvim` configuration options.
 Using `nixvim`, you can configure Neovim, including plugins, through nix.
 This makes your Neovim config reproducible, and easier to manage.
+
+#### Forked
+
+This is originally based on [pta2002/nixvim](https://github.com/pta2002/nixvim).
+However, NixNeovim contains more modules and cleaner code.
 
 ## Get Ready
 
@@ -92,6 +93,54 @@ A wiki for all options will be available in the near future.
 ## Documentation
 
 Can already be generated using `nix build .#docs`, but it is not yet avilable online.
+
+## Contribution
+
+Contributions are very welcome.
+They help improve this project and keep it up to date.
+
+Here is a list of how you can contribute to this project.
+
+TODO:
+
+### Adding a module
+
+- Copy `plugin_template.nix` or `plugin_template_minimal.nix`
+- Add the following information:
+    - `name`
+    - `pluginUrl`
+    - `moduleOptions`
+    - `extraPlugins`
+- If not otherwise specified, `mkLuaPlugin` will add the following string to `init.vim`:
+    - `extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";`
+    - This can be disabled with `defaultRequire = false`
+
+### Adding options to a module
+
+- Go to the module you want to add options to.
+- Add your options to the `moduleOptions` attribute set.
+
+```nix
+{
+  moduleOptions = with helpers; {
+    mappings = mkOption {
+      type = types.attrs;
+      default = { };
+    };
+    enableAuto = boolOption false "Enable auto expanding snippets";
+  };
+}
+```
+
+- In `helpers.nix` we have defined several functions for basic plugin options like bool, strings or integer.
+- In particular, ther are:
+    - `boolOption, intOption, strOption, attrsOption, enumOption`
+- ... improve this
+
+### Rewrite module to new `mkLuaPlugin` api
+
+The `mkLuaPlugin` functions helps reduce boiler code and has some checks to improve the quality of the modules.
+In the long term, all modules should be rewritten to use the `mkLuaPlugin` function.
 
 ## ⚠ Old Readme ⚠
 
