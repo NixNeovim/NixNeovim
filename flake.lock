@@ -31,18 +31,18 @@
         "type": "github"
       }
     },
-    "neonixplugins": {
+    "nixneovimplugins": {
       "inputs": {
         "flake-compat": "flake-compat",
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1670412325,
-        "narHash": "sha256-GuxtEjt+tNDXXSfxBU+qb5W3mrSOGtIrQ4Xiw0iYsnQ=",
+        "lastModified": 1670418597,
+        "narHash": "sha256-1bnvQYro1h9lGXQwUpUn/THOuoBTzy6cdj3Pt692mGU=",
         "owner": "nixneovim",
         "repo": "nixneovimplugins",
-        "rev": "b521c92c6bbc4709b738f515a31a45cb5d17a5c4",
+        "rev": "367139896caa31485bfd1638c15a2b6d9f258d34",
         "type": "github"
       },
       "original": {
@@ -101,7 +101,7 @@
     },
     "root": {
       "inputs": {
-        "neonixplugins": "neonixplugins",
+        "nixneovimplugins": "nixneovimplugins",
         "nixpkgs": "nixpkgs_2",
         "nmd": "nmd"
       }

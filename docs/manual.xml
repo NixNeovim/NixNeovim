@@ -4,20 +4,20 @@
   version="5.0"
   xml:id="book-home-manager-manual">
   <info>
-    <title>NixVim Manual</title>
+    <title>NixNeovim Manual</title>
   </info>
   <preface>
     <title>Preface</title>
     <para>
-      This manual is meant to serve as reference for how to use and install NixVim.
+      This manual is meant to serve as the ultimate reference for how to use and install NixNeovim.
     </para>
     <para>
       If you have any issues, questions, or plugin suggestions please open an issue on the
-      <link xlink:href="https://github.com/jooooscha/nixvim">NixVim GitHub</link>
+      <link xlink:href="https://github.com/nixneovim/nixneovim">NixNeovim GitHub</link>
     </para>
   </preface>
   <appendix xml:id="ch-options">
     <title>Configuration Options</title>
-    <xi:include href="./nmd-result/nixvim-options.xml" />
+    <xi:include href="./nmd-result/nixneovim-options.xml" />
   </appendix>
 </book>

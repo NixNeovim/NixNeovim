@@ -1,11 +1,11 @@
 <reference xmlns="http://docbook.org/ns/docbook"
            xmlns:xlink="http://www.w3.org/1999/xlink"
            xmlns:xi="http://www.w3.org/2001/XInclude">
- <title>NixVim Reference Pages</title>
+ <title>NixNeovim Reference Pages</title>
  <info>
-  <author><personname>NixVim contributors</personname></author>
-  <copyright><year>2021-2022</year><holder>NixVim contributors</holder>
+  <author><personname>NixNeovim contributors</personname></author>
+  <copyright><year>2021-2022</year><holder>NixNeovim contributors</holder>
   </copyright>
  </info>
- <xi:include href="man-nixvim.xml" />
+ <xi:include href="man-nixneovim.xml" />
 </reference>

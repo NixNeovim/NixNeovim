@@ -14,7 +14,7 @@ let
     nmd.buildModulesDocs ({
       moduleRootPaths = [ ./.. ];
       mkModuleUrl = path:
-        "https://github.com/jooooscha/nixneovim/blob/main/${path}#blob-path";
+        "https://github.com/nixneovim/nixneovim/blob/main/${path}#blob-path";
       channelName = "nixneovim";
     } // args);
 
