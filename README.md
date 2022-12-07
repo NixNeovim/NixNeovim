@@ -1,8 +1,8 @@
 
 # NixNeovim - A Neovim configuration module for nix
 
-This flake provides modules for NixOS and Home Manager, which provide the `nixvim` configuration options.
-Using `nixvim`, you can configure Neovim, including plugins, through nix.
+This flake provides modules for NixOS and Home Manager, which provide the `nixneovim` configuration options.
+Using `nixneovim`, you can configure Neovim, including plugins, through nix.
 This makes your Neovim config reproducible, and easier to manage.
 
 #### Forked
@@ -16,17 +16,17 @@ To use the modules, add this flake to the inputs of your nix configuration.
 
 ```nix
 {
-inputs.nixvim.url = "github:nixneovim/nixneovim";
+inputs.nixneovim.url = "github:nixneovim/nixneovim";
 }
 ```
 
 Then, apply the overlay and import the modules.
-This is needed, because NixVim uses [nixpkgs-vim-extra-plugins](https://github.com/jooooscha/nixpkgs-vim-extra-plugins) to get access to more Neovim plugins.
+This is needed, because NixNeovim uses [nixpkgs-vim-extra-plugins](https://github.com/jooooscha/nixpkgs-vim-extra-plugins) to get access to more Neovim plugins.
 
 ```nix
 {
 nixpkgs.overlays = [
-    nixvim.overlays.default
+    nixneovim.overlays.default
 ];
 }
 ```
@@ -36,20 +36,20 @@ And import the module to your Home Manager (recommended) or NixOS configuration.
 ```nix
 {
 imports = [
-    nixvim.nixosModules.default # with Home Manager
-    # nixvim.nixosModules.nixos # without Home Manager
+    nixneovim.nixosModules.default # with Home Manager
+    # nixneovim.nixosModules.nixos # without Home Manager
 ];
 }
 ```
 
 ## Example Config
 
-Importing the modules gives you access to the `programs.nixvim` config.
+Importing the modules gives you access to the `programs.nixneovim` config.
 A wiki for all options will be available in the near future.
 
 ```nix
 {
-  programs.nixvim = {
+  programs.nixneovim = {
     enable = true;
     extraConfigVim = ''
       # you can add your old config to make the switch easier
@@ -60,7 +60,7 @@ A wiki for all options will be available in the near future.
       EOF
     '';
     
-    # NixVim contains some colorschemes
+    # NixNeovim contains some colorschemes
     colorschemes.gruvbox.enable = true;
 
     # to install plugins just activate their modules
@@ -152,7 +152,7 @@ It has not yet been updated, and may contain wrong information.
 
 ```nix
 {
-  programs.nixvim = {
+  programs.nixneovim = {
     options = {
       number = true;         # Show line numbers
       relativenumber = true; # Show relative line numbers
@@ -173,7 +173,7 @@ using the `maps` attribute:
 
 ```nix
 {
-  programs.nixvim = {
+  programs.nixneovim = {
     maps = {
       normalVisualOp.";" = ":";
       normal."<leader>m" = {
