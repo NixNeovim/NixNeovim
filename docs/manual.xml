@@ -9,11 +9,11 @@
   <preface>
     <title>Preface</title>
     <para>
-      This manual is meant to serve as the ultimate reference for how to use and install NixVim.
+      This manual is meant to serve as reference for how to use and install NixVim.
     </para>
     <para>
       If you have any issues, questions, or plugin suggestions please open an issue on the
-      <link xlink:href="https://github.com/pta2002/nixvim">NixVim GitHub</link>
+      <link xlink:href="https://github.com/jooooscha/nixvim">NixVim GitHub</link>
     </para>
   </preface>
   <appendix xml:id="ch-options">
