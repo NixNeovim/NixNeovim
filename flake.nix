@@ -9,14 +9,14 @@
       flake = false;
     };
 
-    neonixplugins.url = "github:nixneovim/nixneovimplugins";
+    nixneovimplugins.url = "github:nixneovim/nixneovimplugins";
   };
 
   outputs = { self, nixpkgs, nmd, ... }@inputs:
     let
       system = "x86_64-linux";
 
-      pkgs = import nixpkgs { inherit system; overlays = [ inputs.neonixplugins.overlays.default ]; };
+      pkgs = import nixpkgs { inherit system; overlays = [ inputs.nixneovimplugins.overlays.default ]; };
 
       lib = pkgs.lib;
 
