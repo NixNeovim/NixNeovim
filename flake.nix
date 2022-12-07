@@ -9,14 +9,14 @@
       flake = false;
     };
 
-    vim-extra-plugins.url = "github:jooooscha/nixpkgs-vim-extra-plugins";
+    neonixplugins.url = "github:nixneovim/nixneovimplugins";
   };
 
   outputs = { self, nixpkgs, nmd, ... }@inputs:
     let
       system = "x86_64-linux";
 
-      pkgs = import nixpkgs { inherit system; overlays = [ inputs.vim-extra-plugins.overlays.default ]; };
+      pkgs = import nixpkgs { inherit system; overlays = [ inputs.neonixplugins.overlays.default ]; };
 
       lib = pkgs.lib;
 

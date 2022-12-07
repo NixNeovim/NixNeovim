@@ -31,23 +31,27 @@
         "type": "github"
       }
     },
-    "nixpkgs": {
+    "neonixplugins": {
+      "inputs": {
+        "flake-compat": "flake-compat",
+        "flake-utils": "flake-utils",
+        "nixpkgs": "nixpkgs"
+      },
       "locked": {
-        "lastModified": 1670064435,
-        "narHash": "sha256-+ELoY30UN+Pl3Yn7RWRPabykwebsVK/kYE9JsIsUMxQ=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "61a8a98e6d557e6dd7ed0cdb54c3a3e3bbc5e25c",
+        "lastModified": 1670412325,
+        "narHash": "sha256-GuxtEjt+tNDXXSfxBU+qb5W3mrSOGtIrQ4Xiw0iYsnQ=",
+        "owner": "nixneovim",
+        "repo": "nixneovimplugins",
+        "rev": "b521c92c6bbc4709b738f515a31a45cb5d17a5c4",
         "type": "github"
       },
       "original": {
-        "owner": "nixos",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
+        "owner": "nixneovim",
+        "repo": "nixneovimplugins",
         "type": "github"
       }
     },
-    "nixpkgs_2": {
+    "nixpkgs": {
       "locked": {
         "lastModified": 1659190188,
         "narHash": "sha256-LudYrDFPFaQMW0l68TYkPWRPKmqpxIFU1nWfylIp9AQ=",
@@ -59,6 +63,22 @@
       "original": {
         "owner": "NixOS",
         "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1670242877,
+        "narHash": "sha256-jBLh7dRHnbfvPPA9znOC6oQfKrCPJ0El8Zoe0BqnCjQ=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "6e51c97f1c849efdfd4f3b78a4870e6aa2da4198",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -81,29 +101,9 @@
     },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs",
-        "nmd": "nmd",
-        "vim-extra-plugins": "vim-extra-plugins"
-      }
-    },
-    "vim-extra-plugins": {
-      "inputs": {
-        "flake-compat": "flake-compat",
-        "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs_2"
-      },
-      "locked": {
-        "lastModified": 1670249517,
-        "narHash": "sha256-xGeHJwyt5G5yMpMD2cjuNXnSWEZ9KM80lV4APhldRZE=",
-        "owner": "jooooscha",
-        "repo": "nixpkgs-vim-extra-plugins",
-        "rev": "8a9f70b7253181ad0b623e75271096c3b3a66a4a",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jooooscha",
-        "repo": "nixpkgs-vim-extra-plugins",
-        "type": "github"
+        "neonixplugins": "neonixplugins",
+        "nixpkgs": "nixpkgs_2",
+        "nmd": "nmd"
       }
     }
   },
