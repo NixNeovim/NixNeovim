@@ -142,6 +142,11 @@ TODO:
 The `mkLuaPlugin` functions helps reduce boiler code and has some checks to improve the quality of the modules.
 In the long term, all modules should be rewritten to use the `mkLuaPlugin` function.
 
+### Create a better logo
+
+- The current logo took me 20 seconds to make.
+- I think this project deserves better
+
 ## ⚠ Old Readme ⚠
 
 The rest of this readme is still in its original state from the fork.
