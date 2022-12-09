@@ -13,30 +13,39 @@ jobs:
       - name: Build docs
         run: nix build .#docs
       - name: Upload docs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-pages-artifact@v2
         with:
           name: docs
           path: result/share/doc
   deploy:
     needs: [build]
+    permission:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout GitHub Pages repository
-        uses: actions/checkout@v2
-        with:
-          repository: NixNeovim/NixNeovim.github.io
-          ref: main
-          token: ${{ secrets.GIHUB_TOKEN }}
-      - name: Download artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: docs
-          path: docs
       - name: Deploy to GitHub Pages
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "action@github.com"
-          git add -A
-          git commit -m "Deploy docs"
-          git push
+        id: deployment
+        usese: actions/deploy-pages@1
+  #     - name: Checkout GitHub Pages repository
+  #       uses: actions/checkout@v2
+  #       with:
+  #         repository: NixNeovim/NixNeovim.github.io
+  #         ref: main
+  #         token: ${{ secrets.GIHUB_TOKEN }}
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: docs
+  #         path: docs
+  #     - name: Deploy to GitHub Pages
+  #       run: |
+  #         git config user.name "GitHub Actions"
+  #         git config user.email "action@github.com"
+  #         git add -A
+  #         git commit -m "Deploy docs"
+  #         git push
 
