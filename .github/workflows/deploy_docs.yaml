@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v17
       - name: Build docs
-        run: nix run .#docs
+        run: nix build .#docs
       - name: Upload docs
         uses: actions/upload-artifact@v2
         with:
