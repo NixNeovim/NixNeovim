@@ -1,0 +1,40 @@
+name: Build and deploy docs
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build docs
+        run: nix run .#docs
+      - name: Upload docs
+        uses: actions/upload-artifact@v2
+        with:
+          name: docs
+          path: result/share/doc
+  deploy:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitHub Pages repository
+        uses: actions/checkout@v2
+        with:
+          repository: NixNeovim/NixNeovim.github.io
+          ref: main
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: docs
+          path: docs
+      - name: Deploy to GitHub Pages
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "action@github.com"
+          git add -A
+          git commit -m "Deploy docs"
+          git push
+
