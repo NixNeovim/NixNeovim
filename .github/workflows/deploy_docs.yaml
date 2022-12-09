@@ -6,9 +6,10 @@ on:
 
 jobs:
   build:
-    runs-on: nixpkgs/nix-flakes
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v17
       - name: Build docs
         run: nix run .#docs
       - name: Upload docs
