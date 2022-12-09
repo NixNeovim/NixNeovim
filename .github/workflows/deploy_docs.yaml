@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: nixpkgs/nix-flakes
     steps:
       - uses: actions/checkout@v2
       - name: Build docs
