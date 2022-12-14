@@ -36,7 +36,7 @@
 
       overlays.default = self: super:
         lib.composeManyExtensions [
-          inputs.vim-extra-plugins.overlays.default
+          inputs.nixneovimplugins.overlays.default
           (self: super: {
             unstable = import nixpkgs { inherit system; };
           })
