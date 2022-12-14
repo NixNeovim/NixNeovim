@@ -98,6 +98,9 @@ in
 
   # list of extra config that sources define/require
   # config = mapAttrsToList (name: attrs: attrs.extraConfig) (helpers.activated plugins); ## return packages of activated sources
-  config = helpers.activatedConfig plugins;
+  extraConfig = helpers.activatedConfig plugins;
+
+  # list of the sources config for cmp
+  config = mapAttrsToList (name: attrs: { name = name; }) (filterAttrs (k: v: v.enable) cfg-plugin);
 
 }

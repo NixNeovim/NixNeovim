@@ -227,7 +227,9 @@ with helpers;
           comparators = if (isNull cfg.sorting.comparators) then null else helpers.mkRaw cfg.sorting.comparators;
         };
 
-        sources = filterAttrs (k: v: v.enable) cfg.sources; # only add activated sources to config
+        # sources = filterAttrs (k: v: v.enable) cfg.sources; # only add activated sources to config
+        sources = sources.config;
+
         snippet = {
           expand = "function(args) ${ lib.optionalString cfg.snippet.luasnip.enable "require(\"luasnip\").lsp_expand(args.body)" } end";
         };
@@ -247,10 +249,10 @@ with helpers;
           do -- create scope to not interfere with other plugins
             local cmp = require('cmp') -- this is needed
 
-            cmp.setup(${helpers.toLuaObject pluginOptions})
+            cmp.setup(${helpers.toLuaObject' 1 pluginOptions})
 
             -- extra config of sources
-            ${toConfigString sources.config}
+            ${toConfigString sources.extraConfig}
           end
         '';
       };
