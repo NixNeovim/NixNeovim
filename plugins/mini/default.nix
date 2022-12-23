@@ -14,6 +14,7 @@ let
   modules = {
     ai = import ./modules/ai.nix { inherit lib helpers; };
     align = { };
+    animate = { };
     base16 = { };
     bufremove = { };
     comment = { };
