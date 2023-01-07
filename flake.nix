@@ -34,10 +34,7 @@
         nixos = import ./nixeovim.nix { homeManager = false; };
       };
 
-      overlays.default = self: super:
-        lib.composeManyExtensions [
-          inputs.nixneovimplugins.overlays.default
-        ] self super;
+      overlays.default = self: super: inputs.nixneovimplugins.overlays.default;
 
 
       # apps.${system} = {
