@@ -54,9 +54,9 @@ mkLuaPlugin {
 
   extraPlugins = with pkgs;
     if cfg.installAllGrammars then
-      [ unstable.vimPlugins.nvim-treesitter.withAllGrammars ]
+      [ vimPlugins.nvim-treesitter.withAllGrammars ]
     else
-      [ unstable.vimPlugins.nvim-treesitter ];
+      [ vimPlugins.nvim-treesitter ];
 
   extraPackages = with pkgs; [
     tree-sitter

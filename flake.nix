@@ -37,9 +37,6 @@
       overlays.default = self: super:
         lib.composeManyExtensions [
           inputs.nixneovimplugins.overlays.default
-          (self: super: {
-            unstable = import nixpkgs { inherit system; };
-          })
         ] self super;
 
 
