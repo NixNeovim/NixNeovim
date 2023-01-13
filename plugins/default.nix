@@ -9,12 +9,14 @@ let
   utils = filesIn "utils";
   completion = filesIn "completion";
   bufferlines = filesIn "bufferlines";
+  git = filesIn "git";
 in
 {
   imports =
     utils ++
     completion ++
     bufferlines ++
+    git ++
     [
     ./generated.nix
 
@@ -27,10 +29,6 @@ in
 
     ./debugging/nvim-dap
     ./debugging/nvim-dap-ui.nix
-
-    ./git/fugitive.nix
-    ./git/gitgutter.nix
-    ./git/neogit.nix
 
     ./languages/ledger.nix
     ./languages/nix.nix
