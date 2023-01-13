@@ -143,7 +143,15 @@ rec {
 
   camelToSnake = string:
     with lib;
-    stringAsChars (x: if (toUpper x == x) then "_${toLower x}" else x) string;
+    with builtins;
+    stringAsChars (x:
+        let
+          upperCaseLetters = split "" "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        in if (elem x upperCaseLetters) then
+          "_${toLower x}"
+        else
+          x
+      ) string;
 
   toLuaOptions = cfg: moduleOptions:
     let
