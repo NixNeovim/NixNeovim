@@ -34,7 +34,7 @@
         nixos = import ./nixeovim.nix { homeManager = false; };
       };
 
-      overlays.default = self: super: inputs.nixneovimplugins.overlays.default;
+      overlays.default = inputs.nixneovimplugins.overlays.default;
 
 
       # apps.${system} = {
