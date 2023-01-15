@@ -12,7 +12,6 @@ let
     "nvim-comment-frame"
     "vim-printer"
     "vim-easy-align"
-    "plantuml-syntax"
     "gruvbox"
     "nest-nvim"
     "plenary-nvim"
