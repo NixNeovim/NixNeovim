@@ -31,6 +31,21 @@
         "type": "github"
       }
     },
+    "nix-flake-tests": {
+      "locked": {
+        "lastModified": 1616362008,
+        "narHash": "sha256-f3G/zSTHgtqy7Ty2W6AvM3jtGcqVBXg103slRUsyjYE=",
+        "owner": "antifuchs",
+        "repo": "nix-flake-tests",
+        "rev": "d54d142f6bfb7f82ef1a60ebc315d56d0430ad70",
+        "type": "github"
+      },
+      "original": {
+        "owner": "antifuchs",
+        "repo": "nix-flake-tests",
+        "type": "github"
+      }
+    },
     "nixneovimplugins": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -101,6 +116,7 @@
     },
     "root": {
       "inputs": {
+        "nix-flake-tests": "nix-flake-tests",
         "nixneovimplugins": "nixneovimplugins",
         "nixpkgs": "nixpkgs_2",
         "nmd": "nmd"

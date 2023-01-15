@@ -10,9 +10,10 @@
     };
 
     nixneovimplugins.url = "github:nixneovim/nixneovimplugins";
+    nix-flake-tests.url = "github:antifuchs/nix-flake-tests";
   };
 
-  outputs = { self, nixpkgs, nmd, ... }@inputs:
+  outputs = { self, nixpkgs, nmd, nix-flake-tests, ... }@inputs:
     let
       system = "x86_64-linux";
 
@@ -31,11 +32,18 @@
       nixosModules = rec {
         default = import ./nixneovim.nix { homeManager = true; };
         homeManager = self.nixosModules.default;
-        nixos = import ./nixeovim.nix { homeManager = false; };
+        nixos = import ./nixneovim.nix { homeManager = false; };
       };
 
       overlays.default = inputs.nixneovimplugins.overlays.default;
 
+      checks.x86_64-linux = {
+        basic =
+          nix-flake-tests.lib.check {
+            inherit pkgs;
+            tests = pkgs.callPackage ./tests.nix {};
+          };
+      };
 
       # apps.${system} = {
       #   default = {
