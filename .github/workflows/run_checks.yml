@@ -1,0 +1,14 @@
+name: Run Checks
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  update-plugins:
+    runs-on: ubuntu-latest
+    name: Update plugins
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v17
+      - run: nix flake check
