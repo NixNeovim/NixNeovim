@@ -2,6 +2,8 @@
 
 let
   helper = import ./plugins/helpers.nix { inherit lib config; };
+
+  simpleCheck = expr: expected: { inherit expr expected; };
 in {
   testShortList = {
     expr = helper.toLuaObject { a = 1; };
@@ -26,6 +28,11 @@ in {
   testToLuaObject2 = {
     expr = helper.toLuaObject false;
     expected = "false";
+  };
+
+  testToLuaObject3 = {
+    expr = helper.toLuaObject "<cmd>lua require('gitsigns').blame_line{full=true}<cr>";
+    expected = ''"<cmd>lua require('gitsigns').blame_line{full=true}<cr>"'';
   };
 
   testSnakeCase = {
