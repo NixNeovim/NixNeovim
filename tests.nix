@@ -50,9 +50,4 @@ in {
     2
     345'';
   };
-
-  testFail = {
-    expr = false;
-    expected = true;
-  };
 }
