@@ -27,6 +27,7 @@ let
     jump2d = { };
     map = { };
     misc = { };
+    move = { };
     pairs = { };
     sessions = { };
     starter = { };
