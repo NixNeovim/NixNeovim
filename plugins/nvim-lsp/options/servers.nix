@@ -25,6 +25,10 @@ let
       default = { };
     };
 
+  # Posible fields are:
+  # - languages: Used in the docs
+  # - packages: used if the name of the nix packages differs from the key
+  # - serverName: name of the server as called in `lspconfig.<serverName>.setup()
   serversSet = {
     clangd = {
       languages = "C, C++";
