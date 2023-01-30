@@ -70,6 +70,10 @@ let
       languages = "text files";
       packages = [ ltex-ls ];
     };
+    nil = {
+      languages = "Nix";
+      serverName = "nil_ls";
+    };
     pyright = {
       languages = "Python";
     };
