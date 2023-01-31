@@ -10,13 +10,6 @@ let
 
       serverName = serverAttrs.serverName;
 
-      onAttach =
-        ''
-          local __on_attach = function(client, bufnr)
-            ${cfg.servers.${server}.onAttachExtra}
-          end
-        '';
-
       setup =
         let
           coqRequire = optionalString cfg.coqSupport "local coq = require(\"coq\")";
@@ -33,7 +26,9 @@ let
     in
     ''
       do -- lsp server config ${server}
-        ${onAttach}
+        local __on_attach = function(client, bufnr)
+          ${cfg.servers.${server}.onAttachExtra}
+        end
         ${setup}
         require('lspconfig')["${serverName}"].setup(__setup)
       end -- lsp server config ${server}

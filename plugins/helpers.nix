@@ -70,6 +70,9 @@ rec {
   toVimDict = args: builtins.toJSON
     (lib.filterAttrs (n: v: !isNull v) args);
 
+  # create indentation string
+  indent = depth: repeatChar " " depth;
+
   # removes empty strings and applies concatStringsSep
   toConfigString = list:
     let
@@ -83,7 +86,7 @@ rec {
     let
       # helper function that keeps track of indentation (depth)
       toLuaObjectHelper = depth: args:
-        let ind = repeatChar " " depth; # create indentation string
+        let ind = indent depth;
         in
           if builtins.isAttrs args then
             let
@@ -321,11 +324,12 @@ rec {
         extraConfigLua = optionalString
           (cfg.extraLua.pre != "" || cfg.extraLua.post != "" || luaConfig != "")
           ''
+
           -- config for plugin: ${name}
           do
             function setup()
               ${cfg.extraLua.pre}
-              ${luaConfig}
+              ${replaceStrings ["\n"] ["\n${indent 2}"] luaConfig}
               ${cfg.extraLua.post}
             end
             success, output = pcall(setup) -- execute 'setup()' and catch any errors
@@ -334,7 +338,6 @@ rec {
             end
           end
         '';
-
         options = extraOptions;
       };
     }; # closes mkLuaPlugin
