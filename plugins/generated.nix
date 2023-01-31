@@ -21,7 +21,6 @@ let
     "ltex-extra-nvim"
     "firenvim"
     { name = "vim-startuptime"; setup = false; }
-    { name = "LuaSnip"; setup = false; }
     { name = "lsp-signature-nvim"; setup = false; }
   ];
 

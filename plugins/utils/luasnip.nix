@@ -1,0 +1,45 @@
+{ pkgs, lib, config, ... }:
+
+with lib;
+
+let
+
+  name = "luasnip";
+  pluginUrl = "https://github.com/L3MON4D3/LuaSnip";
+
+  helpers = import ../helpers.nix { inherit lib config; };
+  cfg = config.programs.nixneovim.plugins.${name};
+
+  moduleOptions = with helpers; {
+    # add module options here
+    enableSnipmate = boolOption true "Load Snimate snippets";
+    enableLua = boolOption true "Load LuaSnip snippets";
+    lazyLoad = boolOption true "lazy load snippets";
+    path = strOption "./snippets" "Specifies the path where snippets are loaded from";
+  };
+
+in
+with helpers;
+mkLuaPlugin {
+  inherit name moduleOptions pluginUrl;
+  extraPlugins = with pkgs.vimExtraPlugins; [
+    # add neovim plugin here
+    LuaSnip
+  ];
+  extraPackages = with pkgs; [
+    # add dependencies here
+    luajitPackages.jsregexp
+  ];
+  extraConfigLua =
+    let
+      load-call =
+        if cfg.lazyLoad then
+          "lazy_load({ paths = \"${cfg.path}\" })"
+        else
+          "load({ paths = \"${cfg.path}\" })";
+    in lib.concatStringsSep "\n" [
+      (optionalString cfg.enableSnipmate "require('${name}.loaders.from_snipmate').${load-call}")
+      (optionalString cfg.enableLua "require('${name}.loaders.from_lua').${load-call}")
+    ];
+  defaultRequire = true;
+}
