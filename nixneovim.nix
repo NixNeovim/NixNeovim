@@ -4,6 +4,8 @@ with lib;
 let
   cfg = config.programs.nixneovim;
 
+  mappings = import ./helper/keymappings.nix { inherit lib config; };
+
   pluginWithConfigType = types.submodule {
     options = {
       config = mkOption {
@@ -231,15 +233,16 @@ in
           vim.o[k] = v
         end
         -- }}}
-      '' + optionalString (mappings != [ ]) ''
-        -- Set up keybinds {{{
-        local __nixneovim_binds = ${helpers.toLuaObject mappings}
-
-        for i, map in ipairs(__nixneovim_binds) do
-          vim.api.nvim_set_keymap(map.mode, map.key, map.action, map.config)
-        end
-        -- }}}
       '';
+
+      # create the keymapping strings
+      mappingsStrings =
+        let
+          string = forEach mappings.list
+            ({ mode, key, action, config }:
+              ''do vim.keymap.set("${mode}", "${key}", ${action}, ${helpers.toLuaObject config}) end''
+            );
+        in concatStringsSep "\n" string;
 
       configure = {
         # Make sure that globals are set before plugins are setup.
@@ -248,7 +251,17 @@ in
         customRC = cfg.extraConfigVim + ''
           lua <<EOF
           ${cfg.extraLuaPreConfig}
+          --------------------------------------------------
+          --                 Globals                      --
+          --------------------------------------------------
           ${luaGlobals}
+
+          --------------------------------------------------
+          --                 Keymappings                  --
+          --------------------------------------------------
+
+          ${mappingsStrings}
+
           ${cfg.extraConfigLua}
         '' +
           # Set colorscheme after setting globals.
@@ -272,18 +285,6 @@ in
         };
       };
 
-      mappings =
-        (helpers.genMaps "" cfg.maps.normalVisualOp) ++
-        (helpers.genMaps "n" cfg.maps.normal) ++
-        (helpers.genMaps "i" cfg.maps.insert) ++
-        (helpers.genMaps "v" cfg.maps.visual) ++
-        (helpers.genMaps "x" cfg.maps.visualOnly) ++
-        (helpers.genMaps "s" cfg.maps.select) ++
-        (helpers.genMaps "t" cfg.maps.terminal) ++
-        (helpers.genMaps "o" cfg.maps.operator) ++
-        (helpers.genMaps "l" cfg.maps.lang) ++
-        (helpers.genMaps "!" cfg.maps.insertCommand) ++
-        (helpers.genMaps "c" cfg.maps.command);
 
     in
     mkIf cfg.enable (

@@ -163,36 +163,6 @@ rec {
     in
     attrs // extraAttrs;
 
-  # Generates maps for a lua config
-  genMaps = mode: maps:
-    let
-      normalized = builtins.mapAttrs
-        (key: action:
-          if builtins.isString action then
-            {
-              silent = false;
-              expr = false;
-              unique = false;
-              noremap = true;
-              script = false;
-              nowait = false;
-              action = action;
-            }
-          else action)
-        maps;
-    in
-    builtins.attrValues (builtins.mapAttrs
-      (key: action:
-        {
-          action = action.action;
-          config = lib.filterAttrs (_: v: v) {
-            inherit (action) silent expr unique noremap script nowait;
-          };
-          key = key;
-          mode = mode;
-        })
-      normalized);
-
   # Creates an option with a nullable type that defaults to null.
   mkNullOrOption = type: desc: lib.mkOption {
     type = lib.types.nullOr type;
