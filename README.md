@@ -101,6 +101,11 @@ A wiki for all options will be available in the near future.
 
 You can generate the docs using `nix build .#docs`
 
+
+### Supported language servers
+
+Until we find a better way of documenting this, you can find a list of supported language servers here: [servers.nix](https://github.com/NixNeovim/NixNeovim/blob/main/plugins/nvim-lsp/options/servers.nix)
+
 ## Contribution
 
 Contributions are very welcome.
