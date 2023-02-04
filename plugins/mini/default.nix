@@ -22,7 +22,7 @@ let
     cursorword = { };
     doc = { };
     fuzzy = { };
-    identscope = { };
+    indentscope = { };
     jump = { };
     jump2d = { };
     map = { };
