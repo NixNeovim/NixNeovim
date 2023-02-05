@@ -126,19 +126,19 @@ nnoremap <leader>m <silent> <cmd>make<CR>
 
 First, you specify the mode; you can choose between the keywords below.
 
-| NixVim         | NeoVim                                           |
-|----------------|--------------------------------------------------|
-| normal         | Normal mode                                      |
-| insert         | Insert mode                                      |
-| visual         | Visual and Select mode                           |
-| select         | Select mode                                      |
-| terminal       | Terminal mode                                    |
-| normalVisualOp | Normal, visual, select and operator-pending mode |
-| visualOnly     | Visual mode only, without select                 |
-| operator       | Operator-pending mode                            |
-| insertCommand  | Insert and command-line mode                     |
-| lang           | Insert, command-line and lang-arg mode           |
-| command        | Command-line mode                                |
+| NixNeovim      | NeoVim | Description                                  |
+|----------------|--------|----------------------------------------------|
+| normalVisualOp | ""     | Normal, visual, select, and operator-pending |
+| normal         | "n"    | Normal                                       |
+| insertCommand  | "!"    | Insert and command-line                      |
+| insert         | "i"    | Insert                                       |
+| command        | "c"    | Command-line                                 |
+| visual         | "v"    | Visual and Select                            |
+| visualOnly     | "x"    | Visual                                       |
+| select         | "s"    | Select                                       |
+| operator       | "o"    | Operator-pending                             |
+| terminal       | "t"    | Terminal                                     |
+| lang           | "l"    | Insert, command-line, and lang-arg           |
 
 When specifying the mapping with an attribute set you can set the following options.
 
@@ -150,7 +150,7 @@ When specifying the mapping with an attribute set you can set the following opti
 | expr    | false   | `<expr>`                                 |
 | unique  | false   | `<unique>`                               |
 | noremap | true    | Use the 'noremap' variant of the mapping |
-| action  | N/A     | Action to execute                        |
+| action  |         | Action to execute                        |
 
 ## Roadmap
 
