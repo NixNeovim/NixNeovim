@@ -159,7 +159,7 @@ in
         description = "Global variables";
       };
 
-      maps = mkOption {
+      mappings = mkOption {
         type = types.submodule {
           options = {
             normal = mapOptions "normal";

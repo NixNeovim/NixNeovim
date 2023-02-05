@@ -89,6 +89,62 @@ A wiki for all options will be available in the near future.
   };
 }
 ```
+
+## Key mappings
+
+It is fully possible to define key mappings from within NixVim. This is done
+using the `maps` attribute:
+
+```nix
+{
+  programs.nixneovim = {
+    maps = {
+      normalVisualOp.";" = ":";
+      normal."<leader>m" = {
+        silent = true;
+        action = "<cmd>make<CR>";
+      };
+    };
+  };
+}
+```
+
+This is equivalent to this vimscript:
+
+```vim
+noremap ; :
+nnoremap <leader>m <silent> <cmd>make<CR>
+```
+
+This table describes all modes for the `maps` option:
+
+| NixVim         | NeoVim                                           |
+|----------------|--------------------------------------------------|
+| normal         | Normal mode                                      |
+| insert         | Insert mode                                      |
+| visual         | Visual and Select mode                           |
+| select         | Select mode                                      |
+| terminal       | Terminal mode                                    |
+| normalVisualOp | Normal, visual, select and operator-pending mode |
+| visualOnly     | Visual mode only, without select                 |
+| operator       | Operator-pending mode                            |
+| insertCommand  | Insert and command-line mode                     |
+| lang           | Insert, command-line and lang-arg mode           |
+| command        | Command-line mode                                |
+
+The map options can be set to either a string, containing just the action,
+or to a set describing additional options:
+
+| NixVim  | Default | VimScript                                |
+|---------|---------|------------------------------------------|
+| silent  | false   | `<silent>`                               |
+| nowait  | false   | `<silent>`                               |
+| script  | false   | `<script>`                               |
+| expr    | false   | `<expr>`                                 |
+| unique  | false   | `<unique>`                               |
+| noremap | true    | Use the 'noremap' variant of the mapping |
+| action  | N/A     | Action to execute                        |
+
 ## Roadmap
 
 - [ ] Further cleanup code
@@ -182,61 +238,6 @@ It has not yet been updated, and may contain wrong information.
 
 Please note that to, for example, disable numbers you would not set
 `options.nonumber` to true, you'd set `options.number` to false.
-
-## Key mappings
-
-It is fully possible to define key mappings from within NixVim. This is done
-using the `maps` attribute:
-
-```nix
-{
-  programs.nixneovim = {
-    maps = {
-      normalVisualOp.";" = ":";
-      normal."<leader>m" = {
-        silent = true;
-        action = "<cmd>make<CR>";
-      };
-    };
-  };
-}
-```
-
-This is equivalent to this vimscript:
-
-```vim
-noremap ; :
-nnoremap <leader>m <silent> <cmd>make<CR>
-```
-
-This table describes all modes for the `maps` option:
-
-| NixVim         | NeoVim                                           |
-|----------------|--------------------------------------------------|
-| normal         | Normal mode                                      |
-| insert         | Insert mode                                      |
-| visual         | Visual and Select mode                           |
-| select         | Select mode                                      |
-| terminal       | Terminal mode                                    |
-| normalVisualOp | Normal, visual, select and operator-pending mode |
-| visualOnly     | Visual mode only, without select                 |
-| operator       | Operator-pending mode                            |
-| insertCommand  | Insert and command-line mode                     |
-| lang           | Insert, command-line and lang-arg mode           |
-| command        | Command-line mode                                |
-
-The map options can be set to either a string, containing just the action,
-or to a set describing additional options:
-
-| NixVim  | Default | VimScript                                |
-|---------|---------|------------------------------------------|
-| silent  | false   | `<silent>`                               |
-| nowait  | false   | `<silent>`                               |
-| script  | false   | `<script>`                               |
-| expr    | false   | `<expr>`                                 |
-| unique  | false   | `<unique>`                               |
-| noremap | true    | Use the 'noremap' variant of the mapping |
-| action  | N/A     | Action to execute                        |
 
 ## Globals
 
