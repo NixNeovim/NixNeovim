@@ -97,7 +97,7 @@ You can define your key mappings using the `mappings` option.
 ```nix
 {
   programs.nixneovim = {
-    maps = {
+    mappings = {
       normalVisualOp = {
         ";" = ":";
       };
