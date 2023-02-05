@@ -122,7 +122,7 @@ This is equivalent to:
 ```lua
 vim.keymap.set("", ";", ':')
 vim.keymap.set("n", "<leader>m", '<cmd>make<cr>', { silent = true })
-vim.keymap.set("n", "<leader>h", functoin() print("hi") end)
+vim.keymap.set("n", "<leader>h", function() print("hi") end)
 ```
 
 First, you specify the mode; you can choose between the keywords below.
