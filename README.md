@@ -92,31 +92,39 @@ A wiki for all options will be available in the near future.
 
 ## Key mappings
 
-It is fully possible to define key mappings from within NixVim. This is done
-using the `maps` attribute:
+You can define your key mappings using the `mappings` option.
 
 ```nix
 {
   programs.nixneovim = {
     maps = {
-      normalVisualOp.";" = ":";
-      normal."<leader>m" = {
-        silent = true;
-        action = "<cmd>make<CR>";
+      normalVisualOp = {
+        ";" = ":";
+      };
+      normal = {
+        "<leader>m" = {
+          action = "'<cmd>make<CR>'"; # vimscript between ' '
+          silent = true;
+        };
+        "<leader>h" = "function() print(\"hi\") end"; # Lua code without ' '
       };
     };
   };
 }
 ```
 
-This is equivalent to this vimscript:
+This uses `vim.keymap.set` under the hood.
+Therefore, you can specify lua functions directly.
+However, this also means, when writing vimscript, you have to put that between extra quotation marks.
+
+This is equivalent to:
 
 ```vim
 noremap ; :
 nnoremap <leader>m <silent> <cmd>make<CR>
 ```
 
-This table describes all modes for the `maps` option:
+First, you specify the mode; you can choose between the keywords below.
 
 | NixVim         | NeoVim                                           |
 |----------------|--------------------------------------------------|
@@ -132,8 +140,7 @@ This table describes all modes for the `maps` option:
 | lang           | Insert, command-line and lang-arg mode           |
 | command        | Command-line mode                                |
 
-The map options can be set to either a string, containing just the action,
-or to a set describing additional options:
+When specifying the mapping with an attribute set you can set the following options.
 
 | NixVim  | Default | VimScript                                |
 |---------|---------|------------------------------------------|
