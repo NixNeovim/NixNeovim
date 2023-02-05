@@ -99,11 +99,11 @@ You can define your key mappings using the `mappings` option.
   programs.nixneovim = {
     mappings = {
       normalVisualOp = {
-        ";" = ":";
+        ";" = "':'"; # vimscript between ' '
       };
       normal = {
         "<leader>m" = {
-          action = "'<cmd>make<CR>'"; # vimscript between ' '
+          action = "'<cmd>make<cr>'"; # vimscript between ' '
           silent = true;
         };
         "<leader>h" = "function() print(\"hi\") end"; # Lua code without ' '
@@ -119,9 +119,10 @@ However, this also means, when writing vimscript, you have to put that between e
 
 This is equivalent to:
 
-```vim
-noremap ; :
-nnoremap <leader>m <silent> <cmd>make<CR>
+```lua
+vim.keymap.set("", ";", ':')
+vim.keymap.set("n", "<leader>m", '<cmd>make<cr>', { silent = true })
+vim.keymap.set("n", "<leader>h", functoin() print("hi") end)
 ```
 
 First, you specify the mode; you can choose between the keywords below.
