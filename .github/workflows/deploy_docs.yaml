@@ -1,55 +1,71 @@
-name: Build and deploy docs
+name: Build and Deploy
 
-on:
-  push:
-  workflow_dispatch:
-
+on: [push]
+permissions:
+  contents: write
 jobs:
-  build:
+  build-and-deploy:
+    concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: cachix/install-nix-action@v18
-      - name: Build docs
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+
+      - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
         run: nix build .#docs
-      - name: Upload docs
-        uses: actions/upload-pages-artifact@v1
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          name: docs
-          path: result/share/doc
-  deploy:
-    needs: [build]
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: docs
-          path: docs
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
-  #     - name: Checkout GitHub Pages repository
-  #       uses: actions/checkout@v2
-  #       with:
-  #         repository: NixNeovim/NixNeovim.github.io
-  #         ref: main
-  #         token: ${{ secrets.GIHUB_TOKEN }}
-  #     - name: Download artifacts
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: docs
-  #         path: docs
-  #     - name: Deploy to GitHub Pages
-  #       run: |
-  #         git config user.name "GitHub Actions"
-  #         git config user.email "action@github.com"
-  #         git add -A
-  #         git commit -m "Deploy docs"
-  #         git push
+          folder: result/share/doc # The folder the action should deploy.
+
+# name: Build and deploy docs
+
+# on:
+#   push:
+#   workflow_dispatch:
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: cachix/install-nix-action@v18
+#       - name: Build docs
+#         run: nix build .#docs
+#       - name: Upload docs
+#         uses: actions/upload-pages-artifact@v1
+#         with:
+#           name: docs
+#           path: result/share/doc
+#   deploy:
+#     needs: [build]
+#     permissions:
+#       pages: write
+#       id-token: write
+#     environment:
+#       name: github-pages
+#       url: ${{ steps.deployment.outputs.page_url }}
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Deploy to GitHub Pages
+#         id: deployment
+#         uses: actions/deploy-pages@v1
+#   #     - name: Checkout GitHub Pages repository
+#   #       uses: actions/checkout@v2
+#   #       with:
+#   #         repository: NixNeovim/NixNeovim.github.io
+#   #         ref: main
+#   #         token: ${{ secrets.GIHUB_TOKEN }}
+#   #     - name: Download artifacts
+#   #       uses: actions/download-artifact@v2
+#   #       with:
+#   #         name: docs
+#   #         path: docs
+#   #     - name: Deploy to GitHub Pages
+#   #       run: |
+#   #         git config user.name "GitHub Actions"
+#   #         git config user.email "action@github.com"
+#   #         git add -A
+#   #         git commit -m "Deploy docs"
+#   #         git push
