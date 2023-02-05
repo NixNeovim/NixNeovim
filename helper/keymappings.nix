@@ -51,16 +51,16 @@ let
 in {
 
   list =
-    (genMaps "" cfg.maps.normalVisualOp) ++
-    (genMaps "n" cfg.maps.normal) ++
-    (genMaps "i" cfg.maps.insert) ++
-    (genMaps "v" cfg.maps.visual) ++
-    (genMaps "x" cfg.maps.visualOnly) ++
-    (genMaps "s" cfg.maps.select) ++
-    (genMaps "t" cfg.maps.terminal) ++
-    (genMaps "o" cfg.maps.operator) ++
-    (genMaps "l" cfg.maps.lang) ++
-    (genMaps "!" cfg.maps.insertCommand) ++
-    (genMaps "c" cfg.maps.command);
+    (genMaps "" cfg.mappings.normalVisualOp) ++
+    (genMaps "n" cfg.mappings.normal) ++
+    (genMaps "i" cfg.mappings.insert) ++
+    (genMaps "v" cfg.mappings.visual) ++
+    (genMaps "x" cfg.mappings.visualOnly) ++
+    (genMaps "s" cfg.mappings.select) ++
+    (genMaps "t" cfg.mappings.terminal) ++
+    (genMaps "o" cfg.mappings.operator) ++
+    (genMaps "l" cfg.mappings.lang) ++
+    (genMaps "!" cfg.mappings.insertCommand) ++
+    (genMaps "c" cfg.mappings.command);
 
 }

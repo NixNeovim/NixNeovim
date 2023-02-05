@@ -18,7 +18,7 @@ in
     programs.nixneovim = {
       extraPlugins = [ defs.intellitab-nvim ];
 
-      maps.insert."<Tab>" = "<CMD>lua require([[intellitab]]).indent()<CR>";
+      mappings.insert."<Tab>" = "<CMD>lua require([[intellitab]]).indent()<CR>";
       plugins.treesitter = {
         indent = true;
       };
