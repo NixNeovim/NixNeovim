@@ -161,10 +161,9 @@ When specifying the mapping with an attribute set you can set the following opti
 
 ## Documentation
 
-[NixNeovim Documentation](https://nixneovim.github.io/options.html)
+All options are documented at: [NixNeovim Documentation](https://nixneovim.github.io/NixNeovim/options.html)
 
 You can generate the docs using `nix build .#docs`
-
 
 ### Supported language servers
 
