@@ -174,12 +174,9 @@ Until we find a better way of documenting this, you can find a list of supported
 Contributions are very welcome.
 They help improve this project and keep it up to date.
 
-Here is a list of how you can contribute to this project.
-
-TODO:
-
 ### Adding a module
 
+- Look at the automatically generated issues. Those are plugins available in the original repo, but not yet in this. Start with those, if you like
 - Copy `plugin_template.nix` or `plugin_template_minimal.nix`
 - Add the following information:
     - `name`
