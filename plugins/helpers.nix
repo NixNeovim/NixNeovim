@@ -214,6 +214,7 @@ rec {
   # helper function to create a lua based plugin # TODO: make usable with non-lua plugins
   mkLuaPlugin =
     { name                  # name of the plugin module
+    , pluginName ? name     # name of the plugin as it appears in 'require("<pluginName>")' if different
     , pluginUrl ? ""        # link to plugin project page
     , extraPlugins          # plugin packages
     , description ? ""      # deprecated, use extraDescription
@@ -254,7 +255,7 @@ rec {
 
       # add default require string to load plugin
       luaConfig = optionalString defaultRequire (if (extraConfigLua == null) then
-        "require('${name}').setup ${toLuaObject pluginOptions}"
+        "require('${pluginName}').setup ${toLuaObject pluginOptions}"
       else extraConfigLua);
 
       # These module options are addded to every module
