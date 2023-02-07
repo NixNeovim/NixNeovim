@@ -17,7 +17,7 @@ echo "$plugins_me" > me_plugins
 found_missing=$(comm -23 pta_plugins me_plugins)
 
 # plugins for which an issue already exists (including closed ones)
-known_issues=$(gh issue list --state "all" --label "bot" --json "body" | jq ".[].body" | grep -o '#[.0-9a-zA-Z-]*')
+known_issues=$(gh issue list --state "all" --label "bot" --json "body" | jq ".[].body" | grep -o '#[.0-9a-zA-Z_-]*')
 
 # iterate over plugins we found missing and
 # compare them to all open issues.
@@ -39,7 +39,7 @@ do
     if ! $found
     then
         echo "Did not find an issue for $f. Creating a new one ..."
-        gh issue create --title "Detected missing plugin: $f" --label "bot" --body "#$f"
+        # gh issue create --title "Detected missing plugin: $f" --label "bot" --body "#$f"
     else
         echo "Issue for $f already exists"
     fi
