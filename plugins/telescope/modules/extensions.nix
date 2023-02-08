@@ -16,7 +16,7 @@ let
     };
     mediaFiles = {
       luaName = "media_files";
-      plugins = [ telescope-media-files-nvim ];
+      plugins = [ telescope-media-files-nvim popup-nvim plenary-nvim ];
       packages = [ ueberzug ];
       options = {
         findCmd = helpers.strOption "" "";
