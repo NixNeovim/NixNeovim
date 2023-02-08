@@ -150,17 +150,30 @@ rec {
 
   toLuaObject = args: toLuaObject' 0 args;
 
+  # takes camalCase string and converts it to snake_case
   camelToSnake = string:
-    with lib;
-    with builtins;
-    stringAsChars (x:
-        let
-          upperCaseLetters = split "" "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        in if (elem x upperCaseLetters) then
-          "_${toLower x}"
-        else
-          x
-      ) string;
+    let
+      inherit (lib) stringAsChars;
+      inherit (builtins) split head;
+
+      upperCaseLetters = split "" "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+      isUpper = x: elem x upperCaseLetters; # check if x is uppercase
+
+      # exchange any uppercase x letter by '_x', leave lower case letters
+      exchangeIfUpper = (x:
+          if isUpper x then
+            "_${toLower x}"
+          else
+            x
+        );
+
+      chars = stringToCharacters string;
+
+    in if !isUpper (head chars) then
+      stringAsChars exchangeIfUpper string
+    else
+      string;
 
   toLuaOptions = cfg: moduleOptions:
     let
