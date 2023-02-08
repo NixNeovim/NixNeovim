@@ -9,7 +9,6 @@ let
   # names inserted here must match the name of the package in pkgs.vimExtraPlugins
   # default for setup is 'false'
   plugs = with pkgs.vimExtraPlugins; [
-    "nvim-comment-frame"
     "vim-printer"
     "vim-easy-align"
     "gruvbox"
