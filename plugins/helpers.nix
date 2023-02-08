@@ -36,6 +36,12 @@ rec {
     default = default;
   };
 
+  listOption = default: description: mkOption {
+    type = types.listOf types.anything;
+    description = description;
+    default = default;
+  };
+
   enumOption = enums: default: description:
     mkOption {
       type = types.enum enums;
