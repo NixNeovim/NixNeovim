@@ -19,10 +19,5 @@ mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
-    # nvim-treesitter
-  ];
-  extraPackages = with pkgs; [
-    # add dependencies here
-    # tree-sitter
   ];
 }
