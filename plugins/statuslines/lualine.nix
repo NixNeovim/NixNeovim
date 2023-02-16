@@ -45,10 +45,13 @@ let
       default = null;
     };
 
-  sections_option = default: mkOption {
-    type = types.nullOr (types.listOf types.str);
-    default = default;
-  };
+  sections_option = default:
+    let
+      inherit (types) nullOr listOf str attrs either;
+    in mkOption {
+      type = nullOr (listOf (either str attrs));
+      default = default;
+    };
 in
 {
   options = {
