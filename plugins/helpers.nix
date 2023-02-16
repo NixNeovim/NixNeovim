@@ -348,6 +348,7 @@ rec {
     inherit value global;
   };
 
+  # NOTE: deprecated in favor of rawLua in lib.nix
   mkRaw = r: { __raw = r; };
 
   ##############################################################################

@@ -37,6 +37,8 @@
 
       overlays.default = inputs.nixneovimplugins.overlays.default;
 
+      lib = import ./lib.nix;
+
       checks.x86_64-linux = {
         basic =
           nix-flake-tests.lib.check {
