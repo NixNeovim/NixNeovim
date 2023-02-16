@@ -25,66 +25,6 @@ let
     };
   };
 
-  mapOption = types.oneOf [
-    types.str
-    (types.submodule {
-      options = {
-        silent = mkOption {
-          type = types.bool;
-          description = "Whether this mapping should be silent. Equivalent to adding <silent> to a map.";
-          default = false;
-        };
-
-        nowait = mkOption {
-          type = types.bool;
-          description = "Whether to wait for extra input on ambiguous mappings. Equivalent to adding <nowait> to a map.";
-          default = false;
-        };
-
-        script = mkOption {
-          type = types.bool;
-          description = "Equivalent to adding <script> to a map.";
-          default = false;
-        };
-
-        expr = mkOption {
-          type = types.bool;
-          description = "Means that the action is actually an expression. Equivalent to adding <expr> to a map.";
-          default = false;
-        };
-
-        unique = mkOption {
-          type = types.bool;
-          description = "Whether to fail if the map is already defined. Equivalent to adding <unique> to a map.";
-          default = false;
-        };
-
-        noremap = mkOption {
-          type = types.bool;
-          description = "Whether to use the 'noremap' variant of the command, ignoring any custom mappings on the defined action. It is highly advised to keep this on, which is the default.";
-          default = true;
-        };
-
-        action = mkOption {
-          type = types.str;
-          description = "The action to execute.";
-        };
-
-        description = mkOption {
-          type = types.nullOr types.str;
-          description = "A textual description of this keybind, to be shown in which-key, if you have it.";
-          default = null;
-        };
-      };
-    })
-  ];
-
-  mapOptions = mode: mkOption {
-    description = "Mappings for ${mode} mode";
-    type = types.attrsOf mapOption;
-    default = { };
-  };
-
   helpers = import ./plugins/helpers.nix { inherit lib config isDocsBuild; };
 in
 {
@@ -161,20 +101,23 @@ in
 
       mappings = mkOption {
         type = types.submodule {
-          options = {
-            normal = mapOptions "normal";
-            insert = mapOptions "insert";
-            select = mapOptions "select";
-            visual = mapOptions "visual and select";
-            terminal = mapOptions "terminal";
-            normalVisualOp = mapOptions "normal, visual, select and operator-pending (same as plain 'map')";
+          options =
+            let
+              inherit (mappings) mapOptions;
+            in {
+              normal = mapOptions "normal";
+              insert = mapOptions "insert";
+              select = mapOptions "select";
+              visual = mapOptions "visual and select";
+              terminal = mapOptions "terminal";
+              normalVisualOp = mapOptions "normal, visual, select and operator-pending (same as plain 'map')";
 
-            visualOnly = mapOptions "visual only";
-            operator = mapOptions "operator-pending";
-            insertCommand = mapOptions "insert and command-line";
-            lang = mapOptions "insert, command-line and lang-arg";
-            command = mapOptions "command-line";
-          };
+              visualOnly = mapOptions "visual only";
+              operator = mapOptions "operator-pending";
+              insertCommand = mapOptions "insert and command-line";
+              lang = mapOptions "insert, command-line and lang-arg";
+              command = mapOptions "command-line";
+            };
         };
         default = { };
         description = ''
@@ -235,14 +178,6 @@ in
         -- }}}
       '';
 
-      # create the keymapping strings
-      mappingsStrings =
-        let
-          string = forEach mappings.list
-            ({ mode, key, action, config }:
-              ''do vim.keymap.set("${mode}", "${key}", ${action}, ${helpers.toLuaObject config}) end''
-            );
-        in concatStringsSep "\n" string;
 
       configure = {
         # Make sure that globals are set before plugins are setup.
@@ -260,7 +195,7 @@ in
           --                 Keymappings                  --
           --------------------------------------------------
 
-          ${mappingsStrings}
+          ${mappings.luaString}
 
           ${cfg.extraConfigLua}
         '' +
