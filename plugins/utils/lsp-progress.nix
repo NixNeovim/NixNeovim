@@ -14,7 +14,7 @@ let
     spinner = listOption [ "⣾" "⣽" "⣻" "⢿" "⡿" "⣟" "⣯" "⣷" ] "Spinning icon array";
     spinUpdateTime = intOption 200 "Spinning update time in milliseconds";
     decay = intOption 1000 "Message decay in milliseconds";
-    maxSize = intOption -1 "Max string length, -1 is unlimited";
+    maxSize = intOption (-1) "Max string length, -1 is unlimited";
   };
 
 in
