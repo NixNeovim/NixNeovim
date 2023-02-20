@@ -2,7 +2,7 @@
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.neogit;
-  helpers = import ../helpers.nix { inherit lib; };
+  helpers = import ../helpers.nix { inherit lib config; };
 
   sectionDefaultsModule = types.submodule {
     options = {

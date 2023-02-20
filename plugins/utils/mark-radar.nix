@@ -3,7 +3,7 @@
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.mark-radar;
-  helpers = import ../helpers.nix { inherit lib; };
+  helpers = import ../helpers.nix { inherit lib config; };
   defs = import ../plugin-defs.nix { inherit pkgs; };
 in
 {

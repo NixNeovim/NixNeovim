@@ -2,7 +2,7 @@
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.null-ls;
-  helpers = (import ../helpers.nix { inherit lib; });
+  helpers = (import ../helpers.nix { inherit lib config; });
 in
 {
   imports = [

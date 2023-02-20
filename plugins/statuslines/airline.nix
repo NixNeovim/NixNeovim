@@ -2,7 +2,7 @@
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.airline;
-  helpers = import ../helpers.nix { inherit lib; };
+  helpers = import ../helpers.nix { inherit lib config; };
 
   sectionType = with types; nullOr (oneOf [ str (listOf str) ]);
   sectionOption = mkOption {

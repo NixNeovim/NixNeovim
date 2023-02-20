@@ -12,7 +12,7 @@
     { pkgs, config, lib, ... }@args:
       with lib;
       let
-        helpers = import ../helpers.nix args;
+        helpers = import ../helpers.nix { inherit lib config; };
         cfg = config.programs.nixneovim.plugins.null-ls.sources.${sourceType}.${name};
       in
       {

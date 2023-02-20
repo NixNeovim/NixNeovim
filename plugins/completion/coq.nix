@@ -2,7 +2,7 @@
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.coq-nvim;
-  helpers = import ../helpers.nix { inherit lib pkgs config; };
+  helpers = import ../helpers.nix { inherit lib config; };
 in
 {
   options = {

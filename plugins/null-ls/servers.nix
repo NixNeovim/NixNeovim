@@ -1,6 +1,6 @@
 { pkgs, config, lib, ... }@args:
 let
-  helpers = import ./helpers.nix args;
+  helpers = import ./helpers.nix { inherit lib config; };
   serverData = {
     code_actions = { };
     completion = { };
