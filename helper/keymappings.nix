@@ -23,7 +23,7 @@ let
       noremap     = boolOption false "Whether to use the 'noremap' variant of the command, ignoring any custom mappings on the defined action. It is highly advised to keep this on, which is the default.";
       action      = strNullOption "The action to execute";
       # actionLua   = strNullOption "The lua function to execute";
-      description = strNullOption "A textual description of this keybind, to be shown in which-key, if you have it.";
+      desc        = strNullOption "A textual description of this keybind, to be shown in which-key (or similar plugins).";
 
       __raw = mkOption {
         type = str;
