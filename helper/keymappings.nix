@@ -46,6 +46,7 @@ let
         script = false;
         nowait = false;
         action = rhs;
+        desc = null;
       }
     else
       rhs;
@@ -66,7 +67,7 @@ let
           action = mapping.action;
           config = filterActive {
             inherit (mapping) silent expr unique noremap script nowait;
-          };
+          } // { inherit (mapping) desc; };
         }
       )
       normalizedMaps;
