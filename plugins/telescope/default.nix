@@ -34,6 +34,7 @@ mkLuaPlugin {
   # ];
   extraPackages = with pkgs; [
     manix
+    ripgrep
   ] ++ optional cfg.useBat bat
   ++ extensions.packages;
 
