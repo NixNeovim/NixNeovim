@@ -180,6 +180,14 @@ rec {
     else
       string;
 
+
+  # input: attribute set with camelCase keys
+  # output: attribute set with snake_case keys
+  keyToSnake = attrs:
+    mapAttrs'
+      (key: value: { name = camelToSnake key; value = value; })
+      attrs;
+
   toLuaOptions = cfg: moduleOptions:
     let
       attrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) (cfg.${k})) moduleOptions;
