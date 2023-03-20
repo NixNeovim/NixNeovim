@@ -79,6 +79,10 @@ rec {
   # create indentation string
   indent = depth: repeatChar " " depth;
 
+  # remove the enable key from a attribute set
+  removeEnable = attrs:
+    filterAttrs (n: _: n != "enable") attrs;
+
   # removes empty strings and applies concatStringsSep
   toConfigString = list:
     let
@@ -88,6 +92,7 @@ rec {
 
   # Black functional magic that converts a bunch of different Nix types to their
   # lua equivalents!
+  # initDepth is only used for styling the lua output
   toLuaObject' = initDepth: args:
     let
       # helper function that keeps track of indentation (depth)
