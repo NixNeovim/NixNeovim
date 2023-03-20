@@ -9,13 +9,15 @@ let
   cfg-plugin = config.programs.nixneovim.plugins.nvim-cmp.sources;
   helpers = import ../../../helpers.nix { inherit lib config cfg-plugin; };
 
+  inherit (helpers) intNullOption removeEnable;
+
   # template for source options
   mkSourceOption = name: attr:
     mkOption {
       type = submodule {
-        options = with helpers; {
+        options = {
           enable = mkEnableOption "";
-          # FIX: those optoins are not considerd
+          priority = intNullOption "";
           option = mkOption {
             type = nullOr (attrsOf anything);
             description = "If direct lua code is needed use helpers.mkRaw";
@@ -27,7 +29,6 @@ let
           };
           keywordLength = intNullOption "";
           keywordPattern = intNullOption "";
-          priority = intNullOption "";
           maxItemCount = intNullOption "";
           groupIndex = intNullOption "";
         };
@@ -86,8 +87,11 @@ let
 
   plugins = mapAttrs fillMissingInfo sourcesSet;
 
-in
-{
+
+  # helper function
+
+
+in {
 
   # nix module options for all sources
   options = mapAttrs mkSourceOption plugins;
@@ -101,6 +105,9 @@ in
   extraConfig = helpers.activatedConfig plugins;
 
   # list of the sources config for cmp
-  config = mapAttrsToList (name: attrs: { name = name; }) (filterAttrs (k: v: v.enable) cfg-plugin);
+  config =
+    mapAttrsToList
+      (name: attrs: { name = name; } // (removeEnable attrs) )
+      (filterAttrs (k: v: v.enable) cfg-plugin);
 
 }
