@@ -9,7 +9,7 @@ let
   cfg-plugin = config.programs.nixneovim.plugins.nvim-cmp.sources;
   helpers = import ../../../helpers.nix { inherit lib config cfg-plugin; };
 
-  inherit (helpers) intNullOption removeEnable;
+  inherit (helpers) intNullOption removeEnable keyToSnake activated;
 
   # template for source options
   mkSourceOption = name: attr:
@@ -87,10 +87,6 @@ let
 
   plugins = mapAttrs fillMissingInfo sourcesSet;
 
-
-  # helper function
-
-
 in {
 
   # nix module options for all sources
@@ -105,9 +101,11 @@ in {
   extraConfig = helpers.activatedConfig plugins;
 
   # list of the sources config for cmp
+  # output format [ { ["name"] = "<name>" } ]
   config =
-    mapAttrsToList
-      (name: attrs: { name = name; } // (removeEnable attrs) )
-      (filterAttrs (k: v: v.enable) cfg-plugin);
+      mapAttrsToList
+        (name: attrs: { name = name; } // (keyToSnake (removeEnable attrs)) )
+        (activated cfg-plugin);
+      
 
 }
