@@ -21,14 +21,19 @@ let
     indent = boolOption false "Enable tree-sitter based indentation (This is the equivalent to indent { enable = true } in the original lua config)";
     folding = boolOption false "Enable tree-sitter based folding";
 
+    grammars = mkOption {
+      type = types.listOf types.package;
+      default = [];
+    };
+
     incrementalSelection = {
       enable = mkEnableOption "Incremental selection based on the named nodes from the grammar";
       keymaps = {
-          initSelection = keymapOption "gnn";
-          nodeIncremental = keymapOption "grn";
-          scopeIncremental = keymapOption "grc";
-          nodeDecremental = keymapOption "grm";
-        };
+        initSelection = keymapOption "gnn";
+        nodeIncremental = keymapOption "grn";
+        scopeIncremental = keymapOption "grc";
+        nodeDecremental = keymapOption "grm";
+      };
     };
   };
 
@@ -47,14 +52,21 @@ let
     };
   };
 
+  grammarsToInstall =
+    let
+      inherit (pkgs.vimPlugins.nvim-treesitter) allGrammars;
+    in
+      cfg.grammars
+      ++ optionals cfg.installAllGrammars allGrammars;
+
 in
 with helpers;
 mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
 
   extraPlugins = with pkgs;
-    if cfg.installAllGrammars then
-      [ vimPlugins.nvim-treesitter.withAllGrammars ]
+    if grammarsToInstall != [] then
+      [ (vimPlugins.nvim-treesitter.withPlugins (_: grammarsToInstall )) ]
     else
       [ vimPlugins.nvim-treesitter ];
 
