@@ -7,9 +7,15 @@ let
   name = "nvim-lightbulb";
   pluginUrl = "https://github.com/kosayoda/nvim-lightbulb";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
+  inherit (helpers.customOptions)
+    boolOption
+    strOption
+    attrsOption
+    intOption
+    enumOption;
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     # add module options here
     ignore = attrsOption {} "LSP client names to ignore";
     sign = {

@@ -1,6 +1,6 @@
 { lib, pkgs, config, ... }@attrs:
 let
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
 in
 with helpers; with lib;
 mkPlugin attrs {

@@ -4,7 +4,7 @@ with lib;
 
 let
 
-  helpers = import ./helpers.nix { inherit lib config; };
+  helpers = import ../helper { inherit pkgs lib config; };
 
   # names inserted here must match the name of the package in pkgs.vimExtraPlugins
   # default for setup is 'false'

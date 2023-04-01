@@ -8,9 +8,13 @@ let
   pluginName = "nvim-comment-frame";
   pluginUrl = "https://github.com/s1n7ax/nvim-comment-frame";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
+  inherit (helpers.customOptions)
+    strOption
+    intOption
+    boolOption;
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     # add module options here
     keymap = strOption "<leader>cc" "";
     multiline_keymap = strOption "<leader>C" "";

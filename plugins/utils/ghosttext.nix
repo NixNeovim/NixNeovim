@@ -7,11 +7,11 @@ let
   name = "ghosttext";
   pluginUrl = "https://github.com/subnut/nvim-ghost.nvim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; { };
-  pluginOptions = helpers.toLuaOptions cfg moduleOptions;
+  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 
 in
 with helpers;

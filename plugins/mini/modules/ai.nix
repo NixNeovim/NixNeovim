@@ -1,10 +1,15 @@
 { lib, helpers, ... }:
 
-with lib;
-with helpers;
-with types;
+let
 
-{
+  inherit (lib) mkOption;
+  inherit (lib.types) enum attrs;
+
+  inherit (helpers.customOptions)
+    intOption
+    strOption;
+
+in {
   searchMethod = mkOption {
     type = enum [ "cover" "cover_or_next" "cover_or_prev" "cover_or_nearest" "next" "previous" "nearest" ];
     default = "cover_or_next";

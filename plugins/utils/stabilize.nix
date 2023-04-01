@@ -1,13 +1,14 @@
-{ pkgs, lib, config, ... }@attrs:
+{ pkgs, lib, config, ... }:
 
 let
 
   name = "stabilize";
   pluginUrl = "https://github.com/luukvbaal/stabilize.nvim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
+  inherit (helpers.customOptions) boolOption;
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     force = boolOption true "stabilize window even when current cursor position will be hidden behind new window";
   };
 

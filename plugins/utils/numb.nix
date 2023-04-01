@@ -7,10 +7,11 @@ let
   name = "numb";
   pluginUrl = "https://github.com/nacro90/numb.nvim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
+  inherit (helpers.customOptions) boolOption;
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     showNumbers = boolOption true "Enable 'number' for the window while peeking";
     showCursorline = boolOption true "Enable 'cursorline' for the window while peeking";
     numberOnly = boolOption false "Peek only when the command is only a number instead of when it starts with a number";
@@ -19,7 +20,7 @@ let
 
   # you can autogenerate the plugin options from the moduleOptions.
   # This essentially converts the camalCase moduleOptions to snake_case plugin options
-  pluginOptions = helpers.toLuaOptions cfg moduleOptions;
+  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 
 in
 with helpers;

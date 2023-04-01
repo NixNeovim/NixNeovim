@@ -4,7 +4,11 @@ with lib;
 let
   cfg = config.programs.nixneovim;
 
-  mappings = import ./helper/keymappings.nix { inherit lib config; };
+  helpers = import ./helper { inherit pkgs lib config isDocsBuild; };
+
+  mappings = import ./helper/keymappings.nix {
+    inherit lib cfg helpers;
+  };
 
   pluginWithConfigType = types.submodule {
     options = {
@@ -25,7 +29,6 @@ let
     };
   };
 
-  helpers = import ./plugins/helpers.nix { inherit lib config isDocsBuild; };
 in
 {
   options = {

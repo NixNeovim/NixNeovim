@@ -7,7 +7,7 @@ let
   name = "bufdelete";
   pluginUrl = "https://github.com/famiu/bufdelete.nvim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
 
   moduleOptions = with helpers; {
     # add module options here

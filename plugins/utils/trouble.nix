@@ -1,9 +1,7 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, helpers, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.trouble;
-
-  helpers = import ../helpers.nix { inherit lib config; };
 in
 {
   options = {

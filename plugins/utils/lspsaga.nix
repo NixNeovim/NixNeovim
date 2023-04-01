@@ -2,7 +2,8 @@
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.lspsaga;
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
+  inherit (helpers.customOptions) boolOption intOption;
 in
 with helpers;
 {

@@ -7,9 +7,13 @@ let
   name = "gitsigns";
   pluginUrl = "https://github.com/lewis6991/gitsigns.nvim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
+  inherit (helpers.customOptions)
+    boolOption
+    enumOption
+    intOption;
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     signcolumn = boolOption true "Can be toggled with `:Gitsigns toggle_signs`";
     numhl = boolOption false "Highlight line number. Can be toggled with `:Gitsigns toggle_numhl`";
     linehl = boolOption false "Highlgiht complete line. Can be toggled with `:Gitsigns toggle_linehl`";

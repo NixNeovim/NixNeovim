@@ -7,10 +7,12 @@ let
   name = "barbar";
   pluginUrl = "https://github.com/romgrk/barbar.nvim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
+   
+  inherit (helpers.customOptions) boolOption;
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     animation = boolOption true "Enable animations";
     autoHide = boolOption false "Auto-hide the tab bar when there is only one buffer";
     tabpages = boolOption true "Enable 'current/total' tabpages indicator in top right corner";
@@ -18,7 +20,7 @@ let
     clickable = boolOption true "Enable clickable tabs\n - left-click: go to buffer\n - middle-click: delete buffer";
   };
 
-  pluginOptions = helpers.toLuaOptions cfg moduleOptions;
+  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 
 in
 with helpers;

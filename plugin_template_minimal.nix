@@ -7,9 +7,10 @@ let
   name = "PLUGIN_NAME";
   pluginUrl = "PLUGIN_URL";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
+  inherit (helpers.customOptions) boolOption;
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     # add module options here
   };
 

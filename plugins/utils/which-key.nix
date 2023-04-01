@@ -7,8 +7,13 @@ let
   name = "which-key";
   pluginUrl = "https://github.com/folke/which-key.nvim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
+  inherit (helpers.customOptions)
+    boolOption
+    intOption
+    strOption
+    enumOption;
 
   groupOptions = mode: mkOption {
     description = "Groups for ${mode} mode";
@@ -34,11 +39,11 @@ let
       string = groups: concatStringsSep ",\n  " (attrValues (mapAttrs
         (keys: name: ''["${keys}"] = { name = "${name}" }'') groups
       ));
-    in concatStringsSep "" (attrValues (mapAttrs 
+    in concatStringsSep "" (attrValues (mapAttrs
       (mode: groups: optionalString (stringLength (string groups) > 0) ''
         wk.register({
           ${string groups}
-        }, { mode = "${mode}" }) 
+        }, { mode = "${mode}" })
       '')
       groupsByMode
     ));
@@ -102,13 +107,13 @@ let
       description = "Assign names to groups of keybindings with the same prefix to be shown in which-key.";
       example = literalExpression ''{
           normal."<leader>g" = "git" # name group of bindings with prefix <leader>g "git" in normal mode
-          visual."<leader>f" = "find" 
+          visual."<leader>f" = "find"
         }
       '';
     };
   };
 
-  pluginOptions = helpers.toLuaOptions cfg (builtins.removeAttrs moduleOptions [ "groups" ]);
+  pluginOptions = helpers.convertModuleOptions cfg (builtins.removeAttrs moduleOptions [ "groups" ]);
 
 in
 with helpers;

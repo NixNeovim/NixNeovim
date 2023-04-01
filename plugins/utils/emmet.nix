@@ -1,7 +1,7 @@
 { lib, pkgs, config, ... }@attrs:
 with lib;
 let
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
 
   eitherAttrsStrInt = with types; let
     strInt = either str int;

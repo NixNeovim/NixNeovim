@@ -7,10 +7,12 @@ let
   name = "diffview";
   pluginUrl = "https://github.com/sindrets/diffview.nvim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
 
-  moduleOptions = with helpers; {
+  inherit (helpers.customOptions) boolOption;
+
+  moduleOptions = {
     diffBinaries = boolOption false "Show diffs for binaries";
     watchIndex = boolOption true "Update views and index buffers when the git index changes";
     useIcons = boolOption true "Requires nvim-web-devicons";

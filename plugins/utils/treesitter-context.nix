@@ -7,10 +7,12 @@ let
   name = "treesitter-context";
   pluginUrl = "https://github.com/nvim-treesitter/nvim-treesitter-context";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
+  inherit (helpers.customOptions) intNullOption typeOption;
+  inherit (lib.types) enum listOf;
 
-  moduleOptions = with helpers; with types; {
+  moduleOptions = {
     # add module options here
     #
     # autoStart = boolOption true "Enable this pugin at start"
@@ -37,7 +39,7 @@ let
 
   # you can autogenerate the plugin options from the moduleOptions.
   # This essentially converts the camalCase moduleOptions to snake_case plugin options
-  pluginOptions = helpers.toLuaOptions cfg moduleOptions;
+  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 
 in
 with helpers;

@@ -7,10 +7,11 @@ let
   name = "snippy";
   pluginUrl = "https://github.com/dcampos/nvim-snippy";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
+  inherit (helpers.customOptions) boolOption;
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     mappings = mkOption {
       type = types.attrs;
       default = { };
@@ -18,7 +19,7 @@ let
     enableAuto = boolOption false "Enable auto expanding snippets";
   };
 
-  pluginOptions = helpers.toLuaOptions cfg moduleOptions;
+  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 
 in
 with helpers;

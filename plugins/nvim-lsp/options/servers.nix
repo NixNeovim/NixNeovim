@@ -6,12 +6,13 @@ with pkgs;
 
 let
 
-  helpers = import ../../helpers.nix { inherit lib config; };
+  helpers = import ../../../helper { inherit pkgs lib config; };
+  inherit (helpers.customOptions) strOption;
 
   mkServerOption = server: attr:
     mkOption {
       type = submodule {
-        options = with helpers; {
+        options = {
           enable = mkEnableOption "";
           onAttachExtra = mkOption {
             type = types.lines;

@@ -7,7 +7,7 @@ let
   name = "plantuml-syntax";
   pluginUrl = "https://github.com/aklt/plantuml-syntax";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
 
 in
 with helpers;

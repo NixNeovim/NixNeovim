@@ -7,17 +7,18 @@ let
   name = "nvim-jqx";
   pluginUrl = "https://github.com/gennaro-tedesco/nvim-jqx";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
+  inherit (helpers.customOptions) boolOption strOption;
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     sort = boolOption false "Sort keys alphabetical";
     queryKey = strOption "X" "Key to open query in floating window";
     closeWindowKey = strOption "<ESC>" "Key to close floating window";
     useQuickfix = boolOption true "Use location list instead of quickfix";
   };
 
-  # pluginOptions = helpers.toLuaOptions cfg moduleOptions;
+  # pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
   pluginOptions = mapAttrsToList
     (key: _option:
       let

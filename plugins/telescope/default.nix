@@ -5,9 +5,16 @@ let
   name = "telescope";
   pluginUrl = "https://github.com/nvim-telescope/telescope.nvim";
 
-  helpers = (import ../helpers.nix { inherit lib config; });
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
-  extensions = import ./modules/extensions.nix { inherit pkgs config lib; };
+  inherit (helpers) toLuaObject;
+  inherit (helpers.customOptions) attrsOption boolOption;
+  inherit (helpers.toLua) convertModuleOptions;
+
+  extensions = import ./modules/extensions.nix {
+    inherit pkgs lib helpers;
+    cfg-telescope = cfg;
+  };
 
   moduleOptions = with helpers; {
     # add module options here
@@ -21,6 +28,8 @@ let
     extraExtensionsConfig = attrsOption { } "Put extra config for extensions here";
     extensions = extensions.options;
   };
+
+  pluginOptions = convertModuleOptions cfg moduleOptions;
 
 in
 with helpers;
@@ -38,13 +47,14 @@ mkLuaPlugin {
   ] ++ optional cfg.useBat bat
   ++ extensions.packages;
 
-  # this looks weird but produces correctly intended lua code
+  # this looks weird but produces correctly indended lua code
   extraConfigLua =
     ''
       local telescope = require('${name}')
           telescope.setup {
-            extensions = ${ extensions.config }
+            extensions = ${ extensions.config },
           }
+          ${toLuaObject pluginOptions}
 
           ${ concatStringsSep "\n    " extensions.loadString } '';
 }

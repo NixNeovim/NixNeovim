@@ -1,25 +1,37 @@
-{ pkgs, lib, config, ... }:
-
-with lib;
-with pkgs;
-with pkgs.vimExtraPlugins;
+{ pkgs, lib, helpers, cfg-telescope }:
 
 let
 
-  cfg-plugin = config.programs.nixneovim.plugins.telescope.extensions;
-  helpers = import ../../helpers.nix { inherit lib config cfg-plugin; };
+  cfg-extensions = cfg-telescope.extensions;
+  filters = helpers.filters { cfg = cfg-extensions; };
 
-  extensionsSet = {
+  inherit (helpers.customOptions) strOption;
+  inherit (helpers)
+    camelToSnake;
+  inherit(lib)
+    types
+    mkEnableOption
+    forEach
+    mapAttrs
+    mapAttrs'
+    mkOption;
+  inherit (filters)
+    activated
+    activatedPlugins
+    activatedPackages
+    activatedLuaNames;
+
+  extensionsSet = with pkgs.vimExtraPlugins; {
     manix = {
       plugins = [ telescope-manix ];
-      packages = [ manix ];
+      packages = [ pkgs.manix ];
     };
     mediaFiles = {
       luaName = "media_files";
       plugins = [ telescope-media-files-nvim popup-nvim plenary-nvim ];
-      packages = [ ueberzug ];
+      packages = [ pkgs.ueberzug ];
       options = {
-        findCmd = helpers.strOption "" "";
+        findCmd = strOption "" "";
       };
     };
   };
@@ -48,8 +60,7 @@ let
         { inherit plugins luaName packages extraConfig options; }
     )
     extensionsSet;
-in
-with helpers; {
+in {
 
   # nix module options for all soruces
   options = mapAttrs mkExtension extensions;
@@ -72,12 +83,12 @@ with helpers; {
             (optName: _:
               {
                 name = camelToSnake optName;
-                value = cfg-plugin.${name}.${optName};
+                value = cfg-extensions.${name}.${optName};
               }
             )
             attrs.options;
         }
       )
-      (helpers.activated extensions));
+      (activated extensions));
 
 }

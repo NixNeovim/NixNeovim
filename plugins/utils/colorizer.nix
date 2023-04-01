@@ -7,9 +7,15 @@ let
   name = "colorizer";
   pluginUrl = "https://github.com/NvChad/nvim-colorizer.lua";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
 
-  moduleOptions = with helpers; {
+  inherit (helpers.customOptions)
+    listOption
+    boolOption
+    enumOption
+    strOption;
+
+  moduleOptions = {
     # add module options here
     filtypes = listOption [ "*" ] "";
     userDefaultOptions = {

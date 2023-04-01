@@ -1,10 +1,10 @@
-{ pkgs, config, lib, ... }@args:
+{ pkgs, config, lib, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.nvim-cmp;
-  helpers = import ../../helpers.nix { inherit lib config; };
+  helpers = import ../../../helper { inherit pkgs lib config; };
 
-  sources = import ./options/sources.nix { inherit lib config pkgs; };
+  sources = import ./options/sources.nix { inherit lib cfg pkgs helpers; };
 
 in
 with helpers;

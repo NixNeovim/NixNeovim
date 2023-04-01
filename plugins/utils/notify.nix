@@ -2,7 +2,7 @@
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.notify;
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   icon = mkOption {
     type = types.nullOr types.str;
     default = null;

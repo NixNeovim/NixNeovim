@@ -7,10 +7,11 @@ let
   name = "luasnip";
   pluginUrl = "https://github.com/L3MON4D3/LuaSnip";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
+  inherit (helpers.customOptions) boolOption strOption;
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     # add module options here
     enableSnipmate = boolOption true "Load Snimate snippets";
     enableLua = boolOption true "Load LuaSnip snippets";

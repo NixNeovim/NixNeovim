@@ -1,16 +1,13 @@
-{ lib, config, ... }:
+{ lib, cfg, helpers, ... }:
 
 let
-  inherit (builtins) isString isAttrs hasAttr;
+  inherit (builtins) isString isAttrs;
   inherit (lib) filterAttrs assertMsg mapAttrsToList mkOption;
   inherit (lib.types) either str submodule attrsOf;
 
-  helpers = import ../plugins/helpers.nix { inherit lib config; };
+  inherit (helpers.customOptions) boolOption strNullOption;
+  inherit (helpers) toLuaObject;
 
-  inherit (helpers) boolOption strNullOption toLuaObject;
-
-
-  cfg = config.programs.nixneovim;
 
   # Type definitions for key mappings
   mapOption = submodule {
@@ -100,7 +97,6 @@ in {
   # create the keymapping strings
   luaString =
     let
-      inherit (helpers) toLuaObject;
       inherit (lib) forEach concatStringsSep;
 
       string = forEach mappingsList

@@ -8,13 +8,13 @@ let
   name = "incline";
   pluginUrl = "https://github.com/b0o/incline.nvim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; {
   };
 
-  pluginOptions = helpers.toLuaOptions cfg moduleOptions;
+  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 in
 with helpers;
 mkLuaPlugin {

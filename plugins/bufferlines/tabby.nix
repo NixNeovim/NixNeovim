@@ -5,7 +5,8 @@ let
   name = "tabby";
 
   cfg = config.programs.nixneovim.plugins.${name};
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
+  inherit (helpers.customOptions) boolOption;
 
   highlight = mkOption {
     type = types.nullOr (types.submodule ({ ... }: {
@@ -24,9 +25,7 @@ let
     }));
     default = null;
   };
-in
-with helpers;
-{
+in {
   options = {
     programs.nixneovim.plugins.${name} = {
       enable = mkEnableOption "Enable ${name}";

@@ -7,7 +7,7 @@ let
   name = "scrollbar";
   pluginUrl = "https://github.com/petertriho/nvim-scrollbar";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; {
@@ -16,7 +16,7 @@ let
     # autoStart = boolOption true "Enable this pugin at start"
   };
 
-  pluginOptions = helpers.toLuaOptions cfg moduleOptions;
+  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 
 in
 with helpers;

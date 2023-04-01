@@ -7,10 +7,11 @@ let
   name = "lsp-lines";
   pluginUrl = "https://sr.ht/~whynothugo/lsp_lines.nvim/";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
-
-  moduleOptions = with helpers; {
+  inherit (helpers.customOptions) boolOption;
+  
+  moduleOptions = {
     # add module options here
     onlyCurrentLine = boolOption false "Show virtual lines only for the current line's diagnostics";
   };

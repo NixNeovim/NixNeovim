@@ -7,7 +7,7 @@ let
   name = "PLUGIN_NAME";
   pluginUrl = "PLUGIN_URL";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; {
@@ -24,7 +24,7 @@ let
 
   # you can autogenerate the plugin options from the moduleOptions.
   # This essentially converts the camalCase moduleOptions to snake_case plugin options
-  pluginOptions = helpers.toLuaOptions cfg moduleOptions;
+  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 
 in
 with helpers;

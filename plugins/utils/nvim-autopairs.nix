@@ -2,7 +2,7 @@
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.nvim-autopairs;
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
 in
 {
   options.programs.nixneovim.plugins.nvim-autopairs = {

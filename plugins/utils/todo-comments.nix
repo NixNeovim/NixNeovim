@@ -7,8 +7,9 @@ let
   name = "todo-comments";
   pluginUrl = "https://github.com/folke/todo-comments.nvim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
+  inherit (helpers.customOptions) boolOption intOption strOption;
 
   keywordModule = { name, config, ... }: {
     options = with helpers; {
@@ -23,7 +24,7 @@ let
     };
   };
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     signs = boolOption true "Show icons in the signs column";
     signPriority = intOption 8 "sign_priority";
     keywords = mkOption {

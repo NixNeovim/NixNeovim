@@ -3,7 +3,7 @@
 with lib;
 with types;
 let
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
 
   toLua = cfg: server: serverAttrs:
     let

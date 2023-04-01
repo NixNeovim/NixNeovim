@@ -7,15 +7,17 @@ let
   name = "treesitter";
   pluginUrl = "https://github.com/nvim-treesitter/nvim-treesitter";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
+
+  inherit (helpers.customOptions) boolOption;
 
   keymapOption = default: mkOption {
     type = types.str;
     inherit default;
   };
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     installAllGrammars = boolOption true "Install all grammars using nix (recommended, make sure no other grammars are installed)";
 
     indent = boolOption false "Enable tree-sitter based indentation (This is the equivalent to indent { enable = true } in the original lua config)";

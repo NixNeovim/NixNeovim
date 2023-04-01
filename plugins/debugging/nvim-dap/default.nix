@@ -7,14 +7,14 @@ let
   name = "nvim-dap";
   pluginUrl = "https://github.com/mfussenegger/nvim-dap";
 
-  helpers = import ../../helpers.nix { inherit lib config; };
+  helpers = import ../../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; {
     adapters = import ./adapters.nix { inherit lib pkgs config; };
   };
 
-  pluginOptions = helpers.toLuaOptions cfg moduleOptions;
+  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 
 in
 with helpers;

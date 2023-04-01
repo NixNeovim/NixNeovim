@@ -204,7 +204,7 @@ They help improve this project and keep it up to date.
 }
 ```
 
-- In `helpers.nix` we have defined several functions for basic plugin options like bool, strings or integer.
+- In `helper/custom_options.nix` we have defined several functions for basic plugin options like bool, strings or integer.
 - In particular, ther are:
     - `boolOption, intOption, strOption, attrsOption, enumOption`
 - ... improve this

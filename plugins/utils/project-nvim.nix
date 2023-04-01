@@ -7,10 +7,14 @@ let
   name = "project-nvim";
   pluginUrl = "https://github.com/ahmedkhalf/project.nvim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
+  inherit (helpers.customOptions)
+    boolOption
+    enumOption;
 
-  moduleOptions = with helpers; {
+
+  moduleOptions = {
     # add module options here
     manualMode = boolOption false "Do not automatically change root directory";
     showHidden = boolOption false "";
@@ -44,7 +48,7 @@ let
 
   };
 
-  pluginOptions = helpers.toLuaOptions cfg moduleOptions;
+  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 in
 with helpers;
 mkLuaPlugin {

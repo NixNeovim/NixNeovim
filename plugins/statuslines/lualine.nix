@@ -2,7 +2,8 @@
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.lualine;
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
+  inherit (helpers.customOptions) boolOption;
   separators = mkOption {
     type = types.nullOr (types.submodule {
       options = {
@@ -64,7 +65,7 @@ in
         description = "The theme to use for lualine-nvim.";
       };
 
-      globalstatus = helpers.boolOption false "Use one global line for all windows";
+      globalstatus = boolOption false "Use one global line for all windows";
       sectionSeparators = separators;
       componentSeparators = separators;
 

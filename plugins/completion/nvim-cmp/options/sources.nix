@@ -1,15 +1,20 @@
-{ lib, config, pkgs, ... }:
+{ lib, cfg, pkgs, helpers, ... }:
 
 with lib;
 with types;
-with pkgs.vimExtraPlugins;
 
 let
 
-  cfg-plugin = config.programs.nixneovim.plugins.nvim-cmp.sources;
-  helpers = import ../../../helpers.nix { inherit lib config cfg-plugin; };
+  cfg-sources = cfg.sources;
 
-  inherit (helpers) intNullOption removeEnable keyToSnake activated;
+  filters = helpers.filters { cfg = cfg-sources; };
+
+  inherit (helpers) removeEnable keyToSnake;
+  inherit (helpers.customOptions) intNullOption;
+  inherit (filters)
+    activated
+    activatedConfig
+    activatedPackages;
 
   # template for source options
   mkSourceOption = name: attr:
@@ -38,7 +43,7 @@ let
     };
 
   # list of sources
-  sourcesSet = {
+  sourcesSet = with pkgs.vimExtraPlugins; {
     buffer = { packages = [ cmp-buffer ]; };
     calc = { packages = [ cmp-calc ]; };
     cmdline = { packages = [ cmp-cmdline ]; };
@@ -94,18 +99,17 @@ in {
 
   # list of packages that sources depend on like the cmp-source package itself.
   # packages = mapAttrsToList (name: attrs: attrs.package) (helpers.activated plugins); ## return packages of activated sources
-  packages = helpers.activatedPackages plugins;
+  packages = activatedPackages plugins;
 
   # list of extra config that sources define/require
   # config = mapAttrsToList (name: attrs: attrs.extraConfig) (helpers.activated plugins); ## return packages of activated sources
-  extraConfig = helpers.activatedConfig plugins;
+  extraConfig = activatedConfig plugins;
 
   # list of the sources config for cmp
   # output format [ { ["name"] = "<name>" } ]
   config =
       mapAttrsToList
         (name: attrs: { name = name; } // (keyToSnake (removeEnable attrs)) )
-        (activated cfg-plugin);
-      
+        (activated cfg-sources);
 
 }

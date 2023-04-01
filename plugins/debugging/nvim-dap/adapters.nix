@@ -4,9 +4,10 @@ with lib;
 with types;
 let
 
-  helpers = import ../../helpers.nix { inherit lib config; };
+  helpers = import ../../../helper { inherit pkgs lib config; };
+  inherit (helpers.customOptions) strNullOption;
 
-  adapterType = with helpers; submodule {
+  adapterType = submodule {
     options = {
       type = mkOption {
         type = enum [ "executable" "server" ];

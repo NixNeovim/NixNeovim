@@ -7,7 +7,7 @@ let
   name = "git-messenger";
   pluginUrl = "https://github.com/rhysd/git-messenger.vim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
 
   # TODO: add options for plugin config (needs changes to mkLuaPlugin)
 

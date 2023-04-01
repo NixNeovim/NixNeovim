@@ -4,7 +4,7 @@ with lib;
 with types;
 let
 
-  helpers = import ../../../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
 
   luaSnipOptions = submodule {
     options = {

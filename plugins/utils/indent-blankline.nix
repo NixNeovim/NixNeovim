@@ -8,9 +8,10 @@ let
   pluginName = "indent_blankline";
   pluginUrl = "https://github.com/lukas-reineke/indent-blankline.nvim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
+  inherit (helpers.customOptions) boolNullOption strNullOption;
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     # add module options here
     showCurrentContext = boolNullOption "";
     showCurrentContextStart = boolNullOption "";

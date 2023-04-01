@@ -7,7 +7,7 @@ let
   name = "copilot";
   pluginUrl = "https://github.com/github/copilot.vim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; {

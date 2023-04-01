@@ -7,9 +7,10 @@ let
   name = "lsp-progress";
   pluginUrl = "https://github.com/linrongbin16/lsp-progress.nvim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
+   inherit (helpers.customOptions) intOption listOption;
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     # add module options here
     spinner = listOption [ "⣾" "⣽" "⣻" "⢿" "⡿" "⣟" "⣯" "⣷" ] "Spinning icon array";
     spinUpdateTime = intOption 200 "Spinning update time in milliseconds";

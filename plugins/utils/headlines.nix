@@ -7,7 +7,7 @@ let
   name = "headlines";
   pluginUrl = "https://github.com/lukas-reineke/headlines.nvim";
 
-  helpers = import ../helpers.nix { inherit lib config; };
+  helpers = import ../../helper { inherit pkgs lib config; };
 
   moduleOptions = with helpers; {
     # add module options here

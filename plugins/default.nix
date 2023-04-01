@@ -1,7 +1,8 @@
+{ pkgs, lib, config, ... }:
+
 with builtins;
 
 let
-  # filesIn = path-name: path: # TODO: this should be possible with only one argument
   filesIn = path:
     let content = attrNames (readDir (./. + "/${path}"));
     in map (x: ./. + "/${path}/${x}") content;
@@ -10,8 +11,14 @@ let
   completion = filesIn "completion";
   bufferlines = filesIn "bufferlines";
   git = filesIn "git";
+
+  helpers = import ../helper { inherit pkgs lib config; };
 in
 {
+  _module.args = {
+    helpers = helpers;
+  };
+
   imports =
     utils ++
     completion ++

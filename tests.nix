@@ -1,7 +1,7 @@
 { pkgs, lib, config, ... }:
 
 let
-  helper = import ./plugins/helpers.nix { inherit lib config; };
+  helper = import ./helper { inherit pkgs lib config; };
 
   simpleCheck = expr: expected: { inherit expr expected; };
 in {
