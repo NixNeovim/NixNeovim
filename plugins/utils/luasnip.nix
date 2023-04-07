@@ -19,9 +19,10 @@ let
     path = strOption "./snippets" "Specifies the path where snippets are loaded from";
   };
 
-in
-with helpers;
-mkLuaPlugin {
+  inherit (helpers.toLua)
+    mkLuaPlugin;
+
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

@@ -65,6 +65,6 @@ in {
   inherit (plugin)
     convertModuleOptions
     defaultModuleOptions
-    toLuaPlugin;
+    mkLuaPlugin;
 
 }

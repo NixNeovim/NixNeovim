@@ -13,9 +13,10 @@ let
     # add module options here
   };
 
-in
-with helpers;
-mkLuaPlugin {
+  inherit (helpers.toLua)
+    mkLuaPlugin;
+
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

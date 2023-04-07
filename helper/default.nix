@@ -37,7 +37,7 @@ in {
     convertModuleOptions
     camelToSnake;
   inherit customOptions toLua;
-  inherit (toLua.plugin)
+  inherit (toLua)
     mkLuaPlugin;
 
   filters = import ./filters.nix { inherit lib; };
