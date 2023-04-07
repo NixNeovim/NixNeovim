@@ -1,13 +1,16 @@
-{ lib, cfg, helpers, ... }:
+# { lib, cfg, helpers, ... }:
+{ lib
+, customOptions
+, toLuaObject
+}:
 
 let
   inherit (builtins) isString isAttrs;
   inherit (lib) filterAttrs assertMsg mapAttrsToList mkOption;
   inherit (lib.types) either str submodule attrsOf;
 
-  inherit (helpers.customOptions) boolOption strNullOption;
-  inherit (helpers) toLuaObject;
-
+  inherit (customOptions) boolOption strNullOption;
+  # inherit (helpers) toLuaObject;
 
   # Type definitions for key mappings
   mapOption = submodule {
@@ -69,18 +72,18 @@ let
       )
       normalizedMaps;
 
-  mappingsList =
-    (genMaps "" cfg.mappings.normalVisualOp) ++
-    (genMaps "n" cfg.mappings.normal) ++
-    (genMaps "i" cfg.mappings.insert) ++
-    (genMaps "v" cfg.mappings.visual) ++
-    (genMaps "x" cfg.mappings.visualOnly) ++
-    (genMaps "s" cfg.mappings.select) ++
-    (genMaps "t" cfg.mappings.terminal) ++
-    (genMaps "o" cfg.mappings.operator) ++
-    (genMaps "l" cfg.mappings.lang) ++
-    (genMaps "!" cfg.mappings.insertCommand) ++
-    (genMaps "c" cfg.mappings.command);
+  genAllMaps = mappings:
+    (genMaps ""  mappings.normalVisualOp) ++
+    (genMaps "n" mappings.normal) ++
+    (genMaps "i" mappings.insert) ++
+    (genMaps "v" mappings.visual) ++
+    (genMaps "x" mappings.visualOnly) ++
+    (genMaps "s" mappings.select) ++
+    (genMaps "t" mappings.terminal) ++
+    (genMaps "o" mappings.operator) ++
+    (genMaps "l" mappings.lang) ++
+    (genMaps "!" mappings.insertCommand) ++
+    (genMaps "c" mappings.command);
 
    # TODO: implement something like this: https://github.com/echasnovski/mini.nvim/blob/main/lua/mini/basics.lua#L633
 
@@ -95,11 +98,11 @@ in {
   };
 
   # create the keymapping strings
-  luaString =
+  luaString = mappings:
     let
       inherit (lib) forEach concatStringsSep;
 
-      string = forEach mappingsList
+      string = forEach (genAllMaps mappings)
         ({ mode, key, action, config }:
           ''do vim.keymap.set("${mode}", "${key}", ${action}, ${toLuaObject config}) end''
         );

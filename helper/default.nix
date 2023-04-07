@@ -1,16 +1,13 @@
-{ pkgs, lib, config, cfg-plugin ? { }, ... }:
+{ pkgs, lib, config, ... }:
 
 let
 
   inherit (lib)
-    attrNames
     concatStringsSep
     filter
     filterAttrs
-    flatten
     mapAttrs
     mapAttrs'
-    mapAttrsToList
     mkEnableOption
     mkIf
     mkOption
@@ -25,8 +22,14 @@ let
   customOptions = import ./custom_options.nix { inherit mkOption types; };
 
   toLua = import ./to_lua { inherit lib customOptions config; };
-
+  
 in {
+
+  # module to handle key mappings
+  keymappings = pkgs.callPackage ./keymappings.nix {
+    inherit customOptions;
+    inherit (toLua) toLuaObject;
+  };
 
   inherit (toLua)
     toLuaObject
@@ -34,6 +37,8 @@ in {
     convertModuleOptions
     camelToSnake;
   inherit customOptions toLua;
+  inherit (toLua.plugin)
+    mkLuaPlugin;
 
   filters = import ./filters.nix { inherit lib; };
 
@@ -107,8 +112,6 @@ in {
           else "";
       };
     };
-
-  mkLuaPlugin = toLua.plugin.mkLuaPlugin;
 
   mkDefaultOpt = { type, global, description ? null, example ? null, default ? null, value ? v: (globalVal v), ... }: {
     option = mkOption {

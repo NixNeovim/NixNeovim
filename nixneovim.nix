@@ -6,9 +6,7 @@ let
 
   helpers = import ./helper { inherit pkgs lib config isDocsBuild; };
 
-  mappings = import ./helper/keymappings.nix {
-    inherit lib cfg helpers;
-  };
+  mappings = helpers.keymappings;
 
   pluginWithConfigType = types.submodule {
     options = {
@@ -31,6 +29,10 @@ let
 
 in
 {
+  imports = [
+    ./plugins
+  ];
+
   options = {
     programs.nixneovim = {
       enable = mkEnableOption "enable nixneovim";
@@ -142,10 +144,6 @@ in
     };
   };
 
-  imports = [
-    ./plugins
-  ];
-
   config =
     let
       neovimConfig = pkgs.neovimUtils.makeNeovimConfig {
@@ -186,28 +184,37 @@ in
         # Make sure that globals are set before plugins are setup.
         # This is becuase you might want to define variables or global functions
         # that the plugin configuration depend upon.
-        customRC = cfg.extraConfigVim + ''
-          lua <<EOF
-          ${cfg.extraLuaPreConfig}
-          --------------------------------------------------
-          --                 Globals                      --
-          --------------------------------------------------
-          ${luaGlobals}
+        customRC =
+          cfg.extraConfigVim
+          + ''
+            lua <<EOF
+            ${cfg.extraLuaPreConfig}
+            --------------------------------------------------
+            --                 Globals                      --
+            --------------------------------------------------
 
-          --------------------------------------------------
-          --                 Keymappings                  --
-          --------------------------------------------------
+            ${luaGlobals}
 
-          ${mappings.luaString}
+            --------------------------------------------------
+            --                 Keymappings                  --
+            --------------------------------------------------
 
-          ${cfg.extraConfigLua}
-        '' +
-          # Set colorscheme after setting globals.
-          # Some colorschemes depends on variables being set before setting the colorscheme.
-          (optionalString (cfg.colorscheme != "" && cfg.colorscheme != null) ''
-            vim.cmd([[colorscheme ${cfg.colorscheme}]])
-          '') +
-          ''
+            ${mappings.luaString cfg.mappings}
+
+            --------------------------------------------------
+            --               Extra Config (Lua)             --
+            --------------------------------------------------
+
+            ${cfg.extraConfigLua}
+
+            ${
+              # Set colorscheme after setting globals.
+              # Some colorschemes depends on variables being set before setting the colorscheme.
+              optionalString
+                (cfg.colorscheme != "" && cfg.colorscheme != null)
+                "vim.cmd([[colorscheme ${cfg.colorscheme}]])"
+            }
+
             ${cfg.extraLuaPostConfig}
             EOF
           '';
