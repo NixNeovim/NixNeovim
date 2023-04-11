@@ -18,6 +18,8 @@ let
     align = { };
     animate = { };
     base16 = { };
+    basics = { };
+    bracketed = { };
     bufremove = { };
     comment = { };
     completion = { };
@@ -32,6 +34,7 @@ let
     move = { };
     pairs = { };
     sessions = { };
+    splitjoin = { };
     starter = { };
     statusline = { };
     surround = { };
