@@ -31,6 +31,10 @@ let
   # - packages: used if the name of the nix packages differs from the key
   # - serverName: name of the server as called in `lspconfig.<serverName>.setup()
   serversSet = {
+    bashls = {
+      languages = "Bash";
+      packages = [ nodePackages.bash-language-server ];
+    };
     clangd = {
       languages = "C, C++";
       packages = [ clang-tools ];
