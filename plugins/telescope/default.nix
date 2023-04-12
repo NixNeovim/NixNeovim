@@ -18,16 +18,22 @@ let
 
   moduleOptions = with helpers; {
     # add module options here
-    useBat = boolOption true "Use bat as the previewer instead of cat";
-    highlightTheme = mkOption {
-      type = types.nullOr types.str;
-      description = "The colorscheme to use for syntax highlighting";
-      default = config.programs.nixneovim.colorscheme;
-    };
-    extraPickersConfig = attrsOption { } "Put extra config for the builtin pickers here";
-    extraExtensionsConfig = attrsOption { } "Put extra config for extensions here";
+    # useBat = boolOption true "Use bat as the previewer instead of cat";
+    # highlightTheme = mkOption {
+    #   type = types.nullOr types.str;
+    #   description = "The colorscheme to use for syntax highlighting";
+    #   default = config.programs.nixneovim.colorscheme;
+    # };
+    # extraPickersConfig = attrsOption { } "Put extra config for the builtin pickers here";
+    # extraExtensionsConfig = attrsOption { } "Put extra config for extensions here";
     extensions = extensions.options;
   };
+
+  pluginOptions =
+    let
+      options = convertModuleOptions cfg (filterAttrs (k: v: k != "extensions") moduleOptions);
+      extraConfig = cfg.extraConfig;
+    in options // extraConfig;
 
 in
 with helpers;
@@ -42,8 +48,7 @@ mkLuaPlugin {
   extraPackages = with pkgs; [
     manix
     ripgrep
-  ] ++ optional cfg.useBat bat
-  ++ extensions.packages;
+  ] ++ extensions.packages;
 
   # this looks weird but produces correctly indented lua code
   extraConfigLua =
@@ -51,11 +56,13 @@ mkLuaPlugin {
       local telescope = require('${name}')
           telescope.setup {
             extensions = ${ extensions.config },
-            ${toLuaObject cfg.extraConfig}
+            default = ${toLuaObject pluginOptions}
           }
 
           ${ concatStringsSep "\n    " extensions.loadString } '';
 }
+            # ${toLuaObject cfg.extraConfig}
+            # ${toLuaObject pluginOptions}
 
 #   # imports = [
 #   #   ./frecency.nix
