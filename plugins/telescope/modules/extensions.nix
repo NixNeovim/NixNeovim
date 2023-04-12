@@ -54,6 +54,7 @@ let
     default = { };
   };
 
+  # fills in all missing attributes about an extension
   extensions = mapAttrs
     (
       name: { plugins, luaName ? name, packages ? { }, extraConfig ? { }, options ? { } }:
@@ -62,7 +63,7 @@ let
     extensionsSet;
 in {
 
-  # nix module options for all soruces
+  # nix module options for all sources
   options = mapAttrs mkExtension extensions;
 
   # list of packages that actiated sources depend on

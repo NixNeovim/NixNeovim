@@ -29,8 +29,6 @@ let
     extensions = extensions.options;
   };
 
-  pluginOptions = convertModuleOptions cfg moduleOptions;
-
 in
 with helpers;
 mkLuaPlugin {
@@ -47,14 +45,14 @@ mkLuaPlugin {
   ] ++ optional cfg.useBat bat
   ++ extensions.packages;
 
-  # this looks weird but produces correctly indended lua code
+  # this looks weird but produces correctly indented lua code
   extraConfigLua =
     ''
       local telescope = require('${name}')
           telescope.setup {
             extensions = ${ extensions.config },
+            ${toLuaObject cfg.extraConfig}
           }
-          ${toLuaObject pluginOptions}
 
           ${ concatStringsSep "\n    " extensions.loadString } '';
 }
