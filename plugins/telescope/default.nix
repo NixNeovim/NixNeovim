@@ -56,7 +56,7 @@ mkLuaPlugin {
       local telescope = require('${name}')
           telescope.setup {
             extensions = ${ extensions.config },
-            default = ${toLuaObject pluginOptions}
+            defaults = ${toLuaObject pluginOptions}
           }
 
           ${ concatStringsSep "\n    " extensions.loadString } '';
