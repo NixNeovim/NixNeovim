@@ -37,6 +37,12 @@ in
     programs.nixneovim = {
       enable = mkEnableOption "enable nixneovim";
 
+      defaultEditor = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Configures neovim to be the default editor using the EDITOR environment variable.";
+      };
+
       package = mkOption {
         type = types.nullOr types.package;
         default = null;
@@ -151,6 +157,8 @@ in
         plugins = cfg.extraPlugins;
       };
 
+      environment.variables.EDITOR = mkIf cfg.defaultEditor (mkOverride 900 "nvim");
+
       extraWrapperArgs = optionalString (cfg.extraPackages != [ ])
         ''--prefix PATH : "${makeBinPath cfg.extraPackages}"'';
 
@@ -238,6 +246,7 @@ in
         {
           programs.neovim = {
             enable = true;
+            defaultEditor = cfg.defaultEditor;
             package = mkIf (cfg.package != null) cfg.package;
             extraPackages = cfg.extraPackages;
             extraConfig = configure.customRC;
