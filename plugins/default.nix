@@ -32,6 +32,7 @@ in
     ./colorschemes/nord.nix
     ./colorschemes/one.nix
     ./colorschemes/onedark.nix
+    ./colorschemes/rose-pine.nix
     ./colorschemes/tokyonight.nix
 
     ./debugging/nvim-dap
