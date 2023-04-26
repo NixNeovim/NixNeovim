@@ -9,7 +9,7 @@
       flake = false;
     };
     nmt = {
-      url = "gitlab:rycee/nmt";
+      url = "github:jooooscha/nmt"; # slightly modified version of rycee/nmt
       flake = false;
     };
 
