@@ -151,17 +151,14 @@
     "nmt": {
       "flake": false,
       "locked": {
-        "lastModified": 1648075362,
-        "narHash": "sha256-u36WgzoA84dMVsGXzml4wZ5ckGgfnvS0ryzo/3zn/Pc=",
-        "owner": "rycee",
-        "repo": "nmt",
-        "rev": "d83601002c99b78c89ea80e5e6ba21addcfe12ae",
-        "type": "gitlab"
+        "lastModified": 1682542346,
+        "narHash": "sha256-LwgCRRjhXZclpeEhrWmlJ8LIXRERRXsWUh5GiBZCCdI=",
+        "path": "/home/joscha/main/programming/nix/nmt",
+        "type": "path"
       },
       "original": {
-        "owner": "rycee",
-        "repo": "nmt",
-        "type": "gitlab"
+        "path": "/home/joscha/main/programming/nix/nmt",
+        "type": "path"
       }
     },
     "root": {
