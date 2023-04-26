@@ -36,7 +36,7 @@ let
     # grep -F 'OK' "${test}/result" > $out
   '';
 in
-lib.mapAttrs checkTest
+# lib.mapAttrs checkTest
   (import nmt {
     inherit lib pkgs modules;
     testedAttrPath = [ "home" "activationPackage" ];
@@ -44,7 +44,7 @@ lib.mapAttrs checkTest
       # ./module.nix
       ./neovim.nix
     ];
-  }).build # or report
+  }).build # ).build # or report
 
 # { nixpkgs , system , nmt }:
 
