@@ -6,24 +6,20 @@
           enable = true;
 
           plugins.numb.enable = true;
-          extraLuaConfig = ''
-            -- extraLuaConfig
-          '';
         };
-        # programs.neovim = {
-        #   enable = true;
-        #   extraLuaConfig = ''
-        #     -- extraLuaConfig
-        #   '';
-        # };
         nmt.script = ''
           nvimFolder="home-files/.config/nvim"
-          assertFileContent "$nvimFolder/init.lua" ${
-            pkgs.writeText "init.lua-expected" ''
-              -- extraLuaConfig
-            ''
-          }
+          assertFileContains "$nvimFolder/init.lua" "vim.cmd [[source"
+          file=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
+          cat $file
+          assertFileExists $file
+          assertFileContains $file "numb"
         '';
       };
     };
 }
+# assertFileContent "$nvimFolder/init.lua" ${
+#   pkgs.writeText "init.lua-expected" ''
+#     -- extraLuaConfig
+#   ''
+# }
