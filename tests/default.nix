@@ -70,7 +70,6 @@ EOF
     };
   };
 
-
   tests = import nmt {
     inherit lib pkgs modules;
     testedAttrPath = [ "home" "activationPackage" ];
@@ -84,7 +83,11 @@ EOF
   };
 
 in tests.build
+# pkgs.runCommandLocal "tests" { } ''
+#   touch ${placeholder "out"}
 
+#   ${lib.forEach tests (t: t.build)}
+# ''
 
 
   # ().build # ).build # or report

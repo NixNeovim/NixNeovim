@@ -1,7 +1,7 @@
 { luaHelper }:
 
 {
-  config = { config, lib, pkgs, ... }:
+  which-key-test = { config, lib, pkgs, ... }:
     {
       config = {
 
@@ -24,7 +24,7 @@
           assertDiff "$file" ${
             pkgs.writeText "which-key.expected" ''
               ${luaHelper.config.start}
-              -- config for plugin: which-keyyyyyy
+              -- config for plugin: which-key
               do
                 function setup()
                   -- test lua pre comment

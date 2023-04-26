@@ -1,6 +1,6 @@
 { ... }:
 {
-  config = { config, lib, pkgs, ... }:
+  neovim-test = { config, lib, pkgs, ... }:
     {
       config = {
 

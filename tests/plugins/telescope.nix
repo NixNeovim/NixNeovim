@@ -1,7 +1,7 @@
 { luaHelper }:
 
 {
-  config = { config, lib, pkgs, ... }:
+  telescope-test = { config, lib, pkgs, ... }:
     {
       config = {
 

@@ -1,7 +1,7 @@
 { luaHelper }:
 
 {
-  config = { config, lib, pkgs, ... }:
+  luasnip-test = { config, lib, pkgs, ... }:
     {
       config = {
 

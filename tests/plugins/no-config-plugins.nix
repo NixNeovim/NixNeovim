@@ -3,7 +3,7 @@
 # Test all modules that have no config
 
 {
-  config = { config, lib, pkgs, ... }:
+  no-config-tests = { config, lib, pkgs, ... }:
     {
       config = {
 
@@ -15,11 +15,12 @@
 
         nmt.script = ''
           nvimFolder="home-files/.config/nvim"
-          file=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
+          config=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
 
-          assertDiff "$file" ${
-            pkgs.writeText "init.lua-expected" ''
+          assertDiff "$config" ${
+            pkgs.writeText "no-config-plugins.expected" ''
               ${luaHelper.config.start}
+
               ${luaHelper.config.end}
             ''
           }
