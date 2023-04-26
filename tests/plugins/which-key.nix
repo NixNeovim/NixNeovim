@@ -18,7 +18,7 @@
         };
 
         nmt.script = ''
-          nvimFolder="home-files/.config/nvim"fail
+          nvimFolder="home-files/.config/nvim"
           file=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
 
           assertDiff "$file" ${
