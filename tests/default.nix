@@ -78,6 +78,7 @@ EOF
       # ./module.nix
       ./neovim.nix
       ./plugins/telescope.nix
+      ./plugins/luasnip.nix
     ];
   };
 
