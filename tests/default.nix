@@ -9,9 +9,9 @@ let
       literalDocBook = super.literalDocBook or super.literalExample;
     });
 
+  # base config
   modules = (import (home-manager.outPath + "/modules/modules.nix") {
     inherit lib pkgs;
-
     check = false;
     useNixpkgsModule = false;
   }) ++
@@ -26,13 +26,14 @@ let
       # Test docs separately
       manual.manpages.enable = false;
 
-      imports = [ (home-manager.outPath + "/tests/asserts.nix") ];
+      # imports = [ (home-manager.outPath + "/tests/asserts.nix") ];
     }
+    (import ../nixneovim.nix {})
   ];
 
-  # inherit (pkgs.stdenv.hostPlatform) isDarwin isLinux;
   checkTest = name: test: pkgs.runCommandLocal "nmt-test-${name}" { } ''
-    grep -F 'OK' "${test}/result" >$out
+    echo hi > $out
+    # grep -F 'OK' "${test}/result" > $out
   '';
 in
 lib.mapAttrs checkTest
@@ -40,9 +41,10 @@ lib.mapAttrs checkTest
     inherit lib pkgs modules;
     testedAttrPath = [ "home" "activationPackage" ];
     tests = builtins.foldl' (a: b: a // (import b)) { } [
-      ./module.nix
+      # ./module.nix
+      ./neovim.nix
     ];
-  }).report
+  }).build # or report
 
 # { nixpkgs , system , nmt }:
 

@@ -29,11 +29,11 @@
       forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
     in
     {
-      packages.${system}.docs = import ./docs {
-        inherit pkgs;
-        lib = nixpkgs.lib;
-        nmd = import nmd { inherit pkgs lib; };
-      };
+      # packages.${system}.docs = import ./docs {
+      #   inherit pkgs;
+      #   lib = nixpkgs.lib;
+      #   nmd = import nmd { inherit pkgs lib; };
+      # };
 
       nixosModules = rec {
         default = import ./nixneovim.nix { homeManager = true; };
