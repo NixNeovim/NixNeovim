@@ -19,32 +19,73 @@ let
     {
       # Fix impurities
       xdg.enable = true;
-      home.username = "hm-user";
-      home.homeDirectory = "/home/hm-user";
-      home.stateVersion = lib.mkDefault "18.09";
+      home = {
+        username = "hm-user";
+        homeDirectory = "/home/hm-user";
+        stateVersion = lib.mkDefault "22.11";
+      };
+
+      programs.nixneovim = {
+        enable = true;
+      };
 
       # Test docs separately
       manual.manpages.enable = false;
-
-      # imports = [ (home-manager.outPath + "/tests/asserts.nix") ];
     }
+
+    # improt NixNeovim module
     (import ../nixneovim.nix {})
   ];
 
-  checkTest = name: test: pkgs.runCommandLocal "nmt-test-${name}" { } ''
-    echo hi > $out
-    # grep -F 'OK' "${test}/result" > $out
-  '';
-in
-# lib.mapAttrs checkTest
-  (import nmt {
+  luaHelper = {
+    config = {
+      start = ''
+lua <<EOF
+
+--------------------------------------------------
+--                 Globals                      --
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+--                 Keymappings                  --
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+--               Extra Config (Lua)             --
+--------------------------------------------------
+
+    '';
+    end = ''
+
+
+
+
+
+EOF
+    '';
+    };
+  };
+
+
+  tests = import nmt {
     inherit lib pkgs modules;
     testedAttrPath = [ "home" "activationPackage" ];
-    tests = builtins.foldl' (a: b: a // (import b)) { } [
+    tests = builtins.foldl' (a: b: a // (import b { inherit luaHelper; })) { } [
       # ./module.nix
       ./neovim.nix
+      ./plugins/telescope.nix
     ];
-  }).build # ).build # or report
+  };
+
+in tests.build
+
+
+
+  # ().build # ).build # or report
 
 # { nixpkgs , system , nmt }:
 
