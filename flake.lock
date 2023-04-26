@@ -151,14 +151,17 @@
     "nmt": {
       "flake": false,
       "locked": {
-        "lastModified": 1682542346,
-        "narHash": "sha256-LwgCRRjhXZclpeEhrWmlJ8LIXRERRXsWUh5GiBZCCdI=",
-        "path": "/home/joscha/main/programming/nix/nmt",
-        "type": "path"
+        "lastModified": 1682542807,
+        "narHash": "sha256-An7P0dDtNdTo7yClc4CSyWYSpEFC6T8QG3IRzYKFXhU=",
+        "owner": "jooooscha",
+        "repo": "nmt",
+        "rev": "e1ffc866e17ed7742d3d6983b1bbfc45eac4f3e2",
+        "type": "github"
       },
       "original": {
-        "path": "/home/joscha/main/programming/nix/nmt",
-        "type": "path"
+        "owner": "jooooscha",
+        "repo": "nmt",
+        "type": "github"
       }
     },
     "root": {

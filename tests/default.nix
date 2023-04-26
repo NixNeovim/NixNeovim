@@ -75,10 +75,11 @@ EOF
     inherit lib pkgs modules;
     testedAttrPath = [ "home" "activationPackage" ];
     tests = builtins.foldl' (a: b: a // (import b { inherit luaHelper; })) { } [
-      # ./module.nix
       ./neovim.nix
       ./plugins/telescope.nix
       ./plugins/luasnip.nix
+      ./plugins/which-key.nix
+      ./plugins/no-config-plugins.nix
     ];
   };
 
