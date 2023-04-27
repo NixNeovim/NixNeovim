@@ -60,9 +60,6 @@ A wiki for all options will be available in the near future.
       EOF
     '';
     
-    # NixNeovim contains some colorschemes
-    colorschemes.gruvbox.enable = true;
-
     # to install plugins just activate their modules
     plugins = {
       lsp = {
