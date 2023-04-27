@@ -53,7 +53,8 @@
       # };
 
       checks.x86_64-linux = import ./tests {
-        inherit nixpkgs nmt system pkgs;
+        inherit nmt pkgs;
+        nixneovim = self.nixosModules.homeManager;
         inherit (inputs) home-manager;
       };
 

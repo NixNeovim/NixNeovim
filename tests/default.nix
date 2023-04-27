@@ -1,4 +1,4 @@
-{ pkgs, home-manager, nmt, ... }:
+{ pkgs, home-manager, nmt, nixneovim, ... }:
 
 let
   lib = pkgs.lib.extend
@@ -73,7 +73,7 @@ EOF
   tests = import nmt {
     inherit lib pkgs modules;
     testedAttrPath = [ "home" "activationPackage" ];
-    tests = builtins.foldl' (a: b: a // (import b { inherit luaHelper; })) { } [
+    tests = builtins.foldl' (a: b: a // (import b { inherit luaHelper nixneovim; })) { } [
       ./neovim.nix
       ./plugins/telescope.nix
       ./plugins/luasnip.nix
@@ -83,6 +83,7 @@ EOF
   };
 
 in tests.build
+
 # pkgs.runCommandLocal "tests" { } ''
 #   touch ${placeholder "out"}
 

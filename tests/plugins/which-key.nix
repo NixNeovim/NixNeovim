@@ -1,4 +1,4 @@
-{ luaHelper }:
+{ luaHelper, ... }:
 
 {
   which-key-test = { config, lib, pkgs, ... }:

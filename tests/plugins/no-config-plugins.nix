@@ -1,4 +1,4 @@
-{ luaHelper }:
+{ luaHelper, ... }:
 
 # Test all modules that have no config
 

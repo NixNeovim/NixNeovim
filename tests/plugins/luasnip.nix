@@ -1,4 +1,4 @@
-{ luaHelper }:
+{ luaHelper, ... }:
 
 {
   luasnip-test = { config, lib, pkgs, ... }:

@@ -1,4 +1,4 @@
-{ ... }:
+{ nixneovim, ... }:
 {
   neovim-test = { config, lib, pkgs, ... }:
     {
@@ -6,8 +6,20 @@
 
         programs.nixneovim = {
           enable = true;
+          extraConfigVim = ''
+            map j gj
+          '';
+          extraConfigLua = ''
+            -- test lua comment
+          '';
 
           plugins.numb.enable = true;
+          mappings = {
+            normalVisualOp = {
+              "ßß" = "'@'";
+              "<F2>" = "':LspStop<cr>'";
+            };
+          };
         };
 
         nmt.script = ''
@@ -16,26 +28,27 @@
           file=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
           # cat $file
           assertFileExists $file
-          assertFileContent "$file" ${
+          assertDiff "$file" ${
             pkgs.writeText "init.lua-expected" ''
+
+map j gj
+
 lua <<EOF
 
 --------------------------------------------------
 --                 Globals                      --
 --------------------------------------------------
 
-
-
 --------------------------------------------------
 --                 Keymappings                  --
 --------------------------------------------------
 
-
+do vim.keymap.set("", "<F2>", ':LspStop<cr>', { ["noremap"] = true }) end
+do vim.keymap.set("", "ßß", '@', { ["noremap"] = true }) end
 
 --------------------------------------------------
 --               Extra Config (Lua)             --
 --------------------------------------------------
-
 
 -- config for plugin: numb
 do
@@ -55,8 +68,7 @@ do
   end
 end
 
-
-
+-- test lua comment
 
 
 EOF

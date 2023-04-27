@@ -1,4 +1,4 @@
-{ luaHelper }:
+{ luaHelper, ... }:
 
 {
   telescope-test = { config, lib, pkgs, ... }:
