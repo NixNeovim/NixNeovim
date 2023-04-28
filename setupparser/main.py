@@ -10,11 +10,76 @@ Language.build_library(
   ]
 )
 
+indent = ""
+
+def print_comment(text):
+    print(indent, "# ", text)
+    
+
 def extract(node):
     linenumber = node.start_point[0]
     start = node.start_point[1]
     end = node.end_point[1]
     return lines[linenumber][start:end]
+
+def parse_field(node):
+    name = node.child_by_field_name("name") # name node
+    value = node.child_by_field_name("value") # value node
+
+    if name is None:
+        #  print("Field has no name. Assuming it's a list")
+        print(indent, extract(value), ";") # TODO: print as list
+        return
+
+    if value is None:
+        print(f"Field {name} has no value")
+        exit()
+
+    match value.type:
+        case "boolean":
+            typeString = "boolOption"
+            print(indent, extract(name), "=", typeString, extract(value), "\"\";")
+        case "string":
+            typeString = "strOption"
+            print(indent, extract(name), "=", typeString, extract(value), "\"\";")
+        case "tableconstructor":
+            print(indent, extract(name), "=", end="")
+            parse_table(value.children)
+        case "number":
+            print(indent, extract(name), "=", "intOption", extract(value), "\"\";")
+        case "function":
+            print(indent, "'lua function'")
+        case "nil":
+            print(indent, "'nil'")
+
+        case type:
+            print(f"UNKNOWN ({type})")
+
+
+def parse_table(children):
+    global indent
+
+    for child in children:
+        match child.type:
+            case "{":
+                print("", "{")
+                indent += "  "
+            case "}":
+                indent = indent[:-2]
+                print(indent, "}")
+            case "comment":
+                text = extract(child)
+                print_comment(text)
+            case "fieldlist":
+                for node in child.children:
+                    match node.type:
+                        case ",":
+                            continue
+                        case "comment":
+                            text = extract(node)
+                            print_comment(text)
+                        case "field":
+                            parse_field(node)
 
 LUA_LANGUAGE = Language('build/my-languages.so', 'lua')
 
@@ -139,49 +204,38 @@ require("oil").setup({
 })
 '''
 
-data = '''
-require("hi").setup({
-    a = true,
-    b = "striiiing"
-})
-'''
+#  data = '''
+#  require("hi").setup({
+#      a = true,
+#      b = "striiiing",
+#      -- Id is automatically added at the beginning, and name at the end
+#      -- See :help oil-columns
+#      columns = {
+#          -- "permissions",
+#          "icon",
+#          -- "size",
+#          -- "mtime",
+#      },
+#  })
+#  '''
 
 lines = data.split('\n')
-
 tree = parser.parse(bytes(data, "utf8"))
 
 cursor = tree.walk()
-assert cursor.node.type == 'program'
+assert cursor.node.type == "program"
 assert cursor.goto_first_child()
-print(cursor.node.children[4])
-setupF = cursor.node.children[4]
+assert cursor.node.type == "function_call" # requrie call
+args = cursor.node.child_by_field_name("args")
 
-print("{")
+if args is None:
+    print("Could not detect args")
+    exit()
 
-#  print(setupF.children[0].children[1].children)
-for field in setupF.children[0].children[1].children:
-    if field.type == ",":
-        continue
-
-    name = field.child_by_field_name("name")
-    value = field.child_by_field_name("value")
-    #  print(name)
-    #  print(value)
-    if value is None:
-        print("Error, no value")
-        exit()
-
-    match value.type:
-        case "boolean":
-            typeString = "boolOption"
-        case "string":
-            typeString = "strOption"
-        case type:
-            typeString = f"UNKNOWN ({type})"
-
-    print(extract(name), "=", typeString, extract(value), "")
-
-print("}")
+cursor = args.walk()
+assert cursor.goto_first_child() # setup call
+children = cursor.node.children
+parse_table(children) # parse setup
 
 """
 (program
@@ -189,8 +243,8 @@ print("}")
         prefix: (function_call
             prefix: (identifier)
             (function_call_paren)
-                args: (function_arguments
-                    (string))
+            args: (function_arguments
+                (string))
             (function_call_paren))
         prefix: (identifier)
         (function_call_paren)
@@ -199,6 +253,20 @@ print("}")
                 (fieldlist
                     (field
                         name: (identifier)
-                        value: (boolean)))))
-        (function_call_paren)))
+                        value: (boolean))
+                    (field
+                        name: (identifier)
+                        value: (string))
+                    (comment)
+                    (comment)
+                    (field
+                        name: (identifier)
+                        value: (tableconstructor
+                            (fieldlist
+                                (field
+                                    value: (string)))
+                            (comment)
+                            (comment)
+                            (comment))))))
+    (function_call_paren)))
 """
