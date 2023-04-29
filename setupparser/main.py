@@ -1,91 +1,5 @@
 from tree_sitter import Language, Parser
-
-Language.build_library(
-  # Store the library in the `build` directory
-  'build/my-languages.so',
-
-  # Include one or more languages
-  [
-    './tree-sitter-lua',
-  ]
-)
-
-indent = ""
-
-def print_comment(text):
-    print(indent, "# ", text)
-    
-
-def extract(node):
-    linenumber = node.start_point[0]
-    start = node.start_point[1]
-    end = node.end_point[1]
-    return lines[linenumber][start:end]
-
-def parse_field(node):
-    name = node.child_by_field_name("name") # name node
-    value = node.child_by_field_name("value") # value node
-
-    if name is None:
-        #  print("Field has no name. Assuming it's a list")
-        print(indent, extract(value), ";") # TODO: print as list
-        return
-
-    if value is None:
-        print(f"Field {name} has no value")
-        exit()
-
-    match value.type:
-        case "boolean":
-            typeString = "boolOption"
-            print(indent, extract(name), "=", typeString, extract(value), "\"\";")
-        case "string":
-            typeString = "strOption"
-            print(indent, extract(name), "=", typeString, extract(value), "\"\";")
-        case "tableconstructor":
-            print(indent, extract(name), "=", end="")
-            parse_table(value.children)
-        case "number":
-            print(indent, extract(name), "=", "intOption", extract(value), "\"\";")
-        case "function":
-            print(indent, "'lua function'")
-        case "nil":
-            print(indent, "'nil'")
-
-        case type:
-            print(f"UNKNOWN ({type})")
-
-
-def parse_table(children):
-    global indent
-
-    for child in children:
-        match child.type:
-            case "{":
-                print("", "{")
-                indent += "  "
-            case "}":
-                indent = indent[:-2]
-                print(indent, "}")
-            case "comment":
-                text = extract(child)
-                print_comment(text)
-            case "fieldlist":
-                for node in child.children:
-                    match node.type:
-                        case ",":
-                            continue
-                        case "comment":
-                            text = extract(node)
-                            print_comment(text)
-                        case "field":
-                            parse_field(node)
-
-LUA_LANGUAGE = Language('build/my-languages.so', 'lua')
-
-parser = Parser()
-
-parser.set_language(LUA_LANGUAGE)
+import re
 
 data = '''
 require("oil").setup({
@@ -204,20 +118,99 @@ require("oil").setup({
 })
 '''
 
-#  data = '''
-#  require("hi").setup({
-#      a = true,
-#      b = "striiiing",
-#      -- Id is automatically added at the beginning, and name at the end
-#      -- See :help oil-columns
-#      columns = {
-#          -- "permissions",
-#          "icon",
-#          -- "size",
-#          -- "mtime",
-#      },
-#  })
-#  '''
+Language.build_library(
+  # Store the library in the `build` directory
+  'build/my-languages.so',
+
+  # Include one or more languages
+  [
+    './tree-sitter-lua',
+  ]
+)
+
+indent = ""
+lastComment = ""
+
+def print_comment(node):
+    global lastComment
+    text = extract(node)
+
+    text = re.sub(r'^-- ?', '', text)
+
+    lastComment = text
+    print(indent, "#", text)
+
+def extract(node):
+    linenumber = node.start_point[0]
+    start = node.start_point[1]
+    end = node.end_point[1]
+    return lines[linenumber][start:end]
+
+def parse_field(node):
+    global lastComment
+    name = node.child_by_field_name("name") # name node
+    value = node.child_by_field_name("value") # value node
+
+    if name is None:
+        print("# TODO: Field has no nam cue. Assuming it's a list")
+        print(indent, extract(value)) # TODO: print as list
+        return
+
+    if value is None:
+        print(f"Field {name} has no value")
+        exit()
+
+    # conver to nix code based on type
+    match value.type:
+        case "tableconstructor":
+            print(indent, extract(name), "=", end="")
+            parse_table(value.children)
+            return
+        case "function":
+            #  print(indent, "'lua function'")
+            return
+        case "nil":
+            print(indent, "'nil'")
+            return
+        case "number":
+            typeString = "intOption"
+        case "boolean":
+            typeString = "boolOption"
+        case "string":
+            typeString = "strOption"
+        case type:
+            print(f"UNKNOWN ({type})")
+            return
+
+    print(indent, extract(name), "=", typeString, extract(value), f"\"{lastComment}\";")
+
+# input node: field list
+def parse_table(children):
+    global indent
+
+    for child in children:
+        match child.type:
+            case "{":
+                print("", "{")
+                indent += "  "
+            case "}":
+                indent = indent[:-2]
+                print(indent, "};")
+            case "comment":
+                print_comment(child)
+            case "fieldlist":
+                for node in child.children:
+                    match node.type:
+                        case ",":
+                            continue
+                        case "comment":
+                            print_comment(node)
+                        case "field":
+                            parse_field(node)
+
+LUA_LANGUAGE = Language('build/my-languages.so', 'lua')
+parser = Parser()
+parser.set_language(LUA_LANGUAGE)
 
 lines = data.split('\n')
 tree = parser.parse(bytes(data, "utf8"))
@@ -234,39 +227,6 @@ if args is None:
 
 cursor = args.walk()
 assert cursor.goto_first_child() # setup call
+assert cursor.node.type == "tableconstructor" # requrie call
 children = cursor.node.children
 parse_table(children) # parse setup
-
-"""
-(program
-    (function_call
-        prefix: (function_call
-            prefix: (identifier)
-            (function_call_paren)
-            args: (function_arguments
-                (string))
-            (function_call_paren))
-        prefix: (identifier)
-        (function_call_paren)
-        args: (function_arguments
-            (tableconstructor
-                (fieldlist
-                    (field
-                        name: (identifier)
-                        value: (boolean))
-                    (field
-                        name: (identifier)
-                        value: (string))
-                    (comment)
-                    (comment)
-                    (field
-                        name: (identifier)
-                        value: (tableconstructor
-                            (fieldlist
-                                (field
-                                    value: (string)))
-                            (comment)
-                            (comment)
-                            (comment))))))
-    (function_call_paren)))
-"""
