@@ -207,9 +207,9 @@ They help improve this project and keep it up to date.
 #### Auto generate module options
 
 - With `nix run .#configparser` you can convert a Lua setup configs to nix module options.
-- For example, you can input the following Lua configs (taken from [NvimTree](https://github.com/nvim-tree/nvim-tree.lua); Example comment added)
+- For example, you can input the following Lua configs (taken from [NvimTree](https://github.com/nvim-tree/nvim-tree.lua); Example-comment added)
 
-```bash
+```zsh
 nix run .#configparser <<EOF
 require("nvim-tree").setup({
   sort_by = "case_sensitive",
@@ -242,7 +242,7 @@ EOF
    filters = {
      dotfiles = boolOption true "";
    };
- };
+ }
 ```
 
 The output is best-effort and will likely contain errors.
