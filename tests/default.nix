@@ -79,6 +79,7 @@ EOF
       ./plugins/luasnip.nix
       ./plugins/which-key.nix
       ./plugins/no-config-plugins.nix
+      ./plugins/cmp.nix
     ];
   };
 
