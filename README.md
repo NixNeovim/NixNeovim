@@ -204,7 +204,48 @@ They help improve this project and keep it up to date.
 - In `helper/custom_options.nix` we have defined several functions for basic plugin options like bool, strings or integer.
 - In particular, ther are:
     - `boolOption, intOption, strOption, attrsOption, enumOption`
-- ... improve this
+#### Auto generate module options
+
+- With `bin/configparser/main.py` you can convert a Lua setup configs to nix module options.
+- For example, you can input the following Lua configs (taken from [NvimTree](https://github.com/nvim-tree/nvim-tree.lua); Example comment added)
+
+```Lua
+require("nvim-tree").setup({
+  sort_by = "case_sensitive",
+  view = {
+    -- Example comment
+    width = 30,
+  },
+  renderer = {
+    group_empty = true,
+  },
+  filters = {
+    dotfiles = true,
+  },
+})
+```
+
+- The output will be
+
+```nix
+ {
+   sort_by = strOption "case_sensitive" "";
+   view = {
+     # Example comment
+     width = intOption 30 "Example comment";
+   };
+   renderer = {
+     group_empty = boolOption true "";
+   };
+   filters = {
+     dotfiles = boolOption true "";
+   };
+ };
+```
+
+The output is best-effort and will likely contain errors.
+For example, the script cannot detect if a variable is a string or an `enum`.
+Therefore, you likely have to edit and correct the output before you add it to the module.
 
 ### Rewrite module to new `mkLuaPlugin` api
 
