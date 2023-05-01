@@ -52,7 +52,7 @@ let
     cmp_pandoc = { packages = [ cmp-pandoc-nvim ]; };
     cmp_tabnine = { packages = [ cmp-tabnine ]; };
     conventionalcommits = { packages = [ cmp-conventionalcommits ]; };
-    copilot = { };
+    copilot = { packages = [ ]; };
     crates = { packages = [ crates-nvim ]; extraConfig = "require('crates').setup()"; };
     dap = { packages = [ cmp-dap ]; };
     dictionary = { packages = [ cmp-dictionary ]; };
