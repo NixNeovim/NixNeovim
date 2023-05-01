@@ -19,7 +19,6 @@
               };
               doCheck = false;
               propagatedBuildInputs = [
-                # antlr4-python3-runtime
                 six
               ];
             }

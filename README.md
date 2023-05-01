@@ -206,10 +206,11 @@ They help improve this project and keep it up to date.
     - `boolOption, intOption, strOption, attrsOption, enumOption`
 #### Auto generate module options
 
-- With `bin/configparser/main.py` you can convert a Lua setup configs to nix module options.
+- With `nix run .#configparser` you can convert a Lua setup configs to nix module options.
 - For example, you can input the following Lua configs (taken from [NvimTree](https://github.com/nvim-tree/nvim-tree.lua); Example comment added)
 
-```Lua
+```bash
+nix run .#configparser <<EOF
 require("nvim-tree").setup({
   sort_by = "case_sensitive",
   view = {
@@ -223,6 +224,7 @@ require("nvim-tree").setup({
     dotfiles = true,
   },
 })
+EOF
 ```
 
 - The output will be

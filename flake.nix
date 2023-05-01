@@ -28,10 +28,40 @@
 
     in
     {
-      packages.${system}.docs = import ./docs {
-        inherit pkgs;
-        lib = nixpkgs.lib;
-        nmd = import nmd { inherit pkgs lib; };
+      packages.${system} = {
+        docs = import ./docs {
+          inherit pkgs;
+          lib = nixpkgs.lib;
+          nmd = import nmd { inherit pkgs lib; };
+        };
+        configparser = pkgs.writeShellApplication {
+          name = "configparser";
+          runtimeInputs = let
+            python-with-my-packages = pkgs.python3.withPackages (p: with p; [
+              tree-sitter
+              (
+                buildPythonPackage rec {
+                  pname = "SLPP";
+                  version = "1.2.3";
+                  src = fetchPypi {
+                    inherit pname version;
+                    sha256 = "sha256-If3ZMoNICQxxpdMnc+juaKq4rX7MMi9eDMAQEUy1Scg=";
+                  };
+                  doCheck = false;
+                  propagatedBuildInputs = [
+                    six
+                  ];
+                }
+              )
+            ]);
+          in [
+            python-with-my-packages
+            pkgs.gcc
+          ];
+          text = ''
+            python ./bin/configparser/main.py
+          '';
+        };
       };
 
       nixosModules = {
