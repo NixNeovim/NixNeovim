@@ -1,0 +1,3 @@
+[submodule "bin/configparser/tree-sitter-lua"]
+	path = bin/configparser/tree-sitter-lua
+	url = https://github.com/tjdevries/tree-sitter-lua
