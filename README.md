@@ -140,21 +140,21 @@ First, you specify the mode; you can choose between the keywords below.
 
 When specifying the mapping with an attribute set you can set the following options.
 
-| NixVim  | Default | VimScript                                |
-|---------|---------|------------------------------------------|
-| silent  | false   | `<silent>`                               |
-| nowait  | false   | `<silent>`                               |
-| script  | false   | `<script>`                               |
-| expr    | false   | `<expr>`                                 |
-| unique  | false   | `<unique>`                               |
-| noremap | true    | Use the 'noremap' variant of the mapping |
-| action  |         | Action to execute                        |
+| NixNeovim | Default | VimScript                                |
+|-----------|---------|------------------------------------------|
+| silent    | false   | `<silent>`                               |
+| nowait    | false   | `<silent>`                               |
+| script    | false   | `<script>`                               |
+| expr      | false   | `<expr>`                                 |
+| unique    | false   | `<unique>`                               |
+| noremap   | true    | Use the 'noremap' variant of the mapping |
+| action    |         | Action to execute                        |
 
 ## Roadmap
 
 - [ ] Further cleanup code
 - [ ] Port more modules to `mkLuaPlugin` function
-- [ ] Add some form of tests
+- [ ] Add some form of tests (groundwork is done, now)
 
 ## Documentation
 
@@ -186,8 +186,7 @@ They help improve this project and keep it up to date.
 
 ### Adding options to a module
 
-- Go to the module you want to add options to.
-- Add your options to the `moduleOptions` attribute set.
+- When using the `plugin_template.nix` you add options to the `moduleOptions` attribute set.
 
 ```nix
 {
@@ -204,6 +203,7 @@ They help improve this project and keep it up to date.
 - In `helper/custom_options.nix` we have defined several functions for basic plugin options like bool, strings or integer.
 - In particular, ther are:
     - `boolOption, intOption, strOption, attrsOption, enumOption`
+
 #### Auto generate module options
 
 - With `nix run .#configparser` you can convert a Lua setup configs to nix module options.
