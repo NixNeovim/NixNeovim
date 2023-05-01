@@ -23,6 +23,10 @@ let
         options = {
           enable = mkEnableOption "";
           priority = intNullOption "";
+          entryFilter = mkOption {
+            default = null;
+            type = types.nullOr types.str;
+          };
           option = mkOption {
             type = nullOr (attrsOf anything);
             description = "If direct lua code is needed use helpers.mkRaw";
