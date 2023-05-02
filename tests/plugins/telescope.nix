@@ -1,4 +1,4 @@
-{ luaHelper, ... }:
+{ testHelper, ... }:
 
 {
   telescope-test = { config, lib, pkgs, ... }:
@@ -21,7 +21,7 @@
 
           assertDiff "$file" ${
             pkgs.writeText "init.lua-expected" ''
-              ${luaHelper.config.start}
+              ${testHelper.config.start}
               -- config for plugin: telescope
               do
                 function setup()
@@ -41,7 +41,7 @@
                   print(output)
                 end
               end
-              ${luaHelper.config.end}
+              ${testHelper.config.end}
             ''
           }
         '';

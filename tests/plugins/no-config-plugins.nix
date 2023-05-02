@@ -1,4 +1,4 @@
-{ luaHelper, ... }:
+{ testHelper, ... }:
 
 # Test all modules that have no config
 
@@ -19,9 +19,9 @@
 
           assertDiff "$config" ${
             pkgs.writeText "no-config-plugins.expected" ''
-              ${luaHelper.config.start}
+              ${testHelper.config.start}
 
-              ${luaHelper.config.end}
+              ${testHelper.config.end}
             ''
           }
         '';

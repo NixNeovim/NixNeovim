@@ -37,7 +37,7 @@ let
     (import ../nixneovim.nix {})
   ];
 
-  luaHelper = {
+  testHelper = {
     config = {
       start = ''
 lua <<EOF
@@ -68,12 +68,22 @@ lua <<EOF
 EOF
     '';
     };
+    moduleTest = text:
+      ''
+      nvimFolder="home-files/.config/nvim"
+      file=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
+      PATH=$PATH:$(_abs home-path/bin)
+
+      HOME=$(realpath .) nvim -u $file -c 'qall' --headless
+
+      ${text}
+      '';
   };
 
   tests = import nmt {
     inherit lib pkgs modules;
     testedAttrPath = [ "home" "activationPackage" ];
-    tests = builtins.foldl' (a: b: a // (import b { inherit luaHelper nixneovim; })) { } [
+    tests = builtins.foldl' (a: b: a // (import b { inherit testHelper nixneovim; })) { } [
       ./neovim.nix
       ./plugins/telescope.nix
       ./plugins/luasnip.nix
