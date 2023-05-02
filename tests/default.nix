@@ -71,10 +71,10 @@ EOF
     moduleTest = text:
       ''
       nvimFolder="home-files/.config/nvim"
-      file=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
+      config=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
       PATH=$PATH:$(_abs home-path/bin)
 
-      HOME=$(realpath .) nvim -u $file -c 'qall' --headless
+      HOME=$(realpath .) nvim -u $config -c 'qall' --headless
 
       ${text}
       '';

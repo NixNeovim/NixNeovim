@@ -25,10 +25,13 @@
         nmt.script = ''
           nvimFolder="home-files/.config/nvim"
           assertFileContains "$nvimFolder/init.lua" "vim.cmd [[source"
-          file=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
-          # cat $file
-          assertFileExists $file
-          assertDiff "$file" ${
+          config=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
+          assertFileExists $config
+
+          PATH=$PATH:$(_abs home-path/bin)
+          HOME=$(realpath .) nvim -u $config -c 'qall' --headless
+
+          assertDiff "$config" ${
             pkgs.writeText "init.lua-expected" ''
 
 map j gj

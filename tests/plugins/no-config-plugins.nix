@@ -13,10 +13,7 @@
           plantuml-syntax.enable = true;
         };
 
-        nmt.script = ''
-          nvimFolder="home-files/.config/nvim"
-          config=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
-
+        nmt.script = testHelper.moduleTest ''
           assertDiff "$config" ${
             pkgs.writeText "no-config-plugins.expected" ''
               ${testHelper.config.start}

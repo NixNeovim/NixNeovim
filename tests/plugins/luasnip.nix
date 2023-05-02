@@ -18,11 +18,8 @@
           };
         };
 
-        nmt.script = ''
-          nvimFolder="home-files/.config/nvim"
-          file=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
-
-          assertDiff "$file" ${
+        nmt.script = testHelper.moduleTest ''
+          assertDiff "$config" ${
             pkgs.writeText "init.lua-expected" ''
               ${testHelper.config.start}
               -- config for plugin: luasnip
