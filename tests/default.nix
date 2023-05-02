@@ -1,6 +1,11 @@
 { pkgs, home-manager, nmt, nixneovim, ... }:
 
 let
+
+  inherit (builtins)
+    attrNames
+    readDir;
+
   lib = pkgs.lib.extend
     (_: super: {
       inherit (home-manager.lib) hm;
@@ -80,17 +85,23 @@ EOF
       '';
   };
 
+  filesIn = path:
+    let content = attrNames (readDir (./. + "/${path}"));
+    in map (x: ./. + "/${path}/${x}") content;
+
   tests = import nmt {
     inherit lib pkgs modules;
     testedAttrPath = [ "home" "activationPackage" ];
-    tests = builtins.foldl' (a: b: a // (import b { inherit testHelper nixneovim; })) { } [
-      ./neovim.nix
-      ./plugins/telescope.nix
-      ./plugins/luasnip.nix
-      ./plugins/which-key.nix
-      ./plugins/no-config-plugins.nix
-      ./plugins/cmp.nix
-    ];
+    tests =
+      let
+        modulesTests = filesIn "plugins";
+        testList = [
+          ./neovim.nix
+        ] ++ modulesTests;
+      in builtins.foldl'
+        (a: b: a // (import b { inherit testHelper nixneovim; }))
+        { }
+        testList;
   };
 
 in tests.build
