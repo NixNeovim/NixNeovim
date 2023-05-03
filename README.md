@@ -42,6 +42,12 @@ imports = [
 }
 ```
 
+## Documentation
+
+All options are documented at: [NixNeovim Documentation](https://nixneovim.github.io/NixNeovim/options.html)
+
+You can generate the docs using `nix build .#docs`
+
 ## Example Config
 
 Importing the modules gives you access to the `programs.nixneovim` config.
@@ -155,12 +161,6 @@ When specifying the mapping with an attribute set you can set the following opti
 - [ ] Further cleanup code
 - [ ] Port more modules to `mkLuaPlugin` function
 - [ ] Add some form of tests
-
-## Documentation
-
-All options are documented at: [NixNeovim Documentation](https://nixneovim.github.io/NixNeovim/options.html)
-
-You can generate the docs using `nix build .#docs`
 
 ### Supported language servers
 
