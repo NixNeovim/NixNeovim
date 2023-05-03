@@ -255,6 +255,7 @@ in
         {
           environment.systemPackages = [ wrappedNeovim ];
           programs.neovim = {
+            defaultEditor = cfg.defaultEditor;
             configure = configure;
           };
 
