@@ -157,8 +157,6 @@ in
         plugins = cfg.extraPlugins;
       };
 
-      environment.variables.EDITOR = mkIf cfg.defaultEditor (mkOverride 900 "nvim");
-
       extraWrapperArgs = optionalString (cfg.extraPackages != [ ])
         ''--prefix PATH : "${makeBinPath cfg.extraPackages}"'';
 
