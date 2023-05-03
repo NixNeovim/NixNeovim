@@ -12,7 +12,7 @@ let
 
   # imports
 
- inherit (lib)
+  inherit (lib)
     assertMsg
     hasAttr
     hasPrefix
@@ -76,7 +76,7 @@ in {
   , description ? ""      # deprecated, use extraDescription
   , extraDescription ? "" # description added to the enable function
   , extraPackages ? [ ]   # non-plugin packages
-  , extraConfigLua ? null # lua config added to the init.vim
+  , extraConfigLua ? "" # lua config added to the init.vim
   , extraConfigVim ? ""   # vim config added to the init.vim
   , moduleOptions ? { }   # options available in the module
   , defaultRequire ? true # add default requrie string?
@@ -106,9 +106,13 @@ in {
       '');
 
     # add default require string to load plugin
-    luaConfig = optionalString defaultRequire (if (extraConfigLua == null) then
-      "require('${pluginName}').setup ${toLuaObject pluginOptions}"
-    else extraConfigLua);
+    # luaConfig = optionalString defaultRequire (if (extraConfigLua == null) then
+    # else extraConfigLua);
+
+    luaConfig = ''
+        ${optionalString defaultRequire "require('${pluginName}').setup ${toLuaObject pluginOptions}"}
+        ${extraConfigLua}
+      '';
 
   in
 
@@ -125,7 +129,7 @@ in {
       inherit extraPlugins extraPackages extraConfigVim;
 
       extraConfigLua = optionalString
-        (cfg.extraLua.pre != "" || cfg.extraLua.post != "" || luaConfig != "")
+        (cfg.extraLua.pre != "" || cfg.extraLua.post != "" || luaConfig != "\n\n")
         ''
 
         -- config for plugin: ${name}

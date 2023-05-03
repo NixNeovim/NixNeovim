@@ -60,7 +60,10 @@ mkLuaPlugin {
           }
 
           ${ concatStringsSep "\n    " extensions.loadString } '';
+
+  defaultRequire = false;
 }
+
             # ${toLuaObject cfg.extraConfig}
             # ${toLuaObject pluginOptions}
 
