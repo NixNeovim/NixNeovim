@@ -51,7 +51,7 @@ let
   moduleOptions = with helpers; {
     plugins = {
       marks = boolOption true "Show a list of your marks on ' and `.";
-      registers = boolOption true "Show your registers on \" in NORMAL or <C-r> in INSERT mode.";
+      registers = boolOption true "Show your registers on \" in NORMAL or &lt;C-r&gt; in INSERT mode.";
       spelling = {
         enabled = boolOption false "Enable showing WhichKey when pressing z= to select spelling suggestions.";
         suggestions = intOption 20 "Number of suggestions to show in the spelling suggestion list.";
@@ -60,7 +60,7 @@ let
         operators = boolOption true "Add help for operators like d, y, ... and register them for motion / text object completion.";
         motions = boolOption true "Add help for motions.";
         textObjects = boolOption true "Add help for text objects triggered after entering an operator.";
-        windows = boolOption true "Add help for default bindings on <c-w>.";
+        windows = boolOption true "Add help for default bindings on &lt;c-w&gt;.";
         nav = boolOption true " Add help for misc bindings to work with windows.";
         z = boolOption true "Add help for bindings for folds, spelling and others prefixed with z.";
         g = boolOption true "Add help for bindings prefixed with g.";
