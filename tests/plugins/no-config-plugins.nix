@@ -10,7 +10,6 @@
         programs.nixneovim.plugins = {
           git-messenger-vim.enable = true;
           bufdelete.enable = true;
-          plantuml-syntax.enable = true;
         };
 
         nmt.script = testHelper.moduleTest ''
