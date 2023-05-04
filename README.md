@@ -15,7 +15,7 @@ However, NixNeovim contains more modules and cleaner code.
 To use the modules, add this flake to the inputs of your nix configuration.
 Depending on your nixos version, you have to use different branches.
 In particular, the `main` branch is only tested with the Nixpkgs/HomeManager `unstable` branch.
-When you use Nixos/HomeManager 22.11, please use the release-22.11 branch.
+When you use Nixos/HomeManager 22.11, please use the `release-22.11` branch.
 
 ```nix
 {
