@@ -16,7 +16,7 @@ To use the modules, add this flake to the inputs of your nix configuration.
 
 ```nix
 {
-inputs.nixneovim.url = "github:nixneovim/nixneovim";
+inputs.nixneovim.url = "github:nixneovim/nixneovim/?ref=release-22.11"; # match with your home-manager version
 }
 ```
 
