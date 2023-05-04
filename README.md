@@ -36,7 +36,7 @@ And import the module to your Home Manager (recommended) or NixOS configuration.
 ```nix
 {
 imports = [
-    nixneovim.nixosModules.default # with Home Manager (unstable branch)
+    nixneovim.nixosModules.default # with Home Manager
     # nixneovim.nixosModules.nixos # without Home Manager
 ];
 }
