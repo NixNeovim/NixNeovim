@@ -40,7 +40,7 @@
                         ["motions"] = true,
                         ["nav"] = true,
                         ["operators"] = true,
-                        ["textObjects"] = true,
+                        ["text_objects"] = true,
                         ["windows"] = true,
                         ["z"] = true
                       },
@@ -51,8 +51,8 @@
                       }
                     },
                     ["popup_mappings"] = {
-                      ["scrollDown"] = "<c-d>",
-                     ["scrollUp"] = "<c-u>"
+                      ["scroll_down"] = "<c-d>",
+                     ["scroll_up"] = "<c-u>"
                     },
                     ["window"] = {
                       ["border"] = "none",
