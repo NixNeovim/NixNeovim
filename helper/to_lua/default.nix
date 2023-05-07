@@ -40,7 +40,7 @@ let
   # create indentation string
   indent = depth: repeatChar " " depth;
 
-  object = import ./object.nix { inherit lib indent; };
+  object = import ./object.nix { inherit lib indent camelToSnake; };
   plugin = import ./mk_plugin.nix {
     inherit
       lib
