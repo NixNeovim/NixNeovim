@@ -38,6 +38,10 @@ require("oil").setup({
   restore_win_options = true,
   -- Skip the confirmation popup for simple operations
   skip_confirm_for_simple_edits = false,
+  -- Deleted files will be removed with the `trash-put` command.
+  delete_to_trash = false,
+  -- Selecting a new/moved/renamed file or directory will prompt you to save changes first
+  prompt_save_on_select_new_entry = true,
   -- Keymaps in oil buffer. Can be any value that `vim.keymap.set` accepts OR a table of keymap
   -- options with a `callback` (e.g. { callback = function() ... end, desc = "", nowait = true })
   -- Additionally, if it is a string that matches "actions.<name>",
@@ -169,6 +173,10 @@ def extract(node):
     end = node.end_point[1]
     return lines[linenumber][start:end]
 
+def to_camel_case(snake_str):
+    camel_string = "".join(x.capitalize() for x in snake_str.lower().split("_"))
+    return snake_str[0].lower() + camel_string[1:]
+
 def parse_field(node) -> Output:
     global lastComment
     name = node.child_by_field_name("name") # name node
@@ -188,11 +196,12 @@ def parse_field(node) -> Output:
         print(f"Field {name} has no value")
         exit()
 
+    camelName = to_camel_case(extract(name))
     # conver to nix code based on type
     match value.type:
         case "tableconstructor":
             #  print(indent, extract(name), "=", end="")
-            output.add(f"{indent}{extract(name)} = ", end="")
+            output.add(f"{indent}{camelName} = ", end="")
             tableOutput = parse_table(value.children)
             output.append(tableOutput)
             return output
@@ -201,7 +210,7 @@ def parse_field(node) -> Output:
             return output
         case "nil":
             #  print(indent, "'nil'")
-            output.add(f"{indent}'nil'")
+            output.add(f"{indent}{camelName} = 'nil';")
             return output
         case "number":
             typeString = "intOption"
@@ -215,7 +224,7 @@ def parse_field(node) -> Output:
             return output
 
     #  print(indent, extract(name), "=", typeString, extract(value), f"\"{lastComment}\";")
-    output.add(f"{extract(name)} = {typeString} {extract(value)} \"{lastComment}\"")
+    output.add(f"{indent}{camelName} = {typeString} {extract(value)} \"{lastComment}\";")
     return output
 
 # input node: field list
