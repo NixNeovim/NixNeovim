@@ -37,6 +37,7 @@
       nixosModules = {
         default = import ./nixneovim.nix { homeManager = true; };
         homeManager = self.nixosModules.default;
+        homeManager-22-11 = import ./nixneovim.nix { homeManager = true; state = 2211; };
         nixos = import ./nixneovim.nix { homeManager = false; };
       };
 

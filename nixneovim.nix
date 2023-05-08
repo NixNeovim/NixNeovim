@@ -1,4 +1,4 @@
-{ homeManager ? true, isDocsBuild ? false }: # function that returns a package
+{ homeManager ? true, isDocsBuild ? false, state ? 9999 }: # function that returns a package
 { lib, config, pkgs, ... }:
 with lib;
 let
@@ -244,12 +244,12 @@ in
         {
           programs.neovim = {
             enable = true;
-            defaultEditor = cfg.defaultEditor;
+            # defaultEditor = cfg.defaultEditor;
             package = mkIf (cfg.package != null) cfg.package;
             extraPackages = cfg.extraPackages;
             extraConfig = configure.customRC;
             plugins = cfg.extraPlugins;
-          };
+          } // (optionalAttrs (state > 2211) { defautEditor = cfg.defaultEditor; }); # only add defaultEditor when over nixpkgs release 22-11
         }
       else
         {
