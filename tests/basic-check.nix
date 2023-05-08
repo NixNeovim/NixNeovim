@@ -12,13 +12,19 @@
         let
           plugins = config.programs.nixneovim.plugins;
         in {
+          # enable all plugins
           programs.nixneovim.plugins =
-            lib.mapAttrs
-              (k: v:
-                {
-                  ${k}.enable = true;
-                }
-              ) plugins;
+            let
+              autoPlugins = lib.mapAttrs
+                (k: v: { enable = true; })
+                plugins;
+
+              # Some plugins are correctly loaded
+              # Therefore, we have to load them manually here
+              pluginsWithErrors = {
+                nvim-cmp.snippet.enable = true;
+              };
+            in autoPlugins // pluginsWithErrors;
           nmt.script = testHelper.moduleTest ''
           '';
 

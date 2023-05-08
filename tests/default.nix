@@ -95,11 +95,10 @@ EOF
     tests =
       let
         modulesTests = filesIn "plugins";
-        tests = [
-          # ./neovim.nix
+        testList = [
+          ./neovim.nix
           ./basic-check.nix
-          ];
-        # ] ++ modulesTests;
+        ] ++ modulesTests;
       in builtins.foldl'
         (a: b: a // (import b { inherit testHelper nixneovim lib; }))
         { }
