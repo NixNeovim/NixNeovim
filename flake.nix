@@ -39,6 +39,7 @@
         homeManager = self.nixosModules.default;
         homeManager-22-11 = import ./nixneovim.nix { homeManager = true; state = 2211; };
         nixos = import ./nixneovim.nix { homeManager = false; };
+        nixos-22-11 = import ./nixneovim.nix { homeManager = false; state = 2211; };
       };
 
       overlays.default = inputs.nixneovimplugins.overlays.default;
