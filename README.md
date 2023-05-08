@@ -13,13 +13,10 @@ However, NixNeovim contains more modules and cleaner code.
 ## Get Ready
 
 To use the modules, add this flake to the inputs of your nix configuration.
-Depending on your nixos version, you have to use different branches.
-In particular, the `main` branch is only tested with the Nixpkgs/HomeManager `unstable` branch.
-When you use Nixos/HomeManager 22.11, please use the [`release-22.11`](https://github.com/NixNeovim/NixNeovim/tree/release-22.11) branch.
 
 ```nix
 {
-inputs.nixneovim.url = "github:nixneovim/nixneovim/?ref=release-22.11"; # match with your home-manager version
+inputs.nixneovim.url = "github:nixneovim/nixneovim";
 }
 ```
 
@@ -35,11 +32,15 @@ nixpkgs.overlays = [
 ```
 
 And import the module to your Home Manager (recommended) or NixOS configuration.
+Depending on your nixos version, you have to import different modules.
+In particular, the `default` and `homeManager` modules only work with the Nixpkgs/HomeManager `unstable` releases.
+When you use Nixos/HomeManager 22.11, please import `homeManager-22-11` or `nixos-22-11`.
 
 ```nix
 {
 imports = [
-    nixneovim.nixosModules.default # with Home Manager
+    nixneovim.nixosModules.default # with Home Manager unstable
+    # nixneovim.nixosModules.homeManager-22-11 # with Home Manager 22.11
     # nixneovim.nixosModules.nixos # without Home Manager
 ];
 }
