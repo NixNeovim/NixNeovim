@@ -167,23 +167,23 @@ in
           + extraWrapperArgs;
       });
 
-      luaGlobals = optionalString (cfg.globals != { }) ''
-        -- Set up globals {{{
-        local __nixneovim_globals = ${helpers.toLuaObject cfg.globals}
-
-        for k,v in pairs(__nixneovim_globals) do
-          vim.g[k] = v
-        end
-        -- }}}
-      '' + optionalString (cfg.options != { }) ''
-        -- Set up options {{{
-        local __nixneovim_options = ${helpers.toLuaObject cfg.options}
-
-        for k,v in pairs(__nixneovim_options) do
-          vim.o[k] = v
-        end
-        -- }}}
-      '';
+      luaGlobals =
+        let
+          list = mapAttrsToList
+            (option: value:
+              "vim.g.${option} = ${helpers.toLuaObject value}"
+            )
+            cfg.globals;
+        in concatStringsSep "\n" list;
+              
+      luaOptions =
+        let
+          list = mapAttrsToList
+            (option: value:
+              "vim.o.${option} = ${helpers.toLuaObject value}"
+            )
+            cfg.options;
+        in concatStringsSep "\n" list;
 
 
       configure = {
@@ -200,6 +200,12 @@ in
             --------------------------------------------------
 
             ${luaGlobals}
+
+            --------------------------------------------------
+            --                 Options                      --
+            --------------------------------------------------
+
+            ${luaOptions}
 
             --------------------------------------------------
             --                 Keymappings                  --
