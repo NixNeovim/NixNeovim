@@ -23,4 +23,5 @@ mkLuaPlugin {
     incline-nvim
   ];
   extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";
+  defaultRequire = false;
 }

@@ -51,4 +51,5 @@ mkLuaPlugin {
       ${cfg.preConfig}
       ${toConfigString serversLua}
     '';
+    defaultRequire = false;
 }
