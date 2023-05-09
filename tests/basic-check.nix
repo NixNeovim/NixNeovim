@@ -15,9 +15,18 @@
           # enable all plugins
           programs.nixneovim.plugins =
             let
+
+              filteredPlugins =
+                lib.filterAttrs
+                (k: v:
+                  let
+                    firstChar = lib.head (lib.stringToCharacters k);
+                  in firstChar == "a")
+                  plugins;
+
               autoPlugins = lib.mapAttrs
                 (k: v: { enable = true; })
-                plugins;
+                filteredPlugins;
 
               # Some plugins are correctly loaded
               # Therefore, we have to load them manually here
