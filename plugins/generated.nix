@@ -40,7 +40,7 @@ with helpers; {
 
         setupString =
           if plugin.setup then
-            "require('${plugin.name}').setup()"
+            "require('${plugin.name}a').setup()"
           else
             "";
 
