@@ -29,6 +29,7 @@
                 end
                 success, output = pcall(setup) -- execute 'setup()' and catch any errors
                 if not success then
+                  print("Error on setup for plugin: plantuml-syntax")
                   print(output)
                 end
               end

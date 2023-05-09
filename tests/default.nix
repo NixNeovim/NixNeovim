@@ -79,7 +79,21 @@ EOF
       config=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
       PATH=$PATH:$(_abs home-path/bin)
 
-      HOME=$(realpath .) nvim -u $config -c 'qall' --headless
+      OUTPUT=$(HOME=$(realpath .) nvim -u $config -c 'qall' --headless 2>&1)
+      if [ "$OUTPUT" != "" ]
+      then
+        echo ----------------- NEOVIM CONFIG -----------------
+        cat -n "$config"
+        echo -------------------------------------------------
+
+        echo
+        echo
+
+        echo ----------------- NEOVIM OUTPUT -----------------
+        echo "$OUTPUT"
+        echo -------------------------------------------------
+        exit 1
+      fi
 
       ${text}
       '';
