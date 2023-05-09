@@ -4,43 +4,78 @@
 # It only confirms that there are no errors on startup, when the respective
 # module is enabled. This does not check that the plugins is actually loaded
 # or otherwise working as intended
+# Because the evaluation of the neovim derivation would take too long when
+# activating all plugins at the same time, we split activate them in groups
+# The groups are formed by the starting letter of the plugin name.
+# This ways only a couple of plugins are activated at the same time.
 
-map
-  (letter:
-    {
-      "basic-check-test-${letter}" = { config, lib, pkgs, ... }:
-        {
-          config =
-            let
-              plugins = config.programs.nixneovim.plugins;
-            in {
-              # enable all plugins
-              programs.nixneovim.plugins =
-                let
+let
+  letters = [
+    "a"
+    "b"
+    "c"
+    "d"
+    "e"
+    "f"
+    "g"
+    "h"
+    "i"
+    "j"
+    "k"
+    "l"
+    "m"
+    "n"
+    "o"
+    "p"
+    "q"
+    "r"
+    "s"
+    "t"
+    "u"
+    "v"
+    "w"
+    "x"
+    "y"
+    "z"
+  ];
+  
+  sets = map
+    (letter:
+      {
+        "basic-check-test-${letter}" = { config, lib, pkgs, ... }:
+          {
+            config =
+              let
+                plugins = config.programs.nixneovim.plugins;
+              in {
+                programs.nixneovim.plugins =
+                  let
 
-                  filteredPlugins =
-                    lib.filterAttrs
-                    (k: v:
-                      let
-                        firstChar = lib.head (lib.stringToCharacters k);
-                      in firstChar == letter)
-                      plugins;
+                    # only activate plugins matched by the first character of their name
+                    filteredPlugins =
+                      lib.filterAttrs
+                      (k: v:
+                        let
+                          firstChar = lib.head (lib.stringToCharacters k);
+                        in firstChar == letter)
+                        plugins;
 
-                  autoPlugins = lib.mapAttrs
-                    (k: v: { enable = true; })
-                    filteredPlugins;
+                    autoPlugins = lib.mapAttrs
+                      (k: v: { enable = true; })
+                      filteredPlugins;
 
-                  # Some plugins are correctly loaded
-                  # Therefore, we have to load them manually here
-                  pluginsWithErrors = {
-                    nvim-cmp.snippet.enable = true;
-                  };
-                in autoPlugins // pluginsWithErrors;
-              nmt.script = testHelper.moduleTest ''
-              '';
+                    # Some plugins are correctly loaded
+                    # Therefore, we have to load them manually here
+                    pluginsWithErrors = {
+                      nvim-cmp.snippet.enable = true;
+                    };
+                  in autoPlugins // pluginsWithErrors;
+                nmt.script = testHelper.moduleTest "";
 
-            };
-        };
-    }
-  )
-  [ "a" "b" ]
+              };
+          };
+      }
+    )
+    letters;
+in builtins.foldl' (a: b: a // b) {} sets
+
