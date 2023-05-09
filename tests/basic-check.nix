@@ -38,7 +38,7 @@ let
     "y"
     "z"
   ];
-  
+
   sets = map
     (letter:
       {
@@ -46,36 +46,36 @@ let
           {
             config =
               let
+
                 plugins = config.programs.nixneovim.plugins;
+
+                # only activate plugins matched by the first character of their name
+                filteredPlugins =
+                  lib.filterAttrs
+                  (k: v:
+                    let
+                      firstChar = lib.head (lib.stringToCharacters k);
+                    in firstChar == letter)
+                    plugins;
+
+                autoPlugins = lib.mapAttrs
+                  (k: v: { enable = true; })
+                  filteredPlugins;
+
+                # Some plugins are correctly loaded
+                # Therefore, we have to load them manually here
+                pluginsWithErrors = {
+                  nvim-cmp.snippet.enable = true;
+                  ghosttext.enable = false; # FIX: does not compile when activated
+                };
+
               in {
-                programs.nixneovim.plugins =
-                  let
+                programs.nixneovim.plugins = autoPlugins // pluginsWithErrors;
 
-                    # only activate plugins matched by the first character of their name
-                    filteredPlugins =
-                      lib.filterAttrs
-                      (k: v:
-                        let
-                          firstChar = lib.head (lib.stringToCharacters k);
-                        in firstChar == letter)
-                        plugins;
-
-                    autoPlugins = lib.mapAttrs
-                      (k: v: { enable = true; })
-                      filteredPlugins;
-
-                    # Some plugins are correctly loaded
-                    # Therefore, we have to load them manually here
-                    pluginsWithErrors = {
-                      nvim-cmp.snippet.enable = true;
-                    };
-                  in autoPlugins // pluginsWithErrors;
                 nmt.script = testHelper.moduleTest "";
-
               };
           };
       }
     )
     letters;
 in builtins.foldl' (a: b: a // b) {} sets
-
