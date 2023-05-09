@@ -9,7 +9,7 @@ let
   # names inserted here must match the name of the package in pkgs.vimExtraPlugins
   # default for setup is 'false'
   # TODO: create modules for these
-  plugs = with pkgs.vimExtraPlugins; [
+  plugs = [
     "vim-printer"
     "vim-easy-align"
     "gruvbox"
