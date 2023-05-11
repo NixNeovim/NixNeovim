@@ -22,5 +22,5 @@ mkLuaPlugin {
   extraPlugins = with pkgs.vimExtraPlugins; [
     incline-nvim
   ];
-  extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";
+  # extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";
 }
