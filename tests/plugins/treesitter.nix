@@ -10,6 +10,7 @@ in {
         programs.nixneovim.plugins = {
           "${name}" = {
             enable = true;
+            installAllGrammars = true;
             extraLua.pre = ''
               -- test lua pre comment
             '';

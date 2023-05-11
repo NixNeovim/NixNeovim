@@ -27,6 +27,9 @@ let
       type = types.listOf types.package;
       default = [];
     };
+    excludeGrammars = mkOption {
+      default = [];
+    };
 
     incrementalSelection = {
       enable = mkEnableOption "Incremental selection based on the named nodes from the grammar";
@@ -57,9 +60,12 @@ let
   grammarsToInstall =
     let
       inherit (pkgs.vimPlugins.nvim-treesitter) allGrammars;
+
+      combinedGrammars =
+        cfg.grammars
+        ++ optionals cfg.installAllGrammars allGrammars;
     in
-      cfg.grammars
-      ++ optionals cfg.installAllGrammars allGrammars;
+      builtins.filter (x: ! elem x.name cfg.excludeGrammars) combinedGrammars;
 
 in
 with helpers;
