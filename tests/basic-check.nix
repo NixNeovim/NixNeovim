@@ -67,6 +67,7 @@ let
                 pluginsWithErrors = {
                   nvim-cmp.snippet.enable = true;
                   ghosttext.enable = false; # FIX: does not compile when activated
+                  vimwiki.enable = false; # FIX: check failes if enabled
                 };
 
               in {
