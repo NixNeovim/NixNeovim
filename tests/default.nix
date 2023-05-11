@@ -84,21 +84,41 @@ EOF
       PATH=$PATH:$(_abs home-path/bin)
       mkdir -p "$(realpath .)/cache/nvim"
 
-      OUTPUT=$(HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) nvim -u $config -c 'qall' --headless 2>&1)
-      if [ "$OUTPUT" != "" ]
-      then
-        echo ----------------- NEOVIM CONFIG -----------------
-        cat -n "$config"
-        echo -------------------------------------------------
+      start_vim () {
+        OUTPUT=$(HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) nvim -u $config -c 'qall' --headless "$@" 2>&1)
+        if [ "$OUTPUT" != "" ]
+        then
+          echo ----------------- NEOVIM CONFIG -----------------
+          cat -n "$config"
+          echo -------------------------------------------------
 
-        echo
-        echo
+          echo
+          echo
 
-        echo ----------------- NEOVIM OUTPUT -----------------
-        echo "$OUTPUT"
-        echo -------------------------------------------------
-        exit 1
-      fi
+          echo ----------------- NEOVIM INFO -------------------
+          nvim --version
+          echo -------------------------------------------------
+
+          echo ----------------- NEOVIM PATH -------------------
+          echo $PATH
+          echo -------------------------------------------------
+
+          echo ----------------- NEOVIM OUTPUT -----------------
+          echo "$OUTPUT"
+          echo -------------------------------------------------
+          exit 1
+        fi
+      }
+
+      start_vim
+
+      # Testing some common file types
+
+      echo "# test" > tmp.md
+      start_vim tmp.md
+
+      echo "print(\"works\")" > tmp.py
+      start_vim tmp.py
 
       ${text}
       '';
@@ -125,50 +145,3 @@ EOF
   };
 
 in tests.build
-
-# pkgs.runCommandLocal "tests" { } ''
-#   touch ${placeholder "out"}
-
-#   ${lib.forEach tests (t: t.build)}
-# ''
-
-
-  # ().build # ).build # or report
-
-# { nixpkgs , system , nmt }:
-
-# let
-#   pkgs = nixpkgs.legacyPackages.${system};
-
-#   modules = [
-#     # {
-#     #   _file = ./default.nix;
-#     #   _module.args = { inherit pkgs; };
-#     # }
-#     # ./module.nix
-#     # ./tool-test.nix
-#     # {}
-#     {
-#       config.home = {};
-#     }
-#   ];
-
-#   defaultNixFiles =
-#     builtins.filter
-#       (x: baseNameOf x == "default.nix")
-#       (pkgs.lib.filesystem.listFilesRecursive ./tools);
-
-#   nmtInstance = import nmt {
-#     inherit pkgs modules;
-#     testedAttrPath = [ "home" ];
-#     tests = builtins.foldl' (a: b: a // (import b)) { } defaultNixFiles;
-#   };
-# in
-
-# pkgs.runCommandLocal "tests" { } ''
-#   touch ${placeholder "out"}
-
-#   # ${nmtInstance.run.all.shellHook}
-# ''
-
-
