@@ -9,15 +9,15 @@ let
   # names inserted here must match the name of the package in pkgs.vimExtraPlugins
   # default for setup is 'false'
   # TODO: create modules for these
-  plugs = with pkgs.vimExtraPlugins; [
+  plugs = [
     "vim-printer"
     "vim-easy-align"
     "gruvbox"
     "nest-nvim"
     "plenary-nvim"
-    "nvim-ts-context-commentstring"
+    # { name = "nvim-ts-context-commentstring"; setup = false; }
     "indent-blankline-nvim"
-    "asyncrun-vim"
+    { name = "asyncrun-vim"; setup = false; }
     "ltex-extra-nvim"
     "firenvim"
     { name = "vim-startuptime"; setup = false; }
@@ -38,11 +38,11 @@ with helpers; {
           else
             fillAttrs p;
 
-        setupString =
-          if plugin.setup then
-            "require('${plugin.name}').setup()"
-          else
-            "";
+        # setupString =
+        #   if plugin.setup then
+        #     "require('${plugin.name}').setup()"
+        #   else
+        #     "";
 
         # setupString =
         #   if isString p then
@@ -59,7 +59,7 @@ with helpers; {
         name = plugin.name;
         extraDescription = "This module was auto-generated";
         extraPlugins = [ pkgs.vimExtraPlugins.${plugin.packageName} ];
-        extraConfigLua = setupString;
+        defaultRequire = plugin.setup;
       }
     );
 }

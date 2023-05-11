@@ -43,5 +43,5 @@ in mkLuaPlugin {
       (optionalString cfg.enableSnipmate "require('${name}.loaders.from_snipmate').${load-call}")
       (optionalString cfg.enableLua "require('${name}.loaders.from_lua').${load-call}")
     ];
-  defaultRequire = true;
+  defaultRequire = false;
 }

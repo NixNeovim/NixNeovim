@@ -97,4 +97,5 @@ mkLuaPlugin {
     Comment-nvim
   ];
   extraConfigLua = "require('Comment').setup ${toLuaObject pluginOptions}";
+  defaultRequire = false;
 }

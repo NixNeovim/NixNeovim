@@ -14,7 +14,7 @@ let
       literalDocBook = super.literalDocBook or super.literalExample;
     });
 
-  # base config
+  # base config; applied for all tests
   modules = (import (home-manager.outPath + "/modules/modules.nix") {
     inherit lib pkgs;
     check = false;
@@ -52,6 +52,10 @@ lua <<EOF
 --------------------------------------------------
 
 
+--------------------------------------------------
+--                 Options                      --
+--------------------------------------------------
+
 
 --------------------------------------------------
 --                 Keymappings                  --
@@ -78,8 +82,23 @@ EOF
       nvimFolder="home-files/.config/nvim"
       config=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
       PATH=$PATH:$(_abs home-path/bin)
+      mkdir -p "$(realpath .)/cache/nvim"
 
-      HOME=$(realpath .) nvim -u $config -c 'qall' --headless
+      OUTPUT=$(HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) nvim -u $config -c 'qall' --headless 2>&1)
+      if [ "$OUTPUT" != "" ]
+      then
+        echo ----------------- NEOVIM CONFIG -----------------
+        cat -n "$config"
+        echo -------------------------------------------------
+
+        echo
+        echo
+
+        echo ----------------- NEOVIM OUTPUT -----------------
+        echo "$OUTPUT"
+        echo -------------------------------------------------
+        exit 1
+      fi
 
       ${text}
       '';
@@ -97,9 +116,10 @@ EOF
         modulesTests = filesIn "plugins";
         testList = [
           ./neovim.nix
+          ./basic-check.nix
         ] ++ modulesTests;
       in builtins.foldl'
-        (a: b: a // (import b { inherit testHelper nixneovim; }))
+        (a: b: a // (import b { inherit testHelper nixneovim lib; }))
         { }
         testList;
   };

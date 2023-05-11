@@ -122,7 +122,7 @@ mkLuaPlugin {
   extraPlugins = with pkgs.vimExtraPlugins; [
     which-key-nvim
   ];
-  defaultRequire = true;
+  defaultRequire = false;
   extraConfigLua = ''
     local wk = require('which-key')
     wk.setup ${toLuaObject pluginOptions}

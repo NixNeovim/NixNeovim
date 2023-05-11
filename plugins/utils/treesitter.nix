@@ -85,4 +85,6 @@ mkLuaPlugin {
   extraConfigLua = ''
     require('nvim-treesitter.configs').setup(${helpers.toLuaObject pluginOptions})
   '';
+
+  defaultRequire = false;
 }
