@@ -15,7 +15,6 @@ let
     "gruvbox"
     "nest-nvim"
     "plenary-nvim"
-    # { name = "nvim-ts-context-commentstring"; setup = false; }
     "indent-blankline-nvim"
     { name = "asyncrun-vim"; setup = false; }
     "ltex-extra-nvim"
