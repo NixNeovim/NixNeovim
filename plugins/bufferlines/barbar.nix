@@ -30,7 +30,6 @@ mkLuaPlugin {
     barbar-nvim
     nvim-web-devicons
   ];
-  # extraConfigLua = "require('bufferline').setup ${toLuaObject pluginOptions}";
   defaultRequire = false;
 }
 
