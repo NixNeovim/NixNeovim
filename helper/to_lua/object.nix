@@ -36,7 +36,7 @@ let
                     if head (stringToCharacters name) == "@" then
                       toLuaObjectHelper (depth + 1) value
                     else
-                      "[${camelToSnake (toLuaObjectHelper 0 name)}] = ${toLuaObjectHelper (depth + 1) value}";
+                      "[${toLuaObjectHelper 0 (camelToSnake name)}] = ${toLuaObjectHelper (depth + 1) value}";
 
                   listOfValues = mapAttrsToList argToLua nonNullArgs;
                 in
