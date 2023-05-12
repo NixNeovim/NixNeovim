@@ -154,7 +154,8 @@ When specifying the mapping with an attribute set you can set the following opti
 
 - [ ] Further cleanup code
 - [ ] Port more modules to `mkLuaPlugin` function
-- [ ] Add some form of tests (groundwork is done, now)
+- [x] Add some form of tests
+- [ ] Integrate tests with `mkLuaPlugin`
 
 ## Documentation
 
