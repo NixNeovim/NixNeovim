@@ -22,7 +22,7 @@ let
 in
 mkOption {
   type = nullOr (attrsOf (either str optionsFormat));
-  default = null;
+  default = {};
   example = ''
     {
       "<CR>" = "cmp.mapping.confirm({ select = true })";

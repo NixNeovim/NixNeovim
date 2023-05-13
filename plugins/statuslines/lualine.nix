@@ -138,6 +138,7 @@ in
     mkIf cfg.enable {
       programs.nixneovim = {
         extraPlugins = [ pkgs.vimPlugins.lualine-nvim ];
+        extraPackages = [ pkgs.git ];
         extraConfigLua =
           ''require("lualine").setup(${helpers.toLuaObject setupOptions})'';
       };

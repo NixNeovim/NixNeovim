@@ -1,6 +1,11 @@
 { pkgs, home-manager, nmt, nixneovim, ... }:
 
 let
+
+  inherit (builtins)
+    attrNames
+    readDir;
+
   lib = pkgs.lib.extend
     (_: super: {
       inherit (home-manager.lib) hm;
@@ -9,7 +14,7 @@ let
       literalDocBook = super.literalDocBook or super.literalExample;
     });
 
-  # base config
+  # base config; applied for all tests
   modules = (import (home-manager.outPath + "/modules/modules.nix") {
     inherit lib pkgs;
     check = false;
@@ -37,7 +42,7 @@ let
     (import ../nixneovim.nix {})
   ];
 
-  luaHelper = {
+  testHelper = {
     config = {
       start = ''
 lua <<EOF
@@ -46,6 +51,10 @@ lua <<EOF
 --                 Globals                      --
 --------------------------------------------------
 
+
+--------------------------------------------------
+--                 Options                      --
+--------------------------------------------------
 
 
 --------------------------------------------------
@@ -68,65 +77,71 @@ lua <<EOF
 EOF
     '';
     };
+    moduleTest = text:
+      ''
+      nvimFolder="home-files/.config/nvim"
+      config=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
+      PATH=$PATH:$(_abs home-path/bin)
+      mkdir -p "$(realpath .)/cache/nvim"
+
+      start_vim () {
+        OUTPUT=$(HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) nvim -u $config -c 'qall' --headless "$@" 2>&1)
+        if [ "$OUTPUT" != "" ]
+        then
+          echo ----------------- NEOVIM CONFIG -----------------
+          cat -n "$config"
+          echo -------------------------------------------------
+
+          echo
+          echo
+
+          echo ----------------- NEOVIM INFO -------------------
+          nvim --version
+          echo -------------------------------------------------
+
+          echo ----------------- NEOVIM PATH -------------------
+          echo $PATH
+          echo -------------------------------------------------
+
+          echo ----------------- NEOVIM OUTPUT -----------------
+          echo "$OUTPUT"
+          echo -------------------------------------------------
+          exit 1
+        fi
+      }
+
+      start_vim
+
+      # Testing some common file types
+
+      echo "# test" > tmp.md
+      start_vim tmp.md
+
+      echo "print(\"works\")" > tmp.py
+      start_vim tmp.py
+
+      ${text}
+      '';
   };
+
+  filesIn = path:
+    let content = attrNames (readDir (./. + "/${path}"));
+    in map (x: ./. + "/${path}/${x}") content;
 
   tests = import nmt {
     inherit lib pkgs modules;
     testedAttrPath = [ "home" "activationPackage" ];
-    tests = builtins.foldl' (a: b: a // (import b { inherit luaHelper nixneovim; })) { } [
-      ./neovim.nix
-      ./plugins/telescope.nix
-      ./plugins/luasnip.nix
-      ./plugins/which-key.nix
-      ./plugins/no-config-plugins.nix
-    ];
+    tests =
+      let
+        modulesTests = filesIn "plugins";
+        testList = [
+          ./neovim.nix
+          ./basic-check.nix
+        ] ++ modulesTests;
+      in builtins.foldl'
+        (a: b: a // (import b { inherit testHelper nixneovim lib; }))
+        { }
+        testList;
   };
 
 in tests.build
-
-# pkgs.runCommandLocal "tests" { } ''
-#   touch ${placeholder "out"}
-
-#   ${lib.forEach tests (t: t.build)}
-# ''
-
-
-  # ().build # ).build # or report
-
-# { nixpkgs , system , nmt }:
-
-# let
-#   pkgs = nixpkgs.legacyPackages.${system};
-
-#   modules = [
-#     # {
-#     #   _file = ./default.nix;
-#     #   _module.args = { inherit pkgs; };
-#     # }
-#     # ./module.nix
-#     # ./tool-test.nix
-#     # {}
-#     {
-#       config.home = {};
-#     }
-#   ];
-
-#   defaultNixFiles =
-#     builtins.filter
-#       (x: baseNameOf x == "default.nix")
-#       (pkgs.lib.filesystem.listFilesRecursive ./tools);
-
-#   nmtInstance = import nmt {
-#     inherit pkgs modules;
-#     testedAttrPath = [ "home" ];
-#     tests = builtins.foldl' (a: b: a // (import b)) { } defaultNixFiles;
-#   };
-# in
-
-# pkgs.runCommandLocal "tests" { } ''
-#   touch ${placeholder "out"}
-
-#   # ${nmtInstance.run.all.shellHook}
-# ''
-
-

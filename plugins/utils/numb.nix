@@ -8,7 +8,6 @@ let
   pluginUrl = "https://github.com/nacro90/numb.nvim";
 
   helpers = import ../../helper { inherit pkgs lib config; };
-  cfg = config.programs.nixneovim.plugins.${name};
   inherit (helpers.customOptions) boolOption;
 
   moduleOptions = {
@@ -18,10 +17,6 @@ let
     centeredPeeking = boolOption true "Peeked line will be centered relative to window";
   };
 
-  # you can autogenerate the plugin options from the moduleOptions.
-  # This essentially converts the camalCase moduleOptions to snake_case plugin options
-  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
-
 in
 with helpers;
 mkLuaPlugin {
@@ -29,5 +24,4 @@ mkLuaPlugin {
   extraPlugins = with pkgs.vimExtraPlugins; [
     numb-nvim
   ];
-  extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";
 }

@@ -67,26 +67,32 @@
       nixosModules = {
         default = import ./nixneovim.nix { homeManager = true; };
         homeManager = self.nixosModules.default;
+        homeManager-22-11 = import ./nixneovim.nix { homeManager = true; state = 2211; };
         nixos = import ./nixneovim.nix { homeManager = false; };
+        nixos-22-11 = import ./nixneovim.nix { homeManager = false; state = 2211; };
       };
 
       overlays.default = inputs.nixneovimplugins.overlays.default;
 
       lib = import ./lib.nix;
 
-      # checks.x86_64-linux = {
-      #   basic =
-      #     nix-flake-tests.lib.check {
-      #       inherit pkgs;
-      #       tests = pkgs.callPackage ./tests.nix {};
-      #     };
-      # };
+      checks =
+        let
+          nmt-tests = {
+            x86_64-linux = import ./tests {
+              inherit nmt pkgs;
+              nixneovim = self.nixosModules.homeManager;
+              inherit (inputs) home-manager;
+            };
+          };
 
-      checks.x86_64-linux = import ./tests {
-        inherit nmt pkgs;
-        nixneovim = self.nixosModules.homeManager;
-        inherit (inputs) home-manager;
-      };
+          lib-checks = {
+            x86_64-linux.basic = nix-flake-tests.lib.check {
+              inherit pkgs;
+              tests = pkgs.callPackage ./tests.nix {};
+            };
+          };
+        in lib.recursiveUpdate nmt-tests lib-checks;
 
        # devShells = forAllSystems (system:
        #  let

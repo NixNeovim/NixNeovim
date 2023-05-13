@@ -45,4 +45,5 @@ mkLuaPlugin {
     local jqx = require("${name}.config")
     ${concatStringsSep "\n" pluginOptions}
   '';
+  defaultRequire = false;
 }

@@ -32,15 +32,25 @@ nixpkgs.overlays = [
 ```
 
 And import the module to your Home Manager (recommended) or NixOS configuration.
+Depending on your nixos version, you have to import different modules.
+In particular, the `default` and `homeManager` modules only work with the Nixpkgs/HomeManager `unstable` releases.
+When you use Nixos/HomeManager 22.11, please import `homeManager-22-11` or `nixos-22-11`.
 
 ```nix
 {
 imports = [
-    nixneovim.nixosModules.default # with Home Manager
+    nixneovim.nixosModules.default # with Home Manager unstable
+    # nixneovim.nixosModules.homeManager-22-11 # with Home Manager 22.11
     # nixneovim.nixosModules.nixos # without Home Manager
 ];
 }
 ```
+
+## Documentation
+
+All options are documented at: [NixNeovim Documentation](https://nixneovim.github.io/NixNeovim/options.html)
+
+You can generate the docs using `nix build .#docs`
 
 ## Example Config
 
@@ -156,12 +166,6 @@ When specifying the mapping with an attribute set you can set the following opti
 - [ ] Port more modules to `mkLuaPlugin` function
 - [x] Add some form of tests
 - [ ] Integrate tests with `mkLuaPlugin`
-
-## Documentation
-
-All options are documented at: [NixNeovim Documentation](https://nixneovim.github.io/NixNeovim/options.html)
-
-You can generate the docs using `nix build .#docs`
 
 ### Supported language servers
 

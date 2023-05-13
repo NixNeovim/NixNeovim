@@ -246,13 +246,21 @@ with helpers;
           ++ sources.packages;
 
         extraConfigLua = ''
-          do -- create scope to not interfere with other plugins
-            local cmp = require('cmp') -- this is needed
+          -- config for plugin: nvim-cmp
+          do
+            function setup()
+              local cmp = require('cmp') -- this is needed
 
-            cmp.setup(${helpers.toLuaObject' 1 pluginOptions})
+              cmp.setup(${helpers.toLuaObject' 1 pluginOptions})
 
-            -- extra config of sources
-            ${toConfigString sources.extraConfig}
+              -- extra config of sources
+              ${toConfigString sources.extraConfig}
+            end
+            success, output = pcall(setup) -- execute 'setup()' and catch any errors
+            if not success then
+              print("Error on setup for plugin: nvim-cmp")
+              print(output)
+            end
           end
         '';
       };

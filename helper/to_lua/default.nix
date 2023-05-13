@@ -12,7 +12,11 @@ let
   camelToSnake = string:
     let
 
+      isChar  = x:
+        elem x lowerCaseLetters || elem x upperCaseLetters;
+
       upperCaseLetters = split "" "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      lowerCaseLetters = split "" "abcdefghijklmnopqrstuvwxyz";
 
       isUpper = x: elem x upperCaseLetters; # check if x is uppercase
 
@@ -26,10 +30,18 @@ let
 
       chars = stringToCharacters string;
 
-    in if !isUpper (head chars) then
-      stringAsChars exchangeIfUpper string
+      firstChar = head chars;
+
+    # in if !isUpper (head chars)  then
+    #   stringAsChars exchangeIfUpper string
+    # else
+    #   string;
+    in if isUpper firstChar then # do nothing if first char is uppercase
+      string
+    else if ! isChar firstChar then # do nothing first char is no alphabetical letter
+      string
     else
-      string;
+      stringAsChars exchangeIfUpper string;
 
   repeatChar = char: n:
     if n == 0 then
@@ -40,7 +52,7 @@ let
   # create indentation string
   indent = depth: repeatChar " " depth;
 
-  object = import ./object.nix { inherit lib indent; };
+  object = import ./object.nix { inherit lib indent camelToSnake; };
   plugin = import ./mk_plugin.nix {
     inherit
       lib

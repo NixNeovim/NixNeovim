@@ -55,6 +55,11 @@ in {
     expected = "AARRGGBB";
   };
 
+  testSnakeCase5 = {
+    expr = helper.camelToSnake "<C-n>";
+    expected = "<C-n>";
+  };
+
   testConfigString = {
     expr = helper.toConfigString [ "1" "2" "" "345" ];
     expected = ''

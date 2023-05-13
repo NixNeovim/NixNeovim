@@ -28,5 +28,4 @@ mkLuaPlugin {
   extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-snippy
   ];
-  extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";
 }

@@ -1,14 +1,15 @@
 { testHelper, ... }:
 
-{
-  luasnip-test = { config, lib, pkgs, ... }:
+let
+  name = "incline";
+in {
+  "${name}-test" = { config, lib, pkgs, ... }:
     {
       config = {
 
         programs.nixneovim.plugins = {
-          luasnip = {
+          "${name}" = {
             enable = true;
-            path = "./test-path";
             extraLua.pre = ''
               -- test lua pre comment
             '';
@@ -22,17 +23,16 @@
           assertDiff "$config" ${
             pkgs.writeText "init.lua-expected" ''
               ${testHelper.config.start}
-              -- config for plugin: luasnip
+              -- config for plugin: ${name}
               do
                 function setup()
                   -- test lua pre comment
-                  require('luasnip.loaders.from_snipmate').lazy_load({ paths = "./test-path" })
-                  require('luasnip.loaders.from_lua').lazy_load({ paths = "./test-path" })
+                  require('incline').setup {}
                   -- test lua post comment
                 end
                 success, output = pcall(setup) -- execute 'setup()' and catch any errors
                 if not success then
-                  print("Error on setup for plugin: luasnip")
+                  print("Error on setup for plugin: incline")
                   print(output)
                 end
               end

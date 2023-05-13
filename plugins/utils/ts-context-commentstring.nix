@@ -4,15 +4,14 @@ with lib;
 
 let
 
-  name = "scrollbar";
-  pluginUrl = "https://github.com/petertriho/nvim-scrollbar";
+  name = "ts-context-commentstring";
+  pluginUrl = "https://github.com/JoosepAlviste/nvim-ts-context-commentstring";
 
   helpers = import ../../helper { inherit pkgs lib config; };
+  inherit (helpers.customOptions) boolOption;
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     # add module options here
-    #
-    # autoStart = boolOption true "Enable this pugin at start"
   };
 
 in
@@ -21,6 +20,7 @@ mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
-    nvim-scrollbar
+    nvim-ts-context-commentstring
   ];
+  defaultRequire = false;
 }
