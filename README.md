@@ -207,7 +207,7 @@ They help improve this project and keep it up to date.
 
 #### Auto generate module options
 
-- With `nix run .#configparser` you can convert a Lua setup configs to nix module options.
+- With `nix run .#configparser` you can convert a Lua setup configs to nix module options (you might need to update the submodule with `git submodule update tree-sitter-lua`).
 - For example, you can input the following Lua configs (taken from [NvimTree](https://github.com/nvim-tree/nvim-tree.lua); Example-comment added)
 
 ```zsh
