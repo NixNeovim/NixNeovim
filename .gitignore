@@ -1,2 +1,4 @@
 .tmp
 result
+**/.direnv
+build/my-languages.so
