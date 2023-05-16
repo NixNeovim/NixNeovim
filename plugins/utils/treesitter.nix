@@ -79,8 +79,10 @@ mkLuaPlugin {
       [ vimPlugins.nvim-treesitter ];
 
   extraPackages = with pkgs; [
-    tree-sitter
-    nodejs
+    # tree-sitter # only needed for :TSInstallFromGrammar (does not work on nix anyway)
+    # nodejs # only needed for :TSInstallFromGrammar (does not work on nix anyway)
+    gcc
+    git
   ];
 
   extraOptions = mkIf cfg.folding {

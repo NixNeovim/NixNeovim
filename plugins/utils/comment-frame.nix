@@ -35,6 +35,6 @@ mkLuaPlugin {
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
     nvim-comment-frame
-    nvim-treesitter
+    pkgs.vimPlugins.nvim-treesitter
   ];
 }

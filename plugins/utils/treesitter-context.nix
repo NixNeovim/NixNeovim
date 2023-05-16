@@ -49,8 +49,4 @@ mkLuaPlugin {
     # add neovim plugin here
     nvim-treesitter-context
   ];
-  extraPackages = with pkgs; [
-    # add neovim plugin here
-    tree-sitter
-  ];
 }
