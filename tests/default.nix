@@ -84,29 +84,33 @@ EOF
       PATH=$PATH:$(_abs home-path/bin)
       mkdir -p "$(realpath .)/cache/nvim"
 
+      neovim_error() {
+        echo ----------------- NEOVIM CONFIG -----------------
+        cat -n "$config"
+        echo -------------------------------------------------
+
+        echo
+        echo
+
+        echo ----------------- NEOVIM INFO -------------------
+        nvim --version
+        echo -------------------------------------------------
+
+        echo ----------------- NEOVIM PATH -------------------
+        echo $PATH
+        echo -------------------------------------------------
+
+        echo ----------------- NEOVIM OUTPUT -----------------
+        echo "$1"
+        echo -------------------------------------------------
+        exit 1
+      }
+
       start_vim () {
-        OUTPUT=$(HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) nvim -u $config -c 'qall' --headless "$@" 2>&1)
+        OUTPUT=$(HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) nvim -u $config --headless "$@" -c 'qall' 2>&1)
         if [ "$OUTPUT" != "" ]
         then
-          echo ----------------- NEOVIM CONFIG -----------------
-          cat -n "$config"
-          echo -------------------------------------------------
-
-          echo
-          echo
-
-          echo ----------------- NEOVIM INFO -------------------
-          nvim --version
-          echo -------------------------------------------------
-
-          echo ----------------- NEOVIM PATH -------------------
-          echo $PATH
-          echo -------------------------------------------------
-
-          echo ----------------- NEOVIM OUTPUT -----------------
-          echo "$OUTPUT"
-          echo -------------------------------------------------
-          exit 1
+          neovim_error "$OUTPUT"
         fi
       }
 
