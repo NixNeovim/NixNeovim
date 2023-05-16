@@ -255,7 +255,7 @@ in
             extraPackages = cfg.extraPackages;
             extraConfig = configure.customRC;
             plugins = cfg.extraPlugins;
-          } // (optionalAttrs (state > 2211) { defautEditor = cfg.defaultEditor; }); # only add defaultEditor when over nixpkgs release 22-11
+          } // (optionalAttrs (state > 2211) { defaultEditor = cfg.defaultEditor; }); # only add defaultEditor when over nixpkgs release 22-11
         }
       else
         {
