@@ -17,7 +17,7 @@ let
   # base config; applied for all tests
   modules = (import (home-manager.outPath + "/modules/modules.nix") {
     inherit lib pkgs;
-    check = false;
+    check = true;
     useNixpkgsModule = false;
   }) ++
   [
