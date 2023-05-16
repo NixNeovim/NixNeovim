@@ -40,6 +40,7 @@ in
     ./languages/ledger.nix
     ./languages/nix.nix
     ./languages/zig.nix
+    ./languages/rust.nix
 
     ./mini
 
