@@ -8,7 +8,7 @@
       config = {
 
         programs.nixneovim.plugins = {
-          git-messenger-vim.enable = true;
+          git-messenger.enable = true;
           bufdelete.enable = true;
         };
 

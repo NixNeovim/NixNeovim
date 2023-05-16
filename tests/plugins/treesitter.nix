@@ -19,6 +19,18 @@ in {
             extraLua.post = ''
               -- test lua post comment
             '';
+            refactor = {
+              highlightDefinitions = {
+                enable = true;
+                clearOnCursorMove = false;
+              };
+              highlightCurrentScope.enable = true;
+              smartRename = {
+                enable = true;
+                keymaps.smartRename = "abc";
+              };
+              navigation.enable = true;
+            };
           };
           comment-frame.enable = true;
           ts-context-commentstring.enable = true;
@@ -43,8 +55,29 @@ in {
                         ["node_incremental"] = "grn",
                         ["scope_incremental"] = "grc"
                       }
-                     },
-                     ["indent"] = { ["enable"] = false }
+                    },
+                    ["indent"] = { ["enable"] = false },
+                    ["refactor"] = {
+                      ["highlight_current_scope"] = { ["enable"] = true },
+                      ["highlight_definitions"] = {
+                        ["clear_on_cursor_move"] = false,
+                        ["enable"] = true
+                      },
+                      ["navigation"] = {
+                        ["enable"] = true,
+                        ["keymaps"] = {
+                          ["goto_definition"] = "gnd",
+                          ["goto_next_usage"] = "<a-*>",
+                          ["goto_previous_usage"] = "<a-#>",
+                          ["list_definitions"] = "gnD",
+                          ["list_definitions_toc"] = "gO"
+                        }
+                      },
+                      ["smart_rename"] = {
+                        ["enable"] = true,
+                        ["keymaps"] = { ["smart_rename"] = "abc" }
+                      }
+                    }
                   })
                   -- test lua post comment
                 end

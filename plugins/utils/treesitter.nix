@@ -10,7 +10,9 @@ let
   helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
 
-  inherit (helpers.customOptions) boolOption;
+  inherit (helpers.customOptions)
+    strOption
+    boolOption;
 
   keymapOption = default: mkOption {
     type = types.str;
@@ -40,22 +42,66 @@ let
         nodeDecremental = keymapOption "grm";
       };
     };
-  };
 
-  pluginOptions = {
-    highlight = { enable = cfg.enable; };
-    indent = { enable = cfg.indent; };
-
-    incremental_selection = {
-      enable = cfg.incrementalSelection.enable;
-      keymaps = with cfg.incrementalSelection.keymaps; {
-        init_selection = initSelection;
-        node_incremental = nodeIncremental;
-        scope_incremental = scopeIncremental;
-        node_decremental = nodeDecremental;
+    # treesitter-refactor
+    refactor = {
+      highlightDefinitions = {
+        enable = boolOption false "";
+        # Set to false if you have an 'updatetime' of ~100.
+        clearOnCursorMove = boolOption true "Set to false if you have an 'updatetime' of 100";
+      };
+      highlightCurrentScope = {
+        enable = boolOption false "";
+      };
+      smartRename = {
+        enable = boolOption false "Set to false if you have an 'updatetime' of ~100.";
+        # Assign keymaps to false to disable them, e.g. 'smart_rename = false'.
+        keymaps = {
+          smartRename = strOption "grr" "Assign keymaps to false to disable them, e.g. 'smart_rename = false'.";
+        };
+      };
+      navigation = {
+        enable = boolOption false "Assign keymaps to false to disable them, e.g. 'smart_rename = false'.";
+        # Assign keymaps to false to disable them, e.g. 'goto_definition = false'.
+        keymaps = {
+          gotoDefinition = strOption "gnd" "Assign keymaps to false to disable them, e.g. 'goto_definition = false'.";
+          listDefinitions = strOption "gnD" "Assign keymaps to false to disable them, e.g. 'goto_definition = false'.";
+          listDefinitionsToc = strOption "gO" "Assign keymaps to false to disable them, e.g. 'goto_definition = false'.";
+          gotoNextUsage = strOption "<a-*>" "Assign keymaps to false to disable them, e.g. 'goto_definition = false'.";
+          gotoPreviousUsage = strOption "<a-#>" "Assign keymaps to false to disable them, e.g. 'goto_definition = false'.";
+        };
       };
     };
   };
+
+  pluginOptions =
+    let
+
+      # This module has many options that cannot be mapped to the plugin options directly.
+      # Therefore, some options are generated, and some are added manual.
+      # Before combining them, we have to filter the generatedOptions.
+
+      generatedOptions = helpers.convertModuleOptions cfg moduleOptions;
+
+      # options do not map 1-to-1 to the plugin options
+      manualOptions = {
+        highlight = { enable = cfg.enable; };
+        indent = { enable = cfg.indent; };
+      };
+
+      # options that are generated but should not appear in the lua ouput
+      optionsFilter = [
+        "folding"
+        "grammars"
+        "exclude_grammars"
+        "install_all_grammars"
+      ];
+
+      # apply the filter
+      filteredGeneratedOptions =
+        filterAttrs (k: v: ! elem k optionsFilter) generatedOptions;
+
+    in recursiveUpdate filteredGeneratedOptions manualOptions;
 
   grammarsToInstall =
     let
@@ -67,9 +113,7 @@ let
     in
       builtins.filter (x: ! elem x.name cfg.excludeGrammars) combinedGrammars;
 
-in
-with helpers;
-mkLuaPlugin {
+in helpers.mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
 
   extraPlugins = with pkgs;
