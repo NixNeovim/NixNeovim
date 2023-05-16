@@ -81,6 +81,7 @@ in {
   , moduleOptions ? { }   # options available in the module
   , defaultRequire ? true # add default requrie string?
   , extraOptions ? {}     # extra vim options like line numbers, etc
+  , extraNixNeovimConfig ? {} # extra config applied to 'programs.nixneovim'
   }:
   let
     # simple functions to improve error messages
@@ -125,7 +126,7 @@ in {
     options.programs.nixneovim.plugins.${name} =
       (defaultModuleOptions fullDescription) // moduleOptions;
 
-    config.programs.nixneovim = mkIf cfg.enable {
+    config.programs.nixneovim = mkIf cfg.enable (extraNixNeovimConfig // {
       inherit extraPlugins extraPackages extraConfigVim;
 
       extraConfigLua = optionalString
@@ -147,6 +148,6 @@ in {
         end
       '';
       options = extraOptions;
-    };
+    });
   };
 }
