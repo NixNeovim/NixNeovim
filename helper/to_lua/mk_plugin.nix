@@ -82,13 +82,21 @@ in {
   , defaultRequire ? true # add default requrie string?
   , extraOptions ? {}     # extra vim options like line numbers, etc
   , extraNixNeovimConfig ? {} # extra config applied to 'programs.nixneovim'
+  , isColorscheme ? false # If enabled, plugin will be added to 'nixneovim.colorschemes' instead of 'nixneovim.plugins'
   }:
   let
     # simple functions to improve error messages
     errorString = "Module for ${name} is broken";
     warnString = "Module for ${name}";
 
-    cfg = config.programs.nixneovim.plugins.${name};
+    # either 'colorscheme' for 'plugin'
+    type =
+      if isColorscheme then
+        "colorschemes"
+      else
+        "plugins";
+
+    cfg = config.programs.nixneovim.${type}.${name};
 
     pluginOptions = convertModuleOptions cfg moduleOptions;
 
@@ -123,8 +131,9 @@ in {
 
   # function output
   {
-    options.programs.nixneovim.plugins.${name} =
-      (defaultModuleOptions fullDescription) // moduleOptions;
+    # add module to 'plugins'/'colorschemes'
+    options.programs.nixneovim.${type}.${name} =
+            (defaultModuleOptions fullDescription) // moduleOptions;
 
     config.programs.nixneovim = mkIf cfg.enable (extraNixNeovimConfig // {
       inherit extraPlugins extraPackages extraConfigVim;
