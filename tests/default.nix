@@ -114,6 +114,14 @@ EOF
         fi
       }
 
+      check_colorscheme () {
+        OUTPUT=$(HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) nvim -u $config --headless -c 'colorscheme' -c 'qall' 2>&1)
+        if [ "$OUTPUT" != "$1" ]
+        then
+          neovim_error "Expected '$1'. Found: '$OUTPUT'"
+        fi
+      }
+
       start_vim
 
       # Testing some common file types
@@ -137,7 +145,9 @@ EOF
     testedAttrPath = [ "home" "activationPackage" ];
     tests =
       let
-        modulesTests = filesIn "plugins";
+        modulesTests =
+          filesIn "plugins"
+          ++ filesIn "colorschemes";
         testList = [
           ./neovim.nix
           ./basic-check.nix

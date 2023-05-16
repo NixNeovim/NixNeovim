@@ -33,6 +33,7 @@ in
     ./colorschemes/one.nix
     ./colorschemes/onedark.nix
     ./colorschemes/tokyonight.nix
+    ./colorschemes/gruvbox-baby.nix
 
     ./debugging/nvim-dap
     ./debugging/nvim-dap-ui.nix
