@@ -42,6 +42,7 @@ def to_comment(node):
     text = extract(node)
 
     text = re.sub(r'^-- ?', '', text)
+    text = re.sub(r'"', '\"', text)
 
     lastComment = text
     #  print(indent, "#", text)
@@ -145,8 +146,8 @@ def parse_table(children):
                             #  print(output.text)
 
     if isList:
-        output.prepend("[")
-        output.add(f"{indent}];")
+        output.prepend("listOption [")
+        output.add(f"{indent}] \"\";")
     else:
         output.prepend("{")
         output.add(f"{indent}}};")
