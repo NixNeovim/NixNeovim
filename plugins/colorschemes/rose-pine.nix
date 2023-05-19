@@ -8,33 +8,39 @@ let
   pluginUrl = "https://github.com/rose-pine/neovim";
 
   helpers = import ../../helper { inherit pkgs lib config; };
-  inherit (helpers.customOptions) attrsOption boolOption enumOption;
-  cfg = config.programs.nixneovim.colorschemes.${name};
 
-  colors = [ "base" "surface" "overlay" "muted" "subtle" "text" "love" "gold" "rose" "pine" "foam" "iris" "highlight_low" "highlight_med" "highlight_high" ];
+  inherit (helpers.customOptions)
+    attrsOption
+    strOption
+    enumOption
+    boolOption;
 
-  moduleOptions = with helpers; { 
-    variant = enumOption [ "auto" "main" "moon" "dawn" ];
-    darkVariant = enumOption [ "main" "moon" "dawn" ];
-    boldVertSplit = boolOption false "Disable bold vertical split";
-    dimNCBackground = boolOption false "Dim the nc background";
-    disableBackground = boolOption false "Disable the background";
-    disableFloatBackground = boolOption false "Disable the float background";
-    disableItalics = boolOption false "Disable italics";
+  colors = [ "base" "surface" "overlay" "muted" "subtle" "text" "love" "gold" "rose" "pine" "foam" "iris" "highlight_low" "highlight_med" "highlight_high" "_experimental_nc" ];
 
-    background = enumOption colors "base" "Set the color of the background";
-    backgroundNC = enumOption colors "_experimental_nc" "Sets the color of the nc background";
-    panel = enumOption colors "surface" "Set the color of the panel";
-    panelNC = enumOption colors "base" "Set the color of the panel nc";
-    border = enumOption colors "highlight_med" "Set the color of the border";
-    comment = enumOption colors "muted" "Set the color of the comments";
-    link = enumOption colors "iris" "Set the color of the links";
-    punctuation = enumOption colors "subtle" "Set the color of the punctuation";
+  moduleOptions = { 
+    variant = enumOption [ "auto" "main" "moon" "dawn" ] "auto" "";
+    dark_variant = enumOption [ "main" "moon" "dawn" ] "main" "";
+    bold_vert_split = boolOption false "Disable bold vertical split";
+    dim_nc_background = boolOption false "Dim the nc background";
+    disable_background = boolOption false "Disable the background";
+    disable_float_background = boolOption false "Disable the float background";
+    disable_italics = boolOption false "Disable italics";
 
-    error = enumOption colors "love" "Set the color of errors";
-    hint = enumOption colors "iris" "Set the color of hints";
-    info = enumOption colors "foam" "Set the color of info";
-    warn = enumOption colors "gold" "Set the color of warnings";
+    groups = {
+      background = enumOption colors "base" "Set the color of the background";
+      background_nc = enumOption colors "_experimental_nc" "Sets the color of the nc background";
+      panel = enumOption colors "surface" "Set the color of the panel";
+      panel_nc = enumOption colors "base" "Set the color of the panel nc";
+      border = enumOption colors "highlight_med" "Set the color of the border";
+      comment = enumOption colors "muted" "Set the color of the comments";
+      link = enumOption colors "iris" "Set the color of the links";
+      punctuation = enumOption colors "subtle" "Set the color of the punctuation";
+
+      error = enumOption colors "love" "Set the color of errors";
+      hint = enumOption colors "iris" "Set the color of hints";
+      info = enumOption colors "foam" "Set the color of info";
+      warn = enumOption colors "gold" "Set the color of warnings";
+    };
 
     headings = {
       h1 = enumOption colors "iris" "Set the color of heading 1";
@@ -45,21 +51,90 @@ let
       h6 = enumOption colors "foam" "Set the color of heading 6";
     };
 
-    highlightGroups = attrsOption {
-      ColorColumn = { bg = "rose"; };
+    highlight_groups = attrsOption {
 	    CursorLine = { bg = "foam"; blend = 10; };
 	    StatusLine = { fg = "love"; bg = "love"; blend = 10; };
+      ColorColumn = { bg = "rose"; };
+      Conceal	= {};	
+      CurSearch	= {};
+      Cursor = {};
+      CursorIM = {};	
+      CursorLineFold	= {};
+      CursorLineNr	= {};
+      CursorLineSign	= {};
+      DiffAdd	= {};	
+      DiffChange	= {};
+      DiffDelete	= {};
+      DiffText	= {};
+      Directory	= {};
+      EndOfBuffer	= {};
+      ErrorMsg	= {};
+      FloatBorder	= {};
+      FloatTitle	= {};
+      FoldColumn = {};	
+      Folded	= {};
+      IncSearch	= {};
+      LineNr	= {};	
+      LineNrAbove	= {};
+      LineNrBelow	= {};
+      MatchParen	= {};
+      ModeMsg	= {};
+      MoreMsg	= {};
+      MsgArea	= {};
+      MsgSeparator	= {};
+      NonText	= {};
+      Normal	= {};
+      NormalFloat	= {};
+      NormalNC	= {};
+      Pmenu	= {};
+      PmenuExtra	= {};
+      PmenuExtraSel	= {};
+      PmenuKind	= {};
+      PmenuKindSel	= {};
+      PmenuSbar	= {};
+      PmenuSel	= {};
+      PmenuThumb	= {};
+      Question	= {};
+      QuickFixLine	= {};
+      Search	= {};
+      SignColumn	= {};
+      SpecialKey	= {};
+      SpellBad	= {};
+      SpellCap	= {};
+      SpellLocal	= {};
+      SpellRare	= {};
+      StatusLineNC	= {};
+      Substitute	= {};
+      TabLine	= {};
+      TabLineFill	= {};
+      TabLineSel	= {};
+      TermCursor	= {};
+      TermCursorNC	= {};
+      Title	= {};
+      Visual	= {};
+      VisualNOS	= {};
+      WarningMsg	= {};
+      Whitespace	= {};
+      WildMenu = {};
+      WinBar = {};
+      WinBarNC	= {};
+      WinSeparator	= {};
+      lCursor = {};	
     } "Change specific vim highlight groups";
   
   };
-
-  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 
 in
 with helpers;
 mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
+    # add neovim plugin here
     rose-pine
   ];
+
+  defaultRequire = true;
+  isColorscheme = true;
+
+  extraConfigLua = "vim.cmd('colorscheme rose-pine')";
 }
