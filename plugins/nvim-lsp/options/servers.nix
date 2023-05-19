@@ -78,6 +78,7 @@ let
     };
     lua_ls = {
       languages = "Lua";
+      packages = [ ];
     };
     nil = {
       languages = "Nix";
