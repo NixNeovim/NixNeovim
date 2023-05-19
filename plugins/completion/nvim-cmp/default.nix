@@ -231,7 +231,7 @@ with helpers;
         sources = sources.config;
 
         snippet = {
-          expand = "function(args) ${ lib.optionalString cfg.snippet.luasnip.enable "require(\"luasnip\").lsp_expand(args.body)" } end";
+          expand.__raw = "function(args) ${ lib.optionalString cfg.snippet.luasnip.enable "require(\"luasnip\").lsp_expand(args.body)" } end";
         };
 
         view = cfg.view;
