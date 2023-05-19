@@ -53,6 +53,7 @@ let
     };
     gopls = {
       languages = "Go";
+      packages = [ gopls ];
     };
     hls = {
       languages = "Haskell";
@@ -75,6 +76,10 @@ let
       languages = "text files";
       packages = [ ltex-ls ];
     };
+    lua_ls = {
+      languages = "Lua";
+      packages = [ lua-language-server ];
+    };
     nil = {
       languages = "Nix";
       serverName = "nil_ls";
@@ -91,6 +96,10 @@ let
       languages = "Rust";
       serverName = "rust_analyzer";
       packages = [ cargo ];
+    };
+    terraform-ls = {
+      languages = "HCL";
+      serverName = "terraformls";
     };
     texlab = {
       languages = "latex";
