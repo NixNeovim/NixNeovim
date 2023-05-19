@@ -12,7 +12,7 @@ let
 
   # imports
 
- inherit (lib)
+  inherit (lib)
     assertMsg
     hasAttr
     hasPrefix
@@ -76,18 +76,27 @@ in {
   , description ? ""      # deprecated, use extraDescription
   , extraDescription ? "" # description added to the enable function
   , extraPackages ? [ ]   # non-plugin packages
-  , extraConfigLua ? null # lua config added to the init.vim
+  , extraConfigLua ? "" # lua config added to the init.vim
   , extraConfigVim ? ""   # vim config added to the init.vim
   , moduleOptions ? { }   # options available in the module
   , defaultRequire ? true # add default requrie string?
   , extraOptions ? {}     # extra vim options like line numbers, etc
+  , extraNixNeovimConfig ? {} # extra config applied to 'programs.nixneovim'
+  , isColorscheme ? false # If enabled, plugin will be added to 'nixneovim.colorschemes' instead of 'nixneovim.plugins'
   }:
   let
     # simple functions to improve error messages
     errorString = "Module for ${name} is broken";
     warnString = "Module for ${name}";
 
-    cfg = config.programs.nixneovim.plugins.${name};
+    # either 'colorscheme' for 'plugin'
+    type =
+      if isColorscheme then
+        "colorschemes"
+      else
+        "plugins";
+
+    cfg = config.programs.nixneovim.${type}.${name};
 
     pluginOptions = convertModuleOptions cfg moduleOptions;
 
@@ -106,9 +115,13 @@ in {
       '');
 
     # add default require string to load plugin
-    luaConfig = optionalString defaultRequire (if (extraConfigLua == null) then
-      "require('${pluginName}').setup ${toLuaObject pluginOptions}"
-    else extraConfigLua);
+    # luaConfig = optionalString defaultRequire (if (extraConfigLua == null) then
+    # else extraConfigLua);
+
+    luaConfig = ''
+        ${optionalString defaultRequire "require('${pluginName}').setup ${toLuaObject pluginOptions}"}
+        ${extraConfigLua}
+      '';
 
   in
 
@@ -118,14 +131,15 @@ in {
 
   # function output
   {
-    options.programs.nixneovim.plugins.${name} =
-      (defaultModuleOptions fullDescription) // moduleOptions;
+    # add module to 'plugins'/'colorschemes'
+    options.programs.nixneovim.${type}.${name} =
+            (defaultModuleOptions fullDescription) // moduleOptions;
 
-    config.programs.nixneovim = mkIf cfg.enable {
+    config.programs.nixneovim = mkIf cfg.enable (extraNixNeovimConfig // {
       inherit extraPlugins extraPackages extraConfigVim;
 
       extraConfigLua = optionalString
-        (cfg.extraLua.pre != "" || cfg.extraLua.post != "" || luaConfig != "")
+        (cfg.extraLua.pre != "" || cfg.extraLua.post != "" || luaConfig != "\n\n")
         ''
 
         -- config for plugin: ${name}
@@ -137,11 +151,12 @@ in {
           end
           success, output = pcall(setup) -- execute 'setup()' and catch any errors
           if not success then
+            print("Error on setup for plugin: ${name}")
             print(output)
           end
         end
       '';
       options = extraOptions;
-    };
+    });
   };
 }

@@ -1,2 +1,8 @@
 .tmp
 result
+**/.direnv
+build/my-languages.so
+pta
+me
+pta_plugins
+me_plugins

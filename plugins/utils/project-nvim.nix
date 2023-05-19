@@ -58,4 +58,5 @@ mkLuaPlugin {
     project-nvim
   ];
   extraConfigLua = "require('project_nvim').setup ${toLuaObject pluginOptions}";
+  defaultRequire = false;
 }

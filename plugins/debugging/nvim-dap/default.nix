@@ -30,4 +30,6 @@ mkLuaPlugin {
   extraConfigLua = ''
     local dap = require('dap')
   '';
+
+  defaultRequire = false;
 }

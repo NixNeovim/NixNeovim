@@ -39,5 +39,5 @@ mkLuaPlugin {
     # tree-sitter
   ];
   extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";
-  defaultRequire = true;
+  defaultRequire = false;
 }

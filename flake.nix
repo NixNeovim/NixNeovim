@@ -8,12 +8,17 @@
       url = "gitlab:rycee/nmd";
       flake = false;
     };
+    nmt = {
+      url = "github:jooooscha/nmt"; # slightly modified version of rycee/nmt
+      flake = false;
+    };
 
     nixneovimplugins.url = "github:nixneovim/nixneovimplugins";
     nix-flake-tests.url = "github:antifuchs/nix-flake-tests";
+    home-manager.url = "github:nix-community/home-manager";
   };
 
-  outputs = { self, nixpkgs, nmd, nix-flake-tests, ... }@inputs:
+  outputs = { self, nixpkgs, nmd, nmt, nix-flake-tests, ... }@inputs:
     let
       system = "x86_64-linux";
 
@@ -23,29 +28,115 @@
 
     in
     {
-      packages.${system}.docs = import ./docs {
-        inherit pkgs;
-        lib = nixpkgs.lib;
-        nmd = import nmd { inherit pkgs lib; };
+      packages.${system} = {
+        docs = import ./docs {
+          inherit pkgs;
+          lib = nixpkgs.lib;
+          nmd = import nmd { inherit pkgs lib; };
+        };
+        configparser = pkgs.writeShellApplication {
+          name = "configparser";
+          runtimeInputs = let
+            python-with-my-packages = pkgs.python3.withPackages (p: with p; [
+              tree-sitter
+              (
+                buildPythonPackage rec {
+                  pname = "SLPP";
+                  version = "1.2.3";
+                  src = fetchPypi {
+                    inherit pname version;
+                    sha256 = "sha256-If3ZMoNICQxxpdMnc+juaKq4rX7MMi9eDMAQEUy1Scg=";
+                  };
+                  doCheck = false;
+                  propagatedBuildInputs = [
+                    six
+                  ];
+                }
+              )
+            ]);
+          in [
+            python-with-my-packages
+            pkgs.gcc
+          ];
+          text = ''
+            python ./bin/configparser/main.py
+          '';
+        };
       };
 
-      nixosModules = rec {
+      nixosModules = {
         default = import ./nixneovim.nix { homeManager = true; };
         homeManager = self.nixosModules.default;
+        homeManager-22-11 = import ./nixneovim.nix { homeManager = true; state = 2211; };
         nixos = import ./nixneovim.nix { homeManager = false; };
+        nixos-22-11 = import ./nixneovim.nix { homeManager = false; state = 2211; };
       };
 
       overlays.default = inputs.nixneovimplugins.overlays.default;
 
       lib = import ./lib.nix;
 
-      checks.x86_64-linux = {
-        basic =
-          nix-flake-tests.lib.check {
-            inherit pkgs;
-            tests = pkgs.callPackage ./tests.nix {};
+      checks =
+        let
+          nmt-tests = {
+            x86_64-linux = import ./tests {
+              inherit nmt pkgs;
+              nixneovim = self.nixosModules.homeManager;
+              inherit (inputs) home-manager;
+            };
           };
-      };
+
+          lib-checks = {
+            x86_64-linux.basic = nix-flake-tests.lib.check {
+              inherit pkgs;
+              tests = pkgs.callPackage ./tests.nix {};
+            };
+          };
+        in lib.recursiveUpdate nmt-tests lib-checks;
+
+       # devShells = forAllSystems (system:
+       #  let
+       #    pkgs = nixpkgs.legacyPackages.x86_64-linux;
+       #    tests = import ./tests { inherit lib pkgs nmt; };
+       #  in {
+       #    default = tests.run;
+       #  });
+
+      # devShells.x86_64-linux.default = import nmt {
+      #     inherit lib pkgs modules;
+      #     testedAttrPath = [ "home" "activationPackage" ];
+      #     tests = {
+      #       testa = {
+      #       config = {
+      #         programs.neovim = {
+      #           enable = true;
+      #           extraConfig = ''
+      #             let g:hmExtraConfig='HM_EXTRA_CONFIG'
+      #               '';
+      #               plugins = with pkgs.vimPlugins; [
+      #                 vim-nix
+      #                 {
+      #                   plugin = vim-commentary;
+      #                   config = ''
+      #                     let g:hmPlugins='HM_PLUGINS_CONFIG'
+      #                   '';
+      #                 }
+      #               ];
+      #               extraLuaPackages = [ pkgs.lua51Packages.luautf8 ];
+      #             };
+
+      #             nmt.script = ''
+      #               vimout=$(mktemp)
+      #               echo "redir >> /dev/stdout | echo g:hmExtraConfig | echo g:hmPlugins | redir END" \
+      #                 | ${pkgs.neovim}/bin/nvim -es -u "$TESTED/home-files/.config/nvim/init.lua" \
+      #                 > "$vimout"
+      #               assertFileContains "$vimout" "HM_EXTRA_CONFIG"
+      #               assertFileContains "$vimout" "HM_PLUGINS_CONFIG"
+      #             '';
+      #           };
+      #       };
+      #     };
+      #   };
 
       # apps.${system} = {
       #   default = {

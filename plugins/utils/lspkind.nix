@@ -31,4 +31,5 @@ mkLuaPlugin {
   ];
 
   extraConfigLua = "require('${name}').init ${toLuaObject pluginOptions}";
+  defaultRequire = false;
 }

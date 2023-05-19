@@ -49,5 +49,4 @@ mkLuaPlugin {
   extraPlugins = with pkgs.vimExtraPlugins; [
     todo-comments-nvim
   ];
-  extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";
 }

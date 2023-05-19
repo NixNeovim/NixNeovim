@@ -25,5 +25,6 @@ mkLuaPlugin {
   extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-toggler
   ];
-  extraConfigLua = "require('${name}').setup ${toLuaObject pluginOptions}";
+  extraConfigLua = "require('${name}').setup(${toLuaObject pluginOptions})";
+  defaultRequire = false;
 }

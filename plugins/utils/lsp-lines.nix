@@ -33,4 +33,5 @@ mkLuaPlugin {
 
     ${optionalString cfg.onlyCurrentLine "vim.diagnostic.config({ virtual_lines = { only_current_line = true } })"}
   '';
+  defaultRequire = false;
 }

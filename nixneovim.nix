@@ -1,4 +1,4 @@
-{ homeManager ? true, isDocsBuild ? false }: # function that returns a package
+{ homeManager ? true, isDocsBuild ? false, state ? 9999 }: # function that returns a package
 { lib, config, pkgs, ... }:
 with lib;
 let
@@ -36,6 +36,12 @@ in
   options = {
     programs.nixneovim = {
       enable = mkEnableOption "enable nixneovim";
+
+      defaultEditor = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Configures neovim to be the default editor using the EDITOR environment variable.";
+      };
 
       package = mkOption {
         type = types.nullOr types.package;
@@ -161,23 +167,23 @@ in
           + extraWrapperArgs;
       });
 
-      luaGlobals = optionalString (cfg.globals != { }) ''
-        -- Set up globals {{{
-        local __nixneovim_globals = ${helpers.toLuaObject cfg.globals}
-
-        for k,v in pairs(__nixneovim_globals) do
-          vim.g[k] = v
-        end
-        -- }}}
-      '' + optionalString (cfg.options != { }) ''
-        -- Set up options {{{
-        local __nixneovim_options = ${helpers.toLuaObject cfg.options}
-
-        for k,v in pairs(__nixneovim_options) do
-          vim.o[k] = v
-        end
-        -- }}}
-      '';
+      luaGlobals =
+        let
+          list = mapAttrsToList
+            (option: value:
+              "vim.g.${option} = ${helpers.toLuaObject value}"
+            )
+            cfg.globals;
+        in concatStringsSep "\n" list;
+              
+      luaOptions =
+        let
+          list = mapAttrsToList
+            (option: value:
+              "vim.o.${option} = ${helpers.toLuaObject value}"
+            )
+            cfg.options;
+        in concatStringsSep "\n" list;
 
 
       configure = {
@@ -194,6 +200,12 @@ in
             --------------------------------------------------
 
             ${luaGlobals}
+
+            --------------------------------------------------
+            --                 Options                      --
+            --------------------------------------------------
+
+            ${luaOptions}
 
             --------------------------------------------------
             --                 Keymappings                  --
@@ -238,16 +250,18 @@ in
         {
           programs.neovim = {
             enable = true;
+            # defaultEditor = cfg.defaultEditor;
             package = mkIf (cfg.package != null) cfg.package;
             extraPackages = cfg.extraPackages;
             extraConfig = configure.customRC;
             plugins = cfg.extraPlugins;
-          };
+          } // (optionalAttrs (state > 2211) { defaultEditor = cfg.defaultEditor; }); # only add defaultEditor when over nixpkgs release 22-11
         }
       else
         {
           environment.systemPackages = [ wrappedNeovim ];
           programs.neovim = {
+            defaultEditor = cfg.defaultEditor;
             configure = configure;
           };
 
