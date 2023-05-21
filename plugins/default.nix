@@ -35,6 +35,7 @@ in
     ./colorschemes/rose-pine.nix
     ./colorschemes/tokyonight.nix
     ./colorschemes/gruvbox-baby.nix
+    ./colorschemes/gruvbox-material.nix
 
     ./debugging/nvim-dap
     ./debugging/nvim-dap-ui.nix
