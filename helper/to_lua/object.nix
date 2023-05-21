@@ -78,4 +78,7 @@ in {
   inherit toLuaObject';
 
   toLuaObject = args: toLuaObject' 0 args;
+
+  boolToInt = bool: if bool then 1 else 0;
+  boolToInt' = bool: toLuaObject' 0 (if bool then 1 else 0);
 }

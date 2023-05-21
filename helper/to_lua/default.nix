@@ -73,7 +73,9 @@ in {
     object;
   inherit (object)
     toLuaObject'
-    toLuaObject;
+    toLuaObject
+    boolToInt
+    boolToInt';
   inherit (plugin)
     convertModuleOptions
     defaultModuleOptions

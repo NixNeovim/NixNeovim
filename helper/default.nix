@@ -35,7 +35,9 @@ in {
     toLuaObject
     toLuaObject'
     convertModuleOptions
-    camelToSnake;
+    camelToSnake
+    boolToInt
+    boolToInt';
   inherit customOptions toLua;
   inherit (toLua)
     mkLuaPlugin;
