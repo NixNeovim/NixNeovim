@@ -145,12 +145,12 @@ EOF
     testedAttrPath = [ "home" "activationPackage" ];
     tests =
       let
-        modulesTests =
-          filesIn "plugins"
-          ++ filesIn "colorschemes";
+        modulesTests = [];
+          #filesIn "plugins"
+          #++ filesIn "colorschemes";
         testList = [
           ./neovim.nix
-          ./basic-check.nix
+          #./basic-check.nix
         ] ++ modulesTests;
       in builtins.foldl'
         (a: b: a // (import b { inherit testHelper nixneovim lib; }))

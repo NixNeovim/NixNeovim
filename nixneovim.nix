@@ -175,7 +175,7 @@ in
             )
             cfg.globals;
         in concatStringsSep "\n" list;
-              
+
       luaOptions =
         let
           list = mapAttrsToList
@@ -186,50 +186,50 @@ in
         in concatStringsSep "\n" list;
 
 
+      luaConfig = ''
+        ${cfg.extraLuaPreConfig}
+        --------------------------------------------------
+        --                 Globals                      --
+        --------------------------------------------------
+
+        ${luaGlobals}
+
+        --------------------------------------------------
+        --                 Options                      --
+        --------------------------------------------------
+
+        ${luaOptions}
+
+        --------------------------------------------------
+        --                 Keymappings                  --
+        --------------------------------------------------
+
+        ${mappings.luaString cfg.mappings}
+
+        --------------------------------------------------
+        --               Extra Config (Lua)             --
+        --------------------------------------------------
+
+        ${cfg.extraConfigLua}
+
+        ${
+          # Set colorscheme after setting globals.
+          # Some colorschemes depends on variables being set before setting the colorscheme.
+          optionalString
+            (cfg.colorscheme != "" && cfg.colorscheme != null)
+            "vim.cmd([[colorscheme ${cfg.colorscheme}]])"
+        }
+
+        ${cfg.extraLuaPostConfig}
+      '';
+
       configure = {
         # Make sure that globals are set before plugins are setup.
         # This is becuase you might want to define variables or global functions
         # that the plugin configuration depend upon.
         customRC =
           cfg.extraConfigVim
-          + ''
-            lua <<EOF
-            ${cfg.extraLuaPreConfig}
-            --------------------------------------------------
-            --                 Globals                      --
-            --------------------------------------------------
-
-            ${luaGlobals}
-
-            --------------------------------------------------
-            --                 Options                      --
-            --------------------------------------------------
-
-            ${luaOptions}
-
-            --------------------------------------------------
-            --                 Keymappings                  --
-            --------------------------------------------------
-
-            ${mappings.luaString cfg.mappings}
-
-            --------------------------------------------------
-            --               Extra Config (Lua)             --
-            --------------------------------------------------
-
-            ${cfg.extraConfigLua}
-
-            ${
-              # Set colorscheme after setting globals.
-              # Some colorschemes depends on variables being set before setting the colorscheme.
-              optionalString
-                (cfg.colorscheme != "" && cfg.colorscheme != null)
-                "vim.cmd([[colorscheme ${cfg.colorscheme}]])"
-            }
-
-            ${cfg.extraLuaPostConfig}
-            EOF
-          '';
+          + luaConfig;
 
         packages.nixneovim = {
           start = filter (f: f != null) (map
@@ -253,7 +253,8 @@ in
             # defaultEditor = cfg.defaultEditor;
             package = mkIf (cfg.package != null) cfg.package;
             extraPackages = cfg.extraPackages;
-            extraConfig = configure.customRC;
+            extraConfig = cfg.extraConfigVim;
+            extraLuaConfig = luaConfig;
             plugins = cfg.extraPlugins;
           } // (optionalAttrs (state > 2211) { defaultEditor = cfg.defaultEditor; }); # only add defaultEditor when over nixpkgs release 22-11
         }

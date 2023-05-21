@@ -25,18 +25,21 @@
         nmt.script = ''
           nvimFolder="home-files/.config/nvim"
           assertFileContains "$nvimFolder/init.lua" "vim.cmd [[source"
-          config=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
-          assertFileExists $config
+          vimscript=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
+          config="$(_abs $nvimFolder/init.lua)"
+          assertFileExists "$config"
 
           PATH=$PATH:$(_abs home-path/bin)
-          HOME=$(realpath .) nvim -u $config -c 'qall' --headless
+          HOME=$(realpath .) nvim -u "$config" -c 'qall' --headless
+          echo # add missing \0 to output of 'nvim'
 
-          assertDiff "$config" ${
+          # Replace the path the vimscript file, because it contains the hash
+          sed "s/\/nix\/store\/[a-z0-9]\{32\}/\<nix-store-hash\>/" "$config" > normalizedConfig.lua
+
+          assertDiff normalizedConfig.lua ${
             pkgs.writeText "init.lua-expected" ''
 
-map j gj
-
-lua <<EOF
+vim.cmd [[source <nix-store-hash>-nvim-init-home-manager.vim]]
 
 --------------------------------------------------
 --                 Globals                      --
@@ -60,14 +63,14 @@ do vim.keymap.set("", "ßß", '@', { ["noremap"] = true }) end
 -- config for plugin: numb
 do
   function setup()
-    
+
     require('numb').setup {
       ["centered_peeking"] = true,
       ["number_only"] = false,
       ["show_cursorline"] = true,
       ["show_numbers"] = true
     }
-    
+
   end
   success, output = pcall(setup) -- execute 'setup()' and catch any errors
   if not success then
@@ -77,9 +80,6 @@ do
 end
 
 -- test lua comment
-
-
-EOF
             ''
           }
         '';
