@@ -45,8 +45,6 @@ let
   testHelper = {
     config = {
       start = ''
-lua <<EOF
-
 --------------------------------------------------
 --                 Globals                      --
 --------------------------------------------------
@@ -68,21 +66,22 @@ lua <<EOF
 --------------------------------------------------
 
     '';
-    end = ''
-
-
-
-
-
-EOF
-    '';
+    end = "";
     };
     moduleTest = text:
       ''
       nvimFolder="home-files/.config/nvim"
-      config=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
+      config="$(_abs $nvimFolder/init.lua)"
+      assertFileExists "$config"
+
       PATH=$PATH:$(_abs home-path/bin)
-      mkdir -p "$(realpath .)/cache/nvim"
+      mkdir -p "$(realpath .)/cache/nvim" # add cache dir; needed for barbar.json
+      HOME=$(realpath .) nvim -u "$config" -c 'qall' --headless
+      echo # add missing \0 to output of 'nvim'
+
+      # Replace the path the vimscript file, because it contains the hash
+      sed "s/\/nix\/store\/[a-z0-9]\{32\}/\<nix-store-hash\>/" "$config" > normalizedConfig.lua
+      normalizedConfig=normalizedConfig.lua
 
       neovim_error() {
         echo ----------------- NEOVIM CONFIG -----------------
@@ -145,12 +144,12 @@ EOF
     testedAttrPath = [ "home" "activationPackage" ];
     tests =
       let
-        modulesTests = [];
-          #filesIn "plugins"
-          #++ filesIn "colorschemes";
+        modulesTests =
+          filesIn "plugins"
+          ++ filesIn "colorschemes";
         testList = [
           ./neovim.nix
-          #./basic-check.nix
+          ./basic-check.nix
         ] ++ modulesTests;
       in builtins.foldl'
         (a: b: a // (import b { inherit testHelper nixneovim lib; }))

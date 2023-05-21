@@ -16,7 +16,7 @@
         };
 
         nmt.script = testHelper.moduleTest ''
-          assertDiff "$config" ${
+          assertDiff "$normalizedConfig" ${
             pkgs.writeText "init.lua-expected" ''
               ${testHelper.config.start}
               -- config for plugin: telescope

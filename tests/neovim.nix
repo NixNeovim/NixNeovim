@@ -1,4 +1,4 @@
-{ nixneovim, ... }:
+{ nixneovim, testHelper, ... }:
 {
   neovim-test = { config, lib, pkgs, ... }:
     {
@@ -22,21 +22,12 @@
           };
         };
 
-        nmt.script = ''
-          nvimFolder="home-files/.config/nvim"
+        nmt.script = testHelper.moduleTest ''
+
           assertFileContains "$nvimFolder/init.lua" "vim.cmd [[source"
           vimscript=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
-          config="$(_abs $nvimFolder/init.lua)"
-          assertFileExists "$config"
 
-          PATH=$PATH:$(_abs home-path/bin)
-          HOME=$(realpath .) nvim -u "$config" -c 'qall' --headless
-          echo # add missing \0 to output of 'nvim'
-
-          # Replace the path the vimscript file, because it contains the hash
-          sed "s/\/nix\/store\/[a-z0-9]\{32\}/\<nix-store-hash\>/" "$config" > normalizedConfig.lua
-
-          assertDiff normalizedConfig.lua ${
+          assertDiff $normalizedConfig ${
             pkgs.writeText "init.lua-expected" ''
 
 vim.cmd [[source <nix-store-hash>-nvim-init-home-manager.vim]]

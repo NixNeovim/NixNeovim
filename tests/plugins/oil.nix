@@ -18,7 +18,7 @@
         };
 
         nmt.script = testHelper.moduleTest ''
-          assertDiff "$config" ${
+          assertDiff "$normalizedConfig" ${
             pkgs.writeText "oil.expected" ''
               ${testHelper.config.start}
               -- config for plugin: oil

@@ -13,8 +13,9 @@
         };
 
         nmt.script = testHelper.moduleTest ''
-          assertDiff "$config" ${
+          assertDiff "$normalizedConfig" ${
             pkgs.writeText "no-config-plugins.expected" ''
+              vim.cmd [[source <nix-store-hash>-nvim-init-home-manager.vim]]
               ${testHelper.config.start}
 
               ${testHelper.config.end}

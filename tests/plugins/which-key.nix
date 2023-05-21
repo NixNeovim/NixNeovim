@@ -18,7 +18,7 @@
         };
 
         nmt.script = testHelper.moduleTest ''
-          assertDiff "$config" ${
+          assertDiff "$normalizedConfig" ${
             pkgs.writeText "which-key.expected" ''
               ${testHelper.config.start}
               -- config for plugin: which-key

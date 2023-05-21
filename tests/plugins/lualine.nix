@@ -22,7 +22,7 @@
         };
 
         nmt.script = testHelper.moduleTest ''
-          assertDiff "$config" ${
+          assertDiff "$normalizedConfig" ${
             pkgs.writeText "init.lua-expected" ''
               ${testHelper.config.start}
               require("lualine").setup({

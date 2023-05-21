@@ -38,8 +38,9 @@ in {
         };
 
         nmt.script = testHelper.moduleTest ''
-          assertDiff "$config" ${
+          assertDiff "$normalizedConfig" ${
             pkgs.writeText "init.lua-expected" ''
+              vim.cmd [[source <nix-store-hash>-nvim-init-home-manager.vim]]
               ${testHelper.config.start}
               -- config for plugin: ${name}
               do
