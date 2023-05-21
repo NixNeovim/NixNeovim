@@ -10,20 +10,20 @@ let
   # default for setup is 'false'
   # TODO: create modules for these
   plugs = [
-    "vim-printer"
-    "vim-easy-align"
-    "gruvbox"
-    "nest-nvim"
-    "plenary-nvim"
-    "indent-blankline-nvim"
-    { name = "asyncrun-vim"; setup = false; }
-    "ltex-extra-nvim"
-    "firenvim"
-    { name = "vim-startuptime"; setup = false; }
-    { name = "lsp-signature-nvim"; setup = false; }
+    { name = "vim-printer"; pluginUrl = "https://github.com/meain/vim-printer"; }
+    { name = "vim-easy-align"; pluginUrl = "https://github.com/junegunn/vim-easy-align"; }
+    { name = "gruvbox"; pluginUrl = "https://github.com/morhetz/gruvbox"; }
+    { name = "nest-nvim"; pluginUrl = "https://github.com/LionC/nest.nvim"; }
+    { name = "plenary-nvim"; pluginUrl = "https://github.com/nvim-lua/plenary.nvim"; }
+    { name = "indent-blankline-nvim"; pluginUrl = "https://github.com/lukas-reineke/indent-blankline.nvim"; }
+    { name = "asyncrun-vim"; setup = false; pluginUrl = "https://github.com/skywind3000/asyncrun.vim"; }
+    { name = "ltex-extra-nvim"; pluginUrl = "https://github.com/barreiroleo/ltex_extra.nvim"; }
+    { name = "firenvim"; pluginUrl = "https://github.com/glacambre/firenvim"; }
+    { name = "vim-startuptime"; setup = false; pluginUrl = "https://github.com/dstein64/vim-startuptime"; }
+    { name = "lsp-signature-nvim"; setup = false; pluginUrl = "https://github.com/ray-x/lsp_signature.nvim"; }
   ];
 
-  fillAttrs = { name, packageName ? name, setup ? false }: { inherit name packageName setup; };
+  fillPlugin = { name, packageName ? name, setup ? false, pluginUrl }: { inherit name packageName setup pluginUrl; };
 
 in
 with helpers; {
@@ -31,11 +31,7 @@ with helpers; {
     (p:
       let
 
-        plugin =
-          if isString p then
-            { name = p; packageName = p; setup = false; }
-          else
-            fillAttrs p;
+        plugin = fillPlugin p;
 
         # setupString =
         #   if plugin.setup then
@@ -55,7 +51,7 @@ with helpers; {
 
       in
       mkLuaPlugin {
-        name = plugin.name;
+        inherit (plugin) name pluginUrl;
         extraDescription = "This module was auto-generated";
         extraPlugins = [ pkgs.vimExtraPlugins.${plugin.packageName} ];
         defaultRequire = plugin.setup;
