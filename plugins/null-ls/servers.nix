@@ -2,7 +2,6 @@
 let
   helpers = import ./helpers.nix { inherit pkgs lib config; };
   serverData = {
-    completion = { };
     diagnostics = { };
     code_actions = { 
       eslint.packages = [ pkgs.nodePackages.eslint ];
@@ -17,6 +16,12 @@ let
       statix.packages = [ pkgs.statix ];
       # ts_node_action.packages = [ ];
       # xo.packages = [ ];
+    };
+    completion = {
+      # luasnip.packages = [ pkgs.vimPlugins.luasnip ];
+      spell.packages = [ ];
+      tags.packages = [ ];
+      # vsnip.packages = [ ];
     };
     formatting = {
       alejandra = {
