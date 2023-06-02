@@ -2,9 +2,22 @@
 let
   helpers = import ./helpers.nix { inherit pkgs lib config; };
   serverData = {
-    code_actions = { };
     completion = { };
     diagnostics = { };
+    code_actions = { 
+      eslint.packages = [ pkgs.nodePackages.eslint ];
+      eslint_d.packages = [ pkgs.eslint_d ];
+      gitsigns.packages = [ pkgs.luajitPackages.gitsigns-nvim ];
+      gomodifytags.packages = [ pkgs.gomodifytags ];
+      impl.packages = [ pkgs.impl ];
+      ltrs.packages = [ pkgs.languagetool-rust ];
+      proselint.packages = [ pkgs.proselint ];
+      # refactoring.packages = [ pkgs.vimPlugins.refactoring-nvim ];
+      shellcheck.packages = [ pkgs.shellcheck ];
+      statix.packages = [ pkgs.statix ];
+      # ts_node_action.packages = [ ];
+      # xo.packages = [ ];
+    };
     formatting = {
       alejandra = {
         packages = [ pkgs.alejandra ];
