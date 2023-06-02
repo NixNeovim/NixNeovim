@@ -152,6 +152,10 @@ in
         type = types.nullOr (types.enum [ "id" "extension" "relative_directory" "directory" "tabs" ]);
         default = null;
       };
+      offsets = mkOption {
+        type = types.nullOr (types.listOf types.attrs);
+        default = null;
+      };
       highlights = mkOption {
         default = null;
         type = types.nullOr (types.submodule ({ ... }: {
@@ -253,6 +257,7 @@ in
           enforce_regular_tabs = cfg.enforceRegularTabs;
           always_show_bufferline = cfg.alwaysShowBufferline;
           sort_by = cfg.sortBy;
+          offsets = cfg.offsets;
         };
         highlights = if builtins.isNull cfg.highlights then null else with cfg.highlights; {
           fill = fill;
