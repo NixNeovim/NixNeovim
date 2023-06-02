@@ -2,7 +2,6 @@
 let
   helpers = import ./helpers.nix { inherit pkgs lib config; };
   serverData = {
-    diagnostics = { };
     code_actions = { 
       eslint.packages = [ pkgs.nodePackages.eslint ];
       eslint_d.packages = [ pkgs.eslint_d ];
@@ -22,6 +21,32 @@ let
       spell.packages = [ ];
       tags.packages = [ ];
       # vsnip.packages = [ ];
+    };
+    diagnostics = {
+      actionlint.packages = [ pkgs.actionlint ];
+      alex.packages = [ pkgs.nodePackages.alex ];
+      ansiblelint.packages = [ pkgs.ansible-lint ];
+      # bslint.packages = [ ];
+      buf.packages = [ pkgs.buf ];
+      # buildifier.packages = [ ];
+      # cfn_lint.packages = [ ];
+      # checkmake.packages = [ ];
+      # checkstyle.packages = [ ];
+      # chktex.packages = [ ];
+      # clang_check.packages = [ ];
+      # clazy.packages = [ ];
+      # clj_kondo.packages = [ ];
+      # cmake_lint.packages = [ ];
+      # codespell.packages = [ ];
+      # commitlint.packages = [ ];
+      # cppcheck.packages = [ ];
+      # cpplint.packages = [ ];
+      # credo.packages = [ ];
+      # cspell.packages = [ ];
+      # cue_fmt.packages = [ ];
+      # curlylint.packages = [ ];
+      # deadnix.packages = [ ];
+      # .packages = [ ];
     };
     formatting = {
       alejandra = {
