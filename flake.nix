@@ -2,7 +2,14 @@
   description = "A neovim configuration system for NixOS";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    # nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    haumea = {
+      # url = "github:nix-community/haumea/v0.2.2";
+      url = "path:/home/joscha/main/programming/nix/haumea";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixpkgs.url = "github:nix-community/nixpkgs.lib";
+
 
     nmd = {
       url = "gitlab:rycee/nmd";
@@ -18,7 +25,7 @@
     home-manager.url = "github:nix-community/home-manager";
   };
 
-  outputs = { self, nixpkgs, nmd, nmt, nix-flake-tests, ... }@inputs:
+  outputs = { self, nixpkgs, nmd, nmt, nix-flake-tests, haumea, ... }@inputs:
     let
       system = "x86_64-linux";
 
@@ -107,9 +114,9 @@
       };
 
       nixosModules = {
-        default = import ./nixneovim.nix { homeManager = true; };
+        default = import ./nixneovim.nix { homeManager = true; haumea = self.libh; };
         homeManager = self.nixosModules.default;
-        homeManager-22-11 = import ./nixneovim.nix { homeManager = true; state = 2211; };
+        homeManager-22-11 = import ./nixneovim.nix { homeManager = true; state = 2211; haumea = self.libh; };
         nixos = import ./nixneovim.nix { homeManager = false; };
         nixos-22-11 = import ./nixneovim.nix { homeManager = false; state = 2211; };
       };
@@ -117,6 +124,15 @@
       overlays.default = inputs.nixneovimplugins.overlays.default;
 
       lib = import ./lib.nix;
+      libh = haumea.lib.load {
+        src = ./src;
+        transformer = with haumea.lib.transformers; [
+          (hoistAttrs "mkLuaPlugin" "helper.mkLuaPlugin")
+        ];
+        inputs = {
+          inherit (nixpkgs) lib;
+        };
+      };
 
       checks =
         let

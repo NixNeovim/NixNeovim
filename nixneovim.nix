@@ -1,10 +1,11 @@
-{ homeManager ? true, isDocsBuild ? false, state ? 9999 }: # function that returns a package
+{ homeManager ? true, isDocsBuild ? false, state ? 9999, haumea ? {} }: # function that returns a package
 { lib, config, pkgs, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim;
 
-  helpers = import ./helper { inherit pkgs lib config isDocsBuild; };
+  # helpers = import ./helper { inherit pkgs lib config isDocsBuild; };
+  helpers = haumea.helper;
 
   mappings = helpers.keymappings;
 
@@ -29,11 +30,12 @@ let
 
 in
 {
-  imports = [
-    ./plugins
-  ];
+  # imports = [
+    # ./src/plugins
+  # ];
+  imports = mapAttrsToList (k: v: v) haumea.plugins;
 
-  options = {
+  options = lib.trace haumea {
     programs.nixneovim = {
       enable = mkEnableOption "enable nixneovim";
 
@@ -169,9 +171,10 @@ in
 
       luaGlobals =
         let
+          f = haumea.helper.to_lua.object.toLuaObject;
           list = mapAttrsToList
             (option: value:
-              "vim.g.${option} = ${helpers.toLuaObject value}"
+              "vim.g.${option} = ${f value}"
             )
             cfg.globals;
         in concatStringsSep "\n" list;
@@ -180,7 +183,7 @@ in
         let
           list = mapAttrsToList
             (option: value:
-              "vim.o.${option} = ${helpers.toLuaObject value}"
+              "vim.o.${option} = ${c value}"
             )
             cfg.options;
         in concatStringsSep "\n" list;
