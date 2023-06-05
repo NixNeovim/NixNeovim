@@ -43,6 +43,22 @@ in
         description = "Configures neovim to be the default editor using the EDITOR environment variable.";
       };
 
+      viAlias = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Symlink <command>vi</command> to <command>nvim</command> binary.
+        '';
+      };
+
+      vimAlias = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Symlink <command>vim</command> to <command>nvim</command> binary.
+        '';
+      };
+
       package = mkOption {
         type = types.nullOr types.package;
         default = null;
@@ -251,6 +267,8 @@ in
           programs.neovim = {
             enable = true;
             # defaultEditor = cfg.defaultEditor;
+            viAlias = cfg.viAlias;
+            vimAlias = cfg.vimAlias;
             package = mkIf (cfg.package != null) cfg.package;
             extraPackages = cfg.extraPackages;
             extraConfig = cfg.extraConfigVim;
@@ -263,6 +281,8 @@ in
           environment.systemPackages = [ wrappedNeovim ];
           programs.neovim = {
             defaultEditor = cfg.defaultEditor;
+            viAlias = cfg.viAlias;
+            vimAlias = cfg.vimAlias;
             configure = configure;
           };
 
