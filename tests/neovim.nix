@@ -6,6 +6,8 @@
 
         programs.nixneovim = {
           enable = true;
+          viAlias = true;
+          vimAlias = true;
           extraConfigVim = ''
             map j gj
           '';
@@ -23,6 +25,12 @@
         };
 
         nmt.script = testHelper.moduleTest ''
+        
+          echo "Starting neovim via 'vi'"
+          HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) vi -u $config --headless -c 'qall' 2>&1
+
+          echo "Starting neovim via 'vim'"
+          HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) vim -u $config --headless -c 'qall' 2>&1
 
           assertFileContains "$nvimFolder/init.lua" "vim.cmd [[source"
           vimscript=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
