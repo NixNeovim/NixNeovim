@@ -18,24 +18,33 @@ let
         ''
           ${coqRequire}
           local __setup = ${coqCapabilities} {
-            on_attach = __on_attach,
+            on_attach = function(client, bufnr)
+              ${optionalString (cfg.onAttach != "") "__on_attach_base(client, bufnr)" }
+              ${optionalString (cfg.servers.${server}.onAttachExtra != "") "__on_attach_extra(client, bufnr)" }
+            end,
             ${cfg.servers.${server}.extraConfig}
           }
         '';
 
+        onAttach =
+          ''
+            local __on_attach_base = function(client, bufnr)
+              ${cfg.onAttach}
+            end
+          '';
+
+        onAttachExtra =
+          ''
+            local __on_attach_extra = function(client, bufnr)
+              ${cfg.servers.${server}.onAttachExtra}
+            end
+          '';
+
     in
     ''
       do -- lsp server config ${server}
-        local __on_attach_base = function(client, bufnr)
-          ${cfg.servers.onAttach}
-        end
-        local __on_attach_extra = function(client, bufnr)
-          ${cfg.servers.${server}.onAttachExtra}
-        end
-        local __on_attach = function(client, bufnr)
-	  __on_attach_base(client, bufnr)
-	  __on_attach_extra(client, bufnr)
-        end
+        ${optionalString (cfg.onAttach != "") onAttach}
+        ${optionalString (cfg.servers.${server}.onAttachExtra != "") onAttachExtra}
         ${setup}
         require('lspconfig')["${serverName}"].setup(__setup)
       end -- lsp server config ${server}

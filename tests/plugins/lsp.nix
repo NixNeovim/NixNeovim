@@ -10,12 +10,15 @@ in {
         programs.nixneovim.plugins = {
           "${name}" = {
             enable = true;
+            onAttach = "-- test comment";
             servers = {
-              rust-analyzer.enable = true;
+              rust-analyzer = {
+                enable = true;
+                onAttachExtra = "-- test comment extra";
+              };
               rnix-lsp.enable = true;
               clangd.enable = true;
               nil.enable = false; # FIX: throws weired error if activated
-
             };
             # extraLua.pre = ''
               # -- test lua pre comment
@@ -35,39 +38,47 @@ in {
                 function setup()
 
                   do -- lsp server config clangd
-                    local __on_attach = function(client, bufnr)
-
-                      end
+                    local __on_attach_base = function(client, bufnr)
+                      -- test comment
+                    end
 
                     local __setup =  {
-                      on_attach = __on_attach,
-
+                      on_attach = function(client, bufnr)
+                        __on_attach_base(client, bufnr)
+                      end,
                     }
 
                     require('lspconfig')["clangd"].setup(__setup)
                   end -- lsp server config clangd
 
                   do -- lsp server config rnix-lsp
-                    local __on_attach = function(client, bufnr)
-
+                    local __on_attach_base = function(client, bufnr)
+                      -- test comment
                     end
 
                     local __setup =  {
-                      on_attach = __on_attach,
-
+                      on_attach = function(client, bufnr)
+                        __on_attach_base(client, bufnr)
+                      end,
                     }
 
                     require('lspconfig')["rnix"].setup(__setup)
                   end -- lsp server config rnix-lsp
 
                   do -- lsp server config rust-analyzer
-                    local __on_attach = function(client, bufnr)
+                    local __on_attach_base = function(client, bufnr)
+                      -- test comment
+                    end
 
+                    local __on_attach_extra = function(client, bufnr)
+                      -- test comment extra
                     end
 
                     local __setup =  {
-                      on_attach = __on_attach,
-
+                      on_attach = function(client, bufnr)
+                        __on_attach_base(client, bufnr)
+                        __on_attach_extra(client, bufnr)
+                      end,
                     }
 
                     require('lspconfig')["rust_analyzer"].setup(__setup)
