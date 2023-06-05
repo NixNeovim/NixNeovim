@@ -6,7 +6,7 @@ let
     stringAsChars
     stringToCharacters
     toLower;
-  inherit (builtins) head split;
+  inherit (builtins) head;
 
   # takes camalCase string and converts it to snake_case
   camelToSnake = string:
@@ -15,8 +15,8 @@ let
       isChar  = x:
         elem x lowerCaseLetters || elem x upperCaseLetters;
 
-      upperCaseLetters = split "" "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      lowerCaseLetters = split "" "abcdefghijklmnopqrstuvwxyz";
+      upperCaseLetters = [ "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z" ];
+      lowerCaseLetters = [ "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z" ];
 
       isUpper = x: elem x upperCaseLetters; # check if x is uppercase
 
