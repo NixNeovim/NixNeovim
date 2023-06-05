@@ -131,6 +131,13 @@ let
       echo "print(\"works\")" > tmp.py
       start_vim tmp.py
 
+      cat << EOF > tmp.rs
+        fn main() {
+          println!("Hello, world!");
+        }
+      EOF
+      start_vim tmp.rs
+
       ${text}
       '';
   };
