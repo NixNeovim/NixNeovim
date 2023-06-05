@@ -90,7 +90,7 @@ let
     rust-analyzer = {
       languages = "Rust";
       serverName = "rust_analyzer";
-      packages = [ cargo ];
+      packages = [ cargo rust-analyzer ];
     };
     texlab = {
       languages = "latex";

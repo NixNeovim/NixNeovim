@@ -151,6 +151,10 @@ mkLuaPlugin {
     rust-tools-nvim
   ];
 
+  extraPackages = with pkgs; [
+    cargo
+  ];
+
   extraNixNeovimConfig = {
     plugins.lsp.enable = true;
   };
