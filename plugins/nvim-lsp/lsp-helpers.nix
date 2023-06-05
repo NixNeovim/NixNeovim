@@ -26,8 +26,15 @@ let
     in
     ''
       do -- lsp server config ${server}
-        local __on_attach = function(client, bufnr)
+        local __on_attach_base = function(client, bufnr)
+          ${cfg.servers.onAttach}
+        end
+        local __on_attach_extra = function(client, bufnr)
           ${cfg.servers.${server}.onAttachExtra}
+        end
+        local __on_attach = function(client, bufnr)
+	  __on_attach_base(client, bufnr)
+	  __on_attach_extra(client, bufnr)
         end
         ${setup}
         require('lspconfig')["${serverName}"].setup(__setup)
