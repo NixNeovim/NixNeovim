@@ -12,6 +12,7 @@ plugin="$3"
 [ -z "$plugin" ] && exit 1
 
 plugin_path="plugins/utils/$name.nix"
+plugin_test_path="tests/plugins/$name.nix"
 
 echo Copy template
 cp ./plugin_template_minimal.nix "$plugin_path"
@@ -30,5 +31,8 @@ w
 q
 EOF
 
+echo Copy test template
+cp ./test_template.nix.nix "$plugin_path"
 
-
+echo Add to git
+git add "$plugin_path" "$plugin_test_path"
