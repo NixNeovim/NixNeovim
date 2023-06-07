@@ -32,7 +32,7 @@ q
 EOF
 
 echo Copy test template
-cp ./test_template.nix.nix "$plugin_path"
+cp ./test_template.nix "$plugin_test_path"
 
 echo Add to git
 git add "$plugin_path" "$plugin_test_path"
