@@ -71,11 +71,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1685888168,
-        "narHash": "sha256-lBgkJxuu4Go5zsnUJs8m9NNWibuGpxUZ/Hpvu66XjtM=",
+        "lastModified": 1686145424,
+        "narHash": "sha256-FBLe6o3Or8uFC0uLy1iHJev9fzyEhUi6vruf0shpyDQ=",
         "owner": "nixneovim",
         "repo": "nixneovimplugins",
-        "rev": "5db253c9556c035d8f02efb2d56c7ce91a948a6d",
+        "rev": "ce14a68b327d8e59e3dbbf48f9507ccc9ddc4c6f",
         "type": "github"
       },
       "original": {
