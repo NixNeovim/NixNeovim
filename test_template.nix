@@ -2,6 +2,7 @@
 
 let
   name = "NAME";
+  nvimTestCommand = ""; # Test command to check if plugin is loaded
 in {
   "${name}-test" = { config, lib, pkgs, ... }:
     {
@@ -38,6 +39,8 @@ in {
               ${testHelper.config.end}
             ''
           }
+
+          start_vim -c "${nvimTestCommand}"
         '';
       };
     };
