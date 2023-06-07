@@ -9,7 +9,6 @@ let
     intOption
     boolOption
     listOption;
-  cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = {
     hover = {
@@ -116,11 +115,9 @@ let
     };
   };
 
-  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 in
 with helpers;
 mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [ lspsaga-nvim ];
-  defaultRequire = true;
 }
