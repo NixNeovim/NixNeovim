@@ -66,4 +66,8 @@ mkLuaPlugin {
     bamboo-nvim
   ];
   isColorscheme = true;
+  extraConfigLua = ''
+    vim.cmd[[ colorscheme bamboo ]]
+  '';
+
 }
