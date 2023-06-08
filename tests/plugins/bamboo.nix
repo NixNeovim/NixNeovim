@@ -52,7 +52,6 @@ in {
                     },
                     ["transparent"] = false
                   }
-
                   vim.cmd[[ colorscheme bamboo ]]
                   -- test lua post comment
                 end
