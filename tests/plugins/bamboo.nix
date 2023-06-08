@@ -52,6 +52,8 @@ in {
                     },
                     ["transparent"] = false
                   }
+
+                  vim.cmd[[ colorscheme bamboo ]]
                   -- test lua post comment
                 end
                 success, output = pcall(setup) -- execute 'setup()' and catch any errors
