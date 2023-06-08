@@ -97,6 +97,15 @@ A wiki for all options will be available in the near future.
 }
 ```
 
+### Reduce size of `init.lua`
+
+By default, NixNeovim prints all config to `init.lua` in order to have a more stable config.
+You can turn this off by setting `nixneovim.usePluginDefaults`.
+This way, NixNeovim will only print the configs you have changed.
+
+Setting `nixneovim.usePluginDefaults` to `true` reduces the size of your `init.lua` but can lead to unexpected changes of your setup,
+when a plugin author decides to change their defaults.
+
 ## Key mappings
 
 You can define your key mappings using the `mappings` option.

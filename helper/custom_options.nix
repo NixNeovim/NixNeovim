@@ -1,64 +1,88 @@
-{ mkOption, types }:
+{ mkOption, types, config }:
 
-{
-  boolOption = default: description: mkOption {
-    type = types.bool;
-    description = description;
-    default = default;
-  };
+let
+  usePlugDef = default:
+    if config.programs.nixneovim.usePluginDefaults then
+      null
+    else
+      default;
 
-  intOption = default: description: mkOption {
-    type = types.int;
-    description = description;
-    default = default;
+  myTypes = with types; {
+    bool = nullOr bool;
+    int = nullOr int;
+    str = nullOr str;
+    list = nullOr (listOf anything);
+    attrs = nullOr (attrsOf anything);
+    enum = enums: nullOr (enum enums);
   };
+in with myTypes; {
+  boolOption = default: description:
+    mkOption {
+      type = bool;
+      default = usePlugDef default;
+      inherit description;
+    };
 
-  strOption = default: description: mkOption {
-    type = types.str;
-    description = description;
-    default = default;
-  };
+  intOption = default: description:
+    mkOption {
+      type = int;
+      default = usePlugDef default;
+      inherit description;
+    };
 
-  attrsOption = default: description: mkOption {
-    type = types.attrsOf types.anything;
-    description = description;
-    default = default;
-  };
+  strOption = default: description:
+    mkOption {
+      type = str;
+      default = usePlugDef default;
+      inherit description;
+    };
 
-  listOption = default: description: mkOption {
-    type = types.listOf types.anything;
-    description = description;
-    default = default;
-  };
+  attrsOption = default: description:
+    mkOption {
+      type = attrs;
+      default = usePlugDef default;
+      inherit description;
+    };
+
+  listOption = default: description:
+    mkOption {
+      type = list;
+      default = usePlugDef default;
+      inherit description;
+    };
 
   enumOption = enums: default: description:
     mkOption {
-      type = types.enum enums;
+      type = enum enums;
+      default = usePlugDef default;
       inherit description;
-      inherit default;
     };
 
   boolNullOption = description:
     mkOption {
       type = types.nullOr types.bool;
-      inherit description;
       default = null;
+      inherit description;
     };
 
-  intNullOption = description: mkOption {
-    type = types.nullOr types.int;
-    description = description;
-    default = null;
-  };
+  intNullOption = description:
+    mkOption {
+      type = types.nullOr types.int;
+      default = null;
+      inherit description;
+    };
 
-  strNullOption = description: mkOption {
-    type = types.nullOr types.str;
-    description = description;
-    default = null;
-  };
+  strNullOption = description:
+    mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      inherit description;
+    };
 
-  typeOption = type: default: description: mkOption {
-    inherit type default description;
-  };
+  typeOption = type: default: description:
+    mkOption {
+      inherit type description;
+      default = usePlugDef default;
+    };
 
 }

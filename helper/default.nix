@@ -19,10 +19,10 @@ let
       (if val == false then 0 else 1)
     else val;
 
-  customOptions = import ./custom_options.nix { inherit mkOption types; };
+  customOptions = import ./custom_options.nix { inherit mkOption types config; };
 
   toLua = import ./to_lua { inherit lib customOptions config; };
-  
+
 in {
 
   # module to handle key mappings

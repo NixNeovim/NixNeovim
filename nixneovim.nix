@@ -71,6 +71,21 @@ in
         description = "List of vim plugins to install.";
       };
 
+      usePluginDefaults = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          When false, NixNeovim will output the lua config with all available options.
+          This way, when a default in a plugin changes, your config will stay the same.
+
+          When true, NixNeovim will output the lua config only with options you have set in you config.
+          This way, all other values will have the default set by the plugin author.
+          When the defaults change, your setup will change.
+
+          Setting this to true, will significantly reduce the number of lines in your init.lua, depending on the number of plugins enabled.
+        '';
+      };
+
       colorscheme = mkOption {
         type = types.nullOr types.str;
         description = "The name of the colorscheme";
