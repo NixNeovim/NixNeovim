@@ -43,7 +43,7 @@ let
 
   # These module options are addded to every module
   defaultModuleOptions = description: {
-    enable = customOptions.boolOption false description;
+    enable = lib.mkEnableOption description;
     extraConfig = mkOption {
       # this is added to lua in 'convertModuleOptions'
       type = types.attrsOf types.anything;
