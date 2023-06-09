@@ -27,8 +27,8 @@ let
     };
   };
 
-in
-{
+in {
+
   imports = [
     ./plugins
   ];
@@ -274,11 +274,11 @@ in
       };
 
 
-    in
-    mkIf cfg.enable (
+    in mkIf cfg.enable (
       if isDocsBuild then { }
       else if homeManager then
         {
+
           programs.neovim = {
             enable = true;
             # defaultEditor = cfg.defaultEditor;
@@ -303,5 +303,5 @@ in
 
           environment.etc."xdg/nvim/sysinit.vim".text = neovimConfig.neovimRcContent;
         }
-    );
+    ) // { _module.args.state = state; };
 }

@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, state, ... }:
 
 with builtins;
 
@@ -16,7 +16,7 @@ let
 in
 {
   _module.args = {
-    helpers = helpers;
+    inherit helpers state;
   };
 
   imports =

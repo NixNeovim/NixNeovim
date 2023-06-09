@@ -19,6 +19,8 @@ in {
               rnix-lsp.enable = true;
               clangd.enable = true;
               nil.enable = false; # FIX: throws weired error if activated
+              terraform-ls.enable = true;
+              terraform-lsp.enable = true;
             };
             # extraLua.pre = ''
               # -- test lua pre comment

@@ -1,4 +1,4 @@
-{ lib, config, pkgs, ... }:
+{ lib, config, pkgs, state }:
 
 with lib;
 with types;
@@ -75,6 +75,16 @@ let
       languages = "text files";
       packages = [ ltex-ls ];
     };
+    lua-language-server = {
+      languages = "Lua";
+      packages =
+        if state <= 2211 then # FIX: stack overflow error
+          lib.warn
+            "The lua-language-server package requires Nixpkgs 23.05 or newer. It will not be added automatically."
+            []
+        else
+          [ pkgs.lua-language-server ];
+    };
     nil = {
       languages = "Nix";
       serverName = "nil_ls";
@@ -91,6 +101,12 @@ let
       languages = "Rust";
       serverName = "rust_analyzer";
       packages = [ cargo rust-analyzer ];
+    };
+    terraform-ls = {
+      languages = "Terraform";
+    };
+    terraform-lsp = {
+      languages = "Terraform";
     };
     texlab = {
       languages = "latex";
