@@ -33,7 +33,9 @@
     },
     "home-manager": {
       "inputs": {
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": [
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1686168915,
@@ -68,7 +70,9 @@
       "inputs": {
         "flake-compat": "flake-compat",
         "flake-utils": "flake-utils",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": [
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1686233872,
@@ -169,7 +173,7 @@
         "home-manager": "home-manager",
         "nix-flake-tests": "nix-flake-tests",
         "nixneovimplugins": "nixneovimplugins",
-        "nixpkgs": "nixpkgs_3",
+        "nixpkgs": "nixpkgs",
         "nmd": "nmd",
         "nmt": "nmt"
       }

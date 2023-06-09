@@ -14,8 +14,12 @@
     };
 
     nixneovimplugins.url = "github:nixneovim/nixneovimplugins";
-    nix-flake-tests.url = "github:antifuchs/nix-flake-tests";
+    nixneovimplugins.inputs.nixpkgs.follows = "nixpkgs";
+
     home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    nix-flake-tests.url = "github:antifuchs/nix-flake-tests";
   };
 
   outputs = { self, nixpkgs, nmd, nmt, nix-flake-tests, ... }@inputs:
