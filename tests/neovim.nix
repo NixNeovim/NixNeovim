@@ -22,6 +22,23 @@
               "<F2>" = "':LspStop<cr>'";
             };
           };
+          augroups = {
+            highlightOnYank = {
+              name = "highlightOnYank";
+              autocmds = [{
+                event = "TextYankPost";
+                pattern = "*";
+                luaCallback = ''
+                  vim.highlight.on_yank {
+                    higroup = (
+                      vim.fn['hlexists'] 'HighlightedyankRegion' > 0 and 'HighlightedyankRegion' or 'IncSearch'
+                    ),
+                    timeout = 200,
+                  }
+                '';
+              }];
+            };
+          };
         };
 
         nmt.script = testHelper.moduleTest ''
@@ -54,6 +71,35 @@ vim.cmd [[source <nix-store-hash>-nvim-init-home-manager.vim]]
 
 do vim.keymap.set("", "<F2>", ':LspStop<cr>', { ["noremap"] = true }) end
 do vim.keymap.set("", "ßß", '@', { ["noremap"] = true }) end
+
+--------------------------------------------------
+--                 Augroups                     --
+--------------------------------------------------
+
+do
+  local group = vim.api.nvim_create_augroup("highlightOnYank", { ["clear"] = true })
+  do
+  local events = {"TextYankPost"}
+  local opts = {
+  ["callback"] = function(opts)
+  vim.highlight.on_yank {
+  higroup = (
+    vim.fn['hlexists'] 'HighlightedyankRegion' > 0 and 'HighlightedyankRegion' or 'IncSearch'
+  ),
+  timeout = 200,
+}
+
+end
+,
+  ["group"] = group,
+  ["nested"] = false,
+  ["once"] = false,
+  ["pattern"] = "*"
+}
+  vim.api.nvim_create_autocmd(events, opts)
+end
+
+end
 
 --------------------------------------------------
 --               Extra Config (Lua)             --
@@ -117,6 +163,10 @@ end
 
 --------------------------------------------------
 --                 Keymappings                  --
+--------------------------------------------------
+
+--------------------------------------------------
+--                 Augroups                     --
 --------------------------------------------------
 
 --------------------------------------------------
