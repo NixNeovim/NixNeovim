@@ -36,6 +36,7 @@ in
     ./colorschemes/tokyonight.nix
     ./colorschemes/gruvbox-baby.nix
     ./colorschemes/gruvbox-material.nix
+    ./colorschemes/kanagawa.nix
 
     ./debugging/nvim-dap
     ./debugging/nvim-dap-ui.nix
