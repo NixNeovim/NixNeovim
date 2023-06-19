@@ -92,10 +92,6 @@ let
       serverName = "rust_analyzer";
       packages = [ cargo rust-analyzer ];
     };
-    svelte-language-server = {
-      languages = "svelte";
-      packages = [nodePackages.svelte-language-server];
-    };
     texlab = {
       languages = "latex";
     };
