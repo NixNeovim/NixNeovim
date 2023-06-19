@@ -95,6 +95,10 @@ let
     texlab = {
       languages = "latex";
     };
+    typescript-language-server = {
+      languages = "typescript";
+      packages = [ nodePackages.typescript-language-server ];
+    };
     vuels = {
       languages = "Vue";
       packages = [ nodePackages.vue-language-server ];
