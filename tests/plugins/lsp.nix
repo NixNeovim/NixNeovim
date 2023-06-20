@@ -94,7 +94,7 @@ in {
               ${testHelper.config.end}
             ''
           }
-          for lang in rust c nix
+          for lang in rust c nix svelte
           do
             echo "Test lsp for filetype $lang"
             start_vim -c "set filetype=$lang" -c 'LspInfo' -c 'silent w! tmp.lsp.out'
