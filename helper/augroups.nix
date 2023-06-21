@@ -1,19 +1,141 @@
-{ lib
-, toLuaObject
-}:
-let
+{
+  lib,
+  toLuaObject,
+}: let
   inherit (import ../lib.nix) rawLua;
 
   inherit (lib) mkOption;
   inherit (lib.strings) concatMapStringsSep;
   inherit (lib.attrsets) mapAttrsToList;
-  inherit (lib.types) either bool str listOf nullOr submodule lines int;
+  inherit (lib.types) either bool str listOf nullOr submodule lines int enum;
+
+  events = enum [
+    "BufAdd"
+    "BufDelete"
+    "BufEnter"
+    "BufFilePost"
+    "BufFilePre"
+    "BufHidden"
+    "BufLeave"
+    "BufModifiedSet"
+    "BufNew"
+    "BufNewFile"
+    "BufReadPost"
+    "BufReadCmd"
+    "BufReadPre"
+    "BufUnload"
+    "BufWinEnter"
+    "BufWinLeave"
+    "BufWipeout"
+    "BufWritePre"
+    "BufWriteCmd"
+    "BufWritePost"
+    "ChanInfo"
+    "ChanOpen"
+    "CmdUndefined"
+    "CmdlineChanged"
+    "CmdlineEnter"
+    "CmdlineLeave"
+    "CmdwinEnter"
+    "CmdwinLeave"
+    "ColorScheme"
+    "ColorSchemePre"
+    "CompleteChanged"
+    "CompleteDonePre"
+    "CompleteDone"
+    "CursorHold"
+    "CursorHold"
+    "CursorHoldI"
+    "CursorMoved"
+    "CursorMovedI"
+    "DiffUpdated"
+    "DirChanged"
+    "DirChangedPre"
+    "ExitPre"
+    "FileAppendCmd"
+    "FileAppendPost"
+    "FileAppendPre"
+    "FileChangedRO"
+    "FileChangedShell"
+    "FileChangedShellPost"
+    "FileReadCmd"
+    "FileReadPost"
+    "FileReadPre"
+    "FileType"
+    "FileWriteCmd"
+    "FileWritePost"
+    "FileWritePre"
+    "FilterReadPost"
+    "FilterReadPre"
+    "FilterWritePost"
+    "FilterWritePre"
+    "FocusGained"
+    "FocusLost"
+    "FuncUndefined"
+    "UIEnter"
+    "UILeave"
+    "InsertChange"
+    "InsertCharPre"
+    "InsertEnter"
+    "InsertLeavePre"
+    "InsertLeave"
+    "MenuPopup"
+    "ModeChanged"
+    "OptionSet"
+    "QuickFixCmdPre"
+    "QuickFixCmdPost"
+    "QuitPre"
+    "RemoteReply"
+    "SearchWrapped"
+    "RecordingEnter"
+    "RecordingLeave"
+    "SessionLoadPost"
+    "ShellCmdPost"
+    "Signal"
+    "ShellFilterPost"
+    "SourcePre"
+    "SourcePost"
+    "SourceCmd"
+    "SpellFileMissing"
+    "StdinReadPost"
+    "StdinReadPre"
+    "SwapExists"
+    "Syntax"
+    "TabEnter"
+    "TabLeave"
+    "TabNew"
+    "TabNewEntered"
+    "TabClosed"
+    "TermOpen"
+    "TermEnter"
+    "TermLeave"
+    "TermClose"
+    "TermResponse"
+    "TextChanged"
+    "TextChangedI"
+    "TextChangedP"
+    "TextChangedT"
+    "TextYankPost"
+    "User"
+    "UserGettingBored"
+    "VimEnter"
+    "VimLeave"
+    "VimLeavePre"
+    "VimResized"
+    "VimResume"
+    "VimSuspend"
+    "WinClosed"
+    "WinEnter"
+    "WinLeave"
+    "WinNew"
+    "WinScrolled"
+    "WinResized"
+  ];
 
   autocmdOpts = {
     options = {
       event = mkOption {
-        # TODO: make enum of nvim events
-        type = either str (listOf str);
+        type = either events (listOf events);
         description = ''
           Event(s) that will trigger the handler (callback or command).
         '';
@@ -108,7 +230,7 @@ let
 
   quote = string: "\"${string}\"";
 
-  toLuaStringList = strings:"{${concatMapStringsSep "," quote strings}}";
+  toLuaStringList = strings: "{${concatMapStringsSep "," quote strings}}";
 
   genAutocmd = group: { event
                , pattern
