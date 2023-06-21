@@ -232,30 +232,38 @@
 
   toLuaStringList = strings: "{${concatMapStringsSep "," quote strings}}";
 
-  genAutocmd = group: { event
-               , pattern
-               , buffer
-               , desc
-               , luaCallback
-               , vimCallback
-               , command
-               , once
-               , nested
-               }: let
-               # TODO: Assert that only one of luaCallback vimCallback or command is set
-               events = if builtins.isList event then toLuaStringList event else "{${quote event}}";
-               opts = {
-                 inherit group pattern buffer desc command once nested;
-                 callback = if luaCallback == null then
-                   vimCallback
-                 else
-                   rawLua ''
-                   function(opts)
-                     ${luaCallback}
-                   end
-                   '';
-               };
-             in ''
+  # Generate a single autocmd:
+  #
+  # do vim.api.nvim_create_autocmd(${events}, ${opts}) end
+  genAutocmd = group: {
+    event,
+    pattern,
+    buffer,
+    desc,
+    luaCallback,
+    vimCallback,
+    command,
+    once,
+    nested,
+  }: let
+    # TODO: Assert that only one of luaCallback vimCallback or command is set
+    events =
+      if builtins.isList event
+      then toLuaStringList event
+      else "{${quote event}}";
+    opts = {
+      inherit group pattern buffer desc command once nested;
+      callback =
+        if luaCallback == null
+        then vimCallback
+        else
+          rawLua ''
+            function(opts)
+              ${luaCallback}
+            end
+          '';
+    };
+  in ''
     do
       local events = ${events}
       local opts = ${toLuaObject opts}
@@ -263,7 +271,20 @@
     end
   '';
 
-  genAugroup = {name, autocmds, clear}: let
+  # Generate a single augroup
+  #
+  # (all autocmds inside it are bound to the group)
+  # do
+  #   local group = vim.api.nvim_create_augroup(${name}, ${opts})
+  #   vim.api.nvim_create_autocmd(events, opts + group)
+  #   ...
+  #   vim.api.nvim_create_autocmd(events, opts + group)
+  # end
+  genAugroup = {
+    name,
+    autocmds,
+    clear,
+  }: let
     opts = toLuaObject {inherit clear;};
     group = rawLua "group";
     autocmds' = concatMapStringsSep "\n" (genAutocmd group) autocmds;
@@ -274,12 +295,12 @@
     end
   '';
 
-  genAugroups = augroups:
-    let
-      setName = name: opts: {inherit name;} // opts;
-      augroups' = mapAttrsToList setName augroups;
-    in
-      concatMapStringsSep "\n" genAugroup augroups';
+  # Generates all augroups
+  genAugroups = augroups: let
+    setName = name: opts: {inherit name;} // opts;
+    augroups' = mapAttrsToList setName augroups;
+  in
+    concatMapStringsSep "\n" genAugroup augroups';
 in {
   augroupOptions = submodule {
     options = {
