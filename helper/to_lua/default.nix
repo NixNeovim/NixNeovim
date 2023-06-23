@@ -5,6 +5,8 @@ let
     elem
     stringAsChars
     stringToCharacters
+    lowerChars
+    upperChars
     toLower;
   inherit (builtins) head;
 
@@ -13,12 +15,9 @@ let
     let
 
       isChar  = x:
-        elem x lowerCaseLetters || elem x upperCaseLetters;
+        elem x lowerChars || elem x upperChars;
 
-      upperCaseLetters = [ "A" "B" "C" "D" "E" "F" "G" "H" "I" "J" "K" "L" "M" "N" "O" "P" "Q" "R" "S" "T" "U" "V" "W" "X" "Y" "Z" ];
-      lowerCaseLetters = [ "a" "b" "c" "d" "e" "f" "g" "h" "i" "j" "k" "l" "m" "n" "o" "p" "q" "r" "s" "t" "u" "v" "w" "x" "y" "z" ];
-
-      isUpper = x: elem x upperCaseLetters; # check if x is uppercase
+      isUpper = x: elem x upperChars; # check if x is uppercase
 
       # exchange any uppercase x letter by '_x', leave lower case letters
       exchangeIfUpper = (x:
