@@ -80,11 +80,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1687443493,
-        "narHash": "sha256-15Q0QR147U9qdI7K8IRm/DQhJAR/LmSLqGlju9JlmVY=",
+        "lastModified": 1687444000,
+        "narHash": "sha256-jZ3q5wjzPJfKoeFaxvSgmh5qXQTxQxXRtcIoGo3DfOM=",
         "owner": "nixneovim",
         "repo": "nixneovimplugins",
-        "rev": "29f03985ddb214b3af9f1b44cbfa8857a8b4cec0",
+        "rev": "8ce62d7f3de0355b32d8666232532ac4e0f0712f",
         "type": "github"
       },
       "original": {
