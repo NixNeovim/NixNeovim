@@ -1,19 +1,16 @@
 {
   lib,
   toLuaObject,
+  customOptions,
 }: let
   inherit (import ../lib.nix) rawLua;
 
   inherit (lib) mkOption;
   inherit (lib.strings) concatMapStringsSep;
   inherit (lib.attrsets) mapAttrsToList;
-  inherit (lib.types) either bool str listOf nullOr submodule lines int enum;
+  inherit (lib.types) either str listOf nullOr submodule lines int enum;
 
-  # inherit (import ./custom_options.nix) boolOption;
-  boolOption = default: description: mkOption {
-    inherit default description;
-    type = bool;
-  };
+  inherit (customOptions) boolOption;
 
   events = enum [
     "BufAdd"

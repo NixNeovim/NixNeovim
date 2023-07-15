@@ -32,7 +32,7 @@ in {
   };
 
   # module to handle augroups
-  augroups = import ./augroups.nix {inherit lib; inherit (toLua) toLuaObject;};
+  augroups = import ./augroups.nix {inherit lib customOptions; inherit (toLua) toLuaObject;};
 
   inherit (toLua)
     toLuaObject
