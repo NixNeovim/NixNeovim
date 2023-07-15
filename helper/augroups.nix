@@ -9,6 +9,12 @@
   inherit (lib.attrsets) mapAttrsToList;
   inherit (lib.types) either bool str listOf nullOr submodule lines int enum;
 
+  # inherit (import ./custom_options.nix) boolOption;
+  boolOption = default: description: mkOption {
+    inherit default description;
+    type = bool;
+  };
+
   events = enum [
     "BufAdd"
     "BufDelete"
@@ -132,7 +138,7 @@
     "WinResized"
   ];
 
-  autocmdOpts = {
+  autocmdOpts = submodule {
     options = {
       event = mkOption {
         type = either events (listOf events);
@@ -207,24 +213,10 @@
       command = mkOption {
         default = null;
         type = nullOr str;
-        description = ''
-          Vim command to execute on event. Cannot be used with {lua,vim}Callback
-        '';
+        description = "Vim command to execute on event. Cannot be used with {lua,vim}Callback";
       };
-      once = mkOption {
-        default = false;
-        type = bool;
-        description = ''
-          Run the autocommand only once |autocmd-once|
-        '';
-      };
-      nested = mkOption {
-        default = false;
-        type = bool;
-        description = ''
-          Run nested autocommands |autocmd-nested|.
-        '';
-      };
+      once = boolOption false "Run the autocommand only once";
+      nested = boolOption false "Run nested autocommands";
     };
   };
 
@@ -306,25 +298,17 @@ in {
     options = {
       name = mkOption {
         type = str;
-        description = ''
-          The name of the augroup. If undefined, the name of the attribute set will be used.
-        '';
+        description = "The name of the augroup. If undefined, the name of the attribute set will be used.";
       };
       autocmds = mkOption {
-        type = listOf (submodule autocmdOpts);
+        type = listOf autocmdOpts;
         description = ''
           The autocmds that are part of this augroup.
 
           See :help nvim_create_autocmd()
         '';
       };
-      clear = mkOption {
-        default = true;
-        type = bool;
-        description = ''
-          Clear existing commands if the group already exists.
-        '';
-      };
+      clear = boolOption true "Clear existing commands if the group already exists.";
     };
   };
 
