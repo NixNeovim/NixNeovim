@@ -234,31 +234,35 @@
     command,
     once,
     nested,
-  }: let
-    # TODO: Assert that only one of luaCallback vimCallback or command is set
-    events =
-      if builtins.isList event
-      then toLuaStringList event
-      else "{${quote event}}";
-    opts = {
-      inherit group pattern buffer desc command once nested;
-      callback =
-        if luaCallback == null
-        then vimCallback
-        else
-          rawLua ''
-            function(opts)
-              ${luaCallback}
-            end
-          '';
-    };
-  in ''
-    do
-      local events = ${events}
-      local opts = ${toLuaObject opts}
-      vim.api.nvim_create_autocmd(events, opts)
-    end
-  '';
+  }:
+    # Only one of `luaCallback`, `vimCallback` or `command` is set
+    assert (luaCallback != null) -> ((vimCallback == null) && (command == null));
+    assert (vimCallback != null) -> ((luaCallback == null) && (command == null));
+    assert (command != null) -> ((luaCallback == null) && (vimCallback == null));
+    let
+      events =
+        if builtins.isList event
+        then toLuaStringList event
+        else "{${quote event}}";
+      opts = {
+        inherit group pattern buffer desc command once nested;
+        callback =
+          if luaCallback == null
+          then vimCallback
+          else
+            rawLua ''
+              function(opts)
+                ${luaCallback}
+              end
+            '';
+      };
+    in ''
+      do
+        local events = ${events}
+        local opts = ${toLuaObject opts}
+        vim.api.nvim_create_autocmd(events, opts)
+      end
+    '';
 
   # Generate a single augroup
   #
