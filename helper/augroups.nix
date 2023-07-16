@@ -135,7 +135,7 @@
     "WinResized"
   ];
 
-  autocmdOpts = submodule {
+  autocmdOpts = {
     options = {
       event = mkOption {
         type = either events (listOf events);
@@ -235,11 +235,10 @@
     once,
     nested,
   }:
-    # Only one of `luaCallback`, `vimCallback` or `command` is set
+  # Only one of `luaCallback`, `vimCallback` or `command` is set
     assert (luaCallback != null) -> ((vimCallback == null) && (command == null));
     assert (vimCallback != null) -> ((luaCallback == null) && (command == null));
-    assert (command != null) -> ((luaCallback == null) && (vimCallback == null));
-    let
+    assert (command != null) -> ((luaCallback == null) && (vimCallback == null)); let
       events =
         if builtins.isList event
         then toLuaStringList event
@@ -290,19 +289,18 @@
 
   # Generates all augroups
   genAugroups = augroups: let
-    setName = name: opts: {inherit name;} // opts;
-    augroups' = mapAttrsToList setName augroups;
+    augroups' = mapAttrsToList (_: opts: opts) augroups;
   in
     concatMapStringsSep "\n" genAugroup augroups';
 in {
-  augroupOptions = submodule {
+  augroupOptions = {name, ...}: {
     options = {
       name = mkOption {
         type = str;
         description = "The name of the augroup. If undefined, the name of the attribute set will be used.";
       };
       autocmds = mkOption {
-        type = listOf autocmdOpts;
+        type = listOf (submodule autocmdOpts);
         description = ''
           The autocmds that are part of this augroup.
 
@@ -311,6 +309,7 @@ in {
       };
       clear = boolOption true "Clear existing commands if the group already exists.";
     };
+    config = lib.mkMerge [{inherit name;}];
   };
 
   luaString = genAugroups;

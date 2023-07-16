@@ -183,7 +183,7 @@ in
 
       augroups = mkOption {
         default = { };
-        type = types.attrsOf augroups.augroupOptions;
+        type = types.attrsOf (types.submodule augroups.augroupOptions);
         description = ''
           Custom autocmd groups
         '';

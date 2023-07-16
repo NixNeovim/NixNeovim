@@ -24,7 +24,6 @@
           };
           augroups = {
             highlightOnYank = {
-              name = "highlightOnYank";
               autocmds = [{
                 event = "TextYankPost";
                 pattern = "*";
