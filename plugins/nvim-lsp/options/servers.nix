@@ -75,6 +75,10 @@ let
       languages = "text files";
       packages = [ ltex-ls ];
     };
+    lua-language-server = {
+      languages = "Lua";
+      packages = [ pkgs.lua-language-server ];
+    };
     nil = {
       languages = "Nix";
       serverName = "nil_ls";
@@ -91,6 +95,10 @@ let
       languages = "Rust";
       serverName = "rust_analyzer";
       packages = [ cargo rust-analyzer ];
+    };
+    terraform-ls = {
+      languages = "HCL";
+      serverName = "terraformls";
     };
     texlab = {
       languages = "latex";
