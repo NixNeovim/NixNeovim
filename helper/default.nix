@@ -31,6 +31,9 @@ in {
     inherit (toLua) toLuaObject;
   };
 
+  # module to handle augroups
+  augroups = import ./augroups.nix {inherit lib customOptions; inherit (toLua) toLuaObject;};
+
   inherit (toLua)
     toLuaObject
     toLuaObject'

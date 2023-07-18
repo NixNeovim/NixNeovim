@@ -169,6 +169,35 @@ When specifying the mapping with an attribute set you can set the following opti
 | noremap   | true    | Use the 'noremap' variant of the mapping |
 | action    |         | Action to execute                        |
 
+## Augroups
+
+You can define augroups with the `augroups` option.
+
+```nix
+{
+  programs.nixneovim = {
+    augroups = {
+      highlightOnYank = {
+        autocmds = [{
+          event = "TextYankPost";
+          pattern = "*";
+          # Or use `vimCallback` with a vimscript function name
+          # Or use `command` if you want to run a normal vimscript command
+          luaCallback = ''
+            vim.highlight.on_yank {
+              higroup = (
+                vim.fn['hlexists'] 'HighlightedyankRegion' > 0 and 'HighlightedyankRegion' or 'IncSearch'
+              ),
+              timeout = 200,
+            }
+          '';
+        }];
+      };
+    };
+  };
+}
+```
+
 ## Roadmap
 
 - [ ] Further cleanup code

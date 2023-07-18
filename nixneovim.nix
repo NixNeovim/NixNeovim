@@ -8,6 +8,8 @@ let
 
   mappings = helpers.keymappings;
 
+  inherit (helpers) augroups;
+
   pluginWithConfigType = types.submodule {
     options = {
       config = mkOption {
@@ -178,6 +180,30 @@ in
           };
         '';
       };
+
+      augroups = mkOption {
+        default = { };
+        type = types.attrsOf (types.submodule augroups.augroupOptions);
+        description = ''
+          Custom autocmd groups
+        '';
+        example = ''
+          augroups.highlightOnYank = {
+            autocmds = [{
+              event = "TextYankPost";
+              pattern = "*";
+              luaCallback = ''\''
+                vim.highlight.on_yank {
+                  higroup = (
+                    vim.fn['hlexists'] 'HighlightedyankRegion' > 0 and 'HighlightedyankRegion' or 'IncSearch'
+                  ),
+                  timeout = 200,
+                }
+              ''\'';
+            }];
+          };
+        '';
+      };
     };
   };
 
@@ -236,6 +262,12 @@ in
         --------------------------------------------------
 
         ${mappings.luaString cfg.mappings}
+
+        --------------------------------------------------
+        --                 Augroups                     --
+        --------------------------------------------------
+
+        ${augroups.luaString cfg.augroups}
 
         --------------------------------------------------
         --               Extra Config (Lua)             --
