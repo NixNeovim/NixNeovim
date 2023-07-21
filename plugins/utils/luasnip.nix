@@ -26,7 +26,7 @@ in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
-    LuaSnip
+    luasnip
   ];
   extraPackages = with pkgs; [
     # add dependencies here
