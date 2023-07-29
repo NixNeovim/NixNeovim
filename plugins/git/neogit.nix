@@ -222,6 +222,10 @@ in
           plenary-nvim
         ] ++ optional cfg.integrations.diffview diffview-nvim;
 
+        extraPackages = with pkgs; [
+          git
+        ];
+
         extraConfigLua = ''
           require('neogit').setup(${setupOptions})
         '';
