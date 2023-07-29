@@ -96,12 +96,31 @@ let
       serverName = "rust_analyzer";
       packages = [ cargo rust-analyzer ];
     };
+    statix = {
+      languages = "Nix";
+      packages = [ statix ];
+    };
+    ruff-lsp = {
+      languages = "Python";
+      serverName = "ruff_lsp";
+      packages = optional (builtins.hasAttr "ruff-lsp" pkgs) [ ruff-lsp ] # on unstable
+      ++ optional (builtins.hasAttr "ruff-lsp" python310Packages) [ python310Packages.ruff-lsp ]; # on 23.05
+    };
+    taplo = {
+      languages = "TOML";
+      packages = [ taplo ];
+    };
     terraform-ls = {
       languages = "HCL";
       serverName = "terraformls";
     };
     texlab = {
       languages = "latex";
+    };
+    typst-lsp = {
+      languages = "Typst";
+      serverName = "typst_lsp";
+      packages = [ typst-lsp ];
     };
     vuels = {
       languages = "Vue";
