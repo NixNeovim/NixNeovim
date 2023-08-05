@@ -162,6 +162,7 @@ let
           ++ filesIn "colorschemes";
         testList = [
           ./neovim.nix
+          ./neovim-use-plugin-defaults.nix
           ./basic-check.nix
         ] ++ modulesTests;
       in builtins.foldl'
