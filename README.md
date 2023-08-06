@@ -99,6 +99,8 @@ A wiki for all options will be available in the near future.
 
 ### Reduce size of `init.lua`
 
+Warning: Using this is currently discouraged as it can cause build failures. I am working on it.
+
 By default, NixNeovim prints all config to `init.lua` in order to have a more stable config.
 You can turn this off by setting `nixneovim.usePluginDefaults`.
 This way, NixNeovim will only print the configs you have changed.
