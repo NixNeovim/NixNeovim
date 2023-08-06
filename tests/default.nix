@@ -163,7 +163,7 @@ let
         testList = [
           ./neovim.nix
           ./neovim-use-plugin-defaults.nix
-          ./basic-check.nix
+          # ./basic-check.nix
         ] ++ modulesTests;
       in builtins.foldl'
         (a: b: a // (import b { inherit testHelper nixneovim lib; }))

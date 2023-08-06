@@ -14,6 +14,7 @@ let
         let
           coqRequire = optionalString cfg.coqSupport "local coq = require(\"coq\")";
           coqCapabilities = optionalString cfg.coqSupport "coq.lsp_ensure_capabilities";
+          extraConfig = cfg.servers.${server}.extraConfig;
         in
         ''
           ${coqRequire}
@@ -22,7 +23,7 @@ let
               ${optionalString (cfg.onAttach != "") "__on_attach_base(client, bufnr)" }
               ${optionalString (cfg.servers.${server}.onAttachExtra != "") "__on_attach_extra(client, bufnr)" }
             end,
-            ${cfg.servers.${server}.extraConfig}
+            ${optionalString (extraConfig != null) extraConfig}
           }
         '';
 

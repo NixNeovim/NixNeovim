@@ -29,6 +29,5 @@ mkLuaPlugin {
   extraPackages = with pkgs.vimExtraPlugins; [
     diffview-nvim
     plenary-nvim
-    (if cfg.useIcons then nvim-web-devicons else null)
-  ];
+  ] ++ optional (cfg.useIcons != null && cfg.useIcons) nvim-web-devicons;
 }

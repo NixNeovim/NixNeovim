@@ -129,7 +129,7 @@ in helpers.mkLuaPlugin {
     git
   ];
 
-  extraOptions = mkIf cfg.folding {
+  extraOptions = mkIf (cfg.folding != null && cfg.folding) {
     foldmethod = "expr";
     foldexpr = "nvim_treesitter#foldexpr()";
   };

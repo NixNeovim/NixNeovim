@@ -9,7 +9,7 @@ let
 
   helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
-  inherit (helpers.customOptions) intNullOption typeOption;
+  inherit (helpers.customOptions) intNullOption enumOption;
   inherit (lib.types) enum listOf;
 
   moduleOptions = {
@@ -17,8 +17,8 @@ let
     #
     # autoStart = boolOption true "Enable this pugin at start"
     maxLines = intNullOption "Define the limit of context lines. 0 means no limit";
-    trimScope = typeOption (enum [ "inner" "outer" ]) "outer" "When max_lines is reached, which lines to discard";
-    mode = typeOption (enum [ "cursor" "topline" ]) "cursor" "Which context to show";
+    trimScope = enumOption [ "inner" "outer" ] "outer" "When max_lines is reached, which lines to discard";
+    mode = enumOption [ "cursor" "topline" ] "cursor" "Which context to show";
     patterns = {
       default = mkOption {
         type = listOf (enum [

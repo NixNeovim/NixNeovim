@@ -35,13 +35,15 @@ in mkLuaPlugin {
   extraConfigLua =
     let
       load-call =
-        if cfg.lazyLoad then
-          "lazy_load({ paths = \"${cfg.path}\" })"
+        let
+          paths = optionalString (cfg.path != null) "{ paths = \"${cfg.path}\" }";
+        in if cfg.lazyLoad then
+          "lazy_load(${paths})"
         else
-          "load({ paths = \"${cfg.path}\" })";
+          "load(${paths})";
     in lib.concatStringsSep "\n" [
-      (optionalString cfg.enableSnipmate "require('${name}.loaders.from_snipmate').${load-call}")
-      (optionalString cfg.enableLua "require('${name}.loaders.from_lua').${load-call}")
+      (optionalString (cfg.enableSnipmate != null && cfg.enableSnipmate) "require('${name}.loaders.from_snipmate').${load-call}")
+      (optionalString (cfg.enableLua != null && cfg.enableLua) "require('${name}.loaders.from_lua').${load-call}")
     ];
   defaultRequire = false;
 }
