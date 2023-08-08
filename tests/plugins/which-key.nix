@@ -1,4 +1,4 @@
-{ luaHelper, ... }:
+{ testHelper, ... }:
 
 {
   which-key-test = { config, lib, pkgs, ... }:
@@ -17,13 +17,10 @@
           };
         };
 
-        nmt.script = ''
-          nvimFolder="home-files/.config/nvim"
-          file=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
-
-          assertDiff "$file" ${
+        nmt.script = testHelper.moduleTest ''
+          assertDiff "$normalizedConfig" ${
             pkgs.writeText "which-key.expected" ''
-              ${luaHelper.config.start}
+              ${testHelper.config.start}
               -- config for plugin: which-key
               do
                 function setup()
@@ -43,7 +40,7 @@
                         ["motions"] = true,
                         ["nav"] = true,
                         ["operators"] = true,
-                        ["textObjects"] = true,
+                        ["text_objects"] = true,
                         ["windows"] = true,
                         ["z"] = true
                       },
@@ -54,8 +51,8 @@
                       }
                     },
                     ["popup_mappings"] = {
-                      ["scrollDown"] = "<c-d>",
-                     ["scrollUp"] = "<c-u>"
+                      ["scroll_down"] = "<c-d>",
+                     ["scroll_up"] = "<c-u>"
                     },
                     ["window"] = {
                       ["border"] = "none",
@@ -67,10 +64,11 @@
                 end
                 success, output = pcall(setup) -- execute 'setup()' and catch any errors
                 if not success then
+                  print("Error on setup for plugin: which-key")
                   print(output)
                 end
               end
-              ${luaHelper.config.end}
+              ${testHelper.config.end}
             ''
           }
         '';

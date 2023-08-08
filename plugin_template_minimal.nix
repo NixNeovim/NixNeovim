@@ -8,7 +8,12 @@ let
   pluginUrl = "PLUGIN_URL";
 
   helpers = import ../../helper { inherit pkgs lib config; };
-  inherit (helpers.customOptions) boolOption;
+  inherit (helpers.customOptions)
+    strOption
+    listOption
+    enumOption
+    intOption
+    boolOption;
 
   moduleOptions = {
     # add module options here

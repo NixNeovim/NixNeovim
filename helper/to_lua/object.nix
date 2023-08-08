@@ -1,4 +1,4 @@
-{ lib, indent }:
+{ lib, indent, camelToSnake }:
 
 let
   inherit (lib)
@@ -36,7 +36,7 @@ let
                     if head (stringToCharacters name) == "@" then
                       toLuaObjectHelper (depth + 1) value
                     else
-                      "[${toLuaObjectHelper 0 name}] = ${toLuaObjectHelper (depth + 1) value}";
+                      "[${toLuaObjectHelper 0 (camelToSnake name)}] = ${toLuaObjectHelper (depth + 1) value}";
 
                   listOfValues = mapAttrsToList argToLua nonNullArgs;
                 in
@@ -78,4 +78,7 @@ in {
   inherit toLuaObject';
 
   toLuaObject = args: toLuaObject' 0 args;
+
+  boolToInt = bool: if bool then 1 else 0;
+  boolToInt' = bool: toLuaObject' 0 (if bool then 1 else 0);
 }

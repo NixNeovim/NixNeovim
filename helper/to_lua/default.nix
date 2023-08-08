@@ -5,16 +5,19 @@ let
     elem
     stringAsChars
     stringToCharacters
+    lowerChars
+    upperChars
     toLower;
-  inherit (builtins) head split;
+  inherit (builtins) head;
 
   # takes camalCase string and converts it to snake_case
   camelToSnake = string:
     let
 
-      upperCaseLetters = split "" "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      isChar  = x:
+        elem x lowerChars || elem x upperChars;
 
-      isUpper = x: elem x upperCaseLetters; # check if x is uppercase
+      isUpper = x: elem x upperChars; # check if x is uppercase
 
       # exchange any uppercase x letter by '_x', leave lower case letters
       exchangeIfUpper = (x:
@@ -26,10 +29,18 @@ let
 
       chars = stringToCharacters string;
 
-    in if !isUpper (head chars) then
-      stringAsChars exchangeIfUpper string
+      firstChar = head chars;
+
+    # in if !isUpper (head chars)  then
+    #   stringAsChars exchangeIfUpper string
+    # else
+    #   string;
+    in if isUpper firstChar then # do nothing if first char is uppercase
+      string
+    else if ! isChar firstChar then # do nothing first char is no alphabetical letter
+      string
     else
-      string;
+      stringAsChars exchangeIfUpper string;
 
   repeatChar = char: n:
     if n == 0 then
@@ -40,7 +51,7 @@ let
   # create indentation string
   indent = depth: repeatChar " " depth;
 
-  object = import ./object.nix { inherit lib indent; };
+  object = import ./object.nix { inherit lib indent camelToSnake; };
   plugin = import ./mk_plugin.nix {
     inherit
       lib
@@ -61,7 +72,9 @@ in {
     object;
   inherit (object)
     toLuaObject'
-    toLuaObject;
+    toLuaObject
+    boolToInt
+    boolToInt';
   inherit (plugin)
     convertModuleOptions
     defaultModuleOptions

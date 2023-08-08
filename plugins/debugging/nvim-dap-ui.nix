@@ -23,4 +23,5 @@ mkLuaPlugin {
     nvim-dap-ui
   ];
   extraConfigLua = "require('dapui').setup ${toLuaObject pluginOptions}";
+  defaultRequire = false;
 }

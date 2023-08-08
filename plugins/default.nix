@@ -32,7 +32,11 @@ in
     ./colorschemes/nord.nix
     ./colorschemes/one.nix
     ./colorschemes/onedark.nix
+    ./colorschemes/rose-pine.nix
     ./colorschemes/tokyonight.nix
+    ./colorschemes/gruvbox-baby.nix
+    ./colorschemes/gruvbox-material.nix
+    ./colorschemes/kanagawa.nix
 
     ./debugging/nvim-dap
     ./debugging/nvim-dap-ui.nix
@@ -40,6 +44,7 @@ in
     ./languages/ledger.nix
     ./languages/nix.nix
     ./languages/zig.nix
+    ./languages/rust.nix
 
     ./mini
 

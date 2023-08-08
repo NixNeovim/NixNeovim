@@ -1,4 +1,4 @@
-{ luaHelper, ... }:
+{ testHelper, ... }:
 
 # Test all modules that have no config
 
@@ -8,20 +8,17 @@
       config = {
 
         programs.nixneovim.plugins = {
-          git-messenger-vim.enable = true;
+          git-messenger.enable = true;
           bufdelete.enable = true;
-          plantuml-syntax.enable = true;
         };
 
-        nmt.script = ''
-          nvimFolder="home-files/.config/nvim"
-          config=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
-
-          assertDiff "$config" ${
+        nmt.script = testHelper.moduleTest ''
+          assertDiff "$normalizedConfig" ${
             pkgs.writeText "no-config-plugins.expected" ''
-              ${luaHelper.config.start}
+              vim.cmd [[source <nix-store-hash>-nvim-init-home-manager.vim]]
+              ${testHelper.config.start}
 
-              ${luaHelper.config.end}
+              ${testHelper.config.end}
             ''
           }
         '';

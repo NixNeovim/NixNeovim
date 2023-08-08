@@ -58,7 +58,7 @@ let
         (key: action: normalizeRhs action) maps;
 
       # filter inactive options
-      filterActive = attrs: filterAttrs (_: v: v) attrs;
+      filterActive = attrs: filterAttrs (k: v: if k != null && v != null then v else false) attrs;
 
     in mapAttrsToList
       (key: mapping: {

@@ -231,7 +231,7 @@ with helpers;
         sources = sources.config;
 
         snippet = {
-          expand = "function(args) ${ lib.optionalString cfg.snippet.luasnip.enable "require(\"luasnip\").lsp_expand(args.body)" } end";
+          expand = helpers.mkRaw "function(args) ${ lib.optionalString cfg.snippet.luasnip.enable "require(\"luasnip\").lsp_expand(args.body)" } end";
         };
 
         view = cfg.view;
@@ -258,6 +258,7 @@ with helpers;
             end
             success, output = pcall(setup) -- execute 'setup()' and catch any errors
             if not success then
+              print("Error on setup for plugin: nvim-cmp")
               print(output)
             end
           end

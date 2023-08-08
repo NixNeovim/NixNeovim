@@ -3,6 +3,10 @@ name: Run Checks
 on:
   push:
   workflow_dispatch:
+  pull_request_target:
+    branches:
+      - main
+
 
 jobs:
   update-plugins:
@@ -11,4 +15,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v17
-      - run: nix flake check
+      - run: nix flake check -L

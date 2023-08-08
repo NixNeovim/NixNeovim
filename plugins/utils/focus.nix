@@ -11,4 +11,5 @@ mkPlugin attrs {
     focus-nvim
   ];
   extraConfigLua = "require('focus').setup {}";
+  defaultRequire = false;
 }

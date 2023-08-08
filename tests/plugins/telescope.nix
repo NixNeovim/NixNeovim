@@ -1,4 +1,4 @@
-{ luaHelper, ... }:
+{ testHelper, ... }:
 
 {
   telescope-test = { config, lib, pkgs, ... }:
@@ -15,13 +15,10 @@
           };
         };
 
-        nmt.script = ''
-          nvimFolder="home-files/.config/nvim"
-          file=$(grep "/nix/store.*\.vim" -o $(_abs $nvimFolder/init.lua))
-
-          assertDiff "$file" ${
+        nmt.script = testHelper.moduleTest ''
+          assertDiff "$normalizedConfig" ${
             pkgs.writeText "init.lua-expected" ''
-              ${luaHelper.config.start}
+              ${testHelper.config.start}
               -- config for plugin: telescope
               do
                 function setup()
@@ -38,10 +35,11 @@
                 end
                 success, output = pcall(setup) -- execute 'setup()' and catch any errors
                 if not success then
+                  print("Error on setup for plugin: telescope")
                   print(output)
                 end
               end
-              ${luaHelper.config.end}
+              ${testHelper.config.end}
             ''
           }
         '';

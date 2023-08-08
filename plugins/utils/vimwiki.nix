@@ -6,5 +6,6 @@ with helpers; with lib;
 mkPlugin attrs {
   name = "vimwiki";
   description = "Enable vimwiki.vim";
-  extraPlugins = [ pkgs.vimPlugins.vimwiki ];
+  extraPackages = [ pkgs.bash ];
+  extraPlugins = [ pkgs.vimExtraPlugins.vimwiki ];
 }

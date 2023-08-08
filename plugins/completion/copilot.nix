@@ -47,7 +47,7 @@ mkLuaPlugin {
           "let g:copilot_proxy = ${cfg.proxy}"
         else "";
     in ''
-      let g:copilot_node_command = "${pkgs.nodejs-16_x}/bin/node"
+      let g:copilot_node_command = "${pkgs.nodejs}/bin/node"
       let g:copilot_filetypes = ${toVimDict cfg.filetypes}
       ${proxy}
     '';

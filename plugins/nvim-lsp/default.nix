@@ -17,7 +17,7 @@ let
 
     onAttach = mkOption {
       type = types.lines;
-      description = "A lua function to be run when a new LSP buffer is attached. The argument `client` is provided.";
+      description = "A lua function to be run when a new LSP buffer is attached. The argument `client` and `bufnr` is provided.";
       default = "";
     };
 
@@ -51,4 +51,5 @@ mkLuaPlugin {
       ${cfg.preConfig}
       ${toConfigString serversLua}
     '';
+    defaultRequire = false;
 }

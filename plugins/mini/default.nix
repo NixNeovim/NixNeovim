@@ -84,4 +84,5 @@ mkLuaPlugin {
         modules;
     in
     toConfigString setup;
+    defaultRequire = false;
 }

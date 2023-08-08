@@ -32,15 +32,25 @@ nixpkgs.overlays = [
 ```
 
 And import the module to your Home Manager (recommended) or NixOS configuration.
+Depending on your nixos version, you have to import different modules.
+In particular, the `default` and `homeManager` modules only work with the Nixpkgs/HomeManager `unstable` releases.
+When you use Nixos/HomeManager 22.11, please import `homeManager-22-11` or `nixos-22-11`.
 
 ```nix
 {
 imports = [
-    nixneovim.nixosModules.default # with Home Manager
+    nixneovim.nixosModules.default # with Home Manager unstable
+    # nixneovim.nixosModules.homeManager-22-11 # with Home Manager 22.11
     # nixneovim.nixosModules.nixos # without Home Manager
 ];
 }
 ```
+
+## Documentation
+
+All options are documented at: [NixNeovim Documentation](https://nixneovim.github.io/NixNeovim/options.html)
+
+You can generate the docs using `nix build .#docs`
 
 ## Example Config
 
@@ -86,6 +96,17 @@ A wiki for all options will be available in the near future.
   };
 }
 ```
+
+### Reduce size of `init.lua`
+
+Warning: Using this is currently discouraged as it can cause build failures. I am working on it.
+
+By default, NixNeovim prints all config to `init.lua` in order to have a more stable config.
+You can turn this off by setting `nixneovim.usePluginDefaults`.
+This way, NixNeovim will only print the configs you have changed.
+
+Setting `nixneovim.usePluginDefaults` to `true` reduces the size of your `init.lua` but can lead to unexpected changes of your setup,
+when a plugin author decides to change their defaults.
 
 ## Key mappings
 
@@ -140,27 +161,51 @@ First, you specify the mode; you can choose between the keywords below.
 
 When specifying the mapping with an attribute set you can set the following options.
 
-| NixVim  | Default | VimScript                                |
-|---------|---------|------------------------------------------|
-| silent  | false   | `<silent>`                               |
-| nowait  | false   | `<silent>`                               |
-| script  | false   | `<script>`                               |
-| expr    | false   | `<expr>`                                 |
-| unique  | false   | `<unique>`                               |
-| noremap | true    | Use the 'noremap' variant of the mapping |
-| action  |         | Action to execute                        |
+| NixNeovim | Default | VimScript                                |
+|-----------|---------|------------------------------------------|
+| silent    | false   | `<silent>`                               |
+| nowait    | false   | `<silent>`                               |
+| script    | false   | `<script>`                               |
+| expr      | false   | `<expr>`                                 |
+| unique    | false   | `<unique>`                               |
+| noremap   | true    | Use the 'noremap' variant of the mapping |
+| action    |         | Action to execute                        |
+
+## Augroups
+
+You can define augroups with the `augroups` option.
+
+```nix
+{
+  programs.nixneovim = {
+    augroups = {
+      highlightOnYank = {
+        autocmds = [{
+          event = "TextYankPost";
+          pattern = "*";
+          # Or use `vimCallback` with a vimscript function name
+          # Or use `command` if you want to run a normal vimscript command
+          luaCallback = ''
+            vim.highlight.on_yank {
+              higroup = (
+                vim.fn['hlexists'] 'HighlightedyankRegion' > 0 and 'HighlightedyankRegion' or 'IncSearch'
+              ),
+              timeout = 200,
+            }
+          '';
+        }];
+      };
+    };
+  };
+}
+```
 
 ## Roadmap
 
 - [ ] Further cleanup code
 - [ ] Port more modules to `mkLuaPlugin` function
-- [ ] Add some form of tests
-
-## Documentation
-
-All options are documented at: [NixNeovim Documentation](https://nixneovim.github.io/NixNeovim/options.html)
-
-You can generate the docs using `nix build .#docs`
+- [x] Add some form of tests
+- [ ] Integrate tests with `mkLuaPlugin`
 
 ### Supported language servers
 
@@ -186,8 +231,7 @@ They help improve this project and keep it up to date.
 
 ### Adding options to a module
 
-- Go to the module you want to add options to.
-- Add your options to the `moduleOptions` attribute set.
+- When using the `plugin_template.nix` you add options to the `moduleOptions` attribute set.
 
 ```nix
 {
@@ -204,7 +248,51 @@ They help improve this project and keep it up to date.
 - In `helper/custom_options.nix` we have defined several functions for basic plugin options like bool, strings or integer.
 - In particular, ther are:
     - `boolOption, intOption, strOption, attrsOption, enumOption`
-- ... improve this
+
+#### Auto generate module options
+
+- With `nix run .#configparser` you can convert a Lua setup configs to nix module options (you might need to update the submodule with `git submodule update tree-sitter-lua`).
+- For example, you can input the following Lua configs (taken from [NvimTree](https://github.com/nvim-tree/nvim-tree.lua); Example-comment added)
+
+```zsh
+nix run .#configparser <<EOF
+require("nvim-tree").setup({
+  sort_by = "case_sensitive",
+  view = {
+    -- Example comment
+    width = 30,
+  },
+  renderer = {
+    group_empty = true,
+  },
+  filters = {
+    dotfiles = true,
+  },
+})
+EOF
+```
+
+- The output will be
+
+```nix
+ {
+   sort_by = strOption "case_sensitive" "";
+   view = {
+     # Example comment
+     width = intOption 30 "Example comment";
+   };
+   renderer = {
+     group_empty = boolOption true "";
+   };
+   filters = {
+     dotfiles = boolOption true "";
+   };
+ }
+```
+
+The output is best-effort and will likely contain errors.
+For example, the script cannot detect if a variable is a string or an `enum`.
+Therefore, you likely have to edit and correct the output before you add it to the module.
 
 ### Rewrite module to new `mkLuaPlugin` api
 

@@ -35,4 +35,7 @@ mkLuaPlugin {
     # add neovim plugin here
     gitsigns-nvim
   ];
+  extraPackages = with pkgs; [
+    git
+  ];
 }

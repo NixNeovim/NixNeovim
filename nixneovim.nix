@@ -1,4 +1,4 @@
-{ homeManager ? true, isDocsBuild ? false }: # function that returns a package
+{ homeManager ? true, isDocsBuild ? false, state ? 9999 }: # function that returns a package
 { lib, config, pkgs, ... }:
 with lib;
 let
@@ -7,6 +7,8 @@ let
   helpers = import ./helper { inherit pkgs lib config isDocsBuild; };
 
   mappings = helpers.keymappings;
+
+  inherit (helpers) augroups;
 
   pluginWithConfigType = types.submodule {
     options = {
@@ -37,6 +39,28 @@ in
     programs.nixneovim = {
       enable = mkEnableOption "enable nixneovim";
 
+      defaultEditor = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Configures neovim to be the default editor using the EDITOR environment variable.";
+      };
+
+      viAlias = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Symlink <command>vi</command> to <command>nvim</command> binary.
+        '';
+      };
+
+      vimAlias = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Symlink <command>vim</command> to <command>nvim</command> binary.
+        '';
+      };
+
       package = mkOption {
         type = types.nullOr types.package;
         default = null;
@@ -47,6 +71,21 @@ in
         type = with types; listOf (either package pluginWithConfigType);
         default = [ ];
         description = "List of vim plugins to install.";
+      };
+
+      usePluginDefaults = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          When false, NixNeovim will output the lua config with all available options.
+          This way, when a default in a plugin changes, your config will stay the same.
+
+          When true, NixNeovim will output the lua config only with options you have set in you config.
+          This way, all other values will have the default set by the plugin author.
+          When the defaults change, your setup will change.
+
+          Setting this to true, will significantly reduce the number of lines in your init.lua, depending on the number of plugins enabled.
+        '';
       };
 
       colorscheme = mkOption {
@@ -141,6 +180,30 @@ in
           };
         '';
       };
+
+      augroups = mkOption {
+        default = { };
+        type = types.attrsOf (types.submodule augroups.augroupOptions);
+        description = ''
+          Custom autocmd groups
+        '';
+        example = ''
+          augroups.highlightOnYank = {
+            autocmds = [{
+              event = "TextYankPost";
+              pattern = "*";
+              luaCallback = ''\''
+                vim.highlight.on_yank {
+                  higroup = (
+                    vim.fn['hlexists'] 'HighlightedyankRegion' > 0 and 'HighlightedyankRegion' or 'IncSearch'
+                  ),
+                  timeout = 200,
+                }
+              ''\'';
+            }];
+          };
+        '';
+      };
     };
   };
 
@@ -161,24 +224,67 @@ in
           + extraWrapperArgs;
       });
 
-      luaGlobals = optionalString (cfg.globals != { }) ''
-        -- Set up globals {{{
-        local __nixneovim_globals = ${helpers.toLuaObject cfg.globals}
+      luaGlobals =
+        let
+          list = mapAttrsToList
+            (option: value:
+              "vim.g.${option} = ${helpers.toLuaObject value}"
+            )
+            cfg.globals;
+        in concatStringsSep "\n" list;
 
-        for k,v in pairs(__nixneovim_globals) do
-          vim.g[k] = v
-        end
-        -- }}}
-      '' + optionalString (cfg.options != { }) ''
-        -- Set up options {{{
-        local __nixneovim_options = ${helpers.toLuaObject cfg.options}
+      luaOptions =
+        let
+          list = mapAttrsToList
+            (option: value:
+              "vim.o.${option} = ${helpers.toLuaObject value}"
+            )
+            cfg.options;
+        in concatStringsSep "\n" list;
 
-        for k,v in pairs(__nixneovim_options) do
-          vim.o[k] = v
-        end
-        -- }}}
+
+      luaConfig = ''
+        ${cfg.extraLuaPreConfig}
+        --------------------------------------------------
+        --                 Globals                      --
+        --------------------------------------------------
+
+        ${luaGlobals}
+
+        --------------------------------------------------
+        --                 Options                      --
+        --------------------------------------------------
+
+        ${luaOptions}
+
+        --------------------------------------------------
+        --                 Keymappings                  --
+        --------------------------------------------------
+
+        ${mappings.luaString cfg.mappings}
+
+        --------------------------------------------------
+        --                 Augroups                     --
+        --------------------------------------------------
+
+        ${augroups.luaString cfg.augroups}
+
+        --------------------------------------------------
+        --               Extra Config (Lua)             --
+        --------------------------------------------------
+
+        ${cfg.extraConfigLua}
+
+        ${
+          # Set colorscheme after setting globals.
+          # Some colorschemes depends on variables being set before setting the colorscheme.
+          optionalString
+            (cfg.colorscheme != "" && cfg.colorscheme != null)
+            "vim.cmd([[colorscheme ${cfg.colorscheme}]])"
+        }
+
+        ${cfg.extraLuaPostConfig}
       '';
-
 
       configure = {
         # Make sure that globals are set before plugins are setup.
@@ -186,38 +292,7 @@ in
         # that the plugin configuration depend upon.
         customRC =
           cfg.extraConfigVim
-          + ''
-            lua <<EOF
-            ${cfg.extraLuaPreConfig}
-            --------------------------------------------------
-            --                 Globals                      --
-            --------------------------------------------------
-
-            ${luaGlobals}
-
-            --------------------------------------------------
-            --                 Keymappings                  --
-            --------------------------------------------------
-
-            ${mappings.luaString cfg.mappings}
-
-            --------------------------------------------------
-            --               Extra Config (Lua)             --
-            --------------------------------------------------
-
-            ${cfg.extraConfigLua}
-
-            ${
-              # Set colorscheme after setting globals.
-              # Some colorschemes depends on variables being set before setting the colorscheme.
-              optionalString
-                (cfg.colorscheme != "" && cfg.colorscheme != null)
-                "vim.cmd([[colorscheme ${cfg.colorscheme}]])"
-            }
-
-            ${cfg.extraLuaPostConfig}
-            EOF
-          '';
+          + luaConfig;
 
         packages.nixneovim = {
           start = filter (f: f != null) (map
@@ -238,16 +313,23 @@ in
         {
           programs.neovim = {
             enable = true;
+            # defaultEditor = cfg.defaultEditor;
+            viAlias = cfg.viAlias;
+            vimAlias = cfg.vimAlias;
             package = mkIf (cfg.package != null) cfg.package;
             extraPackages = cfg.extraPackages;
-            extraConfig = configure.customRC;
+            extraConfig = cfg.extraConfigVim;
+            extraLuaConfig = luaConfig;
             plugins = cfg.extraPlugins;
-          };
+          } // (optionalAttrs (state > 2211) { defaultEditor = cfg.defaultEditor; }); # only add defaultEditor when over nixpkgs release 22-11
         }
       else
         {
           environment.systemPackages = [ wrappedNeovim ];
           programs.neovim = {
+            defaultEditor = cfg.defaultEditor;
+            viAlias = cfg.viAlias;
+            vimAlias = cfg.vimAlias;
             configure = configure;
           };
 
