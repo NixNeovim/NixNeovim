@@ -1,16 +1,24 @@
-{ customOptions
-, camelToSnake
-, config
-, lib
-, indent
-, toLuaObject
-}:
+# { customOptions
+# , camelToSnake
+# , config
+# , lib
+# , indent
+# , toLuaObject
+# }:
+{ super, lib, config }:
 
 # helper function to create a lua based plugin # TODO: make usable with non-lua plugins
 
 let
 
   # imports
+
+  inherit (super.to_lua.object)
+    toLuaObject;
+
+  inherit (super.to_lua.default)
+    indent
+    camelToSnake;
 
   inherit (lib)
     assertMsg
@@ -132,31 +140,33 @@ in {
   # function output
   {
     # add module to 'plugins'/'colorschemes'
-    options.programs.nixneovim.${type}.${name} =
-            (defaultModuleOptions fullDescription) // moduleOptions;
+    # options.programs.nixneovim.${type}.${name} =
+            # (defaultModuleOptions fullDescription) // moduleOptions;
+    options = (defaultModuleOptions fullDescription) // moduleOptions;
 
-    config.programs.nixneovim = mkIf cfg.enable (extraNixNeovimConfig // {
-      inherit extraPlugins extraPackages extraConfigVim;
+    config.programs.nixneovim =
+      mkIf cfg.enable (extraNixNeovimConfig // {
+        inherit extraPlugins extraPackages extraConfigVim;
 
-      extraConfigLua = optionalString
-        (cfg.extraLua.pre != "" || cfg.extraLua.post != "" || luaConfig != "\n\n")
-        ''
+        extraConfigLua = optionalString
+          (cfg.extraLua.pre != "" || cfg.extraLua.post != "" || luaConfig != "\n\n")
+          ''
 
-        -- config for plugin: ${name}
-        do
-          function setup()
-            ${cfg.extraLua.pre}
-            ${replaceStrings ["\n"] ["\n${indent 2}"] luaConfig}
-            ${cfg.extraLua.post}
+          -- config for plugin: ${name}
+          do
+            function setup()
+              ${cfg.extraLua.pre}
+              ${replaceStrings ["\n"] ["\n${indent 2}"] luaConfig}
+              ${cfg.extraLua.post}
+            end
+            success, output = pcall(setup) -- execute 'setup()' and catch any errors
+            if not success then
+              print("Error on setup for plugin: ${name}")
+              print(output)
+            end
           end
-          success, output = pcall(setup) -- execute 'setup()' and catch any errors
-          if not success then
-            print("Error on setup for plugin: ${name}")
-            print(output)
-          end
-        end
-      '';
-      options = extraOptions;
-    });
+        '';
+        options = extraOptions;
+      });
   };
 }

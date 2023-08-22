@@ -1,4 +1,3 @@
-# { lib, cfg, helpers, ... }:
 { lib
 , customOptions
 , toLuaObject

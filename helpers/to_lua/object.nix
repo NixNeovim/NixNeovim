@@ -1,6 +1,12 @@
-{ lib, indent, camelToSnake }:
+# { lib, indent, camelToSnake }:
+{ super, lib, camelToSnake }:
 
 let
+
+  inherit (super.default)
+    indent
+    camelToSnake;
+
   inherit (lib)
     boolToString
     concatMapStringsSep

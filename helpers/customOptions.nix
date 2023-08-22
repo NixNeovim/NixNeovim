@@ -1,8 +1,13 @@
-{ mkOption, types, config }:
+{ lib, usePluginDefaults }:
 
 let
+
+  inherit (lib)
+    mkOption
+    types;
+
   usePlugDef = default:
-    if config.programs.nixneovim.usePluginDefaults then
+    if usePluginDefaults then
       null
     else
       default;
@@ -15,6 +20,7 @@ let
     attrs = nullOr (attrsOf anything);
     enum = enums: nullOr (enum enums);
   };
+
 in with myTypes; {
   boolOption = default: description:
     mkOption {
