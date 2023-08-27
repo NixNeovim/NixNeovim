@@ -36,46 +36,9 @@ let
 
   # internal functions
 
-  # converts the module options to lua code and
-  # adds the 'extraAttrs'
-  convertModuleOptions = cfg: moduleOptions:
-    let
-      attrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) (cfg.${k})) moduleOptions;
-      extraAttrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) v) cfg.extraConfig;
-    in
-    attrs // extraAttrs;
-
-  # helper function to check if the given url is valid
-  validUrl = url:
-      hasPrefix "https://" url;
-
-  # These module options are addded to every module
-  defaultModuleOptions = description: {
-    enable = lib.mkEnableOption description;
-    extraConfig = mkOption {
-      # this is added to lua in 'convertModuleOptions'
-      type = types.attrsOf types.anything;
-      default = { };
-      description = "Place any extra config here as an attibute-set";
-    };
-    extraLua = {
-      pre = mkOption {
-        type = types.str;
-        default = "";
-        description = "Place any extra lua code here that is loaded before the plugin is loaded";
-      };
-      post = mkOption {
-        type = types.str;
-        default = "";
-        description = "Place any extra lua code here that is loaded after the plugin is loaded";
-      };
-    };
-  };
 
 in {
 
-  # Exported functions
-  inherit convertModuleOptions defaultModuleOptions;
 
   mkLuaPlugin = { name                  # name of the plugin module
   , pluginName ? name     # name of the plugin as it appears in 'require("<pluginName>")' if different

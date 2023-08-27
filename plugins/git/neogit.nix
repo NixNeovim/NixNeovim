@@ -1,8 +1,14 @@
-{ config, lib, pkgs, ... }:
-with lib;
+{ lib, config, pkgs, helpers, ... }:
+
 let
+
+  inherit (lib)
+    mkEnableOption
+    mkOption
+    mkIf
+    types;
+  
   cfg = config.programs.nixneovim.plugins.neogit;
-  helpers = import ../../helper { inherit pkgs lib config; };
 
   sectionDefaultsModule = types.submodule {
     options = {
@@ -203,7 +209,7 @@ in
 
   config =
     let
-      setupOptions = with cfg; helpers.toLuaObject {
+      setupOptions = with cfg; helpers.converter.toLuaObject {
         inherit kind integrations signs sections mappings;
         disable_signs = disableSigns;
         disable_hint = disableHint;

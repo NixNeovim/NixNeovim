@@ -10,37 +10,6 @@ let
     toLower;
   inherit (builtins) head;
 
-  # takes camalCase string and converts it to snake_case
-  camelToSnake = string:
-    let
-
-      isChar  = x:
-        elem x lowerChars || elem x upperChars;
-
-      isUpper = x: elem x upperChars; # check if x is uppercase
-
-      # exchange any uppercase x letter by '_x', leave lower case letters
-      exchangeIfUpper = (x:
-          if isUpper x then
-            "_${toLower x}"
-          else
-            x
-        );
-
-      chars = stringToCharacters string;
-
-      firstChar = head chars;
-
-    # in if !isUpper (head chars)  then
-    #   stringAsChars exchangeIfUpper string
-    # else
-    #   string;
-    in if isUpper firstChar then # do nothing if first char is uppercase
-      string
-    else if ! isChar firstChar then # do nothing first char is no alphabetical letter
-      string
-    else
-      stringAsChars exchangeIfUpper string;
 
   repeatChar = char: n:
     if n == 0 then

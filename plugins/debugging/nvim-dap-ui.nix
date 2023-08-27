@@ -1,13 +1,14 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "nvim-dap-ui";
   pluginUrl = "https://github.com/rcarriga/nvim-dap-ui";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; {
@@ -15,9 +16,7 @@ let
   };
   pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-dap-ui

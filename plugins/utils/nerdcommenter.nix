@@ -1,9 +1,13 @@
-{ lib, pkgs, config, ... }@attrs:
+{ lib, pkgs, helpers, ... }@attrs:
 let
-  helpers = import ../../helper { inherit pkgs lib config; };
-in
-with helpers; with lib;
-mkPlugin attrs {
+  inherit (helpers.deprecated)
+      mkDefaultOpt
+      mkPlugin;
+
+  inherit (lib)
+    types;
+
+in mkPlugin attrs {
   name = "nerdcommenter";
   description = "Enable nercommenter";
   extraPlugins = [ pkgs.vimPlugins.nerdcommenter ];

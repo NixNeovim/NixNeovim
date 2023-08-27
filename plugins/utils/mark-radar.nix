@@ -1,9 +1,8 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.mark-radar;
-  helpers = import ../../helper { inherit pkgs lib config; };
   defs = import ../plugin-defs.nix { inherit pkgs; };
 in
 {
@@ -33,7 +32,7 @@ in
 
   config =
     let
-      opts = helpers.toLuaObject {
+      opts = helpers.converter.toLuaObject {
         inherit (cfg) highlight_group background_highlight_group;
         set_default_mappings = cfg.set_default_keybinds;
         background_highlight = cfg.highlight_background;

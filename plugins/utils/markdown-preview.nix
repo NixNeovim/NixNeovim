@@ -1,16 +1,17 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "markdown-preview";
   pluginUrl = "https://github.com/davidgranstrom/nvim-markdown-preview";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
 
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     strOption
     listOption
     enumOption
@@ -37,9 +38,7 @@ let
     theme = enumOption [ "dark" "light"] "dark" "Default theme (dark or light). By default the theme is define according to the preferences of the system.";
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

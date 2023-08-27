@@ -1,14 +1,15 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "oil";
   pluginUrl = "https://github.com/stevearc/oil.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     boolOption
     intOption
     strOption
@@ -98,9 +99,7 @@ let
     };
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

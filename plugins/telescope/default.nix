@@ -1,14 +1,13 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 with lib;
 let
 
   name = "telescope";
   pluginUrl = "https://github.com/nvim-telescope/telescope.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
   inherit (helpers) toLuaObject;
-  inherit (helpers.customOptions) attrsOption boolOption;
+  inherit (helpers.custom_options) attrsOption boolOption;
   inherit (helpers.toLua) convertModuleOptions;
 
   extensions = import ./modules/extensions.nix {
@@ -31,13 +30,13 @@ let
 
   pluginOptions =
     let
+      inherit (helpers.generator)
+         mkLuaPlugin;
       options = convertModuleOptions cfg (filterAttrs (k: v: k != "extensions") moduleOptions);
       extraConfig = cfg.extraConfig;
     in options // extraConfig;
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     telescope-nvim
@@ -97,10 +96,10 @@ mkLuaPlugin {
 #         let $BAT_THEME = '${cfg.highlightTheme}'
 #       '';
 
-#       #   local __telescopeExtensions = ${helpers.toLuaObject cfg.enabledExtensions}
+#       #   local __telescopeExtensions = ${helpers.converter.toLuaObject cfg.enabledExtensions}
 
 #       #   require('telescope').setup{
-#       #     extensions = ${helpers.toLuaObject cfg.extensionConfig}
+#       #     extensions = ${helpers.converter.toLuaObject cfg.extensionConfig}
 #       #   }
 
 #       #   for i, extension in ipairs(__telescopeExtensions) do

@@ -1,14 +1,15 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "numb";
   pluginUrl = "https://github.com/nacro90/numb.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-  inherit (helpers.customOptions) boolOption;
+  inherit (helpers.custom_options) boolOption;
 
   moduleOptions = {
     showNumbers = boolOption true "Enable 'number' for the window while peeking";
@@ -17,9 +18,7 @@ let
     centeredPeeking = boolOption true "Peeked line will be centered relative to window";
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     numb-nvim

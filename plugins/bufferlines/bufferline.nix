@@ -1,8 +1,7 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, config, helpers, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.bufferline;
-  helpers = import ../../helper { inherit pkgs lib config; };
 
   highlight = mkOption {
     type = types.nullOr (types.submodule ({ ... }: {
@@ -330,7 +329,7 @@ in
         ];
         options.termguicolors = true;
         extraConfigLua = ''
-          require('bufferline').setup${helpers.toLuaObject setupOptions}
+          require('bufferline').setup${helpers.converter.toLuaObject setupOptions}
         '';
       };
     };

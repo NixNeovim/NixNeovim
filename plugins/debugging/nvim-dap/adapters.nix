@@ -1,11 +1,18 @@
-{ lib, pkgs, config, ... }:
+{ lib, pkgs, helpers, ... }:
 
-with lib;
-with types;
+
 let
 
-  helpers = import ../../../helper { inherit pkgs lib config; };
-  inherit (helpers.customOptions) strNullOption;
+  inherit (helpers.custom_options) strNullOption;
+
+  inherit (lib)
+    submodule
+    mkOption;
+  inherit (lib.type)
+    enum
+    listOf
+    str
+    nullOr;
 
   adapterType = submodule {
     options = {

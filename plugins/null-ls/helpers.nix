@@ -1,4 +1,4 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, helpers, ... }:
 
 {
   mkServer =
@@ -12,7 +12,6 @@
     { pkgs, config, lib, ... }@args:
       with lib;
       let
-        helpers = import ../../helper { inherit pkgs lib config; };
         cfg = config.programs.nixneovim.plugins.null-ls.sources.${sourceType}.${name};
       in
       {

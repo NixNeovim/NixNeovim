@@ -1,15 +1,15 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "todo-comments";
   pluginUrl = "https://github.com/folke/todo-comments.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-  cfg = config.programs.nixneovim.plugins.${name};
-  inherit (helpers.customOptions) boolOption intOption strOption;
+  inherit (helpers.custom_options) boolOption intOption strOption;
 
   keywordModule = { name, config, ... }: {
     options = with helpers; {
@@ -42,9 +42,7 @@ let
     merge_keywords = cfg.mergeKeywords;
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     todo-comments-nvim

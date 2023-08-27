@@ -1,15 +1,16 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "nvim-jqx";
   pluginUrl = "https://github.com/gennaro-tedesco/nvim-jqx";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
-  inherit (helpers.customOptions) boolOption strOption;
+  inherit (helpers.custom_options) boolOption strOption;
 
   moduleOptions = {
     sort = boolOption false "Sort keys alphabetical";
@@ -31,9 +32,7 @@ let
     )
     moduleOptions;
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-jqx

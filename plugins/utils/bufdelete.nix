@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, helpers, ... }:
 
 with lib;
 
@@ -7,13 +7,11 @@ let
   name = "bufdelete";
   pluginUrl = "https://github.com/famiu/bufdelete.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-
   moduleOptions = with helpers; {
     # add module options here
   };
 
-  inherit (helpers.toLua)
+  inherit (helpers.generator)
     mkLuaPlugin;
 
 in mkLuaPlugin {

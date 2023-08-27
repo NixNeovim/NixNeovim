@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
@@ -7,11 +7,14 @@ let
   name = "hbac";
   pluginUrl = "https://github.com/axkirillov/hbac.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     strOption
     intOption
     boolOption;
+
+  inherit (helpers.generator)
+    mkLuaPlugin;
+
 
   moduleOptions = {
     autoclose = boolOption true "";
@@ -40,9 +43,7 @@ let
     };
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

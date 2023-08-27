@@ -1,15 +1,16 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "which-key";
   pluginUrl = "https://github.com/folke/which-key.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     boolOption
     intOption
     strOption
@@ -115,9 +116,7 @@ let
 
   pluginOptions = helpers.convertModuleOptions cfg (builtins.removeAttrs moduleOptions [ "groups" ]);
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     which-key-nvim

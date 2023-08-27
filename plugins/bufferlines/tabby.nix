@@ -1,12 +1,11 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, config, helpers, ... }:
 with lib;
 let
 
   name = "tabby";
 
   cfg = config.programs.nixneovim.plugins.${name};
-  helpers = import ../../helper { inherit pkgs lib config; };
-  inherit (helpers.customOptions) boolOption;
+  inherit (helpers.custom_options) boolOption;
 
   highlight = mkOption {
     type = types.nullOr (types.submodule ({ ... }: {
@@ -56,7 +55,7 @@ in {
           tabby-nvim
         ];
         extraConfigLua = ''
-          require('tabby').setup${helpers.toLuaObject setupOptions}
+          require('tabby').setup${helpers.converter.toLuaObject setupOptions}
         '';
       };
     };

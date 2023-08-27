@@ -1,14 +1,15 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "nvim-lightbulb";
   pluginUrl = "https://github.com/kosayoda/nvim-lightbulb";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     boolOption
     strOption
     attrsOption
@@ -29,9 +30,7 @@ let
     };
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

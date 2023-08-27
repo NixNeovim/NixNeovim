@@ -1,9 +1,8 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, helpers, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.lualine;
-  helpers = import ../../helper { inherit pkgs lib config; };
-  inherit (helpers.customOptions) boolOption;
+  inherit (helpers.custom_options) boolOption;
   separators = mkOption {
     type = types.nullOr (types.submodule {
       options = {
@@ -140,7 +139,7 @@ in
         extraPlugins = [ pkgs.vimPlugins.lualine-nvim ];
         extraPackages = [ pkgs.git ];
         extraConfigLua =
-          ''require("lualine").setup(${helpers.toLuaObject setupOptions})'';
+          ''require("lualine").setup(${helpers.converter.toLuaObject setupOptions})'';
       };
     };
 }

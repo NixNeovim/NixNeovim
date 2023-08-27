@@ -1,15 +1,16 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "indent-blankline";
   pluginName = "indent_blankline";
   pluginUrl = "https://github.com/lukas-reineke/indent-blankline.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-  inherit (helpers.customOptions) boolNullOption strNullOption;
+  inherit (helpers.custom_options) boolNullOption strNullOption;
 
   moduleOptions = {
     # add module options here
@@ -20,9 +21,7 @@ let
     showTrailingBlanklineIndent = boolNullOption "";
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name pluginName moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

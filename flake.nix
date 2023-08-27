@@ -26,7 +26,7 @@
 
     haumea = {
       url = "github:nix-community/haumea/v0.2.2";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
 
   };
@@ -34,94 +34,12 @@
   outputs = { self, nixpkgs, nmd, nmt, nix-flake-tests, flake-utils, haumea, ... }@inputs:
     {
       nixosModules = {
-        default = import ./nixneovim.nix { homeManager = true; };
-        homeManager = self.nixosModules.default;
-        homeManager-22-11 = import ./nixneovim.nix { homeManager = true; state = 2211; };
-        nixos = import ./nixneovim.nix { homeManager = false; };
-        nixos-22-11 = import ./nixneovim.nix { homeManager = false; state = 2211; };
-        haumea = { config, lib, ... }:
-          let
-            cfg = config.programs.nixneovim;
-
-            system = "x86_64-linux";
-            pkgs = import nixpkgs { inherit system; overlays = [ inputs.nixneovimplugins.overlays.default ]; };
-
-            helpers = haumea.lib.load {
-              src = ./helpers;
-              inputs = {
-                # usePluginDefaults = config.programs.nixneovim.usePluginDefaults;
-                usePluginDefaults = false;
-                inherit (pkgs) lib;
-                inherit config;
-              };
-            };
-
-            plugin-configs = haumea.lib.load {
-              src = ./src;
-              inputs = {
-                homeManager = true;
-                state = 2211;
-                inherit pkgs;
-                inherit (pkgs) lib;
-                inherit config;
-                inherit helpers;
-              };
-            };
-          in {
-
-            options.programs.nixneovim = {
-              enable = lib.mkEnableOption "";
-              extraConfigLua = lib.mkOption {
-                type = lib.types.lines;
-                default = "";
-                description = "Extra contents for init.lua";
-              };
-
-              # combine all options from all plugins
-              plugins =
-                lib.mapAttrs
-                  (k: v: v.options)
-                  plugin-configs;
-            };
-
-            # config.programs.nixneovim.extraConfigLua = lib.mkIf true "test";
-
-            # combine all configs from all plugins
-            config.programs.nixneovim = {
-              extraConfigLua = "hi";
-                # let
-
-                  # # get config declaration from each plugin
-                  # configs = lib.mapAttrs
-                    # (k: v: v.config)
-                    # plugin-configs;
-                  
-                  # # # combined = lib.mapAttrs lib.recursiveUpdate configs;
-                  # # combined = lib.mapAttrsToList
-                    # # (k: v: v)
-                    # # configs;
-
-                 # # in lib.concatStringsSep "\n" configs;
-                 # in configs;
-            };
-
-            config.programs.neovim = {
-                enable = true;
-                extraLuaConfig =
-                  let
-                    config = config.programs.nixneovim;
-                  in ''
-                    ${lib.concatStringsSep "\n" config}
-                  '';
-                  # let
-                    # config = lib.mapAttrsToList
-                      # (k: v: lib.trace v.config v.config.content)
-                      # plugin-configs;
-                  # in ''
-                    # ${lib.concatStringsSep "\n" config}
-                  # '';
-              };
-          };
+        # default = import ./nixneovim.nix { homeManager = true; };
+        # homeManager = self.nixosModules.default;
+        # homeManager-22-11 = import ./nixneovim.nix { homeManager = true; state = 2211; };
+        # nixos = import ./nixneovim.nix { homeManager = false; };
+        # nixos-22-11 = import ./nixneovim.nix { homeManager = false; state = 2211; };
+        homeManager-haumea = import ./nixneovim2.nix { homeManager = true; state = 2211; inherit haumea; };
       };
 
       overlays.default = inputs.nixneovimplugins.overlays.default;
@@ -222,6 +140,7 @@
               inherit nmt pkgs;
               nixneovim = self.nixosModules.homeManager;
               inherit (inputs) home-manager;
+              inherit haumea;
             };
 
             lib-checks.basic = nix-flake-tests.lib.check {

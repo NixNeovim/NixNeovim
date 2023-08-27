@@ -2,7 +2,6 @@
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.easyescape;
-  helpers = import ../../helper { inherit pkgs lib config; };
 in
 {
   options = {

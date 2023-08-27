@@ -1,8 +1,7 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, helpers, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.packer;
-  helpers = import ../../helper { inherit pkgs lib config; };
 in
 {
   options = {
@@ -76,7 +75,7 @@ in
         in
         mkIf (cfg.plugins != [ ]) ''
           require('packer').startup(function()
-            use ${helpers.toLuaObject packedPlugins}
+            use ${helpers.converter.toLuaObject packedPlugins}
           end)
         '';
     };

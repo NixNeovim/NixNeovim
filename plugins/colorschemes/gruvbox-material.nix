@@ -1,15 +1,16 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "gruvbox-material";
   pluginUrl = "https://github.com/sainnhe/gruvbox-material";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.colorschemes.${name};
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     enumOption
     intOption
     boolOption;
@@ -38,9 +39,7 @@ let
       '';
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
@@ -51,12 +50,12 @@ mkLuaPlugin {
   isColorscheme = true;
 
   extraConfigLua = ''
-    vim.g.gruvbox_material_background = ${helpers.toLuaObject cfg.background}
-    vim.g.gruvbox_material_foreground = ${helpers.toLuaObject cfg.foreground}
+    vim.g.gruvbox_material_background = ${helpers.converter.toLuaObject cfg.background}
+    vim.g.gruvbox_material_foreground = ${helpers.converter.toLuaObject cfg.foreground}
     vim.g.gruvbox_material_disable_italic_comment = ${helpers.boolToInt' cfg.disableItalicComment}
     vim.g.gruvbox_material_enable_bold = ${helpers.boolToInt' cfg.enableBold}
     vim.g.gruvbox_material_enable_italic = ${helpers.boolToInt' cfg.enableItalic}
-    vim.g.gruvbox_material_transparent_background = ${helpers.toLuaObject cfg.transparentBackground}
+    vim.g.gruvbox_material_transparent_background = ${helpers.converter.toLuaObject cfg.transparentBackground}
     vim.g.gruvbox_material_dim_inactive_windows = ${helpers.boolToInt' cfg.dimInactiveWindows}
     vim.g.gruvbox_material_better_performance = ${helpers.boolToInt' cfg.betterPerformance}
 

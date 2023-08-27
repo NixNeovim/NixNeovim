@@ -1,15 +1,19 @@
-{ pkgs, lib, config, ... }:
-
-with lib;
+{ pkgs, lib, helpers, ... }:
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
+
+  inherit (lib)
+    mkOption;
 
   name = "treesitter-context";
   pluginUrl = "https://github.com/nvim-treesitter/nvim-treesitter-context";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-  cfg = config.programs.nixneovim.plugins.${name};
-  inherit (helpers.customOptions) intNullOption enumOption;
+  inherit (helpers.custom_options)
+    intNullOption
+    enumOption;
+
   inherit (lib.types) enum listOf;
 
   moduleOptions = {
@@ -19,7 +23,7 @@ let
     maxLines = intNullOption "Define the limit of context lines. 0 means no limit";
     trimScope = enumOption [ "inner" "outer" ] "outer" "When max_lines is reached, which lines to discard";
     mode = enumOption [ "cursor" "topline" ] "cursor" "Which context to show";
-    patterns = {
+    pattern = { # TODO: rename to patterns
       default = mkOption {
         type = listOf (enum [
           "class"
@@ -37,13 +41,7 @@ let
     };
   };
 
-  # you can autogenerate the plugin options from the moduleOptions.
-  # This essentially converts the camalCase moduleOptions to snake_case plugin options
-  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
-
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

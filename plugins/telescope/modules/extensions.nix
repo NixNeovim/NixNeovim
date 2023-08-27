@@ -5,7 +5,7 @@ let
   cfg-extensions = cfg-telescope.extensions;
   filters = helpers.filters { cfg = cfg-extensions; };
 
-  inherit (helpers.customOptions) strOption;
+  inherit (helpers.custom_options) strOption;
   inherit (helpers)
     camelToSnake;
   inherit(lib)
@@ -67,15 +67,15 @@ in {
   options = mapAttrs mkExtension extensions;
 
   # list of packages that actiated sources depend on
-  packages = activatedPackages extensions;
+  packages = activatedPackages cfg-extensions extensions;
 
   # list of packages that actiated sources depend on
-  plugins = activatedPlugins extensions;
+  plugins = activatedPlugins cfg-extensions extensions;
 
   # string list of all extensions that shall be loaded
-  loadString = forEach (activatedLuaNames extensions) (ext: "telescope.load_extension('${ext}')");
+  loadString = forEach (activatedLuaNames cfg-extensions extensions) (ext: "telescope.load_extension('${ext}')");
 
-  config = helpers.toLuaObject (
+  config = helpers.converter.toLuaObject (
     mapAttrs'
       (name: attrs:
         {
@@ -90,6 +90,6 @@ in {
             attrs.options;
         }
       )
-      (activated extensions));
+      (activated cfg-extensions extensions));
 
 }

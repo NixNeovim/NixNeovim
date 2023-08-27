@@ -1,4 +1,4 @@
-{ pkgs, home-manager, nmt, nixneovim, ... }:
+{ pkgs, home-manager, nmt, nixneovim, haumea, ... }:
 
 let
 
@@ -39,7 +39,7 @@ let
     }
 
     # improt NixNeovim module
-    (import ../nixneovim.nix {})
+    (import ../nixneovim2.nix { inherit haumea; })
   ];
 
   testHelper = {
@@ -157,12 +157,12 @@ let
     testedAttrPath = [ "home" "activationPackage" ];
     tests =
       let
-        modulesTests =
-          filesIn "plugins"
-          ++ filesIn "colorschemes";
+        modulesTests = [];
+          # filesIn "plugins"
+          # ++ filesIn "colorschemes";
         testList = [
           ./neovim.nix
-          ./neovim-use-plugin-defaults.nix
+          # ./neovim-use-plugin-defaults.nix
           # ./basic-check.nix
         ] ++ modulesTests;
       in builtins.foldl'

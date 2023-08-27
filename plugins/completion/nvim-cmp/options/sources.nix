@@ -10,7 +10,7 @@ let
   filters = helpers.filters { cfg = cfg-sources; };
 
   inherit (helpers) removeEnable keyToSnake;
-  inherit (helpers.customOptions) intNullOption;
+  inherit (helpers.custom_options) intNullOption;
   inherit (filters)
     activated
     activatedConfig
@@ -99,17 +99,17 @@ in {
 
   # list of packages that sources depend on like the cmp-source package itself.
   # packages = mapAttrsToList (name: attrs: attrs.package) (helpers.activated plugins); ## return packages of activated sources
-  packages = activatedPackages plugins;
+  packages = activatedPackages cfg plugins;
 
   # list of extra config that sources define/require
   # config = mapAttrsToList (name: attrs: attrs.extraConfig) (helpers.activated plugins); ## return packages of activated sources
-  extraConfig = activatedConfig plugins;
+  extraConfig = activatedConfig cfg plugins;
 
   # list of the sources config for cmp
   # output format [ { ["name"] = "<name>" } ]
   config =
       mapAttrsToList
         (name: attrs: { name = name; } // (keyToSnake (removeEnable attrs)) )
-        (activated cfg-sources);
+        (activated cfg cfg-sources);
 
 }

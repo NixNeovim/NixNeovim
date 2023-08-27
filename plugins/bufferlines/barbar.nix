@@ -1,16 +1,15 @@
-{ lib, pkgs, config, ... }:
+{ lib, pkgs, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "barbar";
   pluginUrl = "https://github.com/romgrk/barbar.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-  cfg = config.programs.nixneovim.plugins.${name};
-   
-  inherit (helpers.customOptions) boolOption;
+  inherit (helpers.custom_options) boolOption;
 
   moduleOptions = {
     animation = boolOption true "Enable animations";
@@ -20,11 +19,7 @@ let
     clickable = boolOption true "Enable clickable tabs\n - left-click: go to buffer\n - middle-click: delete buffer";
   };
 
-  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
-
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     barbar-nvim

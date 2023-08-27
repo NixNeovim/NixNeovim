@@ -1,15 +1,15 @@
-{ lib, pkgs, config, ... }@attrs:
+{ lib, pkgs, helpers, ... }@attrs:
 with lib;
 let
-  helpers = import ../../helper { inherit pkgs lib config; };
 
   eitherAttrsStrInt = with types; let
     strInt = either str int;
   in
   either strInt (attrsOf (either strInt (attrsOf strInt)));
-in
-with helpers;
-mkPlugin attrs {
+  inherit (helpers.deprecated)
+    mkPlugin;
+
+in mkPlugin attrs {
   name = "emmet";
   description = "Enable emmet";
   extraPlugins = [ pkgs.vimPlugins.emmet-vim ];

@@ -1,9 +1,8 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 with types;
 let
-  helpers = import ../../helper { inherit pkgs lib config; };
 
   toLua = cfg: server: serverAttrs:
     let

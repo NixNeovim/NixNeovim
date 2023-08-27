@@ -1,8 +1,7 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, helpers, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.airline;
-  helpers = import ../../helper { inherit pkgs lib config; };
 
   sectionType = with types; nullOr (oneOf [ str (listOf str) ]);
   sectionOption = mkOption {

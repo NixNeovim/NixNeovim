@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
@@ -7,9 +7,7 @@ let
   name = "bamboo";
   pluginUrl = "https://github.com/ribru17/bamboo.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     strOption
     listOption
     enumOption
@@ -57,9 +55,7 @@ let
     };
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in helpers.generator.mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

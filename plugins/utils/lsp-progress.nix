@@ -1,14 +1,15 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "lsp-progress";
   pluginUrl = "https://github.com/linrongbin16/lsp-progress.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-   inherit (helpers.customOptions) intOption listOption;
+   inherit (helpers.custom_options) intOption listOption;
 
   moduleOptions = {
     # add module options here
@@ -18,9 +19,7 @@ let
     maxSize = intOption (-1) "Max string length, -1 is unlimited";
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

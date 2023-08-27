@@ -1,15 +1,16 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "snippy";
   pluginUrl = "https://github.com/dcampos/nvim-snippy";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
-  inherit (helpers.customOptions) boolOption;
+  inherit (helpers.custom_options) boolOption;
 
   moduleOptions = {
     mappings = mkOption {
@@ -21,9 +22,7 @@ let
 
   pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-snippy

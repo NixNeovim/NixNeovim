@@ -15,7 +15,7 @@
             -- test lua comment
           '';
 
-          plugins.numb.enable = true;
+          plugins.windows.enable = true;
           mappings = {
             normalVisualOp = {
               "ßß" = "'@'";

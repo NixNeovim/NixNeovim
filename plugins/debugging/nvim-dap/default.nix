@@ -1,24 +1,19 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "nvim-dap";
   pluginUrl = "https://github.com/mfussenegger/nvim-dap";
-
-  helpers = import ../../../helper { inherit pkgs lib config; };
-  cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; {
     adapters = import ./adapters.nix { inherit lib pkgs config; };
   };
 
-  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
-
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-dap

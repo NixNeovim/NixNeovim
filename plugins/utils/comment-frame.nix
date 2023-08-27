@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
@@ -8,11 +8,13 @@ let
   pluginName = "nvim-comment-frame";
   pluginUrl = "https://github.com/s1n7ax/nvim-comment-frame";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     strOption
     intOption
     boolOption;
+
+  inherit (helpers.generator)
+    mkLuaPlugin;
 
   moduleOptions = {
     # add module options here
@@ -28,9 +30,7 @@ let
     addCommentAbove = boolOption true "";
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginName pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

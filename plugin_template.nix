@@ -1,13 +1,14 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "PLUGIN_NAME";
   pluginUrl = "PLUGIN_URL";
 
-  helpers = import import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; {
@@ -26,9 +27,7 @@ let
   # This essentially converts the camalCase moduleOptions to snake_case plugin options
   pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

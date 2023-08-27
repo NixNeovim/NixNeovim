@@ -1,13 +1,14 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "scrollbar";
   pluginUrl = "https://github.com/petertriho/nvim-scrollbar";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
 
   moduleOptions = with helpers; {
     # add module options here
@@ -15,9 +16,7 @@ let
     # autoStart = boolOption true "Enable this pugin at start"
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

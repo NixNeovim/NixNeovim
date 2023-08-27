@@ -1,8 +1,7 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, helpers, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.lightline;
-  helpers = import ../../helper { inherit pkgs lib config; };
 in
 {
   options = {

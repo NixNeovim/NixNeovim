@@ -1,8 +1,7 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, helpers, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.notify;
-  helpers = import ../../helper { inherit pkgs lib config; };
   icon = mkOption {
     type = types.nullOr types.str;
     default = null;
@@ -68,7 +67,7 @@ in
         extraPlugins = [ pkgs.vimPlugins.nvim-notify ];
         extraConfigLua = ''
           vim.notify = require('notify');
-          require('notify').setup(${helpers.toLuaObject setupOptions})
+          require('notify').setup(${helpers.converter.toLuaObject setupOptions})
         '';
       };
     };

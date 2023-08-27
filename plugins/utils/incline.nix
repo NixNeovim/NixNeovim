@@ -1,23 +1,21 @@
-{ pkgs
-, lib
-, config
-, ...
-}:
+{ pkgs , lib , config , helpers, ... }:
 with lib;
 let
+
+  inherit (helpers.generator)
+     mkLuaPlugin;
+
   name = "incline";
   pluginUrl = "https://github.com/b0o/incline.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; {
   };
 
   pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
-in
-with helpers;
-mkLuaPlugin {
+
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     incline-nvim

@@ -1,16 +1,17 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "gruvbox-baby";
   pluginUrl = "https://github.com/luisiacc/gruvbox-baby";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.colorschemes.${name};
 
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     attrsOption
     strOption
     enumOption
@@ -30,9 +31,7 @@ let
     useOriginalPalette = boolOption false "Use the original gruvbox palette";
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
@@ -43,16 +42,16 @@ mkLuaPlugin {
   isColorscheme = true;
 
   extraConfigLua = ''
-    vim.g.gruvbox_baby_background_color = ${helpers.toLuaObject cfg.backgroundColor}
-    vim.g.gruvbox_baby_transparent_mode = ${helpers.toLuaObject cfg.transparentMode}
-    vim.g.gruvboy_baby_comment_style = ${helpers.toLuaObject cfg.commentStyle}
-    vim.g.gruvboy_baby_keyword_style = ${helpers.toLuaObject cfg.keywordStyle}
-    vim.g.gruvboy_baby_string_style = ${helpers.toLuaObject cfg.stringStyle}
-    vim.g.gruvboy_baby_function_style = ${helpers.toLuaObject cfg.functionStyle}
-    vim.g.gruvboy_baby_variable_style = ${helpers.toLuaObject cfg.variableStyle}
-    vim.g.gruvboy_baby_highlights = ${helpers.toLuaObject cfg.highlights}
-    vim.g.gruvboy_baby_color_overrides = ${helpers.toLuaObject cfg.colorOverrides}
-    vim.g.gruvboy_baby_use_original_palette = ${helpers.toLuaObject cfg.useOriginalPalette}
+    vim.g.gruvbox_baby_background_color = ${helpers.converter.toLuaObject cfg.backgroundColor}
+    vim.g.gruvbox_baby_transparent_mode = ${helpers.converter.toLuaObject cfg.transparentMode}
+    vim.g.gruvboy_baby_comment_style = ${helpers.converter.toLuaObject cfg.commentStyle}
+    vim.g.gruvboy_baby_keyword_style = ${helpers.converter.toLuaObject cfg.keywordStyle}
+    vim.g.gruvboy_baby_string_style = ${helpers.converter.toLuaObject cfg.stringStyle}
+    vim.g.gruvboy_baby_function_style = ${helpers.converter.toLuaObject cfg.functionStyle}
+    vim.g.gruvboy_baby_variable_style = ${helpers.converter.toLuaObject cfg.variableStyle}
+    vim.g.gruvboy_baby_highlights = ${helpers.converter.toLuaObject cfg.highlights}
+    vim.g.gruvboy_baby_color_overrides = ${helpers.converter.toLuaObject cfg.colorOverrides}
+    vim.g.gruvboy_baby_use_original_palette = ${helpers.converter.toLuaObject cfg.useOriginalPalette}
 
     vim.cmd[[colorscheme gruvbox-baby]]
   '';

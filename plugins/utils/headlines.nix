@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
@@ -7,15 +7,14 @@ let
   name = "headlines";
   pluginUrl = "https://github.com/lukas-reineke/headlines.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
+  inherit (helpers.generator)
+    mkLuaPlugin;
 
   moduleOptions = with helpers; {
     # add module options here
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     headlines-nvim

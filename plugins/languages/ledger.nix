@@ -1,12 +1,11 @@
-{ pkgs, lib, config, ... }@args:
+{ pkgs, lib, helpers, ... }@args:
 
 let
-  helpers = import ../../helper { inherit pkgs lib config; };
   inherit (lib.types)
     bool
     int;
 
-  inherit (helpers)
+  inherit (helpers.deprecated)
     mkDefaultOpt
     mkPlugin;
 

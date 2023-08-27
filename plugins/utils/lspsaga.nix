@@ -1,10 +1,13 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 let
+
+  inherit (helpers.generator)
+     mkLuaPlugin;
+
   name = "lspsaga";
   pluginUrl = "https://github.com/nvimdev/lspsaga.nvim";
   
-  helpers = import ../../helper { inherit pkgs lib config; };
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     strOption
     intOption
     boolOption
@@ -115,9 +118,7 @@ let
     };
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [ lspsaga-nvim ];
 }

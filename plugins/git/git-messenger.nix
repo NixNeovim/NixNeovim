@@ -1,19 +1,15 @@
-{ pkgs, lib, config, ... }:
-
-with lib;
+{ pkgs, helpers, ... }:
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "git-messenger";
   pluginUrl = "https://github.com/rhysd/git-messenger.vim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-
   # TODO: add options for plugin config (needs changes to mkLuaPlugin)
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

@@ -77,8 +77,7 @@ let
           else if isNull args then
             "nil"
           else "";
-    in
-    toLuaObjectHelper initDepth args;
+    in toLuaObjectHelper initDepth args;
 
 in {
   inherit toLuaObject';

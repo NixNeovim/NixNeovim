@@ -1,24 +1,23 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "lsp-lines";
   pluginUrl = "https://sr.ht/~whynothugo/lsp_lines.nvim/";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
-  inherit (helpers.customOptions) boolOption;
+  inherit (helpers.custom_options) boolOption;
   
   moduleOptions = {
     # add module options here
     onlyCurrentLine = boolOption false "Show virtual lines only for the current line's diagnostics";
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     lsp-lines-nvim

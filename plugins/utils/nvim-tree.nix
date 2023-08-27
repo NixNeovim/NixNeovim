@@ -1,8 +1,7 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, helpers, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.nvim-tree;
-  helpers = import ../../helper { inherit pkgs lib config; };
 in
 {
   options.programs.nixneovim.plugins.nvim-tree = {
@@ -255,7 +254,7 @@ in
         ];
 
         extraConfigLua = ''
-          require('nvim-tree').setup(${helpers.toLuaObject options})
+          require('nvim-tree').setup(${helpers.converter.toLuaObject options})
         '';
       };
     };

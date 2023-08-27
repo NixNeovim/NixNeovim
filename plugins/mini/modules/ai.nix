@@ -5,7 +5,7 @@ let
   inherit (lib) mkOption;
   inherit (lib.types) enum attrs;
 
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     intOption
     strOption;
 

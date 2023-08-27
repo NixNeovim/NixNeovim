@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
@@ -7,10 +7,11 @@ let
   name = "diffview";
   pluginUrl = "https://github.com/sindrets/diffview.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
+  inherit (helpers.generator)
+    mkLuaPlugin;
 
-  inherit (helpers.customOptions) boolOption;
+  inherit (helpers.custom_options) boolOption;
 
   moduleOptions = {
     diffBinaries = boolOption false "Show diffs for binaries";
@@ -19,9 +20,7 @@ let
   };
 
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     diffview-nvim

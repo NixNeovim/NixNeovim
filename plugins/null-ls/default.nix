@@ -1,8 +1,7 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, helpers, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.null-ls;
-  helpers = import ../../helper { inherit pkgs lib config; };
 in
 {
   imports = [
@@ -42,7 +41,7 @@ in
         extraPlugins = with pkgs.vimPlugins; [ null-ls-nvim ];
 
         extraConfigLua = ''
-          require("null-ls").setup(${helpers.toLuaObject options})
+          require("null-ls").setup(${helpers.converter.toLuaObject options})
         '';
       };
     };

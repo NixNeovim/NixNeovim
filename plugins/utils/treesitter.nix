@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
@@ -7,10 +7,9 @@ let
   name = "treesitter";
   pluginUrl = "https://github.com/nvim-treesitter/nvim-treesitter";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
 
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     strOption
     boolOption;
 
@@ -113,7 +112,7 @@ let
     in
       builtins.filter (x: ! elem x.name cfg.excludeGrammars) combinedGrammars;
 
-in helpers.mkLuaPlugin {
+in helpers.generator.mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
 
   extraPlugins = with pkgs;
@@ -135,7 +134,7 @@ in helpers.mkLuaPlugin {
   };
 
   extraConfigLua = ''
-    require('nvim-treesitter.configs').setup(${helpers.toLuaObject pluginOptions})
+    require('nvim-treesitter.configs').setup(${helpers.converter.toLuaObject pluginOptions})
   '';
 
   defaultRequire = false;

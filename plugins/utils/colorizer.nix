@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
@@ -7,13 +7,14 @@ let
   name = "colorizer";
   pluginUrl = "https://github.com/NvChad/nvim-colorizer.lua";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     listOption
     boolOption
     enumOption
     strOption;
+
+  inherit (helpers.generator)
+    mkLuaPlugin;
 
   moduleOptions = {
     # add module options here
@@ -38,9 +39,7 @@ let
     };
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

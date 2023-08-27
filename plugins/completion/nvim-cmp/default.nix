@@ -1,14 +1,11 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, helpers, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.nvim-cmp;
-  helpers = import ../../../helper { inherit pkgs lib config; };
 
   sources = import ./options/sources.nix { inherit lib cfg pkgs helpers; };
 
-in
-with helpers;
-{
+in {
   options.programs.nixneovim.plugins.nvim-cmp = {
     enable = mkEnableOption "Enable nvim-cmp";
 
@@ -16,6 +13,8 @@ with helpers;
     mapping = import ./options/mapping.nix { inherit lib; };
     sources = sources.options;
     completion = import ./options/completion.nix { inherit lib; };
+      inherit (helpers.generator)
+         mkLuaPlugin;
 
     preselect = mkOption {
       type = types.nullOr (types.enum [ "Item" "None" ]);
@@ -191,9 +190,9 @@ with helpers;
               else
                 mapAttrs
                   (bind: mapping: helpers.mkRaw (if isString mapping then mapping
-                  else "cmp.mapping(${mapping.action}${optionalString (mapping.modes != null && length mapping.modes >= 1) ("," + (helpers.toLuaObject mapping.modes))})"))
+                  else "cmp.mapping(${mapping.action}${optionalString (mapping.modes != null && length mapping.modes >= 1) ("," + (helpers.converter.toLuaObject mapping.modes))})"))
                   cfg.mapping;
-            luaMappings = (helpers.toLuaObject mappings);
+            luaMappings = (helpers.converter.toLuaObject mappings);
             wrapped = lists.fold (presetName: prevString: ''cmp.mapping.preset.${presetName}(${prevString})'') luaMappings cfg.mappingPresets;
           in
           helpers.mkRaw wrapped;
@@ -251,7 +250,7 @@ with helpers;
             function setup()
               local cmp = require('cmp') -- this is needed
 
-              cmp.setup(${helpers.toLuaObject' 1 pluginOptions})
+              cmp.setup(${helpers.converter.toLuaObject' 1 pluginOptions})
 
               -- extra config of sources
               ${toConfigString sources.extraConfig}

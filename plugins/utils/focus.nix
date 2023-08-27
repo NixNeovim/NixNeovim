@@ -1,10 +1,9 @@
-{ pkgs, lib, config, ... }@attrs:
+{ pkgs, lib, helpers, ... }@attrs:
 
 let
-  helpers = import ../../helper { inherit pkgs lib config; };
-in
-with helpers; with lib;
-mkPlugin attrs {
+  inherit (helpers.deprecated)
+    mkPlugin;
+in mkPlugin attrs {
   name = "focus";
   description = "Enable focus.nvim";
   extraPlugins = with pkgs.vimExtraPlugins; [

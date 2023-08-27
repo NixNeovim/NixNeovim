@@ -1,9 +1,8 @@
-{ config, lib, pkgs, ... }:
+{ lib, pkgs, helpers, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.dashboard;
 
-  helpers = import ../../helper { inherit pkgs lib config; };
 in
 {
   options = {
@@ -132,7 +131,7 @@ in
           local dashboard = require("dashboard")
 
           ${toString (mapAttrsToList (n: v:
-            "dashboard.${n} = ${helpers.toLuaObject v}\n")
+            "dashboard.${n} = ${helpers.converter.toLuaObject v}\n")
             filteredOptions)}
         '';
       };

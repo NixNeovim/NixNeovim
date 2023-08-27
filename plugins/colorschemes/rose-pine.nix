@@ -1,15 +1,16 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "rose-pine";
   pluginUrl = "https://github.com/rose-pine/neovim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
 
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     attrsOption
     strOption
     enumOption
@@ -17,7 +18,7 @@ let
 
   colors = [ "base" "surface" "overlay" "muted" "subtle" "text" "love" "gold" "rose" "pine" "foam" "iris" "highlight_low" "highlight_med" "highlight_high" "_experimental_nc" ];
 
-  moduleOptions = { 
+  moduleOptions = {
     variant = enumOption [ "auto" "main" "moon" "dawn" ] "auto" "";
     dark_variant = enumOption [ "main" "moon" "dawn" ] "main" "";
     bold_vert_split = boolOption false "Disable bold vertical split";
@@ -52,12 +53,10 @@ let
     };
 
     highlight_groups = attrsOption {} "Change specific vim highlight groups";
-  
+
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

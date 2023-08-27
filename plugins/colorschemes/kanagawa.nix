@@ -1,19 +1,16 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "kanagawa";
   pluginUrl = "https://github.com/rebelot/kanagawa.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-  cfg = config.programs.nixneovim.colorschemes.${name};
-
-  inherit (helpers.customOptions)
-    attrsOption
+  inherit (helpers.custom_options)
     strOption
-    enumOption
     boolOption;
 
   moduleOptions = {
@@ -51,9 +48,7 @@ let
     };
   };
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

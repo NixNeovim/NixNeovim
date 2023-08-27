@@ -1,8 +1,7 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.gitgutter;
-  helpers = import ../../helper { inherit pkgs lib config; };
 in
 {
   options = {

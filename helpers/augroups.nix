@@ -1,16 +1,14 @@
-{
-  lib,
-  toLuaObject,
-  customOptions,
-}: let
+{ lib, super }: let
   inherit (import ../lib.nix) rawLua;
+  inherit 
 
   inherit (lib) mkOption;
   inherit (lib.strings) concatMapStringsSep;
   inherit (lib.attrsets) mapAttrsToList;
   inherit (lib.types) either str listOf nullOr submodule lines int enum;
 
-  inherit (customOptions) boolOption;
+  inherit (super.customOptions) boolOption;
+  inherit (super.to_lua.object) toLuaObject;
 
   events = enum [
     "BufAdd"
@@ -293,6 +291,7 @@
   in
     concatMapStringsSep "\n" genAugroup augroups';
 in {
+
   augroupOptions = {name, ...}: {
     options = {
       name = mkOption {

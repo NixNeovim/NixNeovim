@@ -1,14 +1,15 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "mini";
   pluginUrl = "https://github.com/echasnovski/mini.nvim";
 
   cfg = config.programs.nixneovim.plugins.${name};
-  helpers = import ../../helper { inherit pkgs lib config; };
   inherit (helpers)
     convertModuleOptions;
 
@@ -61,9 +62,7 @@ let
 
   # pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
 
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     mini-nvim
@@ -77,7 +76,7 @@ mkLuaPlugin {
             setup = convertModuleOptions cfg.${module} (options // { extraConfig = { }; });
           in
           if cfg.${module}.enable then
-            "require('${name}.${module}').setup(${helpers.toLuaObject setup})"
+            "require('${name}.${module}').setup(${helpers.converter.toLuaObject setup})"
           else
             ""
         )

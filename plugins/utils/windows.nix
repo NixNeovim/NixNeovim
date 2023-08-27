@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
@@ -6,9 +6,6 @@ let
 
   name = "windows";
   pluginUrl = "https://github.com/anuvyklack/windows.nvim";
-
-  helpers = import ../../helper { inherit pkgs lib config; };
-  cfg = config.programs.nixneovim.plugins.${name};
 
   moduleOptions = with helpers; {
     # add module options here
@@ -18,11 +15,7 @@ let
     # animations = boolOption true "Enable animations";
   };
 
-  # pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
-
-in
-with helpers;
-mkLuaPlugin {
+in helpers.generator.mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

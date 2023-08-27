@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
@@ -7,11 +7,7 @@ let
   name = "plantuml-syntax";
   pluginUrl = "https://github.com/aklt/plantuml-syntax";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-
-in
-with helpers;
-mkLuaPlugin {
+in helpers.generator.mkLuaPlugin {
   inherit name pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
@@ -7,9 +7,8 @@ let
   name = "luasnip";
   pluginUrl = "https://github.com/L3MON4D3/LuaSnip";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
-  inherit (helpers.customOptions) boolOption strOption;
+  inherit (helpers.custom_options) boolOption strOption;
 
   moduleOptions = {
     # add module options here
@@ -19,7 +18,7 @@ let
     path = strOption "./snippets" "Specifies the path where snippets are loaded from";
   };
 
-  inherit (helpers.toLua)
+  inherit (helpers.generator)
     mkLuaPlugin;
 
 in mkLuaPlugin {

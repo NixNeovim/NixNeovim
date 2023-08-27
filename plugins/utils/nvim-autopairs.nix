@@ -1,8 +1,7 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, helpers, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.nvim-autopairs;
-  helpers = import ../../helper { inherit pkgs lib config; };
 in
 {
   options.programs.nixneovim.plugins.nvim-autopairs = {
@@ -54,7 +53,7 @@ in
         extraPlugins = [ pkgs.vimPlugins.nvim-autopairs ];
 
         extraConfigLua = ''
-          require('nvim-autopairs').setup(${helpers.toLuaObject options})
+          require('nvim-autopairs').setup(${helpers.converter.toLuaObject options})
         '';
       };
     };

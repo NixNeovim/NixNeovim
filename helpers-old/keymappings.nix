@@ -1,15 +1,12 @@
-{ lib
-, customOptions
-, toLuaObject
-}:
+{ lib, super }:
 
 let
   inherit (builtins) isString isAttrs;
   inherit (lib) filterAttrs assertMsg mapAttrsToList mkOption;
   inherit (lib.types) either str submodule attrsOf;
 
-  inherit (customOptions) boolOption strNullOption;
-  # inherit (helpers) toLuaObject;
+  inherit (super.customOptions) boolOption strNullOption;
+  inherit (super.to_lua.object) toLuaObject;
 
   # Type definitions for key mappings
   mapOption = submodule {

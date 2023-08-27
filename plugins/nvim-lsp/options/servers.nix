@@ -1,13 +1,18 @@
-{ lib, config, pkgs, ... }:
+{ lib, pkgs, helpers, ... }:
 
-with lib;
-with types;
-with pkgs;
 
 let
 
-  helpers = import ../../../helper { inherit pkgs lib config; };
-  inherit (helpers.customOptions) strOption;
+  inherit (helpers.custom_options) strOption;
+  inherit (lib)
+    mkOption
+    mkEnableOption
+    flatten
+    mapAttrs
+    mapAttrsToList
+    filterAttrs
+    types
+    submodule;
 
   mkServerOption = server: attr:
     mkOption {
@@ -30,7 +35,7 @@ let
   # - languages: Used in the docs
   # - packages: used if the name of the nix packages differs from the key
   # - serverName: name of the server as called in `lspconfig.<serverName>.setup()
-  serversSet = {
+  serversSet = with pkgs; {
     bashls = {
       languages = "Bash";
       packages = [ nodePackages.bash-language-server ];

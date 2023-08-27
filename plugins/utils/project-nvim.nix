@@ -1,15 +1,16 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, ... }:
 
 with lib;
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "project-nvim";
   pluginUrl = "https://github.com/ahmedkhalf/project.nvim";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
   cfg = config.programs.nixneovim.plugins.${name};
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     boolOption
     enumOption;
 
@@ -49,9 +50,7 @@ let
   };
 
   pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
-in
-with helpers;
-mkLuaPlugin {
+in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here

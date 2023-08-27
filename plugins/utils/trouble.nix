@@ -31,7 +31,7 @@ in
       programs.nixneovim = {
         extraPlugins = [ pkgs.vimPlugins.trouble-nvim ];
         extraConfigLua = ''
-          require("trouble").setup${helpers.toLuaObject filteredOptions}
+          require("trouble").setup${helpers.converter.toLuaObject filteredOptions}
         '';
       };
     };

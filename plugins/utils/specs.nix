@@ -1,8 +1,7 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, lib, helpers, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.specs;
-  helpers = import ../../helper { inherit pkgs lib config; };
 in
 {
   options.programs.nixneovim.plugins.specs = {
@@ -107,7 +106,7 @@ in
   };
   config =
     let
-      setup = helpers.toLuaObject {
+      setup = helpers.converter.toLuaObject {
         inherit (cfg) show_jumps min_jump;
         ignore_filetypes = attrsets.listToAttrs
           (lib.lists.map (x: attrsets.nameValuePair x true)

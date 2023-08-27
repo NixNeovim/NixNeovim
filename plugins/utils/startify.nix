@@ -1,9 +1,18 @@
-{ pkgs, lib, config, ... }@args:
+{ pkgs, lib, helpers, ... }@args:
 let
-  helpers = import ../../helper { inherit pkgs lib config; };
-in
-with lib; with helpers;
-mkPlugin args {
+  inherit (helpers.deprecated)
+    mkPlugin
+    mkDefaultOpt;
+
+  inherit (helpers.converter)
+    toLuaObject;
+
+  inherit (lib)
+    types
+    concatStringsSep
+    mkOption;
+    
+in mkPlugin args {
   name = "startify";
   description = "Enable startify";
   extraPlugins = [ pkgs.vimPlugins.vim-startify ];

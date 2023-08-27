@@ -1,8 +1,7 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers, config, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.coq-nvim;
-  helpers = import ../../helper { inherit pkgs lib config; };
 in
 {
   options = {
@@ -39,7 +38,7 @@ in
         ] ++ optional cfg.installArtifacts pkgs.vimExtraPlugins.coq-artifacts;
         plugins.lsp = {
           preConfig = ''
-            vim.g.coq_settings = ${helpers.toLuaObject settings}
+            vim.g.coq_settings = ${helpers.converter.toLuaObject settings}
           '';
           coqSupport = true;
         };

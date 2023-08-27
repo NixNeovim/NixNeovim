@@ -1,9 +1,15 @@
-{ lib, pkgs, config, ... }@attrs:
+{ lib, pkgs, helpers, ... }@attrs:
+
 let
-  helpers = import ../../helper { inherit pkgs lib config; };
-in
-with helpers; with lib;
-mkPlugin attrs {
+
+  inherit (helpers.deprecated)
+    mkPlugin
+    mkDefaultOpt;
+
+  inherit (lib)
+    types;
+
+in mkPlugin attrs {
   name = "goyo";
   description = "Enable goyo.vim";
   extraPlugins = [ pkgs.vimPlugins.goyo-vim ];
