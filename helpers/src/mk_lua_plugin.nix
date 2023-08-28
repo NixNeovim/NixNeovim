@@ -12,11 +12,11 @@ let
     warnIf;
 
   inherit (super.generator)
-    defaultModuleOptions
-    convertModuleOptions;
+    defaultModuleOptions;
 
   inherit (super.converter)
-    toLuaObject;
+    toLuaObject
+    convertModuleOptions;
 
   inherit (super.utils)
     indent;
@@ -89,9 +89,9 @@ in { name                  # name of the plugin module
   # function output
   {
     # add module to 'plugins'/'colorschemes'
-    # options.programs.nixneovim.${type}.${name} =
-            # (defaultModuleOptions fullDescription) // moduleOptions;
-    options = (defaultModuleOptions fullDescription) // moduleOptions;
+    options.programs.nixneovim.${type}.${name} =
+            (defaultModuleOptions fullDescription) // moduleOptions;
+    # options = (defaultModuleOptions fullDescription) // moduleOptions;
 
     config.programs.nixneovim =
       mkIf cfg.enable (extraNixNeovimConfig // {

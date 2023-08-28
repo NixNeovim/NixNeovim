@@ -1,14 +1,13 @@
 { lib, super }: let
-  inherit (import ../lib.nix) rawLua;
-  inherit 
 
   inherit (lib) mkOption;
   inherit (lib.strings) concatMapStringsSep;
   inherit (lib.attrsets) mapAttrsToList;
   inherit (lib.types) either str listOf nullOr submodule lines int enum;
 
-  inherit (super.customOptions) boolOption;
-  inherit (super.to_lua.object) toLuaObject;
+  inherit (super.utils) rawLua;
+  inherit (super.custom_options) boolOption;
+  inherit (super.converter) toLuaObject;
 
   events = enum [
     "BufAdd"

@@ -1,19 +1,20 @@
-{ pkgs, lib, helpers, ... }:
+{ pkgs, lib, helpers, super, config }:
 with lib;
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "telescope";
   pluginUrl = "https://github.com/nvim-telescope/telescope.nvim";
 
   cfg = config.programs.nixneovim.plugins.${name};
-  inherit (helpers) toLuaObject;
   inherit (helpers.custom_options) attrsOption boolOption;
-  inherit (helpers.toLua) convertModuleOptions;
 
-  extensions = import ./modules/extensions.nix {
-    inherit pkgs lib helpers;
-    cfg-telescope = cfg;
-  };
+  inherit (helpers.converter)
+    convertModuleOptions
+    toLuaObject;
+
+  extensions = super.modules.extensions;
 
   moduleOptions = with helpers; {
     # add module options here
@@ -30,8 +31,6 @@ let
 
   pluginOptions =
     let
-      inherit (helpers.generator)
-         mkLuaPlugin;
       options = convertModuleOptions cfg (filterAttrs (k: v: k != "extensions") moduleOptions);
       extraConfig = cfg.extraConfig;
     in options // extraConfig;
@@ -43,7 +42,7 @@ in mkLuaPlugin {
     plenary-nvim
     popup-nvim
   ] ++ extensions.plugins;
-  # ];
+
   extraPackages = with pkgs; [
     manix
     ripgrep

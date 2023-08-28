@@ -1,8 +1,8 @@
-{ pkgs, helpers, ... }@attrs:
+{ pkgs, helpers, config, lib }:
 let
   inherit (helpers.deprecated)
       mkPlugin;
-in mkPlugin attrs {
+in mkPlugin { inherit config lib; } {
   name = "vimwiki";
   description = "Enable vimwiki.vim";
   extraPackages = [ pkgs.bash ];

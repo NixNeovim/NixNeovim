@@ -1,10 +1,14 @@
-{ pkgs, lib, helpers, ... }:
+{ pkgs, lib, helpers, config }:
 
 with lib;
 
 let
   inherit (helpers.generator)
      mkLuaPlugin;
+
+  inherit (helpers.converter)
+    convertModuleOptions
+    toLuaObject;
 
   name = "PLUGIN_NAME";
   pluginUrl = "PLUGIN_URL";
@@ -25,7 +29,7 @@ let
 
   # you can autogenerate the plugin options from the moduleOptions.
   # This essentially converts the camalCase moduleOptions to snake_case plugin options
-  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
+  pluginOptions = convertModuleOptions cfg moduleOptions;
 
 in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;

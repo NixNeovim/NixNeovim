@@ -1,4 +1,4 @@
-{ lib, pkgs, helpers, ... }@attrs:
+{ lib, pkgs, helpers, config }:
 let
   inherit (helpers.deprecated)
       mkDefaultOpt
@@ -7,7 +7,7 @@ let
   inherit (lib)
     types;
 
-in mkPlugin attrs {
+in mkPlugin { inherit lib config; } {
   name = "nerdcommenter";
   description = "Enable nercommenter";
   extraPlugins = [ pkgs.vimPlugins.nerdcommenter ];

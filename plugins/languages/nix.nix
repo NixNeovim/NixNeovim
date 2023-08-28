@@ -1,8 +1,8 @@
-{ lib, pkgs, helpers, ... }@attrs:
+{ lib, pkgs, helpers, config }:
 let
   inherit (helpers.deprecated)
       mkPlugin;
-in mkPlugin attrs {
+in mkPlugin { inherit lib config; } {
   name = "nix";
   description = "Enable nix";
   extraPlugins = [ pkgs.vimPlugins.vim-nix ];

@@ -1,4 +1,4 @@
-{ pkgs, lib, helpers, ... }@args:
+{ pkgs, lib, helpers, config, ... }:
 let
   inherit (helpers.deprecated)
     mkPlugin
@@ -12,7 +12,7 @@ let
     concatStringsSep
     mkOption;
     
-in mkPlugin args {
+in mkPlugin { inherit config lib; } {
   name = "startify";
   description = "Enable startify";
   extraPlugins = [ pkgs.vimPlugins.vim-startify ];

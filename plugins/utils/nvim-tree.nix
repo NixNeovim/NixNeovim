@@ -1,4 +1,4 @@
-{ pkgs, lib, helpers, ... }:
+{ pkgs, lib, helpers, config }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.nvim-tree;
@@ -165,17 +165,6 @@ in
         type = types.nullOr types.bool;
         default = null;
       };
-      mappings = {
-        customOnly = mkOption {
-          type = types.nullOr types.bool;
-          default = null;
-        };
-        list = mkOption {
-          # TODO: Type-check the attrset
-          type = types.nullOr (types.listOf types.attrs);
-          default = null;
-        };
-      };
       number = mkOption {
         type = types.nullOr types.bool;
         default = null;
@@ -232,10 +221,6 @@ in
           hide_root_folder = cfg.view.hideRootFolder;
           side = cfg.view.side;
           auto_resize = cfg.view.autoResize;
-          mappings = {
-            custom_only = cfg.view.mappings.customOnly;
-            list = cfg.view.mappings.list;
-          };
           number = cfg.view.number;
           relativenumber = cfg.view.relativenumber;
           signcolumn = cfg.view.signcolumn;

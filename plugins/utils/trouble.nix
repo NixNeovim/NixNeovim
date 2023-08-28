@@ -1,4 +1,4 @@
-{ config, lib, pkgs, helpers, ... }:
+{ config, lib, pkgs, helpers }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.trouble;

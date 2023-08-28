@@ -1,10 +1,11 @@
-{ pkgs, lib, helpers, ... }:
-
-with lib;
+{ pkgs, lib, helpers, config }:
 
 let
   inherit (helpers.generator)
      mkLuaPlugin;
+
+  inherit (helpers.utils)
+    optionalString;
 
   name = "lsp-lines";
   pluginUrl = "https://sr.ht/~whynothugo/lsp_lines.nvim/";

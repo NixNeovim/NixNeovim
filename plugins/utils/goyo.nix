@@ -1,4 +1,4 @@
-{ lib, pkgs, helpers, ... }@attrs:
+{ lib, pkgs, helpers, config }:
 
 let
 
@@ -9,7 +9,7 @@ let
   inherit (lib)
     types;
 
-in mkPlugin attrs {
+in mkPlugin { inherit config lib; } {
   name = "goyo";
   description = "Enable goyo.vim";
   extraPlugins = [ pkgs.vimPlugins.goyo-vim ];

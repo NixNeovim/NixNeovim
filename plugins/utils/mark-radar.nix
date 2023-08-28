@@ -1,9 +1,9 @@
-{ pkgs, lib, helpers, ... }:
+{ pkgs, lib, helpers, root, config }:
 
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.mark-radar;
-  defs = import ../plugin-defs.nix { inherit pkgs; };
+  defs = root.deprecated.plugin-defs;
 in
 {
   options.programs.nixneovim.plugins.mark-radar = {

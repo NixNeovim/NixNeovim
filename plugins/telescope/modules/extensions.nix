@@ -1,12 +1,11 @@
-{ pkgs, lib, helpers, cfg-telescope }:
+{ pkgs, lib, helpers, config }:
 
 let
 
-  cfg-extensions = cfg-telescope.extensions;
-  filters = helpers.filters { cfg = cfg-extensions; };
+  cfg-extensions = config.programs.nixneovim.plugins.telescope.extensions;
 
   inherit (helpers.custom_options) strOption;
-  inherit (helpers)
+  inherit (helpers.converter)
     camelToSnake;
   inherit(lib)
     types
@@ -15,7 +14,7 @@ let
     mapAttrs
     mapAttrs'
     mkOption;
-  inherit (filters)
+  inherit (helpers.utils)
     activated
     activatedPlugins
     activatedPackages

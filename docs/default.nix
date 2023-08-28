@@ -1,4 +1,4 @@
-{ pkgs, lib, nmd, ... }:
+{ pkgs, lib, nmd, haumea }:
 let
 
   scrubbedPkgsModule = {
@@ -20,7 +20,7 @@ let
 
   nixneovimDocs = buildModulesDocs {
     modules = [
-      (import ../nixneovim.nix { isDocsBuild = true; })
+      (import ../nixneovim.nix { isDocsBuild = true; inherit haumea; })
       scrubbedPkgsModule
     ];
     docBook.id = "nixneovim-options";

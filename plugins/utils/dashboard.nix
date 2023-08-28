@@ -1,4 +1,4 @@
-{ lib, pkgs, helpers, ... }:
+{ lib, pkgs, helpers, config }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.dashboard;

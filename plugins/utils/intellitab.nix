@@ -1,11 +1,11 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, root }:
 with lib;
 let
 
   name = "intellitab";
 
   cfg = config.programs.nixneovim.plugins.${name};
-  defs = import ../plugin-defs.nix { inherit pkgs; };
+  defs = root.deprecated.plugin-defs;
 in
 {
   options = {

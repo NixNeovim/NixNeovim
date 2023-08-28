@@ -1,10 +1,13 @@
-{ pkgs, lib, helpers, ... }:
+{ pkgs, lib, helpers, config }:
 
 with lib;
 
 let
   inherit (helpers.generator)
      mkLuaPlugin;
+
+  inherit (helpers.converter)
+    toVimDict;
 
   name = "copilot";
   pluginUrl = "https://github.com/github/copilot.vim";

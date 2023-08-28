@@ -1,10 +1,13 @@
-{ pkgs, lib, helpers, ... }:
+{ pkgs, lib, helpers, config }:
 
 with lib;
 
 let
   inherit (helpers.generator)
      mkLuaPlugin;
+
+  inherit (helpers.converter)
+    toLuaObject;
 
   name = "markdown-preview";
   pluginUrl = "https://github.com/davidgranstrom/nvim-markdown-preview";

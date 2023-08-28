@@ -1,4 +1,4 @@
-{ pkgs, lib, helpers, ... }@args:
+{ pkgs, lib, helpers, config, ... }@args:
 
 let
   inherit (lib.types)
@@ -9,7 +9,7 @@ let
     mkDefaultOpt
     mkPlugin;
 
-in mkPlugin args {
+in mkPlugin { inherit config lib; } {
   name = "ledger";
   description = "Enable ledger language features";
   extraPlugins = [ pkgs.vimPlugins.vim-ledger ];

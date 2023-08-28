@@ -1,46 +1,47 @@
-{ pkgs, lib, helpers, ... }:
-with lib;
+{ pkgs, lib, helpers, config, super}:
 let
+
+  inherit (lib)
+    types
+    mkOption
+    length
+    mapAttrs
+    isString
+    optionalString
+    mkIf
+    lists
+    mkEnableOption;
+
+  inherit (helpers.deprecated)
+    mkNullOrOption;
+
+  inherit (helpers.utils)
+    rawLua;
+
+  inherit (helpers.converter)
+    toNeovimConfigString;
+
   cfg = config.programs.nixneovim.plugins.nvim-cmp;
 
-  sources = import ./options/sources.nix { inherit lib cfg pkgs helpers; };
+  sourcesHelper = super.nvim-cmp-options.sources;
 
 in {
   options.programs.nixneovim.plugins.nvim-cmp = {
     enable = mkEnableOption "Enable nvim-cmp";
 
-    performance = import ./options/performance.nix { inherit lib; };
-    mapping = import ./options/mapping.nix { inherit lib; };
-    sources = sources.options;
-    completion = import ./options/completion.nix { inherit lib; };
-      inherit (helpers.generator)
-         mkLuaPlugin;
+    inherit (super.nvim-cmp-options)
+      performance
+      mapping
+      completion
+      snippet;
+
+    sources = sourcesHelper.options;
 
     preselect = mkOption {
       type = types.nullOr (types.enum [ "Item" "None" ]);
       default = null;
       example = ''"Item"'';
     };
-
-    snippet = import ./options/snippet.nix { inherit lib config pkgs; };
-    # snippet = mkOption {
-    #   default = null;
-    #   type = types.nullOr (types.submodule ({ ... }: {
-    #     options = {
-    #       expand = mkOption {
-    #         type = types.nullOr types.str;
-    #         example = ''
-    #           function(args)
-    #             vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-    #             -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-    #             -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-    #             -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-    #           end
-    #         '';
-    #       };
-    #     };
-    #   }));
-    # };
 
     mappingPresets = mkOption {
       default = [ ];
@@ -177,7 +178,7 @@ in {
       pluginOptions = {
         enabled = cfg.enable;
         performance = cfg.performance;
-        preselect = if (isNull cfg.preselect) then null else helpers.mkRaw "cmp.PreselectMode.${cfg.preselect}";
+        preselect = if (isNull cfg.preselect) then null else rawLua "cmp.PreselectMode.${cfg.preselect}";
 
         # Not very readable sorry
         # If null then null
@@ -189,48 +190,48 @@ in {
               if (isNull cfg.mapping) then null
               else
                 mapAttrs
-                  (bind: mapping: helpers.mkRaw (if isString mapping then mapping
+                  (bind: mapping: rawLua (if isString mapping then mapping
                   else "cmp.mapping(${mapping.action}${optionalString (mapping.modes != null && length mapping.modes >= 1) ("," + (helpers.converter.toLuaObject mapping.modes))})"))
                   cfg.mapping;
             luaMappings = (helpers.converter.toLuaObject mappings);
             wrapped = lists.fold (presetName: prevString: ''cmp.mapping.preset.${presetName}(${prevString})'') luaMappings cfg.mappingPresets;
           in
-          helpers.mkRaw wrapped;
+          rawLua wrapped;
 
         # snippet = {
-        #   expand = if (isNull cfg.snippet || isNull cfg.snippet.expand) then null else helpers.mkRaw cfg.snippet.expand;
+        #   expand = if (isNull cfg.snippet || isNull cfg.snippet.expand) then null else rawLua cfg.snippet.expand;
         # };
 
         completion = if (isNull cfg.completion) then null else {
           keyword_length = cfg.completion.keyword_length;
           keyword_pattern = cfg.completion.keyword_pattern;
-          autocomplete = if (isNull cfg.completion.autocomplete) then null else mkRaw cfg.completion.autocomplete;
+          autocomplete = if (isNull cfg.completion.autocomplete) then null else rawLua cfg.completion.autocomplete;
           completeopt = cfg.completion.completeopt;
         };
 
         confirmation = if (isNull cfg.confirmation) then null else {
           get_commit_characters =
-            if (isString cfg.confirmation.get_commit_characters) then helpers.mkRaw cfg.confirmation.get_commit_characters
+            if (isString cfg.confirmation.get_commit_characters) then rawLua cfg.confirmation.get_commit_characters
             else cfg.confirmation.get_commit_characters;
         };
 
         formatting = if (isNull cfg.formatting) then null else {
           fields = cfg.formatting.fields;
-          format = if (isNull cfg.formatting.format) then null else helpers.mkRaw cfg.formatting.format;
+          format = if (isNull cfg.formatting.format) then null else rawLua cfg.formatting.format;
         };
 
         matching = cfg.matching;
 
         sorting = if (isNull cfg.sorting) then null else {
           priority_weight = cfg.sorting.priority_weight;
-          comparators = if (isNull cfg.sorting.comparators) then null else helpers.mkRaw cfg.sorting.comparators;
+          comparators = if (isNull cfg.sorting.comparators) then null else rawLua cfg.sorting.comparators;
         };
 
         # sources = filterAttrs (k: v: v.enable) cfg.sources; # only add activated sources to config
-        sources = sources.config;
+        sources = sourcesHelper.config;
 
         snippet = {
-          expand = helpers.mkRaw "function(args) ${ lib.optionalString cfg.snippet.luasnip.enable "require(\"luasnip\").lsp_expand(args.body)" } end";
+          expand = rawLua "function(args) ${ lib.optionalString cfg.snippet.luasnip.enable "require(\"luasnip\").lsp_expand(args.body)" } end";
         };
 
         view = cfg.view;
@@ -242,7 +243,7 @@ in {
       programs.nixneovim = {
         extraPlugins =
           [ pkgs.vimExtraPlugins.nvim-cmp ]
-          ++ sources.packages;
+          ++ sourcesHelper.packages;
 
         extraConfigLua = ''
           -- config for plugin: nvim-cmp
@@ -253,7 +254,7 @@ in {
               cmp.setup(${helpers.converter.toLuaObject' 1 pluginOptions})
 
               -- extra config of sources
-              ${toConfigString sources.extraConfig}
+              ${toNeovimConfigString sourcesHelper.extraConfig}
             end
             success, output = pcall(setup) -- execute 'setup()' and catch any errors
             if not success then

@@ -1,9 +1,13 @@
-{ pkgs , lib , config , helpers, ... }:
+{ pkgs , lib , config , helpers }:
 with lib;
 let
 
   inherit (helpers.generator)
      mkLuaPlugin;
+
+  inherit (helpers.converter)
+    convertModuleOptions
+    toLuaObject;
 
   name = "incline";
   pluginUrl = "https://github.com/b0o/incline.nvim";
@@ -13,7 +17,7 @@ let
   moduleOptions = with helpers; {
   };
 
-  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
+  pluginOptions = convertModuleOptions cfg moduleOptions;
 
 in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;

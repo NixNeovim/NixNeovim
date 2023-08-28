@@ -1,10 +1,11 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, helpers }:
 
 with lib;
 
 let
 
-  helpers = import ../helper { inherit pkgs lib config; };
+  inherit (helpers.generator)
+    mkLuaPlugin;
 
   # names inserted here must match the name of the package in pkgs.vimExtraPlugins
   # default for setup is 'false'
@@ -25,8 +26,7 @@ let
 
   fillPlugin = { name, packageName ? name, setup ? false, pluginUrl }: { inherit name packageName setup pluginUrl; };
 
-in
-with helpers; {
+in {
   imports = lib.forEach plugs
     (p:
       let
@@ -49,8 +49,7 @@ with helpers; {
         #       "require('${name}').setup()"
         #     else "";
 
-      in
-      mkLuaPlugin {
+      in mkLuaPlugin {
         inherit (plugin) name pluginUrl;
         extraDescription = "This module was auto-generated";
         extraPlugins = [ pkgs.vimExtraPlugins.${plugin.packageName} ];

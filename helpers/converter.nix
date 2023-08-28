@@ -10,7 +10,11 @@ let
     lowerChars
     upperChars
     mapAttrs'
+    nameValuePair
     toLower;
+
+  inherit (self)
+    camelToSnake;
 
   inherit (builtins) head;
 
@@ -21,6 +25,22 @@ in {
 
   # Same as toLuaObject' but with indent set to 0
   toLuaObject = args: to_lua_object 0 args;
+
+  # vim dictionaries are, in theory, compatible with JSON
+  toVimDict = args: builtins.toJSON
+    (lib.filterAttrs (n: v: !isNull v) args);
+
+  # Input: config, options attributes from module
+  # Output: Attribute set of lua options # todo: clarify
+  #
+  # converts the module options to lua code and
+  # adds the 'extraAttrs'
+  convertModuleOptions = cfg: moduleOptions:
+    let
+      attrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) (cfg.${k})) moduleOptions;
+      extraAttrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) v) cfg.extraConfig;
+    in
+    attrs // extraAttrs;
 
   boolToInt = bool: if bool then 1 else 0;
 
@@ -67,7 +87,7 @@ in {
   # Output: lines (srings concatenated with '\n'
   #
   # Removes empty strings and applies concatStringsSep
-  toConfigString = list:
+  toNeovimConfigString = list:
     let
       filtered = filter (str: str != "") list;
     in

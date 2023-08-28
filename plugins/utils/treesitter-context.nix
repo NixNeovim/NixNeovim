@@ -23,7 +23,7 @@ let
     maxLines = intNullOption "Define the limit of context lines. 0 means no limit";
     trimScope = enumOption [ "inner" "outer" ] "outer" "When max_lines is reached, which lines to discard";
     mode = enumOption [ "cursor" "topline" ] "cursor" "Which context to show";
-    pattern = { # TODO: rename to patterns
+    patterns = {
       default = mkOption {
         type = listOf (enum [
           "class"

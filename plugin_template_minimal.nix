@@ -1,7 +1,5 @@
 { pkgs, lib, helpers, ... }:
 
-with lib;
-
 let
   inherit (helpers.generator)
      mkLuaPlugin;

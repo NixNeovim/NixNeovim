@@ -1,20 +1,20 @@
-{ lib, cfg, pkgs, helpers, ... }:
+{ lib, config, pkgs, helpers }:
 
 with lib;
 with types;
 
 let
 
-  cfg-sources = cfg.sources;
+  cfg-sources = config.programs.nixneovim.plugins.nvim-cmp.sources;
 
-  filters = helpers.filters { cfg = cfg-sources; };
-
-  inherit (helpers) removeEnable keyToSnake;
   inherit (helpers.custom_options) intNullOption;
-  inherit (filters)
+  inherit (helpers.converter)
+    attrKeysToSnake;
+  inherit (helpers.utils)
     activated
     activatedConfig
-    activatedPackages;
+    activatedPackages
+    removeEnable;
 
   # template for source options
   mkSourceOption = name: attr:
@@ -99,17 +99,17 @@ in {
 
   # list of packages that sources depend on like the cmp-source package itself.
   # packages = mapAttrsToList (name: attrs: attrs.package) (helpers.activated plugins); ## return packages of activated sources
-  packages = activatedPackages cfg plugins;
+  packages = activatedPackages cfg-sources plugins;
 
   # list of extra config that sources define/require
   # config = mapAttrsToList (name: attrs: attrs.extraConfig) (helpers.activated plugins); ## return packages of activated sources
-  extraConfig = activatedConfig cfg plugins;
+  extraConfig = activatedConfig cfg-sources plugins;
 
   # list of the sources config for cmp
   # output format [ { ["name"] = "<name>" } ]
   config =
       mapAttrsToList
-        (name: attrs: { name = name; } // (keyToSnake (removeEnable attrs)) )
-        (activated cfg cfg-sources);
+        (name: attrs: { name = name; } // (attrKeysToSnake (removeEnable attrs)) )
+        (activated cfg-sources plugins);
 
 }

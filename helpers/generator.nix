@@ -2,27 +2,11 @@
 
 let
   inherit (lib)
-    mapAttrs'
     types
-    mkOption
-    nameValuePair;
+    mkOption;
 
-  inherit (super.converter)
-    camelToSnake;
 
 in {
-
-  # Input: config, options attributes from module
-  # Output: Attribute set of lua options # todo: clarify
-  #
-  # converts the module options to lua code and
-  # adds the 'extraAttrs'
-  convertModuleOptions = cfg: moduleOptions:
-    let
-      attrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) (cfg.${k})) moduleOptions;
-      extraAttrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) v) cfg.extraConfig;
-    in
-    attrs // extraAttrs;
 
   # Input: description string
   # These module options are addded to every module

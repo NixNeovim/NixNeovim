@@ -1,4 +1,4 @@
-{ pkgs, lib, helpers, config, ... }:
+{ pkgs, lib, helpers, config }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.coq-nvim;

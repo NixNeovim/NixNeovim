@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.undotree;

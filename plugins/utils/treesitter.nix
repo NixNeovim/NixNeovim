@@ -1,4 +1,4 @@
-{ pkgs, lib, helpers, ... }:
+{ pkgs, lib, helpers, config }:
 
 with lib;
 
@@ -12,6 +12,9 @@ let
   inherit (helpers.custom_options)
     strOption
     boolOption;
+
+  inherit (helpers.converter)
+    convertModuleOptions;
 
   keymapOption = default: mkOption {
     type = types.str;
@@ -80,7 +83,7 @@ let
       # Therefore, some options are generated, and some are added manual.
       # Before combining them, we have to filter the generatedOptions.
 
-      generatedOptions = helpers.convertModuleOptions cfg moduleOptions;
+      generatedOptions = convertModuleOptions cfg moduleOptions;
 
       # options do not map 1-to-1 to the plugin options
       manualOptions = {

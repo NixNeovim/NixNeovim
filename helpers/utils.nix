@@ -7,10 +7,10 @@ let
     flatten
     mapAttrsToList
     attrNames
+    filterAttrs
     assertMsg;
 
   inherit (builtins)
-    filterAttrs
     hasAttr
     isAttrs;
 
@@ -19,9 +19,6 @@ let
     assert assertMsg (hasAttr "__raw" lua) "Function isRawLua failed: input dows not have __raw attribute\n - '${lua}'";
     assert assertMsg (filterAttrs (key: _: key != "__raw") lua == {}) "Function isRawLua failed: input has unrecognised attributes\n - '${lua}'";
     lua;
-
-  # filters activated options from a set
-  activated = cfg: options: filterAttrs (name: attrs: cfg.${name}.enable) options;
 
 in {
 
@@ -59,24 +56,32 @@ in {
   removeEnable = attrs:
     filterAttrs (n: _: n != "enable") attrs;
 
+  optionalString = condition: string:
+    if condition != null && condition then
+      string
+    else
+      "";
 
   ##############################################################################
   # helper functions for plugins with sub-plugins like cmp, lsp, telescope, etc.
 
+  # filters activated options from a set
+  activated = cfg: options: filterAttrs (name: attrs: cfg.${name}.enable) options;
+
   # returns a list of the names of all activated options
-  activatedNames = cfg: options: attrNames (activated cfg options);
+  activatedNames = cfg: options: attrNames (self.activated cfg options);
 
   # Input: cfg, options of sub-plugins
   # Output: activated sub-plugins
   activatedPackages = cfg: options:
-    flatten (mapAttrsToList (name: attrs: attrs.packages) (activated cfg options));
+    flatten (mapAttrsToList (name: attrs: attrs.packages) (self.activated cfg options));
 
   activatedLuaNames = cfg: options:
-    flatten (mapAttrsToList (name: attrs: attrs.luaName) (activated cfg options));
+    flatten (mapAttrsToList (name: attrs: attrs.luaName) (self.activated cfg options));
 
   activatedPlugins = cfg: options:
-    flatten (mapAttrsToList (name: attrs: attrs.plugins) (activated cfg options));
+    flatten (mapAttrsToList (name: attrs: attrs.plugins) (self.activated cfg options));
 
   activatedConfig = cfg: options:
-    mapAttrsToList (name: attrs: attrs.extraConfig) (activated cfg options);
+    mapAttrsToList (name: attrs: attrs.extraConfig) (self.activated cfg options);
 }

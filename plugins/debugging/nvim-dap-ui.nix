@@ -1,10 +1,14 @@
-{ pkgs, lib, helpers, ... }:
+{ pkgs, lib, helpers, config }:
 
 with lib;
 
 let
   inherit (helpers.generator)
      mkLuaPlugin;
+
+  inherit (helpers.converter)
+    convertModuleOptions
+    toLuaObject;
 
   name = "nvim-dap-ui";
   pluginUrl = "https://github.com/rcarriga/nvim-dap-ui";
@@ -14,7 +18,7 @@ let
   moduleOptions = with helpers; {
     # add module options here
   };
-  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
+  pluginOptions = convertModuleOptions cfg moduleOptions;
 
 in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;

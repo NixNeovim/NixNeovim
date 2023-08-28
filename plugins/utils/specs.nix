@@ -1,7 +1,10 @@
-{ pkgs, lib, helpers, ... }:
+{ pkgs, lib, helpers, config }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.specs;
+
+  inherit (helpers.utils)
+    rawLua;
 in
 {
   options.programs.nixneovim.plugins.specs = {
@@ -118,11 +121,11 @@ in
           inherit (cfg) blend width;
           delay_ms = cfg.delay;
           inc_ms = cfg.increment;
-          fader = helpers.mkRaw (if cfg.fader.builtin == null then
+          fader = rawLua (if cfg.fader.builtin == null then
             cfg.fader.custom
           else
             ''require("specs").${cfg.fader.builtin}'');
-          resizer = helpers.mkRaw (if cfg.resizer.builtin == null then
+          resizer = rawLua (if cfg.resizer.builtin == null then
             cfg.resizer.custom
           else
             ''require("specs").${cfg.resizer.builtin}'');

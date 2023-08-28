@@ -7,11 +7,14 @@ let
   inherit (lib)
     mkOption
     mkEnableOption
+    optional
     flatten
     mapAttrs
     mapAttrsToList
     filterAttrs
-    types
+    types;
+
+  inherit (lib.types)
     submodule;
 
   mkServerOption = server: attr:

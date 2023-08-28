@@ -1,70 +1,219 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, home-manager, nmt, nixneovim, haumea, ... }:
 
 let
-  helper = import ./helper { inherit pkgs lib config; };
 
-  simpleCheck = expr: expected: { inherit expr expected; };
-in {
-  # testShortList = {
-    # expr = helper.toLuaObject { a = 1; };
-    # expected = "{ [\"a\"] = 1 }";
-  # };
+  inherit (builtins)
+    attrNames
+    readDir;
 
-  # testLongList = {
-    # expr = helper.toLuaObject [ 1 2 3 ];
-    # expected =
-# ''{
-  # 1,
-  # 2,
-  # 3
-# }'';
-  # };
+  lib = pkgs.lib.extend
+    (_: super: {
+      inherit (home-manager.lib) hm;
 
-  # testToLuaObject1 = {
-    # expr = helper.toLuaObject true;
-    # expected = "true";
-  # };
+      literalExpression = super.literalExpression or super.literalExample;
+      literalDocBook = super.literalDocBook or super.literalExample;
+    });
 
-  # testToLuaObject2 = {
-    # expr = helper.toLuaObject false;
-    # expected = "false";
-  # };
+  # base config; applied for all tests
+  modules = (import (home-manager.outPath + "/modules/modules.nix") {
+    inherit lib pkgs;
+    check = true;
+    useNixpkgsModule = false;
+  }) ++
+  [
+    {
+      # Fix impurities
+      xdg.enable = true;
+      home = {
+        username = "hm-user";
+        homeDirectory = "/home/hm-user";
+        stateVersion = lib.mkDefault "22.11";
+      };
 
-  # testToLuaObject3 = {
-    # expr = helper.toLuaObject "<cmd>lua require('gitsigns').blame_line{full=true}<cr>";
-    # expected = ''"<cmd>lua require('gitsigns').blame_line{full=true}<cr>"'';
-  # };
+      programs.nixneovim = {
+        enable = true;
+      };
 
-  # testSnakeCase = {
-    # expr = helper.camelToSnake "camalCaseString";
-    # expected = "camal_case_string";
-  # };
+      # Test docs separately
+      manual.manpages.enable = false;
+    }
 
-  # testSnakeCase2 = {
-    # expr = helper.camelToSnake "snake_string";
-    # expected = "snake_string";
-  # };
+    # improt NixNeovim module
+    (import ./nixneovim.nix { inherit haumea; })
+  ];
 
-  # testSnakeCase3 = {
-    # expr = helper.camelToSnake "snake_1tring";
-    # expected = "snake_1tring";
-  # };
+  testHelper = {
+    config = {
+      start = ''
+--------------------------------------------------
+--                 Globals                      --
+--------------------------------------------------
 
-  # testSnakeCase4 = {
-    # expr = helper.camelToSnake "AARRGGBB";
-    # expected = "AARRGGBB";
-  # };
 
-  # testSnakeCase5 = {
-    # expr = helper.camelToSnake "<C-n>";
-    # expected = "<C-n>";
-  # };
+--------------------------------------------------
+--                 Options                      --
+--------------------------------------------------
 
-  # testConfigString = {
-    # expr = helper.toConfigString [ "1" "2" "" "345" ];
-    # expected = ''
-    # 1
-    # 2
-    # 345'';
-  # };
-}
+
+--------------------------------------------------
+--                 Keymappings                  --
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+--                 Augroups                     --
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+--               Extra Config (Lua)             --
+--------------------------------------------------
+
+    '';
+    end = "";
+    };
+    moduleTest = text:
+      ''
+      nvimFolder="home-files/.config/nvim"
+      config="$(_abs $nvimFolder/init.lua)"
+      assertFileExists "$config"
+
+      PATH=$PATH:$(_abs home-path/bin)
+      mkdir -p "$(realpath .)/cache/nvim" # add cache dir; needed for barbar.json
+      HOME=$(realpath .) nvim -u "$config" -c 'qall' --headless
+      echo # add missing \0 to output of 'nvim'
+
+      # Replace the path the vimscript file, because it contains the hash
+      sed "s/\/nix\/store\/[a-z0-9]\{32\}/\<nix-store-hash\>/" "$config" > normalizedConfig.lua
+      normalizedConfig=normalizedConfig.lua
+
+      neovim_error() {
+        echo ----------------- NEOVIM CONFIG -----------------
+        cat -n "$config"
+        echo -------------------------------------------------
+
+        echo
+        echo
+
+        echo ----------------- NEOVIM INFO -------------------
+        nvim --version
+        echo -------------------------------------------------
+
+        echo ----------------- NEOVIM PATH -------------------
+        echo $PATH
+        echo -------------------------------------------------
+
+        echo ----------------- NEOVIM OUTPUT -----------------
+        echo "$1"
+        echo -------------------------------------------------
+        exit 1
+      }
+
+      start_vim () {
+        OUTPUT=$(HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) nvim -u $config --headless "$@" -c 'qall' 2>&1)
+        if [ "$OUTPUT" != "" ]
+        then
+          neovim_error "$OUTPUT"
+        fi
+      }
+
+      check_colorscheme () {
+        OUTPUT=$(HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) nvim -u $config --headless -c 'colorscheme' -c 'qall' 2>&1)
+        if [ "$OUTPUT" != "$1" ]
+        then
+          neovim_error "Expected '$1'. Found: '$OUTPUT'"
+        fi
+      }
+
+      start_vim
+
+      # Testing some common file types
+
+      echo "# test" > tmp.md
+      start_vim tmp.md
+
+      echo "print(\"works\")" > tmp.py
+      start_vim tmp.py
+
+      cat << EOF > tmp.rs
+        fn main() {
+          println!("Hello, world!");
+        }
+      EOF
+      start_vim tmp.rs
+
+      ${text}
+      '';
+  };
+
+  filesIn = path:
+    let content = attrNames (readDir (./. + "/${path}"));
+    in map (x: ./. + "/${path}/${x}") content;
+
+  tests = import nmt {
+    inherit lib pkgs modules;
+    testedAttrPath = [ "home" "activationPackage" ];
+    tests =
+      let
+        src = haumea.lib.load {
+          src = ./tests/integration;
+          inputs = {
+            inherit testHelper pkgs;
+          };
+        };
+
+      in with src;
+        neovim //
+        neovim-use-plugin-defaults //
+        basic-check //
+        plugins.bamboo //
+        # plugins.cmp //
+        plugins.hbac //
+        plugins.incline //
+        plugins.lsp //
+        plugins.lspsaga //
+        plugins.lualine //
+        plugins.luasnip //
+        plugins.markdown-preview //
+        plugins.no-config-plugins //
+        plugins.oil //
+        plugins.plantuml-syntax //
+        # plugins.rust //
+        plugins.telescope //
+        # plugins.treesitter //
+        plugins.which-key //
+        plugins.zk;
+
+
+      # in builtins.foldl'
+        # # (final: module: final // (import "${module}" { inherit testHelper nixneovim lib; }))
+        # (final: module: final // module)
+        # { }
+        # (builtins.attrValues src);
+
+      # {
+        # inherit (src.neovim)
+          # neovim-test;
+          # neovim-use-plugin-defaults
+          # plugins;
+          # basic-check
+          # colorschemes;
+      # };
+      # let
+        # modulesTests =
+          # filesIn "plugins"
+          # ++ filesIn "colorschemes";
+        # testList = [
+          # ./neovim.nix
+          # # ./neovim-use-plugin-defaults.nix # TODO: reactiate this test
+          # ./basic-check.nix
+        # ] ++ modulesTests;
+      # in builtins.foldl'
+        # (a: b: a // (import b { inherit testHelper nixneovim lib; }))
+        # { }
+        # testList;
+  };
+
+in tests.build

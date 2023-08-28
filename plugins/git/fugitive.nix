@@ -1,8 +1,8 @@
-{ pkgs, helpers, ... }@attrs:
+{ pkgs, helpers, config, lib }:
 let
   inherit (helpers.deprecated)
       mkPlugin;
-in mkPlugin attrs {
+in mkPlugin { inherit lib config; } {
   name = "fugitive";
   description = "Enable vim-fugitive";
   extraPlugins = [ pkgs.vimPlugins.vim-fugitive ];

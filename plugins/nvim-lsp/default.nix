@@ -1,4 +1,4 @@
-{ pkgs, lib, helpers, ... }:
+{ pkgs, lib, helpers, config, super }:
 
 with lib;
 
@@ -6,12 +6,15 @@ let
   inherit (helpers.generator)
      mkLuaPlugin;
 
+  inherit (helpers.converter)
+    toNeovimConfigString;
+
   name = "lsp";
   pluginUrl = "https://github.com/neovim/nvim-lspconfig";
 
   cfg = config.programs.nixneovim.plugins.${name};
-  lsp-helpers = import ./lsp-helpers.nix { inherit lib config pkgs; };
-  servers = import ./options/servers.nix { inherit lib config pkgs; };
+  lsp-helpers = super.lsp-helpers;
+  servers = super.options.servers;
 
   moduleOptions = {
     servers = servers.options;
@@ -48,7 +51,7 @@ in mkLuaPlugin {
     in
     ''
       ${cfg.preConfig}
-      ${toConfigString serversLua}
+      ${toNeovimConfigString serversLua}
     '';
     defaultRequire = false;
 }

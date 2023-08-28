@@ -6,11 +6,12 @@ let
   inherit (helpers.custom_options) strNullOption;
 
   inherit (lib)
-    submodule
     mkOption;
-  inherit (lib.type)
+
+  inherit (lib.types)
     enum
     listOf
+    submodule
     str
     nullOr;
 

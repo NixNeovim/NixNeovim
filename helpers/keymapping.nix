@@ -7,7 +7,7 @@ let
 
   inherit (super.custom_options)
     boolOption strNullOption;
-  inherit (super.to_lua.object)
+  inherit (super.converter)
     toLuaObject;
 
   # Type definitions for key mappings

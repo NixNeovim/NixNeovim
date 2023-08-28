@@ -1,4 +1,4 @@
-{ pkgs, lib, helpers, ... }:
+{ pkgs, lib, helpers, config }:
 
 with lib;
 
@@ -8,8 +8,13 @@ let
   pluginUrl = "https://github.com/numToStr/Comment.nvim";
 
   cfg = config.programs.nixneovim.plugins.${name};
+
   inherit (helpers.generator)
     mkLuaPlugin;
+
+  inherit (helpers.converter)
+    convertModuleOptions
+    toLuaObject;
 
   moduleOptions = with helpers; {
     padding = mkOption {
@@ -88,7 +93,7 @@ let
     };
   };
 
-  pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
+  pluginOptions = convertModuleOptions cfg moduleOptions;
 
 in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;

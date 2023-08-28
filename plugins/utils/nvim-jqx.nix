@@ -1,4 +1,4 @@
-{ pkgs, lib, helpers, ... }:
+{ pkgs, lib, helpers, config }:
 
 with lib;
 
@@ -19,7 +19,6 @@ let
     useQuickfix = boolOption true "Use location list instead of quickfix";
   };
 
-  # pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
   pluginOptions = mapAttrsToList
     (key: _option:
       let

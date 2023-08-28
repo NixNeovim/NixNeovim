@@ -1,21 +1,22 @@
-{ pkgs, lib, helpers, ... }:
+{ pkgs, lib, helpers, super, config }:
 
 with lib;
 
 let
   inherit (helpers.generator)
      mkLuaPlugin;
+  inherit (helpers.converter)
+    toNeovimConfigString
+    convertModuleOptions;
 
   name = "mini";
   pluginUrl = "https://github.com/echasnovski/mini.nvim";
 
   cfg = config.programs.nixneovim.plugins.${name};
-  inherit (helpers)
-    convertModuleOptions;
 
   # TODO: move to files and add options
   modules = {
-    ai = import ./modules/ai.nix { inherit lib helpers; };
+    ai = super.modules.ai;
     align = { };
     animate = { };
     base16 = { };
@@ -39,7 +40,7 @@ let
     starter = { };
     statusline = { };
     surround = { };
-    tabline = import ./modules/tabline.nix { inherit lib helpers; };
+    tabline = super.modules.tabline;
     test = { };
     trailspace = { };
   };
@@ -60,8 +61,6 @@ let
     )
     modules;
 
-  # pluginOptions = helpers.convertModuleOptions cfg moduleOptions;
-
 in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
@@ -81,7 +80,7 @@ in mkLuaPlugin {
             ""
         )
         modules;
-    in
-    toConfigString setup;
-    defaultRequire = false;
+    in toNeovimConfigString setup;
+
+  defaultRequire = false;
 }

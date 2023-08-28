@@ -1,4 +1,4 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, config, lib }:
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.telescope.extensions.frecency;

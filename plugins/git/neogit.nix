@@ -1,10 +1,11 @@
-{ lib, config, pkgs, helpers, ... }:
+{ lib, config, pkgs, helpers }:
 
 let
 
   inherit (lib)
     mkEnableOption
     mkOption
+    optional
     mkIf
     types;
   

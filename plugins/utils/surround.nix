@@ -1,8 +1,8 @@
-{ lib, pkgs, helpers, ... }@attrs:
+{ lib, pkgs, helpers, config }:
 let
   inherit (helpers.deprecated)
       mkPlugin;
-in mkPlugin attrs {
+in mkPlugin { inherit config lib; } {
   name = "surround";
   description = "Enable surround.vim";
   extraPlugins = [ pkgs.vimPlugins.surround ];

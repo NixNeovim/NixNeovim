@@ -1,8 +1,8 @@
-{ pkgs, config, lib, ... }:
+{ pkgs, config, lib, super }:
 with lib;
 let
   cfg = config.programs.nixneovim.colorschemes.base16;
-  themes = import ./base16-list.nix;
+  themes = super.base16-list;
 in
 {
   options = {

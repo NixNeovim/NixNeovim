@@ -1,4 +1,4 @@
-{ pkgs, lib, helpers, ... }:
+{ pkgs, lib, helpers, super }:
 
 with lib;
 
@@ -10,7 +10,7 @@ let
   pluginUrl = "https://github.com/mfussenegger/nvim-dap";
 
   moduleOptions = with helpers; {
-    adapters = import ./adapters.nix { inherit lib pkgs config; };
+    adapters = super.adapters;
   };
 
 in mkLuaPlugin {
