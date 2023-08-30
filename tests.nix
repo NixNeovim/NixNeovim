@@ -166,9 +166,10 @@ let
 
       in with src;
         {
-          inherit neovim;
+          inherit
+            neovim
+            neovim-use-plugin-defaults;
         } //
-        # neovim-use-plugin-defaults //
         basic-check //
         # plugins.bamboo //
         # # plugins.cmp //

@@ -1,8 +1,6 @@
-{ nixneovim, testHelper, ... }:
+{ testHelper, pkgs }:
 {
   # testing the usePluginDefaults options actually only prints the changes configs
-  neovim-test-usePluginDefaults = { config, lib, pkgs, ... }:
-    {
       config = {
 
         programs.nixneovim = {
@@ -63,5 +61,4 @@ end
           }
         '';
       };
-    };
 }

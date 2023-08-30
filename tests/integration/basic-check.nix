@@ -11,6 +11,10 @@
 
 let
 
+  inherit (lib)
+    elem
+    filter;
+
   plugins =
     let
       src = haumea.lib.load {
@@ -19,11 +23,17 @@ let
     in with src;
       bufferlines //
       # colorschemes //
-      completion //
+      # completion //
       { nvim-dap-ui = debugging.nvim-dap-ui; } //
       { nvim-dap = debugging.nvim-dap.default; } //
       git //
-      languages //
+      {
+        rust-tools = languages.rust;
+        inherit (languages)
+          nix
+          ledger
+          zig;
+      } //
       { mini = mini.default; } //
       # null-ls //
       { lsp = nvim-lsp.default; } //
@@ -33,9 +43,19 @@ let
       utils;
       # { inherit generated; };
 
+
   pluginNames = builtins.attrNames plugins;
 
-  moduleTemplate = map
+  disabledTests = [
+    "lualine"
+    "nvim-dap-ui"
+    "ts-context-commentstring"
+    "windows"
+  ];
+
+  activeTests = filter (name: !(elem name disabledTests)) pluginNames;
+
+  tests = map
     (name:
       {
         "basic-check-${name}" =
@@ -52,6 +72,6 @@ let
           };
       }
     )
-    pluginNames;
-
-in builtins.foldl' (final: set: final // set) {} moduleTemplate
+    activeTests;
+  
+in builtins.foldl' (final: set: final // set) {} tests

@@ -1,8 +1,12 @@
-{ lib, config, pkgs, ... }:
+{ lib }:
 
-with lib;
-with types;
 let
+  inherit (lib.types)
+    submodule;
+
+  inherit (lib)
+    mkOption
+    mkEnableOption;
 
   luaSnipOptions = submodule {
     options = {
@@ -10,9 +14,7 @@ let
     };
   };
 
-
-in
-mkOption {
+in mkOption {
   type = submodule {
     options = {
       luasnip = mkOption {

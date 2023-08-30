@@ -74,26 +74,26 @@ do vim.keymap.set("", "ßß", '@', { ["noremap"] = true }) end
 --------------------------------------------------
 
 do
-local group = vim.api.nvim_create_augroup("highlightOnYank", { ["clear"] = true })
-do
-local events = {"TextYankPost"}
-local opts = {
-["callback"] = function(opts)
-vim.highlight.on_yank {
-higroup = (
-vim.fn['hlexists'] 'HighlightedyankRegion' > 0 and 'HighlightedyankRegion' or 'IncSearch'
-),
-timeout = 200,
+  local group = vim.api.nvim_create_augroup("highlightOnYank", { ["clear"] = true })
+  do
+  local events = {"TextYankPost"}
+  local opts = {
+  ["callback"] = function(opts)
+  vim.highlight.on_yank {
+  higroup = (
+    vim.fn['hlexists'] 'HighlightedyankRegion' > 0 and 'HighlightedyankRegion' or 'IncSearch'
+  ),
+  timeout = 200,
 }
 
 end
 ,
-["group"] = group,
-["nested"] = false,
-["once"] = false,
-["pattern"] = "*"
+  ["group"] = group,
+  ["nested"] = false,
+  ["once"] = false,
+  ["pattern"] = "*"
 }
-vim.api.nvim_create_autocmd(events, opts)
+  vim.api.nvim_create_autocmd(events, opts)
 end
 
 end
@@ -104,21 +104,21 @@ end
 
 -- config for plugin: numb
 do
-function setup()
+  function setup()
 
-require('numb').setup {
-  ["centered_peeking"] = true,
-  ["number_only"] = false,
-  ["show_cursorline"] = true,
-  ["show_numbers"] = true
-}
+    require('numb').setup {
+      ["centered_peeking"] = true,
+      ["number_only"] = false,
+      ["show_cursorline"] = true,
+      ["show_numbers"] = true
+    }
 
-end
-success, output = pcall(setup) -- execute 'setup()' and catch any errors
-if not success then
-print("Error on setup for plugin: numb")
-print(output)
-end
+  end
+  success, output = pcall(setup) -- execute 'setup()' and catch any errors
+  if not success then
+    print("Error on setup for plugin: numb")
+    print(output)
+  end
 end
 
 -- test lua comment
