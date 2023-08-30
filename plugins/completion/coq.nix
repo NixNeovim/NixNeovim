@@ -1,12 +1,12 @@
 { pkgs, lib, helpers, config }:
 with lib;
 let
-  cfg = config.programs.nixneovim.plugins.coq-nvim;
+  cfg = config.programs.nixneovim.plugins.coq;
 in
 {
   options = {
-    programs.nixneovim.plugins.coq-nvim = {
-      enable = mkEnableOption "Enable coq-nvim";
+    programs.nixneovim.plugins.coq = {
+      enable = mkEnableOption "Enable coq";
 
       installArtifacts = mkEnableOption "Install coq-artifacts";
 

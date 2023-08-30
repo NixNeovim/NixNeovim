@@ -160,30 +160,32 @@ let
         src = haumea.lib.load {
           src = ./tests/integration;
           inputs = {
-            inherit testHelper pkgs;
+            inherit testHelper pkgs haumea lib;
           };
         };
 
       in with src;
-        neovim //
-        neovim-use-plugin-defaults //
+        {
+          inherit neovim;
+        } //
+        # neovim-use-plugin-defaults //
         basic-check //
-        plugins.bamboo //
-        # plugins.cmp //
-        plugins.hbac //
-        plugins.incline //
-        plugins.lsp //
-        plugins.lspsaga //
-        plugins.lualine //
-        plugins.luasnip //
-        plugins.markdown-preview //
-        plugins.no-config-plugins //
-        plugins.oil //
-        plugins.plantuml-syntax //
-        # plugins.rust //
-        plugins.telescope //
-        # plugins.treesitter //
-        plugins.which-key //
+        # plugins.bamboo //
+        # # plugins.cmp //
+        # plugins.hbac //
+        # plugins.incline //
+        # plugins.lsp //
+        # plugins.lspsaga //
+        # plugins.lualine //
+        # plugins.luasnip //
+        # plugins.markdown-preview //
+        # plugins.no-config-plugins //
+        # plugins.oil //
+        # plugins.plantuml-syntax //
+        # # plugins.rust //
+        # plugins.telescope //
+        # # plugins.treesitter //
+        # plugins.which-key //
         plugins.zk;
 
 

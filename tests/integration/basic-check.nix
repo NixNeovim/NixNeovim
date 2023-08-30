@@ -1,4 +1,4 @@
-{ testHelper, ... }:
+{ testHelper, haumea, lib }:
 
 # This module performs a very basic check for all available plugins
 # It only confirms that there are no errors on startup, when the respective
@@ -10,107 +10,48 @@
 # This ways only a couple of plugins are activated at the same time.
 
 let
-  letters = [
-    "a"
-    "b"
-    "c"
-    "d"
-    "e"
-    "f"
-    "g"
-    "h"
-    "i"
-    "j"
-    "k"
-    "l"
-    "m"
-    "n"
-    "o"
-    "p"
-    "q"
-    "r"
-    "s"
-    "t"
-    "u"
-    "v"
-    "w"
-    "x"
-    "y"
-    "z"
-  ];
 
-  sets = map
-    (letter:
+  plugins =
+    let
+      src = haumea.lib.load {
+        src = ../../plugins;
+      };
+    in with src;
+      bufferlines //
+      # colorschemes //
+      completion //
+      { nvim-dap-ui = debugging.nvim-dap-ui; } //
+      { nvim-dap = debugging.nvim-dap.default; } //
+      git //
+      languages //
+      { mini = mini.default; } //
+      # null-ls //
+      { lsp = nvim-lsp.default; } //
+      pluginmanagers //
+      statuslines //
+      { telescope = telescope.default; } //
+      utils;
+      # { inherit generated; };
+
+  pluginNames = builtins.attrNames plugins;
+
+  moduleTemplate = map
+    (name:
       {
-        "basic-check-test-${letter}" = { config, lib, pkgs, ... }:
+        "basic-check-${name}" =
           {
-            config =
-              let
-
-                plugins = config.programs.nixneovim.plugins;
-
-                # only activate plugins matched by the first character of their name
-                filteredPlugins =
-                  lib.filterAttrs
-                  (k: v:
-                    let
-                      firstChar = lib.head (lib.stringToCharacters k);
-                    in firstChar == letter)
-                    plugins;
-
-                autoPlugins = lib.mapAttrs
-                  (k: v: { enable = true; })
-                  filteredPlugins;
-
-                # Some plugins are correctly loaded
-                # Therefore, we have to load them manually here
-                pluginsWithErrors = {
-                  nvim-cmp.snippet.enable = true;
-                  ghosttext.enable = false; # FIX: does not compile when activated
-                };
-
-              in {
-                programs.nixneovim.plugins = autoPlugins // pluginsWithErrors;
-
-                nmt.script = testHelper.moduleTest "";
-              };
+            programs.nixneovim.plugins = { ${name} = { enable = true; }; }; # // pluginsWithErrors;
+            nmt.script = testHelper.moduleTest "";
           };
 
-        "basic-check-test-${letter}-use-plugin-default" = { config, lib, pkgs, ... }:
+        "basic-check-${name}-use-plugin-default" =
           {
-            config =
-              let
-
-                plugins = config.programs.nixneovim.plugins;
-
-                # only activate plugins matched by the first character of their name
-                filteredPlugins =
-                  lib.filterAttrs
-                  (k: v:
-                    let
-                      firstChar = lib.head (lib.stringToCharacters k);
-                    in firstChar == letter)
-                    plugins;
-
-                autoPlugins = lib.mapAttrs
-                  (k: v: { enable = true; })
-                  filteredPlugins;
-
-                # Some plugins are correctly loaded
-                # Therefore, we have to load them manually here
-                pluginsWithErrors = {
-                  nvim-cmp.snippet.enable = true;
-                  ghosttext.enable = false; # FIX: does not compile when activated
-                };
-
-              in {
-                programs.nixneovim.plugins = autoPlugins // pluginsWithErrors;
-                programs.nixneovim.usePluginDefaults = true;
-
-                nmt.script = testHelper.moduleTest "";
-              };
+            programs.nixneovim.plugins = { ${name} = { enable = true; }; }; # // pluginsWithErrors;
+            programs.nixneovim.usePluginDefaults = true;
+            nmt.script = testHelper.moduleTest "";
           };
       }
     )
-    letters;
-in builtins.foldl' (a: b: a // b) {} sets
+    pluginNames;
+
+in builtins.foldl' (final: set: final // set) {} moduleTemplate

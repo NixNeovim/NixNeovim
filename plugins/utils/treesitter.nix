@@ -11,7 +11,8 @@ let
 
   inherit (helpers.custom_options)
     strOption
-    boolOption;
+    boolOption
+    boolOptionStrict;
 
   inherit (helpers.converter)
     convertModuleOptions;
@@ -22,7 +23,7 @@ let
   };
 
   moduleOptions = {
-    installAllGrammars = boolOption true "Install all grammars using nix (recommended, make sure no other grammars are installed)";
+    installAllGrammars = boolOptionStrict true "Install all grammars using nix (recommended, make sure no other grammars are installed)";
 
     indent = boolOption false "Enable tree-sitter based indentation (This is the equivalent to indent { enable = true } in the original lua config)";
     folding = boolOption false "Enable tree-sitter based folding";

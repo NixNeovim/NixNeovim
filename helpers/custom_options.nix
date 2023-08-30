@@ -2,7 +2,17 @@
 
 let
 
-  # TODO: create mkForce options to force a default value
+  # This ist a list of custom 'mkOption' functions that aim to
+  # simplify the option creation for plugins.
+  # They always have a default value, however, the default is only applied
+  # when usePluginDefaults is false. Then the option will not be written to
+  # the init.lua and the respective plugin defaults will be respected.
+  #
+  # The ...Strict ignore the 'usePluginDefaults' setting and always have a
+  # defined value. This is used for some plugin-module options
+  # that are processed in other parts of the plugin-module.
+  # Otherwise the respective 'if' or 'mkIf' statements could fail,
+  # because they cannot handle 'null' arguments
 
   inherit (lib)
     mkOption
@@ -28,6 +38,14 @@ in with myTypes; {
     mkOption {
       type = bool;
       default = usePlugDef default;
+      inherit description;
+    };
+
+  # This is a version of boolOption that does always have a fixed value
+  boolOptionStrict = default: description:
+    mkOption {
+      type = bool;
+      default = default;
       inherit description;
     };
 

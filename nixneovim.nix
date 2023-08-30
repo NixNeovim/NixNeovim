@@ -51,7 +51,7 @@ let
       { nvim-dap = debugging.nvim-dap.default; } //
       git //
       languages //
-      mini //
+      { mini = mini.default; } //
       # null-ls //
       { lsp = nvim-lsp.default; } //
       pluginmanagers //
@@ -69,6 +69,13 @@ in {
     ({
       imports = lib.mapAttrsToList
         (key: value: value)
+          # if key == "numb" || key == "bamboo" then
+            # lib.trace
+              # key
+              # lib.traceSeqN 1 value.options.programs.nixneovim
+                # value
+          # else
+            # value)
         plugins;
     })
   ];
