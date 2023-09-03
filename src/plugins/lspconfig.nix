@@ -9,12 +9,12 @@ let
   inherit (helpers.converter)
     toNeovimConfigString;
 
-  name = "lsp";
+  name = "lspconfig";
   pluginUrl = "https://github.com/neovim/nvim-lspconfig";
 
   cfg = config.programs.nixneovim.plugins.${name};
-  lsp-helpers = super.lsp-helpers;
-  servers = super.nvim-lsp-modules.servers;
+  lsp-helpers = super.lspconfig-modules.lsp-helpers;
+  servers = super.lspconfig-modules.servers;
 
   moduleOptions = {
     servers = servers.options;

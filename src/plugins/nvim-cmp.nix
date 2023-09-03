@@ -26,6 +26,8 @@ let
   sourcesHelper = super.nvim-cmp-modules.sources;
 
 in {
+
+  # FIX: rtp attribute is deprecated, use outPath instead
   options.programs.nixneovim.plugins.nvim-cmp = {
     enable = mkEnableOption "Enable nvim-cmp";
 

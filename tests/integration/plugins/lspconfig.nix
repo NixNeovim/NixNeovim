@@ -1,7 +1,7 @@
 { testHelper, ... }:
 
 let
-  name = "lsp";
+  name = "lspconfig";
 in {
   "${name}-test" = { config, lib, pkgs, ... }:
     {
@@ -33,7 +33,7 @@ in {
           assertDiff "$normalizedConfig" ${
             pkgs.writeText "init.lua-expected" ''
               ${testHelper.config.start}
-              -- config for plugin: lsp
+              -- config for plugin: lspconfig
               do
                 function setup()
 
@@ -87,7 +87,7 @@ in {
                 end
                 success, output = pcall(setup) -- execute 'setup()' and catch any errors
                 if not success then
-                  print("Error on setup for plugin: lsp")
+                  print("Error on setup for plugin: lspconfig")
                   print(output)
                 end
               end

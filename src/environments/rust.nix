@@ -155,6 +155,6 @@ in mkLuaPlugin {
   ];
 
   extraNixNeovimConfig = {
-    plugins.lsp.enable = true;
+    plugins.lspconfig.enable = true;
   };
 }

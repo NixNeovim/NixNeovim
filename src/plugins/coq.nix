@@ -36,7 +36,7 @@ in
           # plugins.coq-nvim
           pkgs.vimExtraPlugins.coq-nvim
         ] ++ optional cfg.installArtifacts pkgs.vimExtraPlugins.coq-artifacts;
-        plugins.lsp = {
+        plugins.lspconfig = {
           preConfig = ''
             vim.g.coq_settings = ${helpers.converter.toLuaObject settings}
           '';
