@@ -170,23 +170,23 @@ let
             neovim
             neovim-use-plugin-defaults;
         } //
-        basic-check //
-        # plugins.bamboo //
-        # # plugins.cmp //
-        # plugins.hbac //
-        # plugins.incline //
-        # plugins.lsp //
-        # plugins.lspsaga //
-        # plugins.lualine //
-        # plugins.luasnip //
-        # plugins.markdown-preview //
-        # plugins.no-config-plugins //
-        # plugins.oil //
-        # plugins.plantuml-syntax //
-        # # plugins.rust //
-        # plugins.telescope //
-        # # plugins.treesitter //
-        # plugins.which-key //
+        # basic-check //
+        plugins.bamboo //
+        # plugins.cmp // # NOTE: runs forever
+        plugins.hbac //
+        plugins.incline //
+        plugins.lspconfig //
+        plugins.lspsaga //
+        plugins.lualine //
+        plugins.luasnip //
+        plugins.markdown-preview //
+        plugins.no-config-plugins //
+        plugins.oil //
+        plugins.plantuml-syntax //
+        plugins.rust //
+        plugins.telescope //
+        plugins.treesitter //
+        plugins.which-key //
         plugins.zk;
 
 

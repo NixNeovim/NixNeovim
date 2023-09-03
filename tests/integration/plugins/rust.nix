@@ -25,18 +25,6 @@ in {
               vim.cmd [[source <nix-store-hash>-nvim-init-home-manager.vim]]
               ${testHelper.config.start}
 
-              -- config for plugin: lsp
-              do
-                function setup()
-
-                end
-                success, output = pcall(setup) -- execute 'setup()' and catch any errors
-                if not success then
-                  print("Error on setup for plugin: lsp")
-                  print(output)
-                end
-              end
-
               -- config for plugin: ${name}
               do
                 function setup()
@@ -133,6 +121,19 @@ in {
                   print(output)
                 end
               end
+
+              -- config for plugin: lspconfig
+              do
+                function setup()
+
+                end
+                success, output = pcall(setup) -- execute 'setup()' and catch any errors
+                if not success then
+                  print("Error on setup for plugin: lspconfig")
+                  print(output)
+                end
+              end
+
               ${testHelper.config.end}
             ''
           }

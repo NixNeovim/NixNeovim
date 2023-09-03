@@ -51,6 +51,7 @@ let
     "nvim-dap-ui"
     "ts-context-commentstring"
     "windows"
+    "nvim-cmp"
   ];
 
   activeTests = filter (name: !(elem name disabledTests)) pluginNames;

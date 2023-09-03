@@ -42,6 +42,29 @@ in {
             pkgs.writeText "init.lua-expected" ''
               vim.cmd [[source <nix-store-hash>-nvim-init-home-manager.vim]]
               ${testHelper.config.start}
+
+              -- config for plugin: treesitter-context
+              do
+                function setup()
+
+                  require('treesitter-context').setup {
+                    ["mode"] = "cursor",
+                    ["patterns"] = { ["default"] = {
+                        "class",
+                        "function",
+                        "method"
+                      } },
+                    ["trim_scope"] = "outer"
+                  }
+
+                end
+                success, output = pcall(setup) -- execute 'setup()' and catch any errors
+                if not success then
+                  print("Error on setup for plugin: treesitter-context")
+                  print(output)
+                end
+              end
+
               -- config for plugin: ${name}
               do
                 function setup()
@@ -85,28 +108,6 @@ in {
                 success, output = pcall(setup) -- execute 'setup()' and catch any errors
                 if not success then
                   print("Error on setup for plugin: ${name}")
-                  print(output)
-                end
-              end
-
-              -- config for plugin: treesitter-context
-              do
-                function setup()
-
-                  require('treesitter-context').setup {
-                    ["mode"] = "cursor",
-                    ["patterns"] = { ["default"] = {
-                        "class",
-                        "function",
-                        "method"
-                      } },
-                    ["trim_scope"] = "outer"
-                  }
-
-                end
-                success, output = pcall(setup) -- execute 'setup()' and catch any errors
-                if not success then
-                  print("Error on setup for plugin: treesitter-context")
                   print(output)
                 end
               end

@@ -43,7 +43,9 @@ let
           inherit helpers config pkgs lib;
         };
       };
-    in src.plugins; # TODO: add the other plugins
+    in src.plugins //
+      src.environments //
+      src.colorschemes; # TODO: add the other plugins
     # in with src;
       # colorschemes //
       # environments //
