@@ -38,27 +38,16 @@ let
   plugins =
     let
       src = haumea.lib.load {
-        src = ./plugins;
+        src = ./src;
         inputs = {
           inherit helpers config pkgs lib;
         };
       };
-    in with src;
-      bufferlines //
-      colorschemes //
-      completion //
-      { nvim-dap-ui = debugging.nvim-dap-ui; } //
-      { nvim-dap = debugging.nvim-dap.default; } //
-      git //
-      languages //
-      { mini = mini.default; } //
-      # null-ls //
-      { lsp = nvim-lsp.default; } //
-      pluginmanagers //
-      statuslines //
-      { telescope = telescope.default; } //
-      utils //
-      { inherit generated; };
+    in src.plugins; # TODO: add the other plugins
+    # in with src;
+      # colorschemes //
+      # environments //
+      # src;
 
 
 in {

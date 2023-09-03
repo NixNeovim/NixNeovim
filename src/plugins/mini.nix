@@ -16,7 +16,7 @@ let
 
   # TODO: move to files and add options
   modules = {
-    ai = super.modules.ai;
+    ai = super.mini-modules.ai;
     align = { };
     animate = { };
     base16 = { };
@@ -40,7 +40,7 @@ let
     starter = { };
     statusline = { };
     surround = { };
-    tabline = super.modules.tabline;
+    tabline = super.mini-modules.tabline;
     test = { };
     trailspace = { };
   };

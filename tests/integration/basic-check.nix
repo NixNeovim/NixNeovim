@@ -18,30 +18,30 @@ let
   plugins =
     let
       src = haumea.lib.load {
-        src = ../../plugins;
+        src = ../../src;
       };
-    in with src;
-      bufferlines //
-      # colorschemes //
-      # completion //
-      { nvim-dap-ui = debugging.nvim-dap-ui; } //
-      { nvim-dap = debugging.nvim-dap.default; } //
-      git //
-      {
-        rust-tools = languages.rust;
-        inherit (languages)
-          nix
-          ledger
-          zig;
-      } //
-      { mini = mini.default; } //
-      # null-ls //
-      { lsp = nvim-lsp.default; } //
-      pluginmanagers //
-      statuslines //
-      { telescope = telescope.default; } //
-      utils;
-      # { inherit generated; };
+    in src.plugins; # TODO: add the other plugins
+      # bufferlines //
+      # # colorschemes //
+      # # completion //
+      # { nvim-dap-ui = debugging.nvim-dap-ui; } //
+      # { nvim-dap = debugging.nvim-dap.default; } //
+      # git //
+      # {
+        # rust-tools = languages.rust;
+        # inherit (languages)
+          # nix
+          # ledger
+          # zig;
+      # } //
+      # { mini = mini.default; } //
+      # # null-ls //
+      # { lsp = nvim-lsp.default; } //
+      # pluginmanagers //
+      # statuslines //
+      # { telescope = telescope.default; } //
+      # utils;
+      # # { inherit generated; };
 
 
   pluginNames = builtins.attrNames plugins;

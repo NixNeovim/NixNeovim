@@ -14,7 +14,7 @@ let
     convertModuleOptions
     toLuaObject;
 
-  extensions = super.modules.extensions;
+  extensions = super.telescope-modules.extensions;
 
   moduleOptions = with helpers; {
     # add module options here

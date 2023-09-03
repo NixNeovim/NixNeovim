@@ -23,13 +23,13 @@ let
 
   cfg = config.programs.nixneovim.plugins.nvim-cmp;
 
-  sourcesHelper = super.nvim-cmp-options.sources;
+  sourcesHelper = super.nvim-cmp-modules.sources;
 
 in {
   options.programs.nixneovim.plugins.nvim-cmp = {
     enable = mkEnableOption "Enable nvim-cmp";
 
-    inherit (super.nvim-cmp-options)
+    inherit (super.nvim-cmp-modules)
       performance
       mapping
       completion

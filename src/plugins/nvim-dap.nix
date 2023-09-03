@@ -10,7 +10,7 @@ let
   pluginUrl = "https://github.com/mfussenegger/nvim-dap";
 
   moduleOptions = with helpers; {
-    adapters = super.adapters;
+    adapters = super.nvim-dap-modules.adapters;
   };
 
 in mkLuaPlugin {

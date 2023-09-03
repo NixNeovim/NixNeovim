@@ -14,7 +14,7 @@ let
 
   cfg = config.programs.nixneovim.plugins.${name};
   lsp-helpers = super.lsp-helpers;
-  servers = super.options.servers;
+  servers = super.nvim-lsp-modules.servers;
 
   moduleOptions = {
     servers = servers.options;
