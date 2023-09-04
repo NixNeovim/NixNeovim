@@ -47,7 +47,7 @@ let
   pluginNames = builtins.attrNames plugins;
 
   disabledTests = [
-    "lualine"
+    # "lualine"
     "ts-context-commentstring"
     "nvim-cmp"
     "ghosttext" # NOTE: test does not terminate

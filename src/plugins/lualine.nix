@@ -2,7 +2,11 @@
 with lib;
 let
   cfg = config.programs.nixneovim.plugins.lualine;
-  inherit (helpers.custom_options) boolOption;
+  
+  inherit (helpers.custom_options)
+    intOption
+    boolOption;
+
   separators = mkOption {
     type = types.nullOr (types.submodule {
       options = {
@@ -98,6 +102,12 @@ in
         default = null;
       };
 
+      refresh = {
+        statusline = intOption 1000 "";
+        tabline = intOption 1000 "";
+        winbar = intOption 1000 "";
+      };
+
       tabline = mkOption {
         type = types.nullOr (types.submodule ({ ... }: {
           options = {
@@ -124,7 +134,7 @@ in
     let
       setupOptions = {
         options = {
-          inherit (cfg) theme globalstatus;
+          inherit (cfg) theme globalstatus refresh;
           section_separators = cfg.sectionSeparators;
           component_separators = cfg.componentSeparators;
           disabled_filetypes = cfg.disabledFiletypes;
