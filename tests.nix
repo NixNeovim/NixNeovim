@@ -2,10 +2,6 @@
 
 let
 
-  inherit (builtins)
-    attrNames
-    readDir;
-
   lib = pkgs.lib.extend
     (_: super: {
       inherit (home-manager.lib) hm;
@@ -152,78 +148,41 @@ let
       '';
   };
 
-  filesIn = path:
-    let content = attrNames (readDir (./. + "/${path}"));
-    in map (x: ./. + "/${path}/${x}") content;
-
   tests = import nmt {
     inherit lib pkgs modules;
     testedAttrPath = [ "home" "activationPackage" ];
     tests =
       let
-        src = haumea.lib.load {
+        integrationTests = haumea.lib.load {
           src = ./tests/integration;
           inputs = {
             inherit testHelper pkgs haumea lib;
           };
         };
 
-        activeTests = src.basic-check;
-
-      in
-        # {
-          # inherit
-            # neovim
-            # neovim-use-plugin-defaults;
-        # } //
-        activeTests;
-        # src.basic-check;
-        # lib.trace "bamboo called" plugins.bamboo;
-        # # plugins.cmp // # NOTE: runs forever
-        # plugins.hbac //
-        # plugins.incline //
-        # plugins.lspconfig //
-        # plugins.lspsaga //
-        # plugins.lualine //
-        # plugins.luasnip //
-        # plugins.markdown-preview //
-        # plugins.no-config-plugins //
-        # plugins.oil //
-        # plugins.plantuml-syntax //
-        # plugins.rust //
-        # plugins.telescope //
-        # plugins.treesitter //
-        # plugins.which-key //
-        # plugins.zk;
-
-
-      # in builtins.foldl'
-        # # (final: module: final // (import "${module}" { inherit testHelper nixneovim lib; }))
-        # (final: module: final // module)
-        # { }
-        # (builtins.attrValues src);
-
-      # {
-        # inherit (src.neovim)
-          # neovim-test;
-          # neovim-use-plugin-defaults
-          # plugins;
-          # basic-check
-          # colorschemes;
-      # };
-      # let
-        # modulesTests =
-          # filesIn "plugins"
-          # ++ filesIn "colorschemes";
-        # testList = [
-          # ./neovim.nix
-          # # ./neovim-use-plugin-defaults.nix # TODO: reactiate this test
-          # ./basic-check.nix
-        # ] ++ modulesTests;
-      # in builtins.foldl'
-        # (a: b: a // (import b { inherit testHelper nixneovim lib; }))
-        # { }
-        # testList;
+      in  with integrationTests; {
+          inherit (integrationTests)
+            neovim
+            neovim-use-plugin-defaults;
+        } //
+        basic-check //
+        plugins.bamboo //
+        # src.cmp // # NOTE: runs forever
+        plugins.hbac //
+        plugins.incline //
+        plugins.lspconfig //
+        plugins.lspsaga //
+        plugins.lualine //
+        plugins.luasnip //
+        plugins.markdown-preview //
+        plugins.no-config-plugins //
+        plugins.oil //
+        plugins.plantuml-syntax //
+        plugins.rust //
+        plugins.telescope //
+        plugins.treesitter //
+        plugins.which-key //
+        plugins.zk;
   };
 
 in tests.build

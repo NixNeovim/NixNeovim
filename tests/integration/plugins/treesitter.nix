@@ -31,9 +31,9 @@ in {
               };
               navigation.enable = true;
             };
+            contextCommentstring.enable = true;
           };
           comment-frame.enable = true;
-          ts-context-commentstring.enable = true;
           treesitter-context.enable = true;
         };
 
@@ -70,6 +70,7 @@ in {
                 function setup()
                   -- test lua pre comment
                   require('nvim-treesitter.configs').setup({
+                    ["context_commentstring"] = { ["enable"] = true },
                     ["highlight"] = { ["enable"] = true },
                     ["incremental_selection"] = {
                       ["enable"] = false,
@@ -142,7 +143,7 @@ in {
           }
 
           start_vim -c "silent checkhealth nvim-treesitter" -c 'silent w test.tmp'
-          if grep -c 'ERROR' test.tmp # -c counts mathing lines, simulates error code
+          if grep -c 'ERROR' test.tmp # the -c flag counts mathing lines, simulates error code
           then
             neovim_error "$(cat test.tmp)"
           fi

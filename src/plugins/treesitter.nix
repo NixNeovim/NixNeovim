@@ -75,6 +75,9 @@ let
         };
       };
     };
+    contextCommentstring = {
+      enable = boolOptionStrict false "Enable the nvim-ts-context-commentstring treesitter module";
+    };
   };
 
   pluginOptions =
@@ -119,11 +122,18 @@ let
 in helpers.generator.mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
 
-  extraPlugins = with pkgs;
-    if grammarsToInstall != [] then
-      [ (vimPlugins.nvim-treesitter.withPlugins (_: grammarsToInstall )) ]
-    else
-      [ vimPlugins.nvim-treesitter ];
+  extraPlugins =
+    let
+      grammars = with pkgs;
+        if grammarsToInstall != [] then
+          [ (vimPlugins.nvim-treesitter.withPlugins (_: grammarsToInstall )) ]
+        else
+          [ vimPlugins.nvim-treesitter ];
+
+      treesitterModules =
+        optional cfg.contextCommentstring.enable pkgs.vimExtraPlugins.nvim-ts-context-commentstring;
+
+    in grammars ++ treesitterModules;
 
   extraPackages = with pkgs; [
     # tree-sitter # only needed for :TSInstallFromGrammar (does not work on nix anyway)

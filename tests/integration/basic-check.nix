@@ -47,8 +47,6 @@ let
   pluginNames = builtins.attrNames plugins;
 
   disabledTests = [
-    # "lualine"
-    "ts-context-commentstring"
     "nvim-cmp"
     "ghosttext" # NOTE: test does not terminate
   ];
@@ -60,13 +58,13 @@ let
       {
         "basic-check-${name}" =
           { ... }: {
-            programs.nixneovim.plugins = { ${name} = { enable = true; }; }; # // pluginsWithErrors;
+            programs.nixneovim.plugins = { ${name} = { enable = true; }; };
             nmt.script = testHelper.moduleTest "";
           };
 
         "basic-check-${name}-use-plugin-default" =
           { ... }: {
-            programs.nixneovim.plugins = { ${name} = { enable = true; }; }; # // pluginsWithErrors;
+            programs.nixneovim.plugins = { ${name} = { enable = true; }; };
             programs.nixneovim.usePluginDefaults = true;
             nmt.script = testHelper.moduleTest "";
           };
@@ -74,7 +72,4 @@ let
     )
     activeTests;
 
-  # helper function only used for debug output
-  count = builtins.length tests;
-
-in builtins.foldl' (final: set: final // set) { } (lib.trace "Evaluating ${toString count} tests" tests)
+in builtins.foldl' (final: set: final // set) { } tests
