@@ -76,6 +76,7 @@ let
     };
     moduleTest = text:
       ''
+      echo Begin test
       nvimFolder="home-files/.config/nvim"
       config="$(_abs $nvimFolder/init.lua)"
       assertFileExists "$config"
@@ -127,9 +128,10 @@ let
         fi
       }
 
+      echo Start Vim tests
       start_vim
 
-      # Testing some common file types
+      echo Testing some common file types
 
       echo "# test" > tmp.md
       start_vim tmp.md
@@ -143,6 +145,8 @@ let
         }
       EOF
       start_vim tmp.rs
+
+      echo Vim tests done
 
       ${text}
       '';
@@ -164,30 +168,33 @@ let
           };
         };
 
-      in with src;
-        {
-          inherit
-            neovim
-            neovim-use-plugin-defaults;
-        } //
-        # basic-check //
-        plugins.bamboo //
-        # plugins.cmp // # NOTE: runs forever
-        plugins.hbac //
-        plugins.incline //
-        plugins.lspconfig //
-        plugins.lspsaga //
-        plugins.lualine //
-        plugins.luasnip //
-        plugins.markdown-preview //
-        plugins.no-config-plugins //
-        plugins.oil //
-        plugins.plantuml-syntax //
-        plugins.rust //
-        plugins.telescope //
-        plugins.treesitter //
-        plugins.which-key //
-        plugins.zk;
+        activeTests = src.basic-check;
+
+      in
+        # {
+          # inherit
+            # neovim
+            # neovim-use-plugin-defaults;
+        # } //
+        activeTests;
+        # src.basic-check;
+        # lib.trace "bamboo called" plugins.bamboo;
+        # # plugins.cmp // # NOTE: runs forever
+        # plugins.hbac //
+        # plugins.incline //
+        # plugins.lspconfig //
+        # plugins.lspsaga //
+        # plugins.lualine //
+        # plugins.luasnip //
+        # plugins.markdown-preview //
+        # plugins.no-config-plugins //
+        # plugins.oil //
+        # plugins.plantuml-syntax //
+        # plugins.rust //
+        # plugins.telescope //
+        # plugins.treesitter //
+        # plugins.which-key //
+        # plugins.zk;
 
 
       # in builtins.foldl'

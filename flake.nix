@@ -46,7 +46,8 @@
 
       lib = import ./lib.nix;
     } //
-    flake-utils.lib.eachDefaultSystem (system:
+    # flake-utils.lib.eachDefaultSystem (system:
+    flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
         # system = "x86_64-linux";
 
@@ -148,7 +149,10 @@
               inherit pkgs;
               tests = import ./tests/function-tests.nix { inherit pkgs lib haumea; };
             };
-          in lib.recursiveUpdate nmt-tests lib-checks;
+          in
+            lib.trace
+              "Evaluating for ${system}"
+              lib.recursiveUpdate nmt-tests lib-checks;
 
       });
 }

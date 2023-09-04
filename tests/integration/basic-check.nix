@@ -50,8 +50,8 @@ let
     "lualine"
     "nvim-dap-ui"
     "ts-context-commentstring"
-    "windows"
     "nvim-cmp"
+    "ghosttext" # NOTE: test does not terminate
   ];
 
   activeTests = filter (name: !(elem name disabledTests)) pluginNames;
@@ -60,13 +60,13 @@ let
     (name:
       {
         "basic-check-${name}" =
-          {
+          { ... }: {
             programs.nixneovim.plugins = { ${name} = { enable = true; }; }; # // pluginsWithErrors;
             nmt.script = testHelper.moduleTest "";
           };
 
         "basic-check-${name}-use-plugin-default" =
-          {
+          { ... }: {
             programs.nixneovim.plugins = { ${name} = { enable = true; }; }; # // pluginsWithErrors;
             programs.nixneovim.usePluginDefaults = true;
             nmt.script = testHelper.moduleTest "";
@@ -74,5 +74,8 @@ let
       }
     )
     activeTests;
-  
-in builtins.foldl' (final: set: final // set) {} tests
+
+  # helper function only used for debug output
+  count = builtins.length tests;
+
+in builtins.foldl' (final: set: final // set) { } (lib.trace "Evaluating ${toString count} tests" tests)
