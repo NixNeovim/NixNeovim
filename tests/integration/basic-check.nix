@@ -48,7 +48,6 @@ let
 
   disabledTests = [
     "lualine"
-    "nvim-dap-ui"
     "ts-context-commentstring"
     "nvim-cmp"
     "ghosttext" # NOTE: test does not terminate

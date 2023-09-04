@@ -9,7 +9,7 @@ let
   name = "nvim-dap";
   pluginUrl = "https://github.com/mfussenegger/nvim-dap";
 
-  moduleOptions = with helpers; {
+  moduleOptions = {
     adapters = super.nvim-dap-modules.adapters;
   };
 

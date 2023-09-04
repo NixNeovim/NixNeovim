@@ -27,4 +27,9 @@ in mkLuaPlugin {
   ];
   extraConfigLua = "require('dapui').setup ${toLuaObject pluginOptions}";
   defaultRequire = false;
+
+  extraNixNeovimConfig = {
+    plugins.nvim-dap.enable = true;
+  };
+
 }
