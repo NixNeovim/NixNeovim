@@ -4,8 +4,8 @@ let
   inherit (helpers.generator)
      mkLuaPlugin;
 
-  name = "PLUGIN_NAME";
-  pluginUrl = "PLUGIN_URL";
+  name = "plenary";
+  pluginUrl = "https://github.com/nvim-lua/plenary.nvim";
 
   inherit (helpers.custom_options)
     strOption
@@ -36,5 +36,8 @@ in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
+    plenary-nvim
   ];
+
+  defaultRequire = false;
 }

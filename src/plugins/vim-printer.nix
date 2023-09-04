@@ -4,8 +4,8 @@ let
   inherit (helpers.generator)
      mkLuaPlugin;
 
-  name = "PLUGIN_NAME";
-  pluginUrl = "PLUGIN_URL";
+  name = "vim-printer";
+  pluginUrl = "https://github.com/meain/vim-printer";
 
   inherit (helpers.custom_options)
     strOption
@@ -36,5 +36,8 @@ in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
+    vim-printer
   ];
+   defaultRequire = false;
 }
+

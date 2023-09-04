@@ -4,8 +4,8 @@ let
   inherit (helpers.generator)
      mkLuaPlugin;
 
-  name = "PLUGIN_NAME";
-  pluginUrl = "PLUGIN_URL";
+  name = "ltex-extra";
+  pluginUrl = "https://github.com/barreiroleo/ltex_extra.nvim";
 
   inherit (helpers.custom_options)
     strOption
@@ -36,5 +36,8 @@ in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
+    ltex-extra-nvim
   ];
+
+  defaultRequire = false;
 }

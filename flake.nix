@@ -34,11 +34,11 @@
   outputs = { self, nixpkgs, nmd, nmt, nix-flake-tests, flake-utils, haumea, ... }@inputs:
     {
       nixosModules = {
-        # default = import ./nixneovim.nix { homeManager = true; };
-        # homeManager = self.nixosModules.default;
-        # homeManager-22-11 = import ./nixneovim.nix { homeManager = true; state = 2211; };
-        # nixos = import ./nixneovim.nix { homeManager = false; };
-        # nixos-22-11 = import ./nixneovim.nix { homeManager = false; state = 2211; };
+        default = import ./nixneovim.nix { homeManager = true; inherit haumea; };
+        homeManager = self.nixosModules.default;
+        homeManager-22-11 = import ./nixneovim.nix { homeManager = true; state = 2211; inherit haumea;  };
+        nixos = import ./nixneovim.nix { homeManager = false; inherit haumea; };
+        nixos-22-11 = import ./nixneovim.nix { homeManager = false; state = 2211; inherit haumea; };
         homeManager-haumea = import ./nixneovim.nix { homeManager = true; state = 2211; inherit haumea; };
       };
 
@@ -104,8 +104,8 @@
             [ -z "$url" ] && exit 1
             [ -z "$plugin" ] && exit 1
 
-            plugin_path="plugins/utils/$name.nix"
-            plugin_test_path="tests/plugins/$name.nix"
+            plugin_path="src/plugins/$name.nix"
+            plugin_test_path="tests/integration/plugins/$name.nix"
 
             echo Copy template
             cp ./plugin_template_minimal.nix "$plugin_path"

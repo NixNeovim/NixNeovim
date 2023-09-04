@@ -4,8 +4,8 @@ let
   inherit (helpers.generator)
      mkLuaPlugin;
 
-  name = "PLUGIN_NAME";
-  pluginUrl = "PLUGIN_URL";
+  name = "asyncrun";
+  pluginUrl = "https://github.com/skywind3000/asyncrun.vim";
 
   inherit (helpers.custom_options)
     strOption
@@ -36,5 +36,9 @@ in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
+    asyncrun-vim
   ];
+
+  defaultRequire = false;
+
 }

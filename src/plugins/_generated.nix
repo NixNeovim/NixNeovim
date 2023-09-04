@@ -11,17 +11,15 @@ let
   # default for setup is 'false'
   # TODO: create modules for these
   plugs = [
-    { name = "vim-printer"; pluginUrl = "https://github.com/meain/vim-printer"; }
-    { name = "vim-easy-align"; pluginUrl = "https://github.com/junegunn/vim-easy-align"; }
-    { name = "gruvbox"; pluginUrl = "https://github.com/morhetz/gruvbox"; }
-    { name = "nest-nvim"; pluginUrl = "https://github.com/LionC/nest.nvim"; }
-    { name = "plenary-nvim"; pluginUrl = "https://github.com/nvim-lua/plenary.nvim"; }
-    { name = "indent-blankline-nvim"; pluginUrl = "https://github.com/lukas-reineke/indent-blankline.nvim"; }
-    { name = "asyncrun-vim"; setup = false; pluginUrl = "https://github.com/skywind3000/asyncrun.vim"; }
-    { name = "ltex-extra-nvim"; pluginUrl = "https://github.com/barreiroleo/ltex_extra.nvim"; }
-    { name = "firenvim"; pluginUrl = "https://github.com/glacambre/firenvim"; }
-    { name = "vim-startuptime"; setup = false; pluginUrl = "https://github.com/dstein64/vim-startuptime"; }
-    { name = "lsp-signature-nvim"; setup = false; pluginUrl = "https://github.com/ray-x/lsp_signature.nvim"; }
+    # { name = "vim-printer"; pluginUrl = "https://github.com/meain/vim-printer"; }
+    # { name = "vim-easy-align"; pluginUrl = "https://github.com/junegunn/vim-easy-align"; }
+    # { name = "nest-nvim"; pluginUrl = "https://github.com/LionC/nest.nvim"; }
+    # { name = "plenary-nvim"; pluginUrl = "https://github.com/nvim-lua/plenary.nvim"; }
+    # { name = "indent-blankline-nvim"; pluginUrl = "https://github.com/lukas-reineke/indent-blankline.nvim"; }
+    # { name = "ltex-extra-nvim"; pluginUrl = "https://github.com/barreiroleo/ltex_extra.nvim"; }
+    # { name = "firenvim"; pluginUrl = "https://github.com/glacambre/firenvim"; }
+    # { name = "vim-startuptime"; setup = false; pluginUrl = "https://github.com/dstein64/vim-startuptime"; }
+    # { name = "lsp-signature-nvim"; setup = false; pluginUrl = "https://github.com/ray-x/lsp_signature.nvim"; }
   ];
 
   fillPlugin = { name, packageName ? name, setup ? false, pluginUrl }: { inherit name packageName setup pluginUrl; };
