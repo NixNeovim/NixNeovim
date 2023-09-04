@@ -39,6 +39,7 @@ in { name                  # name of the plugin module
   , extraOptions ? {}     # extra vim options like line numbers, etc
   , extraNixNeovimConfig ? {} # extra config applied to 'programs.nixneovim'
   , isColorscheme ? false # If enabled, plugin will be added to 'nixneovim.colorschemes' instead of 'nixneovim.plugins'
+  # , warning ? ""          # TODO: This can be used to warn the user when the plugin is used. For example, when the plugin is broken, deprecated, or does not work as expected
   }:
 
   let

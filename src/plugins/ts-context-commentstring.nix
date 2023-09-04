@@ -22,4 +22,11 @@ in mkLuaPlugin {
     nvim-ts-context-commentstring
   ];
   defaultRequire = false;
+
+  # TODO: implement this
+  # warning = "${name}.enable is deprecated. Please use treesitter.contextCommentstring.enable";
+
+  extraNixNeovimConfig = {
+    plugins.treesitter.enable = true;
+  };
 }
