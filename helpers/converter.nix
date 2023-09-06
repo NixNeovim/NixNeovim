@@ -10,13 +10,16 @@ let
     lowerChars
     upperChars
     mapAttrs'
+    mapAttrs
     nameValuePair
     toLower;
 
   inherit (self)
     camelToSnake;
 
-  inherit (builtins) head;
+  inherit (builtins)
+    attrNames
+    head;
 
   to_lua_object = import ./src/to_lua_object.nix { inherit lib super; };
 
@@ -92,4 +95,12 @@ in {
       filtered = filter (str: str != "") list;
     in
     concatStringsSep "\n" filtered;
+
+  # Input: list of vim plugin options
+  # Output: vim config string
+  toVimOptions = cfg: prefix: options:
+    assert builtins.typeOf prefix == "string";
+    let
+      f = variable: "vim.g.${prefix}_${self.camelToSnake variable} = ${self.toLuaObject cfg.${variable}}";
+    in concatStringsSep "\n" (map f (attrNames options));
 }

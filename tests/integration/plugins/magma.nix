@@ -1,19 +1,19 @@
 { testHelper, lib }:
 
 let
-  name = "NAME";
+  name = "magma";
   nvimTestCommand = ""; # Test command to check if plugin is loaded
 in {
   "${name}-test" = { config, lib, pkgs, ... }:
-
-    assert lib.assertMsg false "Please write a simple test for the ${name} module";
-
+    
     {
       config = {
 
         programs.nixneovim.plugins = {
           "${name}" = {
             enable = true;
+            imageProvider = "ueberzug";
+            wrapOutput = false;
             extraLua.pre = ''
               -- test lua pre comment
             '';
@@ -31,6 +31,14 @@ in {
               do
                 function setup()
                   -- test lua pre comment
+                    vim.g.magma_automatically_open_output = true
+                    vim.g.magma_cell_highlight_group = "CursorLine"
+                    vim.g.magma_image_provider = "ueberzug"
+                    vim.g.magma_output_window_borders = true
+                    vim.g.magma_save_path = ' '
+                    vim.g.magma_show_mimetype_debug = false
+                    vim.g.magma_wrap_output = false
+
                   -- test lua post comment
                 end
                 success, output = pcall(setup) -- execute 'setup()' and catch any errors

@@ -1,4 +1,4 @@
-{ lib, usePluginDefaults }:
+{ lib, usePluginDefaults, super }:
 
 let
 
@@ -16,7 +16,11 @@ let
 
   inherit (lib)
     mkOption
+    mkOptionType
     types;
+
+  inherit (super.utils)
+    isRawLua;
 
   usePlugDef = default:
     if usePluginDefaults then
@@ -31,6 +35,11 @@ let
     list = nullOr (listOf anything);
     attrs = nullOr (attrsOf anything);
     enum = enums: nullOr (enum enums);
+  };
+
+  rawLuaType = mkOptionType {
+    name = "rawLuaType";
+    check = value: isRawLua value;
   };
 
 in with myTypes; {
@@ -59,6 +68,13 @@ in with myTypes; {
   strOption = default: description:
     mkOption {
       type = str;
+      default = usePlugDef default;
+      inherit description;
+    };
+
+  rawLuaOption = default: description:
+    mkOption {
+      type = rawLuaType;
       default = usePlugDef default;
       inherit description;
     };
