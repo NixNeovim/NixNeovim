@@ -41,4 +41,7 @@ in mkLuaPlugin {
 
   defaultRequire = false;
   isColorscheme = true;
+  extraConfigLua = ''
+    vim.cmd[[ colorscheme gruvbox ]]
+  '';
 }
