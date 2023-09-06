@@ -13,7 +13,11 @@ let
   inherit (helpers.custom_options)
     enumOption
     intOption
-    boolOption;
+    boolOptionStrict;
+
+  inherit (helpers.converter)
+    toLuaObject
+    boolToLuaInt;
 
   moduleOptions = {
     # add module options here
@@ -25,12 +29,12 @@ let
         - `mix`: Color palette obtained by calculating the mean of the other two.
         - `original`: The color palette used in the original gruvbox.
       '';
-    disableItalicComment = boolOption false "By default, italic is enabled in `Comment`. To disable italic in `Comment`, set this option to `1`.";
-    enableBold = boolOption false "To enable bold in function name just like the original gruvbox, set this option to `1`. ";
-    enableItalic = boolOption false "To enable italic in this color scheme, set this option to `1`.";
+    disableItalicComment = boolOptionStrict false "By default, italic is enabled in `Comment`. To disable italic in `Comment`, set this option to `1`.";
+    enableBold = boolOptionStrict false "To enable bold in function name just like the original gruvbox, set this option to `1`. ";
+    enableItalic = boolOptionStrict false "To enable italic in this color scheme, set this option to `1`.";
     transparentBackground = intOption 0 "If you want more ui components to be transparent (for example, status line background), set this option to `2`.";
-    dimInactiveWindows = boolOption false "Dim inactive windows. Only works in neovim currently.";
-    betterPerformance = boolOption false ''
+    dimInactiveWindows = boolOptionStrict false "Dim inactive windows. Only works in neovim currently.";
+    betterPerformance = boolOptionStrict false ''
         The loading time of this color scheme is very long because too many file types
         and plugins are optimized. This feature allows you to load part of the code on
         demand by placing them in the `after/syntax` directory.
@@ -50,14 +54,14 @@ in mkLuaPlugin {
   isColorscheme = true;
 
   extraConfigLua = ''
-    vim.g.gruvbox_material_background = ${helpers.converter.toLuaObject cfg.background}
-    vim.g.gruvbox_material_foreground = ${helpers.converter.toLuaObject cfg.foreground}
-    vim.g.gruvbox_material_disable_italic_comment = ${helpers.boolToInt' cfg.disableItalicComment}
-    vim.g.gruvbox_material_enable_bold = ${helpers.boolToInt' cfg.enableBold}
-    vim.g.gruvbox_material_enable_italic = ${helpers.boolToInt' cfg.enableItalic}
-    vim.g.gruvbox_material_transparent_background = ${helpers.converter.toLuaObject cfg.transparentBackground}
-    vim.g.gruvbox_material_dim_inactive_windows = ${helpers.boolToInt' cfg.dimInactiveWindows}
-    vim.g.gruvbox_material_better_performance = ${helpers.boolToInt' cfg.betterPerformance}
+    vim.g.gruvbox_material_background = ${toLuaObject cfg.background}
+    vim.g.gruvbox_material_foreground = ${toLuaObject cfg.foreground}
+    vim.g.gruvbox_material_disable_italic_comment = ${boolToLuaInt cfg.disableItalicComment}
+    vim.g.gruvbox_material_enable_bold = ${boolToLuaInt cfg.enableBold}
+    vim.g.gruvbox_material_enable_italic = ${boolToLuaInt cfg.enableItalic}
+    vim.g.gruvbox_material_transparent_background = ${toLuaObject cfg.transparentBackground}
+    vim.g.gruvbox_material_dim_inactive_windows = ${boolToLuaInt cfg.dimInactiveWindows}
+    vim.g.gruvbox_material_better_performance = ${boolToLuaInt cfg.betterPerformance}
 
     vim.cmd[[colorscheme gruvbox-material]]
   '';

@@ -186,11 +186,11 @@
     "nmt": {
       "flake": false,
       "locked": {
-        "lastModified": 1693777814,
-        "narHash": "sha256-Tck4yI/0MHyf5f3KjJvZfag6gDnsGkWBbGDGgQcHqKg=",
+        "lastModified": 1693844729,
+        "narHash": "sha256-uGqTTP/++0E+X3RLNnojrPZCNtNJHKTeP40SBGBqeho=",
         "owner": "jooooscha",
         "repo": "nmt",
-        "rev": "513cb125b985dafc4f3a2d7fd69fb9f0dbf5a376",
+        "rev": "6947389da7a51ed72d57cde23aff79584d88262f",
         "type": "github"
       },
       "original": {

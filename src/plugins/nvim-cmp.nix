@@ -19,6 +19,7 @@ let
     rawLua;
 
   inherit (helpers.converter)
+    toLuaObject'
     toNeovimConfigString;
 
   cfg = config.programs.nixneovim.plugins.nvim-cmp;
@@ -229,7 +230,7 @@ in {
           comparators = if (isNull cfg.sorting.comparators) then null else rawLua cfg.sorting.comparators;
         };
 
-        # sources = filterAttrs (k: v: v.enable) cfg.sources; # only add activated sources to config
+        # sources = lib.filterAttrs (k: v: v.enable) cfg.sources; # only add activated sources to config
         sources = sourcesHelper.config;
 
         snippet = {
@@ -253,7 +254,7 @@ in {
             function setup()
               local cmp = require('cmp') -- this is needed
 
-              cmp.setup(${helpers.converter.toLuaObject' 1 pluginOptions})
+              cmp.setup(${toLuaObject' 1 pluginOptions})
 
               -- extra config of sources
               ${toNeovimConfigString sourcesHelper.extraConfig}

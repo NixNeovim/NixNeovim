@@ -4,14 +4,11 @@
 # It only confirms that there are no errors on startup, when the respective
 # module is enabled. This does not check that the plugins is actually loaded
 # or otherwise working as intended
-# Because the evaluation of the neovim derivation would take too long when
-# activating all plugins at the same time, we split activate them in groups
-# The groups are formed by the starting letter of the plugin name.
-# This ways only a couple of plugins are activated at the same time.
 
 let
 
   inherit (lib)
+    mapAttrs
     elem
     filter;
 
@@ -20,56 +17,47 @@ let
       src = haumea.lib.load {
         src = ../../src;
       };
-    in src.plugins; # TODO: add the other plugins
-      # bufferlines //
-      # # colorschemes //
-      # # completion //
-      # { nvim-dap-ui = debugging.nvim-dap-ui; } //
-      # { nvim-dap = debugging.nvim-dap.default; } //
-      # git //
-      # {
-        # rust-tools = languages.rust;
-        # inherit (languages)
-          # nix
-          # ledger
-          # zig;
-      # } //
-      # { mini = mini.default; } //
-      # # null-ls //
-      # { lsp = nvim-lsp.default; } //
-      # pluginmanagers //
-      # statuslines //
-      # { telescope = telescope.default; } //
-      # utils;
-      # # { inherit generated; };
 
+      pluginsNames = builtins.attrNames src.plugins;
+      colorschemesNames = builtins.attrNames src.colorschemes;
 
-  pluginNames = builtins.attrNames plugins;
+    in {
+      # inherit (src)
+        # plugins
+        # colorschemes;
+      # src.plugins; # TODO: add the other plugins
+      plugins = filterActive pluginsNames;
+      colorschemes = filterActive colorschemesNames;
+    };
 
   disabledTests = [
     "nvim-cmp"
     "ghosttext" # NOTE: test does not terminate
   ];
 
-  activeTests = filter (name: !(elem name disabledTests)) pluginNames;
+  filterActive = names: filter (name: !(elem name disabledTests)) names;
 
-  tests = map
-    (name:
-      {
-        "basic-check-${name}" =
-          { ... }: {
-            programs.nixneovim.plugins = { ${name} = { enable = true; }; };
-            nmt.script = testHelper.moduleTest "";
-          };
+  tests = mapAttrs
+    (type: set:
+      map
+        (name:
+          {
+            "basic-check-${name}" =
+              { ... }: {
+                programs.nixneovim.${type} = { ${name} = { enable = true; }; };
+                nmt.script = testHelper.moduleTest "";
+              };
 
-        "basic-check-${name}-use-plugin-default" =
-          { ... }: {
-            programs.nixneovim.plugins = { ${name} = { enable = true; }; };
-            programs.nixneovim.usePluginDefaults = true;
-            nmt.script = testHelper.moduleTest "";
-          };
-      }
+            "basic-check-${name}-use-plugin-default" =
+              { ... }: {
+                programs.nixneovim.${type} = { ${name} = { enable = true; }; };
+                programs.nixneovim.usePluginDefaults = true;
+                nmt.script = testHelper.moduleTest "";
+              };
+          }
+        )
+        set
     )
-    activeTests;
+    plugins;
 
-in builtins.foldl' (final: set: final // set) { } tests
+in builtins.foldl' (final: set: final // set) { } (tests.plugins ++ tests.colorschemes)

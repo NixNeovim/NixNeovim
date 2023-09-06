@@ -1,13 +1,11 @@
 { lib, config, pkgs, helpers }:
 
-with lib;
-with types;
-
 let
 
   cfg-sources = config.programs.nixneovim.plugins.nvim-cmp.sources;
 
-  inherit (helpers.custom_options) intNullOption;
+  inherit (helpers.custom_options)
+    intNullOption;
   inherit (helpers.converter)
     attrKeysToSnake;
   inherit (helpers.utils)
@@ -15,6 +13,20 @@ let
     activatedConfig
     activatedPackages
     removeEnable;
+
+  inherit (lib)
+    mapAttrs
+    mapAttrsToList
+    mkEnableOption
+    mkOption;
+
+  inherit (lib.types)
+    attrsOf
+    anything
+    str
+    submodule
+    nullOr
+    listOf;
 
   # template for source options
   mkSourceOption = name: attr:
@@ -110,6 +122,6 @@ in {
   config =
       mapAttrsToList
         (name: attrs: { name = name; } // (attrKeysToSnake (removeEnable attrs)) )
-        (activated cfg-sources plugins);
+        (activated cfg-sources cfg-sources);
 
 }

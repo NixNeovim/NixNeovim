@@ -6,12 +6,14 @@ let
   inherit (lib)
     flatten
     mapAttrsToList
-    attrNames
     filterAttrs
     assertMsg;
 
   inherit (builtins)
     hasAttr
+    foldl'
+    attrNames
+    attrValues
     isAttrs;
 
   checkRawLua = lua:
@@ -61,6 +63,144 @@ in {
       string
     else
       "";
+
+
+  # Input: attrset
+  # Output: attrset
+  #
+  # Merge all values of all attributes of a attibutes set
+  #
+  # Example:
+  # Input:
+  # {
+  #  gruvbox-baby = {
+  #   test1= {}
+  #   test2= {}
+  #  };
+  #  gruvbox-material = {
+  #   test3= {}
+  #   test4= {}
+  #  };
+  # }
+  # Output:
+  # {
+  #  test1 = {};
+  #  test2 = {};
+  #  test3 = {};
+  #  test4 = {};
+  # }
+  mergeValues = input: foldl' (final: set: final // set) {} (attrValues input);
+
+  testHelper = {
+    config = {
+      start = ''
+--------------------------------------------------
+--                 Globals                      --
+--------------------------------------------------
+
+
+--------------------------------------------------
+--                 Options                      --
+--------------------------------------------------
+
+
+--------------------------------------------------
+--                 Keymappings                  --
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+--                 Augroups                     --
+--------------------------------------------------
+
+
+
+--------------------------------------------------
+--               Extra Config (Lua)             --
+--------------------------------------------------
+
+    '';
+    end = "";
+    };
+    moduleTest = text:
+      ''
+      echo Begin test
+      nvimFolder="home-files/.config/nvim"
+      config="$(_abs $nvimFolder/init.lua)"
+      assertFileExists "$config"
+
+      PATH=$PATH:$(_abs home-path/bin)
+      mkdir -p "$(realpath .)/cache/nvim" # add cache dir; needed for barbar.json
+      HOME=$(realpath .) nvim -u "$config" -c 'qall' --headless
+      echo # add missing \0 to output of 'nvim'
+
+      # Replace the path the vimscript file, because it contains the hash
+      sed "s/\/nix\/store\/[a-z0-9]\{32\}/\<nix-store-hash\>/" "$config" > normalizedConfig.lua
+      normalizedConfig=normalizedConfig.lua
+
+      neovim_error() {
+        echo ----------------- NEOVIM CONFIG -----------------
+        cat -n "$config"
+        echo -------------------------------------------------
+
+        echo
+        echo
+
+        echo ----------------- NEOVIM INFO -------------------
+        nvim --version
+        echo -------------------------------------------------
+
+        echo ----------------- NEOVIM PATH -------------------
+        echo $PATH
+        echo -------------------------------------------------
+
+        echo ----------------- NEOVIM OUTPUT -----------------
+        echo "$1"
+        echo -------------------------------------------------
+        exit 1
+      }
+
+      start_vim () {
+        OUTPUT=$(HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) nvim -u $config --headless "$@" -c 'qall' 2>&1)
+        if [ "$OUTPUT" != "" ]
+        then
+          neovim_error "$OUTPUT"
+        fi
+      }
+
+      check_colorscheme () {
+        OUTPUT=$(HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) nvim -u $config --headless -c 'colorscheme' -c 'qall' 2>&1)
+        if [ "$OUTPUT" != "$1" ]
+        then
+          neovim_error "Expected '$1'. Found: '$OUTPUT'"
+        fi
+      }
+
+      echo Start Vim tests
+      start_vim
+
+      echo Testing some common file types
+
+      echo "# test" > tmp.md
+      start_vim tmp.md
+
+      echo "print(\"works\")" > tmp.py
+      start_vim tmp.py
+
+      cat << EOF > tmp.rs
+        fn main() {
+          println!("Hello, world!");
+        }
+      EOF
+      start_vim tmp.rs
+
+      echo Vim tests done
+
+      ${text}
+      '';
+  };
+
 
   ##############################################################################
   # helper functions for plugins with sub-plugins like cmp, lsp, telescope, etc.
