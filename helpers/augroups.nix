@@ -167,7 +167,7 @@
       luaCallback = mkOption {
         default = null;
         type = nullOr lines;
-        description = ''
+        description = lib.escapeXML ''
           Lua function called when the event(s) is triggered.
           Can return true to delete the autocommand, and receives a table argument (opts) with these keys:
              • id: (number) autocommand id

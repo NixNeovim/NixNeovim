@@ -54,7 +54,7 @@ let
       savePath = rawLuaOption "' '" ''
           Where to save/load with :MagmaSave and :MagmaLoad (with no parameters).
           The generated file is placed in this directory, with the filename itself being the
-          buffer's name, with % replaced by %% and / replaced by %, and postfixed with the extension
+          buffer's name, with % replaced by %% and \/ replaced by %, and postfixed with the extension
           .json.
         '';
 

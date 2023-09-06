@@ -46,10 +46,6 @@ let
     in src.plugins //
       src.environments //
       src.colorschemes; # TODO: add the other plugins
-    # in with src;
-      # colorschemes //
-      # environments //
-      # src;
 
 
 in {

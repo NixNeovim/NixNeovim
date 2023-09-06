@@ -70,14 +70,14 @@ let
         templateparamobject = strOption "🅃" "";
       };
       highlights = {
-        detail = strOption "Comment" "[[ Thes";
+        detail = strOption "Comment" "";
       };
     };
     memoryUsage = {
-      border = strOption "none" "[[ Thes";
+      border = strOption "none" "";
     };
     symbolInfo = {
-      border = strOption "none" "[[ Thes";
+      border = strOption "none" "";
     };
   };
 

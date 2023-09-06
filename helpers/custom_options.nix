@@ -17,6 +17,7 @@ let
   inherit (lib)
     mkOption
     mkOptionType
+    escapeXML
     types;
 
   inherit (super.utils)
@@ -55,7 +56,7 @@ in with myTypes; {
     mkOption {
       type = bool;
       default = usePlugDef default;
-      inherit description;
+      description = escapeXML description;
     };
 
   # This is a version of boolOption that does always have a fixed value
@@ -63,76 +64,77 @@ in with myTypes; {
     mkOption {
       type = bool;
       default = default;
-      inherit description;
+      description = escapeXML description;
     };
 
   intOption = default: description:
     mkOption {
       type = int;
       default = usePlugDef default;
-      inherit description;
+      description = escapeXML description;
     };
 
   strOption = default: description:
     mkOption {
       type = str;
       default = usePlugDef default;
-      inherit description;
+      description = escapeXML description;
     };
 
   rawLuaOption = default: description:
     mkOption {
       type = rawLuaType;
       default = rawLua (usePlugDef default);
-      inherit description;
+      description = escapeXML description;
     };
 
   attrsOption = default: description:
     mkOption {
       type = attrs;
       default = usePlugDef default;
-      inherit description;
+      description = escapeXML description;
     };
 
   listOption = default: description:
     mkOption {
       type = list;
       default = usePlugDef default;
-      inherit description;
+      description = escapeXML description;
     };
 
   enumOption = enums: default: description:
     mkOption {
       type = enum enums;
       default = usePlugDef default;
-      inherit description;
+      description = escapeXML description;
     };
 
   boolNullOption = description:
     mkOption {
       type = types.nullOr types.bool;
       default = null;
-      inherit description;
+      description = escapeXML description;
     };
 
   intNullOption = description:
     mkOption {
       type = types.nullOr types.int;
       default = null;
-      inherit description;
+      description = escapeXML description;
     };
 
   strNullOption = description:
     mkOption {
       type = types.nullOr types.str;
       default = null;
-      inherit description;
+      description = escapeXML description;
     };
 
   typeOption = type: default: description:
     mkOption {
-      inherit type description;
+      inherit type;
       default = usePlugDef default;
+      description = escapeXML description;
     };
 
 }
