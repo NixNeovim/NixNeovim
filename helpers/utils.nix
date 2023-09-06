@@ -24,6 +24,8 @@ let
 
 in {
 
+  inherit checkRawLua;
+
   # Input: char, int
   #
   # Repeat char n times
@@ -36,6 +38,7 @@ in {
   # Input: int
   indent = depth: self.repeatChar " " depth;
 
+  # Create a rawLua Object
   rawLua = lua: { __raw = lua; };
 
   # Input: attr

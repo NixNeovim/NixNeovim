@@ -72,8 +72,8 @@ let
             neovim
             neovim-use-plugin-defaults;
         } //
-        # basic-check //
-        # colorschemes //
+        basic-check //
+        colorschemes //
         plugins;
   };
 

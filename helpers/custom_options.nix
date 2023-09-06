@@ -20,6 +20,7 @@ let
     types;
 
   inherit (super.utils)
+    rawLua
     isRawLua;
 
   usePlugDef = default:
@@ -39,7 +40,14 @@ let
 
   rawLuaType = mkOptionType {
     name = "rawLuaType";
-    check = value: isRawLua value;
+    check = value:
+      if !(isRawLua value) then
+        lib.warn "Your input ${value} does not seem to be lua code. Did you use the 'nixneovim.lib.rawLua' function?"
+        false
+      else
+        true;
+
+        
   };
 
 in with myTypes; {
@@ -75,7 +83,7 @@ in with myTypes; {
   rawLuaOption = default: description:
     mkOption {
       type = rawLuaType;
-      default = usePlugDef default;
+      default = rawLua (usePlugDef default);
       inherit description;
     };
 

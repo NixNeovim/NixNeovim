@@ -7,10 +7,6 @@ let
   inherit (helpers.converter)
     toVimOptions;
 
-  inherit (helpers.utils)
-    rawLua;
-
-
   name = "magma";
   pluginUrl = "https://github.com/dccsillag/magma-nvim";
 
@@ -55,7 +51,7 @@ let
           The highlight group to be used for highlighting cells.
         '';
 
-      savePath = rawLuaOption (rawLua "' '") ''
+      savePath = rawLuaOption "' '" ''
           Where to save/load with :MagmaSave and :MagmaLoad (with no parameters).
           The generated file is placed in this directory, with the filename itself being the
           buffer's name, with % replaced by %% and / replaced by %, and postfixed with the extension
