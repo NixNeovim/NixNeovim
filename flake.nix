@@ -46,8 +46,7 @@
 
       lib = import ./lib.nix;
     } //
-    # flake-utils.lib.eachDefaultSystem (system:
-    flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
+    flake-utils.lib.eachDefaultSystem (system:
       let
         # system = "x86_64-linux";
 
