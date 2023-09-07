@@ -1,10 +1,13 @@
-{ testHelper, ... }:
+{ testHelper, lib }:
 
 let
   name = "NAME";
   nvimTestCommand = ""; # Test command to check if plugin is loaded
 in {
   "${name}-test" = { config, lib, pkgs, ... }:
+
+    assert lib.assertMsg false "Please write a simple test for the ${name} module";
+
     {
       config = {
 

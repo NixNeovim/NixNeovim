@@ -3,10 +3,10 @@ import re
 import fileinput
 from dataclasses import dataclass
 
+
 data = ''
 for line in fileinput.input():
     data += line
-
 
 @dataclass
 class Output:

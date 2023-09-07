@@ -1,12 +1,10 @@
-{ homeManager ? true, isDocsBuild ? false, state ? 9999 }: # function that returns a package
+{ homeManager ? true, isDocsBuild ? false, state ? 9999, haumea }: # function that returns a package
 { lib, config, pkgs, ... }:
 with lib;
 let
   cfg = config.programs.nixneovim;
 
-  helpers = import ./helper { inherit pkgs lib config isDocsBuild; };
-
-  mappings = helpers.keymappings;
+  mappings = helpers.keymapping;
 
   inherit (helpers) augroups;
 
@@ -29,10 +27,44 @@ let
     };
   };
 
-in
-{
+  helpers = haumea.lib.load {
+    src = ./helpers;
+    inputs = {
+      inherit lib config;
+      usePluginDefaults = config.programs.nixneovim.usePluginDefaults;
+    };
+  };
+
+  plugins =
+    let
+      src = haumea.lib.load {
+        src = ./src;
+        inputs = {
+          inherit helpers config pkgs lib;
+        };
+      };
+    in src.plugins //
+      src.environments //
+      src.colorschemes; # TODO: add the other plugins
+
+
+in {
+
   imports = [
-    ./plugins
+    # manually importing './plugins' prevents infinite loop
+    # (import ./plugins { inherit pkgs lib config helpers plugins; })
+    ({
+      imports = lib.mapAttrsToList
+        (key: value: value)
+          # if key == "numb" || key == "bamboo" then
+            # lib.trace
+              # key
+              # lib.traceSeqN 1 value.options.programs.nixneovim
+                # value
+          # else
+            # value)
+        plugins;
+    })
   ];
 
   options = {
@@ -66,6 +98,16 @@ in
         default = null;
         description = "The package to use for neovim.";
       };
+
+      # plugins = mkOption {
+        # type = types.attrsOf types.anything;
+        # default = {};
+      # };
+
+      # colorschems = mkOption {
+        # type = types.anything;
+        # default = {};
+      # };
 
       extraPlugins = mkOption {
         type = with types; listOf (either package pluginWithConfigType);
@@ -205,6 +247,7 @@ in
         '';
       };
     };
+
   };
 
   config =
@@ -228,7 +271,7 @@ in
         let
           list = mapAttrsToList
             (option: value:
-              "vim.g.${option} = ${helpers.toLuaObject value}"
+              "vim.g.${option} = ${helpers.converter.toLuaObject value}"
             )
             cfg.globals;
         in concatStringsSep "\n" list;
@@ -237,7 +280,7 @@ in
         let
           list = mapAttrsToList
             (option: value:
-              "vim.o.${option} = ${helpers.toLuaObject value}"
+              "vim.o.${option} = ${helpers.converter.toLuaObject value}"
             )
             cfg.options;
         in concatStringsSep "\n" list;
@@ -306,8 +349,7 @@ in
       };
 
 
-    in
-    mkIf cfg.enable (
+    in (mkIf cfg.enable (
       if isDocsBuild then { }
       else if homeManager then
         {
@@ -335,5 +377,5 @@ in
 
           environment.etc."xdg/nvim/sysinit.vim".text = neovimConfig.neovimRcContent;
         }
-    );
+    ));
 }

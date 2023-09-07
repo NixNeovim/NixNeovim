@@ -1,14 +1,13 @@
-{ pkgs, lib, config, ... }:
-
-with lib;
+{ pkgs, lib, helpers, ... }:
 
 let
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   name = "PLUGIN_NAME";
   pluginUrl = "PLUGIN_URL";
 
-  helpers = import ../../helper { inherit pkgs lib config; };
-  inherit (helpers.customOptions)
+  inherit (helpers.custom_options)
     strOption
     listOption
     enumOption
@@ -19,9 +18,21 @@ let
     # add module options here
   };
 
-in
-with helpers;
-mkLuaPlugin {
+
+
+in mkLuaPlugin {
+
+# Consider the following additional options:
+#
+# extraDescription ? "" # description added to the enable function
+# extraPackages ? [ ]   # non-plugin packages
+# extraConfigLua ? "" # lua config added to the init.vim
+# extraConfigVim ? ""   # vim config added to the init.vim
+# defaultRequire ? true # add default requrie string?
+# extraOptions ? {}     # extra vim options like line numbers, etc
+# extraNixNeovimConfig ? {} # extra config applied to 'programs.nixneovim'
+# isColorscheme ? false # If enabled, plugin will be added to 'nixneovim.colorschemes' instead of 'nixneovim.plugins'
+
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
