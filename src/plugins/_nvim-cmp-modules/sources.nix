@@ -5,6 +5,7 @@ let
   cfg-sources = config.programs.nixneovim.plugins.nvim-cmp.sources;
 
   inherit (helpers.custom_options)
+    rawLuaOption
     intNullOption;
   inherit (helpers.converter)
     attrKeysToSnake;
@@ -35,6 +36,28 @@ let
         options = {
           enable = mkEnableOption "";
           priority = intNullOption "";
+          entryFilter = rawLuaOption null ''
+            A source-specific entry filter, with the following function signature:
+            >
+              function(entry: cmp.Entry, ctx: cmp.Context): boolean
+            <
+
+              Returning `true` will keep the entry, while returning `false` will remove it.
+
+              This can be used to hide certain entries from a given source. For instance, you
+              could hide all entries with kind `Text` from the `nvim_lsp` filter using the
+              following source definition:
+            >lua
+              {
+                name = 'nvim_lsp',
+                entry_filter = function(entry, ctx)
+                  return require('cmp.types').lsp.CompletionItemKind[entry:get_kind()] ~= 'Text'
+                end
+              }
+            <
+              Using the `ctx` parameter, you can further customize the behaviour of the
+              source.
+          '';
           option = mkOption {
             type = nullOr (attrsOf anything);
             description = "If direct lua code is needed use helpers.mkRaw";

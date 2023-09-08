@@ -15,6 +15,12 @@
               nvim_lsp = {
                 enable = true;
                 priority = 10;
+                # TODO: use mkRaw function
+                entryFilter = { __raw = ''
+                  function(entry, ctx)
+                    return require('cmp.types').lsp.CompletionItemKind[entry:get_kind()] ~= 'Text'
+                  end
+                ''; };
               };
               path = {
                 enable = true;
@@ -64,12 +70,20 @@
               },
                     ["snippet"] = { ["expand"] = function(args) require("luasnip").lsp_expand(args.body) end },
                     ["sources"] = {
-                      { ["name"] = "luasnip" },
                       {
+                        ["entry_filter"] = nil,
+                        ["name"] = "luasnip"
+                      },
+                      {
+                        ["entry_filter"] = function(entry, ctx)
+                          return require('cmp.types').lsp.CompletionItemKind[entry:get_kind()] ~= 'Text'
+            end
+            ,
                         ["name"] = "nvim_lsp",
                         ["priority"] = 10
                       },
                       {
+                        ["entry_filter"] = nil,
                         ["name"] = "path",
                         ["priority"] = 9
                       }
