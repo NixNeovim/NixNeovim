@@ -52,7 +52,7 @@ in {
                     },
                     ["inlay_hints"] = {
                       ["highlight"] = "Comment",
-                      ["inline"] = {},
+                      ["inline"] = nil,
                       ["max_len_align"] = false,
                       ["max_len_align_padding"] = 1,
                       ["only_current_line"] = false,

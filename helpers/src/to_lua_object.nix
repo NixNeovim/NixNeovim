@@ -21,6 +21,11 @@
 
   inherit (builtins) head;
 
+  # filter attributes that are null
+  # TODO: this also filters rawLua values that are null
+  filterNull = attrs:
+    filterAttrs (_: value: !isNull value || isRawLua value && !isNull getRawLua value) attrs;
+
  in
 
   # Converts a bunch of different Nix types to their lua equivalents!
@@ -33,26 +38,21 @@
       toLuaObjectHelper = depth: args:
         let ind = indent depth;
         in
-          if builtins.isAttrs args then
+          if isRawLua args then
+            getRawLua args
+          else if builtins.isAttrs args then
             let
-              nonNullArgs = filterAttrs
-                (name: value:
-                  !isNull value # && toLuaObject value != "{}"
-                )
-                args;
+              nonNullArgs = filterNull args;
             in
-              if isRawLua nonNullArgs then # TODO: create and use function isRaw
-                getRawLua nonNullArgs
-              else
-                let
-                  argToLua = name: value:
-                    if head (stringToCharacters name) == "@" then
-                      toLuaObjectHelper (depth + 1) value
-                    else
-                      "[${toLuaObjectHelper 0 (camelToSnake name)}] = ${toLuaObjectHelper (depth + 1) value}";
+              let
+                argToLua = name: value:
+                  if head (stringToCharacters name) == "@" then
+                    toLuaObjectHelper (depth + 1) value
+                  else
+                    "[${toLuaObjectHelper 0 (camelToSnake name)}] = ${toLuaObjectHelper (depth + 1) value}";
 
-                  listOfValues = mapAttrsToList argToLua nonNullArgs;
-                in
+                listOfValues = mapAttrsToList argToLua nonNullArgs;
+              in
                 if length listOfValues == 0 then
                   "{}"
                 else if length listOfValues == 1 then

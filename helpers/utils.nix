@@ -55,7 +55,14 @@ in {
   # Input: raw lua attribute set
   #
   # returns the raw lua code, if the input is of correct type
-  getRawLua = lua: (checkRawLua lua).__raw;
+  getRawLua = lua:
+    let
+      value = (checkRawLua lua).__raw;
+    in
+      if isNull value then
+        "nil"
+      else
+        value;
 
   # remove the enable key from a attribute set
   removeEnable = attrs:
