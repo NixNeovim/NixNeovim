@@ -14,9 +14,14 @@ let
     camelToSnake
     toLuaObject;
 
+  inherit (helpers.utils)
+    rawLua
+    isRawLua;
+
   simpleCheck = expr: expected: { inherit expr expected; };
 
 in {
+
   testShortList = {
     expr = toLuaObject { a = 1; };
     expected = "{ [\"a\"] = 1 }";
@@ -45,6 +50,26 @@ in {
   testToLuaObject3 = {
     expr = toLuaObject "<cmd>lua require('gitsigns').blame_line{full=true}<cr>";
     expected = ''"<cmd>lua require('gitsigns').blame_line{full=true}<cr>"'';
+  };
+
+  testRawLua1 = {
+    expr = rawLua "require('gitsigns').blame_line{full=true}";
+    expected = { __raw = ''require('gitsigns').blame_line{full=true}''; };
+  };
+
+  testRawLua2 = {
+    expr = isRawLua { __raw = "function end"; };
+    expected = true;
+  };
+
+  testRawLua3 = {
+    expr = isRawLua { };
+    expected = false;
+  };
+
+  testRawLua4 = {
+    expr = isRawLua { __raw = "function end"; otherAttrs = 1; };
+    expected = false;
   };
 
   testSnakeCase = {
