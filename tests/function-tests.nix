@@ -16,6 +16,7 @@ let
 
   inherit (helpers.utils)
     rawLua
+    getRawLua
     isRawLua;
 
   simpleCheck = expr: expected: { inherit expr expected; };
@@ -70,6 +71,21 @@ in {
   testRawLua4 = {
     expr = isRawLua { __raw = "function end"; otherAttrs = 1; };
     expected = false;
+  };
+
+  testRawLua5 = {
+    expr = isRawLua (rawLua null);
+    expected = true;
+  };
+
+  testRawLua6 = {
+    expr = getRawLua (rawLua null);
+    expected = "nil";
+  };
+
+  testRawLuaObject1 = {
+    expr = toLuaObject (rawLua "function end");
+    expected = "function end";
   };
 
   testSnakeCase = {
