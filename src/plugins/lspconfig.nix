@@ -48,8 +48,16 @@ in mkLuaPlugin {
     let
       # create lua code for lsp server, with setup wrapper
       serversLua = lsp-helpers.serversToLua cfg (servers.activated cfg.servers);
+
+      globalOnAttachFunction =
+        ''
+          local on_attach_global = function(client, bufnr)
+            ${cfg.onAttach}
+          end
+        '';
     in
     ''
+      ${optionalString (cfg.onAttach != "") globalOnAttachFunction}
       ${cfg.preConfig}
       ${toNeovimConfigString serversLua}
     '';

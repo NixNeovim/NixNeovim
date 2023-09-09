@@ -37,51 +37,45 @@ in {
               do
                 function setup()
 
-                  do -- lsp server config clangd
-                    local __on_attach_base = function(client, bufnr)
-                      -- test comment
-                    end
+                  local on_attach_global = function(client, bufnr)
+                    -- test comment
+                  end
 
-                    local __setup =  {
+                  do -- lsp server config clangd
+
+                    local setup =  {
                       on_attach = function(client, bufnr)
-                        __on_attach_base(client, bufnr)
+                        on_attach_global(client, bufnr)
                       end,
                     }
 
-                    require('lspconfig')["clangd"].setup(__setup)
+                    require('lspconfig')["clangd"].setup(setup)
                   end -- lsp server config clangd
 
                   do -- lsp server config rnix-lsp
-                    local __on_attach_base = function(client, bufnr)
-                      -- test comment
-                    end
-
-                    local __setup =  {
+                    local setup =  {
                       on_attach = function(client, bufnr)
-                        __on_attach_base(client, bufnr)
+                        on_attach_global(client, bufnr)
                       end,
                     }
 
-                    require('lspconfig')["rnix"].setup(__setup)
+                    require('lspconfig')["rnix"].setup(setup)
                   end -- lsp server config rnix-lsp
 
                   do -- lsp server config rust-analyzer
-                    local __on_attach_base = function(client, bufnr)
-                      -- test comment
-                    end
 
-                    local __on_attach_extra = function(client, bufnr)
+                    local on_attach_client = function(client, bufnr)
                       -- test comment extra
                     end
 
-                    local __setup =  {
+                    local setup =  {
                       on_attach = function(client, bufnr)
-                        __on_attach_base(client, bufnr)
-                        __on_attach_extra(client, bufnr)
+                        on_attach_global(client, bufnr)
+                        on_attach_client(client, bufnr)
                       end,
                     }
 
-                    require('lspconfig')["rust_analyzer"].setup(__setup)
+                    require('lspconfig')["rust_analyzer"].setup(setup)
                   end -- lsp server config rust-analyzer
 
                 end
