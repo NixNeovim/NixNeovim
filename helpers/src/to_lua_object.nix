@@ -21,11 +21,6 @@
 
   inherit (builtins) head;
 
-  # filter attributes that are null
-  # TODO: this also filters rawLua values that are null
-  filterNull = attrs:
-    filterAttrs (_: value: !isNull value || isRawLua value && !isNull getRawLua value) attrs;
-
  in
 
   # Converts a bunch of different Nix types to their lua equivalents!
@@ -36,32 +31,36 @@
     let
       # helper function that keeps track of indentation (depth)
       toLuaObjectHelper = depth: args:
-        let ind = indent depth;
+        let
+          ind = indent depth;
         in
-          if isRawLua args then
+          if isRawLua args then # TODO: create and use function isRaw
             getRawLua args
           else if builtins.isAttrs args then
             let
-              nonNullArgs = filterNull args;
-            in
-              let
-                argToLua = name: value:
-                  if head (stringToCharacters name) == "@" then
-                    toLuaObjectHelper (depth + 1) value
-                  else
-                    "[${toLuaObjectHelper 0 (camelToSnake name)}] = ${toLuaObjectHelper (depth + 1) value}";
+              nonNullArgs = filterAttrs
+                (name: value:
+                  !isNull value # && toLuaObject value != "{}"
+                )
+                args;
 
-                listOfValues = mapAttrsToList argToLua nonNullArgs;
-              in
-                if length listOfValues == 0 then
-                  "{}"
-                else if length listOfValues == 1 then
-                  "{ ${head listOfValues} }"
+              argToLua = name: value:
+                if head (stringToCharacters name) == "@" then
+                  toLuaObjectHelper (depth + 1) value
                 else
-                  ''
-                    {
-                    ${ind}  ${concatStringsSep ",\n${ind}  " listOfValues}
-                    ${ind}}''
+                  "[${toLuaObjectHelper 0 (camelToSnake name)}] = ${toLuaObjectHelper (depth + 1) value}";
+
+              listOfValues = mapAttrsToList argToLua nonNullArgs;
+            in
+              if length listOfValues == 0 then
+                "{}"
+              else if length listOfValues == 1 then
+                "{ ${head listOfValues} }"
+              else
+                ''
+                  {
+                  ${ind}  ${concatStringsSep ",\n${ind}  " listOfValues}
+                  ${ind}}''
           else if builtins.isList args then
             if length args == 0 then
               "{}"
@@ -71,7 +70,7 @@
                 ${ind}  ${concatMapStringsSep ",\n${ind}  " (toLuaObjectHelper depth) args}
                 ${ind}}'' # this is concatMap not concat
           else if builtins.isString args then
-          # This should be enough!
+            # This should be enough!
             builtins.toJSON args
           else if builtins.isPath args then
             builtins.toJSON (toString args)

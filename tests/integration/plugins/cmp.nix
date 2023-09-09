@@ -52,6 +52,7 @@
           assertDiff "$normalizedConfig" ${
             pkgs.writeText "init.lua-expected" ''
               ${testHelper.config.start}
+
               -- config for plugin: nvim-cmp
               do
                 function setup()
@@ -66,8 +67,8 @@
                       ["<Tab>"] = cmp.mapping.confirm({
                         behavior = cmp.ConfirmBehavior.Replace,
                         select = false,
-              })
-              },
+                    })
+                    },
                     ["snippet"] = { ["expand"] = function(args) require("luasnip").lsp_expand(args.body) end },
                     ["sources"] = {
                       {
@@ -77,8 +78,8 @@
                       {
                         ["entry_filter"] = function(entry, ctx)
                           return require('cmp.types').lsp.CompletionItemKind[entry:get_kind()] ~= 'Text'
-            end
-            ,
+                          end
+                          ,
                         ["name"] = "nvim_lsp",
                         ["priority"] = 10
                       },
