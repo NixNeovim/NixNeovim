@@ -47,9 +47,10 @@ imports = [
 
 ## Documentation
 
-All options are documented at: [NixNeovim Documentation](https://nixneovim.github.io/NixNeovim/options.html)
+All options are documented at: [NixNeovim Documentation](https://nixneovim.github.io/NixNeovim/options.html).
+Alternatively, you can use this search: [NixNeovim Options Search](https://nixneovim.github.io/nixneovim-option-search/).
 
-You can generate the docs using `nix build .#docs`
+Finally, you can generate the docs using `nix build .#docs`.
 
 ## Example Config
 
