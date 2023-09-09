@@ -34,12 +34,13 @@
   outputs = { self, nixpkgs, nmd, nmt, nix-flake-tests, flake-utils, haumea, ... }@inputs:
     {
       nixosModules = {
-        default = import ./nixneovim.nix { homeManager = true; inherit haumea; };
-        homeManager = self.nixosModules.default;
+        default = self.nixosModules.homeManager;
+        homeManager = import ./nixneovim.nix { homeManager = true; inherit haumea; };
         homeManager-22-11 = import ./nixneovim.nix { homeManager = true; state = 2211; inherit haumea;  };
-        nixos = import ./nixneovim.nix { homeManager = false; inherit haumea; };
+        homeManager-23-05 = import ./nixneovim.nix { homeManager = true; state = 2305; inherit haumea;  };
+        nixos = import ./nixneovim.nix { homeMnager = false; inherit haumea; };
         nixos-22-11 = import ./nixneovim.nix { homeManager = false; state = 2211; inherit haumea; };
-        homeManager-haumea = import ./nixneovim.nix { homeManager = true; state = 2211; inherit haumea; };
+        nixos-23-05 = import ./nixneovim.nix { homeManager = false; state = 2305; inherit haumea; };
       };
 
       overlays.default = inputs.nixneovimplugins.overlays.default;
