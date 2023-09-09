@@ -8,7 +8,6 @@ This makes your Neovim config reproducible, and easier to manage.
 #### Forked
 
 This is originally based on [pta2002/nixvim](https://github.com/pta2002/nixvim).
-However, NixNeovim contains more modules and cleaner code.
 
 ## Get Ready
 
