@@ -4,18 +4,17 @@ let
   inherit (helpers.generator)
      mkLuaPlugin;
 
-  name = "PLUGIN_NAME";
-  pluginUrl = "PLUGIN_URL";
+  name = "origami";
+  pluginUrl = "https://github.com/chrisgrieser/nvim-origami";
 
   inherit (helpers.custom_options)
-    strOption
-    listOption
-    enumOption
-    intOption
     boolOption;
 
   moduleOptions = {
     # add module options here
+    keepFoldsAcrossSessions = boolOption true "";
+    pauseFoldsOnSearch = boolOption true "";
+    setupFoldKeymaps = boolOption true "";
   };
 
 
@@ -32,10 +31,10 @@ in mkLuaPlugin {
 # extraOptions ? {}     # extra vim options like line numbers, etc
 # extraNixNeovimConfig ? {} # extra config applied to 'programs.nixneovim'
 # isColorscheme ? false # If enabled, plugin will be added to 'nixneovim.colorschemes' instead of 'nixneovim.plugins'
-# keepOptionsCase ? false # do not modify the case of module options
 
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
+    nvim-origami
   ];
 }
