@@ -34,6 +34,7 @@ let
     bool = nullOr bool;
     int = nullOr int;
     str = nullOr str;
+    float = nullOr float;
     list = nullOr (listOf anything);
     attrs = nullOr (attrsOf anything);
     enum = enums: nullOr (enum enums);
@@ -48,7 +49,7 @@ let
       else
         true;
 
-        
+
   };
 
 in with myTypes; {
@@ -70,6 +71,13 @@ in with myTypes; {
   intOption = default: description:
     mkOption {
       type = int;
+      default = usePlugDef default;
+      description = escapeXML description;
+    };
+
+  floatOption = default: description:
+    mkOption {
+      type = float;
       default = usePlugDef default;
       description = escapeXML description;
     };
