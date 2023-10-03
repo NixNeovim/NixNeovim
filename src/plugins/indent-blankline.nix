@@ -7,7 +7,7 @@ let
      mkLuaPlugin;
 
   name = "indent-blankline";
-  pluginName = "indent_blankline";
+  pluginName = "ibl";
   pluginUrl = "https://github.com/lukas-reineke/indent-blankline.nvim";
 
   inherit (helpers.custom_options) boolNullOption strNullOption;
