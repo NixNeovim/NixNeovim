@@ -11,6 +11,7 @@ let
 
   inherit (helpers.converter)
     toNeovimConfigString
+    convertModuleOptions
     camelToSnake
     toLuaObject;
 

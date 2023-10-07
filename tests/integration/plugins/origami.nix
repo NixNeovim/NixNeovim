@@ -33,9 +33,9 @@ in {
                 function setup()
                   -- test lua pre comment
                   require('origami').setup {
-                    ["keep_foldscross_sessions"] = false,
-                    ["pause_folds_on_search"] = true,
-                    ["setup_fold_keymaps"] = false
+                    ["keepFoldsAcrossSessions"] = false,
+                    ["pauseFoldsOnSearch"] = true,
+                    ["setupFoldKeymaps"] = false
                   }
                   -- test lua post comment
                 end

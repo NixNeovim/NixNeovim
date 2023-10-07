@@ -24,10 +24,17 @@ let
   to_lua_object = import ./src/to_lua_object.nix { inherit lib super; };
 
 in {
-  toLuaObject' = to_lua_object;
+  toLuaObject' = initDepth: args: to_lua_object initDepth camelToSnake args;
 
   # Same as toLuaObject' but with indent set to 0
-  toLuaObject = args: to_lua_object 0 args;
+  toLuaObject = args: to_lua_object 0 camelToSnake args;
+
+  # same as toLuaObject' but caller can specify custom converter function
+  toLuaObjectCustomConverter' = to_lua_object;
+
+  # same as toLuaObject but caller can specify custom converter function
+  toLuaObjectCustomConverter = to_lua_object 0;
+
 
   # vim dictionaries are, in theory, compatible with JSON
   toVimDict = args: builtins.toJSON
@@ -40,8 +47,8 @@ in {
   # adds the 'extraAttrs'
   convertModuleOptions = cfg: moduleOptions:
     let
-      attrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) (cfg.${k})) moduleOptions;
-      extraAttrs = mapAttrs' (k: v: nameValuePair (camelToSnake k) v) cfg.extraConfig;
+      attrs = mapAttrs (k: v: cfg.${k}) moduleOptions;
+      extraAttrs = cfg.extraConfig;
     in
     attrs // extraAttrs;
 
