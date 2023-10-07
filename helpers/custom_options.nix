@@ -96,6 +96,14 @@ in with myTypes; {
       description = escapeXML description;
     };
 
+  rawLuaOptionExample = default: description: example:
+    mkOption {
+      type = rawLuaType;
+      default = rawLua (usePlugDef default);
+      description = escapeXML description;
+      example = example;
+    };
+
   attrsOption = default: description:
     mkOption {
       type = attrs;
