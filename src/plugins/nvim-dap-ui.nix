@@ -7,7 +7,7 @@ let
      mkLuaPlugin;
 
   inherit (helpers.converter)
-    convertModuleOptions
+    flattenModuleOptions
     toLuaObject;
 
   name = "nvim-dap-ui";
@@ -18,7 +18,7 @@ let
   moduleOptions = with helpers; {
     # add module options here
   };
-  pluginOptions = convertModuleOptions cfg moduleOptions;
+  pluginOptions = flattenModuleOptions cfg moduleOptions;
 
 in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;

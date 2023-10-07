@@ -7,7 +7,7 @@ let
      mkLuaPlugin;
   inherit (helpers.converter)
     toNeovimConfigString
-    convertModuleOptions;
+    flattenModuleOptions;
 
   name = "mini";
   pluginUrl = "https://github.com/echasnovski/mini.nvim";
@@ -78,7 +78,7 @@ in mkLuaPlugin {
         (module: options:
           let
             # combine the lua configs with their values from the nix-module config value and add extraConfig
-            setup = convertModuleOptions cfg.${module} (options // { extraConfig = { }; });
+            setup = flattenModuleOptions cfg.${module} (options // { extraConfig = { }; });
           in
           if cfg.${module}.enable then
             "require('${name}.${module}').setup(${helpers.converter.toLuaObject setup})"

@@ -15,7 +15,7 @@ let
     boolOptionStrict;
 
   inherit (helpers.converter)
-    convertModuleOptions;
+    flattenModuleOptions;
 
   keymapOption = default: mkOption {
     type = types.str;
@@ -87,7 +87,7 @@ let
       # Therefore, some options are generated, and some are added manual.
       # Before combining them, we have to filter the generatedOptions.
 
-      generatedOptions = convertModuleOptions cfg moduleOptions;
+      generatedOptions = flattenModuleOptions cfg moduleOptions;
 
       # options do not map 1-to-1 to the plugin options
       manualOptions = {
@@ -99,8 +99,8 @@ let
       optionsFilter = [
         "folding"
         "grammars"
-        "exclude_grammars"
-        "install_all_grammars"
+        "excludeGrammars"
+        "installAllGrammars"
       ];
 
       # apply the filter

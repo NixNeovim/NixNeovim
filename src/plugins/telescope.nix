@@ -11,7 +11,7 @@ let
   inherit (helpers.custom_options) attrsOption boolOption;
 
   inherit (helpers.converter)
-    convertModuleOptions
+    flattenModuleOptions
     toLuaObject;
 
   extensions = super.telescope-modules.extensions;
@@ -31,7 +31,7 @@ let
 
   pluginOptions =
     let
-      options = convertModuleOptions cfg (filterAttrs (k: v: k != "extensions") moduleOptions);
+      options = flattenModuleOptions cfg (filterAttrs (k: v: k != "extensions") moduleOptions);
       extraConfig = cfg.extraConfig;
     in options // extraConfig;
 

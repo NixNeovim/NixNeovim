@@ -7,7 +7,7 @@ let
      mkLuaPlugin;
 
   inherit (helpers.converter)
-    convertModuleOptions
+    flattenModuleOptions
     toLuaObject;
 
   name = "PLUGIN_NAME";
@@ -29,7 +29,7 @@ let
 
   # you can autogenerate the plugin options from the moduleOptions.
   # This essentially converts the camalCase moduleOptions to snake_case plugin options
-  pluginOptions = convertModuleOptions cfg moduleOptions;
+  pluginOptions = flattenModuleOptions cfg moduleOptions;
 
 in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;

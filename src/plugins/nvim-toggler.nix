@@ -5,7 +5,7 @@ let
      mkLuaPlugin;
 
   inherit (helpers.converter)
-    convertModuleOptions
+    flattenModuleOptions
     toLuaObject;
 
   inherit (helpers.custom_options)
@@ -22,7 +22,7 @@ let
     removeDefaultKeybinds = boolOption false "Removes the default leader-i keymap";
   };
 
-  pluginOptions = convertModuleOptions cfg moduleOptions;
+  pluginOptions = flattenModuleOptions cfg moduleOptions;
 
 in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;

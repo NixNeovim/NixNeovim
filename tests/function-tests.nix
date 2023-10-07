@@ -11,6 +11,7 @@ let
 
   inherit (helpers.converter)
     toNeovimConfigString
+    flattenModuleOptions
     camelToSnake
     toLuaObject;
 
@@ -120,4 +121,25 @@ in {
     2
     345'';
   };
+
+  testConvertModuleOptions1 =
+    let
+      cfg =
+        {
+          customConfig1 = true;
+          extraConfig = {
+            extraConfig1 = true;
+            extraConfig2 = "";
+          };
+        };
+    in {
+      expr = flattenModuleOptions cfg {
+        customConfig1 = null;
+      };
+      expected = {
+          customConfig1 = true;
+          extraConfig1 = true;
+          extraConfig2 = "";
+      };
+    };
 }

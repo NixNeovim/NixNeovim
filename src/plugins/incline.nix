@@ -6,7 +6,7 @@ let
      mkLuaPlugin;
 
   inherit (helpers.converter)
-    convertModuleOptions
+    flattenModuleOptions
     toLuaObject;
 
   name = "incline";
@@ -17,7 +17,7 @@ let
   moduleOptions = with helpers; {
   };
 
-  pluginOptions = convertModuleOptions cfg moduleOptions;
+  pluginOptions = flattenModuleOptions cfg moduleOptions;
 
 in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;

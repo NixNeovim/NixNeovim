@@ -15,8 +15,9 @@ let
     defaultModuleOptions;
 
   inherit (super.converter)
-    toLuaObject
-    convertModuleOptions;
+    toLuaObjectCustomConverter
+    camelToSnake
+    flattenModuleOptions;
 
   inherit (super.utils)
     indent;
@@ -25,21 +26,22 @@ let
   validUrl = url:
       hasPrefix "https://" url;
 
-in { name                  # name of the plugin module
-  , pluginName ? name     # name of the plugin as it appears in 'require("<pluginName>")' if different
-  , pluginUrl ? ""        # link to plugin project page
-  , extraPlugins          # plugin packages
-  , description ? ""      # deprecated, use extraDescription
-  , extraDescription ? "" # description added to the enable function
-  , extraPackages ? [ ]   # non-plugin packages
-  , extraConfigLua ? "" # lua config added to the init.vim
-  , extraConfigVim ? ""   # vim config added to the init.vim
-  , moduleOptions ? { }   # options available in the module
-  , defaultRequire ? true # add default requrie string?
-  , extraOptions ? {}     # extra vim options like line numbers, etc
-  , extraNixNeovimConfig ? {} # extra config applied to 'programs.nixneovim'
-  , isColorscheme ? false # If enabled, plugin will be added to 'nixneovim.colorschemes' instead of 'nixneovim.plugins'
-  # , warning ? ""          # TODO: This can be used to warn the user when the plugin is used. For example, when the plugin is broken, deprecated, or does not work as expected
+in { name                          # name of the plugin module
+  , pluginName ? name              # name of the plugin as it appears in 'require("<pluginName>")' if different
+  , pluginUrl ? ""                 # link to plugin project page
+  , extraPlugins                   # plugin packages
+  , description ? ""               # deprecated, use extraDescription
+  , extraDescription ? ""          # description added to the enable function
+  , extraPackages ? [ ]            # non-plugin packages
+  , extraConfigLua ? ""            # lua config added to the init.vim
+  , extraConfigVim ? ""            # vim config added to the init.vim
+  , moduleOptions ? { }            # options available in the module
+  , defaultRequire ? true          # add default requrie string?
+  , extraOptions ? {}              # extra vim options like line numbers, etc
+  , extraNixNeovimConfig ? {}      # extra config applied to 'programs.nixneovim'
+  , isColorscheme ? false          # If enabled, plugin will be added to 'nixneovim.colorschemes' instead of 'nixneovim.plugins'
+  # , warning ? ""                 # TODO: This can be used to warn the user when the plugin is used. For example, when the plugin is broken, deprecated, or does not work as expected
+  , configConverter ? camelToSnake # Specify the config name converter, default expects camelCase and converts that to snake_case
   }:
 
   let
@@ -56,7 +58,7 @@ in { name                  # name of the plugin module
 
     cfg = config.programs.nixneovim.${type}.${name};
 
-    pluginOptions = convertModuleOptions cfg moduleOptions;
+    pluginOptions = flattenModuleOptions cfg moduleOptions; # rename converModuleOptions to 'addDefaultOptions' or similar
 
     fullDescription =
       warnIf (description != "") "${warnString}: 'description' is deprecated, please use extraDescription"
@@ -77,7 +79,7 @@ in { name                  # name of the plugin module
     # else extraConfigLua);
 
     luaConfig = ''
-        ${optionalString defaultRequire "require('${pluginName}').setup ${toLuaObject pluginOptions}"}
+        ${optionalString defaultRequire "require('${pluginName}').setup ${toLuaObjectCustomConverter configConverter pluginOptions}"}
         ${extraConfigLua}
       '';
 
