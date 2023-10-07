@@ -99,8 +99,8 @@ let
       optionsFilter = [
         "folding"
         "grammars"
-        "exclude_grammars"
-        "install_all_grammars"
+        "excludeGrammars"
+        "installAllGrammars"
       ];
 
       # apply the filter
