@@ -17,7 +17,7 @@ let
 
 
   inherit (helpers.converter)
-    convertModuleOptions
+    flattenModuleOptions
     toLuaObject;
 
 
@@ -55,7 +55,7 @@ let
 
   };
 
-  pluginOptions = convertModuleOptions cfg moduleOptions;
+  pluginOptions = flattenModuleOptions cfg moduleOptions;
 in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [

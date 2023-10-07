@@ -11,7 +11,6 @@ let
     upperChars
     mapAttrs'
     mapAttrs
-    nameValuePair
     toLower;
 
   inherit (self)
@@ -43,9 +42,8 @@ in {
   # Input: config, options attributes from module
   # Output: Attribute set of lua options # todo: clarify
   #
-  # converts the module options to lua code and
   # adds the 'extraAttrs'
-  convertModuleOptions = cfg: moduleOptions:
+  flattenModuleOptions = cfg: moduleOptions:
     let
       attrs = mapAttrs (k: v: cfg.${k}) moduleOptions;
       extraAttrs = cfg.extraConfig;

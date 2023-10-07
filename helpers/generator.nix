@@ -13,7 +13,7 @@ in {
   defaultModuleOptions = description: {
     enable = lib.mkEnableOption description;
     extraConfig = mkOption {
-      # this is added to lua in 'convertModuleOptions'
+      # this is added to lua in 'flattenModuleOptions'
       type = types.attrsOf types.anything;
       default = { };
       description = "Place any extra config here as an attibute-set";

@@ -8,7 +8,7 @@ let
   pluginUrl = "https://github.com/subnut/nvim-ghost.nvim";
 
   inherit (helpers.converter)
-    convertModuleOptions
+    flattenModuleOptions
     toLuaObject;
 
   cfg = config.programs.nixneovim.plugins.${name};
@@ -16,7 +16,7 @@ let
     mkLuaPlugin;
 
   moduleOptions = with helpers; { };
-  pluginOptions = convertModuleOptions cfg moduleOptions;
+  pluginOptions = flattenModuleOptions cfg moduleOptions;
 
 in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;

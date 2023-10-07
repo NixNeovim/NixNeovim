@@ -7,7 +7,7 @@ let
      mkLuaPlugin;
 
   inherit (helpers.converter)
-    convertModuleOptions
+    flattenModuleOptions
     toLuaObject;
 
   name = "which-key";
@@ -119,7 +119,7 @@ let
     };
   };
 
-  pluginOptions = convertModuleOptions cfg (builtins.removeAttrs moduleOptions [ "groups" ]);
+  pluginOptions = flattenModuleOptions cfg (builtins.removeAttrs moduleOptions [ "groups" ]);
 
 in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
