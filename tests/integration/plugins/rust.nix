@@ -10,6 +10,17 @@ in {
         programs.nixneovim.plugins = {
           "${name}" = {
             enable = true;
+            # TODO: use mkRaw function
+            server = { __raw =
+              ''
+                {
+                  ["on_attach"] = function()
+                    -- custom lsp code
+                    -- custom rust-tools code
+                  end
+                }
+              '';
+            };
             extraLua.pre = ''
               -- test lua pre comment
             '';
@@ -35,7 +46,13 @@ in {
                         ["name"] = "rt_lldb",
                         ["type"] = "executable"
                       } },
-                    ["server"] = { ["standalone"] = true },
+                    ["server"] = {
+                      ["on_attach"] = function()
+                        -- custom lsp code
+                        -- custom rust-tools code
+                      end
+                    }
+                    ,
                     ["tools"] = {
                       ["crate_graph"] = {
                         ["backend"] = "x11",
