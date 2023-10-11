@@ -69,6 +69,9 @@
             runtimeInputs = let
               python-with-my-packages = pkgs.python3.withPackages (p: with p; [
                 tree-sitter
+                requests
+                mistune
+                beautifulsoup4
                 (
                   buildPythonPackage rec {
                     pname = "SLPP";
