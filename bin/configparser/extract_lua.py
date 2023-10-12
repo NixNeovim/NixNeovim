@@ -137,20 +137,8 @@ def extract_lua(repo) -> str|None:
 
     parsed.update({current_header: current_content})
 
-    config_section = ["Configuration", "Config", "Usage", "Default configuration"]
+    config_section = ["Configuration", "Config", "Usage", "Default configuration", "Installation"]
     parsed = { section: content for section, content in parsed.items() if section in config_section and content != "" }
-
-    #  if "Configuration" in parsed:
-        #  lua = parsed["Configuration"]
-    #  elif "Config" in parsed:
-        #  lua = parsed["Config"]
-    #  elif "Usage" in parsed:
-        #  lua = parsed["Usage"]
-    #  else:
-        #  print("Setup section no found")
-        #  return None
-
-    #  print("lua:", lua)
 
     if len(parsed.items()) != 1:
         print("Could not determin config section")

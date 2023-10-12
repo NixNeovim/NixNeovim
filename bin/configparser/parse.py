@@ -48,13 +48,6 @@ def to_comment(node):
     #  print(indent, "#", text)
     return f"{indent}# {text}"
 
-#  def extract(node):
-    #  linenumber = node.start_point[0]
-    #  start = node.start_point[1]
-    #  end = node.end_point[1]
-
-    #  return lines[linenumber][start:end]
-
 def extract(node) -> str:
     return data[node.start_byte:node.end_byte]
 
@@ -214,10 +207,6 @@ def extract_table(table_node) -> dict:
                 continue # TODO:
             case "fieldlist":
                 ret = ret | extract_field_list(n)
-                #  for field in n.children:
-                    #  if field.type == "field":
-                        #  data = extract_field(field)
-                        #  ret.update(data)
 
     return ret
 
@@ -250,66 +239,70 @@ def parse(input, name):
     parser.set_language(LUA_LANGUAGE)
 
     data = input
-    #  data = """
-    #  {
-        #  auto_teaser_filetypes = { "dashboard", "alpha", "starter", }, -- will enable running the teaser automatically for listed filetypes
-        #  try = true,
-    #  }
-    #  """
-    #  lines = input.split('\n') # for later user
+    print(data)
 
     tree = parser.parse(bytes(data, "utf8"))
     #  cursor = tree.walk()
     print(tree.root_node.sexp())
     print()
 
-    query = LUA_LANGUAGE.query("""
+    fieldlist_string = """
+        (fieldlist
+            (field
+                name: (identifier)
+                [
+                    value: (tableconstructor)
+                    value: (string)
+                    value: (number)
+                    value: (boolean)
+                ]
+            )
+        ) @table
+    """
+
+    # NOTE:
+    # use '_' as prefix to hide captures
+    query = LUA_LANGUAGE.query(f"""
         [
             (table_argument
-                (fieldlist
-                    (field
-                        name: (identifier)
-                        [
-                            value: (tableconstructor)
-                            value: (string)
-                            value: (number)
-                            value: (boolean)
-                        ]
-                    )
-                ) @table
+                {fieldlist_string}
             )
             (tableconstructor
-                (fieldlist
-                    (field
-                        name: (identifier)
-                        [
-                            value: (tableconstructor)
-                            value: (string)
-                            value: (number)
-                            value: (boolean)
-                        ]
-                    )
-                ) @table
+                {fieldlist_string}
+            )
+            (
+                (field
+                    ((identifier) @_config_var
+                        (#eq? @_config_var "config"))
+                    (function
+                        (function_body) @body))
             )
         ]
         """)
 
     captures = query.captures(tree.root_node)
     pprint(captures)
-    #  print()
+    print()
 
-    #  print(extract(captures[0][0]))
+    # filter hidden captures
+    captures = [ cap for cap in captures if not cap[1].startswith("_") ]
+
     #  for c, tag in captures:
-        #  print(tag, extract(c))
+        #  print(tag, "\n", extract(c))
+
+    if len(captures) == 0 or len(captures[0]) == 0:
+        print("Captures empty")
+        return
 
     setup = extract_field_list(captures[0][0])
 
     if setup == {}:
         print("No setup function found")
-    else:
-        #  pprint(setup)
-        file_path = f"./output/{name}.txt"
-        with open(file_path, 'w') as file:
-            # Write data to the file
-            file.seek(0)
-            file.write(f"{setup}")
+        return
+
+    #  pprint(setup)
+    file_path = f"./output/{name}.txt"
+    with open(file_path, 'w') as file:
+        # Write data to the file
+        file.seek(0)
+        file.write(f"{setup}")

@@ -860,9 +860,8 @@ def main():
         "mickael-menu/zk-nvim",
     ]
 
-    for repo in repos[:50]:
+    for repo in repos[40:41]:
         lua = extract_lua(repo)
-        continue
         if lua is not None:
             name = repo.replace("/", "-")
             parse.parse(lua, name)
