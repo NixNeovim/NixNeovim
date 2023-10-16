@@ -99,7 +99,7 @@ def tag_is_title_or_lua(tag) -> bool:
 
     return title or lua
 
-def extract_lua(repo) -> str|None:
+def extract_lua(repo) -> list[str]|None:
 
     print()
     print(f"Checking {repo}")
@@ -119,11 +119,11 @@ def extract_lua(repo) -> str|None:
     #  pprint(lua_code_blocks)
 
     blocks = soup.find_all(tag_is_title_or_lua)
-    current_header = ""
 
     parsed = {}
-
+    current_header = ""
     current_content = ""
+
     for block in blocks:
         if block.name == "code": # html tag type
             current_content += block.contents[0] + "\n"
@@ -140,14 +140,18 @@ def extract_lua(repo) -> str|None:
     config_section = ["Configuration", "Config", "Usage", "Default configuration", "Installation"]
     parsed = { section: content for section, content in parsed.items() if section in config_section and content != "" }
 
-    if len(parsed.items()) != 1:
+    if len(parsed.items()) == 0:
         print("Could not determin config section")
-        print(parsed)
+        pprint(parsed)
         print()
         return None
     else:
         print()
 
 
-    lua = list(parsed.values())[0]
+    #  lua = ""
+    #  for section in parsed.values():
+        #  lua += section
+    lua = list(parsed.values())
+
     return lua

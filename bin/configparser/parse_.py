@@ -1,7 +1,7 @@
-from tree_sitter import Language, Parser
 import re
 from dataclasses import dataclass
 from pprint import pprint
+from parser import Parser
 
 # global variables
 
@@ -220,79 +220,22 @@ def extract_setup_table(node) -> dict|None:
             if is_setup_function(node):
                 return extract_table(node.children[3])
 
-def parse(input, name):
-    global lines
-    global data
+def extract_function_body(node) -> dict|None:
+    return None
 
-    Language.build_library(
-      # Store the library in the `build` directory
-      'build/my-languages.so',
+def parse(lua: Parser, name):
 
-      # Include one or more languages
-      [
-        './bin/configparser/tree-sitter-lua',
-      ]
-    )
-
-    LUA_LANGUAGE = Language('build/my-languages.so', 'lua')
-    parser = Parser()
-    parser.set_language(LUA_LANGUAGE)
-
-    data = input
-    print(data)
-
-    tree = parser.parse(bytes(data, "utf8"))
-    #  cursor = tree.walk()
-    print(tree.root_node.sexp())
-    print()
-
-    fieldlist_string = """
-        (fieldlist
-            (field
-                name: (identifier)
-                [
-                    value: (tableconstructor)
-                    value: (string)
-                    value: (number)
-                    value: (boolean)
-                ]
-            )
-        ) @table
-    """
-
-    # NOTE:
-    # use '_' as prefix to hide captures
-    query = LUA_LANGUAGE.query(f"""
-        [
-            (table_argument
-                {fieldlist_string}
-            )
-            (tableconstructor
-                {fieldlist_string}
-            )
-            (
-                (field
-                    ((identifier) @_config_var
-                        (#eq? @_config_var "config"))
-                    (function
-                        (function_body) @body))
-            )
-        ]
-        """)
-
-    captures = query.captures(tree.root_node)
-    pprint(captures)
-    print()
-
-    # filter hidden captures
-    captures = [ cap for cap in captures if not cap[1].startswith("_") ]
-
-    #  for c, tag in captures:
-        #  print(tag, "\n", extract(c))
+    captures = lua.nodes
+    #  print("captures:", captures)
 
     if len(captures) == 0 or len(captures[0]) == 0:
         print("Captures empty")
         return
+
+    # go through nodes and parse
+
+    # ...
+
 
     setup = extract_field_list(captures[0][0])
 

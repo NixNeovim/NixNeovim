@@ -1,5 +1,5 @@
-import parse
 from extract_lua import extract_lua
+from parser import Parser
 
 def main():
 
@@ -860,11 +860,29 @@ def main():
         "mickael-menu/zk-nvim",
     ]
 
-    for repo in repos[40:41]:
-        lua = extract_lua(repo)
+    #  for repo in repos[40:41]:
+    for repo in repos[2:3]:
+
+        # extract code from readme
+
+        lua: list[str]|None = extract_lua(repo)
+
+        name = repo.replace("/", "-")
+
+        # parse extracted code block to lua
+
         if lua is not None:
-            name = repo.replace("/", "-")
-            parse.parse(lua, name)
+            code = []
+            for section in lua:
+                code.append(Parser(section).code)
+            #  parse.parse(lua, name) # deprecated
+
+
+            print("code:", code)
+
+        # output config
+
+        # TODO: ...
 
 if __name__ == "__main__":
     main()
