@@ -27,38 +27,48 @@ class Parser:
     def __init__(self, data: str):
         self.text = data
 
-        try:
-            captures = parse_require(data)
-            print("Parsed as require")
-        except:
-            captures = None
-
-        if captures is None:
-            try:
-                captures = parse_plugin_set(data)
-                print("Parsed as plugin set")
-            except:
-                captures = None
-
-        if captures is None:
-            try:
-                captures = parse_plugin_set(data)
-                print("Parsed as plugin set")
-            except:
-                captures = None
-
-        if captures is None:
-            exit("Could not parse lua")
+        captures = self._query(data)
 
         # filter hidden captures
-        captures = [ cap for cap in captures if not cap[1].startswith("_") ]
-
-        self.nodes = captures
+        self.nodes = [ cap for cap in captures if not cap[1].startswith("_") ]
 
         for node, tag in self.nodes:
             match tag:
                 case "function_body":
                     self.code = self._extract_function_body(node)
+
+                case "function_call":
+                    self.code = self._extract_function_call(node)
+
+                case other:
+                    exit(f"{other} not matched in __init__ of Parser")
+
+
+    def _query(self, data) -> list:
+        #  print(data)
+
+        captures = parse_require(data)
+
+        if captures != []:
+            print("Parsed as require")
+            return captures
+
+        captures = parse_config_function(data)
+
+        if captures != []:
+            print("Parsed as config function")
+            return captures
+
+        captures = parse_config_table(data)
+
+        if captures != []:
+            print("Parsed as config table")
+            return captures
+
+
+        # error state
+        exit("Could not parse lua")
+
 
     def _extract_variable_declaration(self, node) -> Variable|None:
         """
@@ -89,9 +99,6 @@ class Parser:
         return VimFunctionCall(code)
 
     def _extract_function_body(self, node) -> list|None:
-        self.print_code(node)
-
-        print()
         output = []
         for child in node.children:
             match child.type:

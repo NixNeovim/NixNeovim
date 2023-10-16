@@ -137,7 +137,7 @@ def extract_lua(repo) -> list[str]|None:
 
     parsed.update({current_header: current_content})
 
-    config_section = ["Configuration", "Config", "Usage", "Default configuration", "Installation"]
+    config_section = ["Configuration", "Config", "Usage", "Default configuration", "Installation", "Setup"]
     parsed = { section: content for section, content in parsed.items() if section in config_section and content != "" }
 
     if len(parsed.items()) == 0:

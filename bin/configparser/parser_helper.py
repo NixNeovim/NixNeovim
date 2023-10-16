@@ -52,22 +52,27 @@ fieldlist_string = """
     #  """)
 
 def parse_require(data):
-    exit("TODO: parse_require")
     query = LUA_LANGUAGE.query(f"""
-        (table_argument
-            {fieldlist_string}
+        (program
+            ((function_call
+                (function_call
+                    ((identifier) @_function_id
+                     (#eq? @_function_id "require"))))
+            ) @function_call
         )
         """)
 
-    print(data)
+    #  print(data)
     tree = parser.parse(bytes(data, "utf8"))
-    pprint(tree.root_node.sexp())
-    print()
+    #  print(tree.root_node.sexp())
+    #  print()
     captures = query.captures(tree.root_node)
+    #  print("captures:", captures)
+    #  print()
     return captures
 
 
-def parse_plugin_set(data):
+def parse_config_function(data):
     query = LUA_LANGUAGE.query(f"""
         (
             (field
@@ -84,4 +89,23 @@ def parse_plugin_set(data):
     #  print()
     captures = query.captures(tree.root_node)
     #  print("captures:", captures)
+    return captures
+
+def parse_config_table(data):
+    # TODO: do not capture non-config tables
+    query = LUA_LANGUAGE.query(f"""
+        (program
+            ((function_call
+                (table_argument))
+            ) @function_call
+        )
+        """)
+
+    #  print(data)
+    tree = parser.parse(bytes(data, "utf8"))
+    #  print(tree.root_node.sexp())
+    #  print()
+    captures = query.captures(tree.root_node)
+    #  print("captures:", captures)
+    #  print()
     return captures

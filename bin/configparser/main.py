@@ -1,5 +1,6 @@
 from extract_lua import extract_lua
 from parser import Parser
+from pprint import pprint
 
 def main():
 
@@ -861,7 +862,8 @@ def main():
     ]
 
     #  for repo in repos[40:41]:
-    for repo in repos[2:3]:
+    i = 14
+    for repo in repos[i:i+1]:
 
         # extract code from readme
 
@@ -871,16 +873,20 @@ def main():
 
         # parse extracted code block to lua
 
+        code = []
         if lua is not None:
-            code = []
             for section in lua:
-                code.append(Parser(section).code)
-            #  parse.parse(lua, name) # deprecated
-
-
-            print("code:", code)
+                parsed = Parser(section).code
+                code.append(parsed)
 
         # output config
+
+        print()
+        print("Current output:")
+        print()
+
+        pprint(code)
+        print()
 
         # TODO: ...
 
