@@ -52,14 +52,23 @@ fieldlist_string = """
     #  """)
 
 def parse_require(data):
+    function_call_string = """
+        ((function_call
+            (function_call
+                ((identifier) @_function_id
+                 (#eq? @_function_id "require")))
+                (function_arguments
+                    (tableconstructor) @tableconstructor)))
+    """
     query = LUA_LANGUAGE.query(f"""
-        (program
-            ((function_call
-                (function_call
-                    ((identifier) @_function_id
-                     (#eq? @_function_id "require"))))
-            ) @function_call
-        )
+        [
+            (program
+                {function_call_string}
+            )
+            (function_body
+                {function_call_string}
+            )
+        ]
         """)
 
     #  print(data)
@@ -96,8 +105,8 @@ def parse_config_table(data):
     query = LUA_LANGUAGE.query(f"""
         (program
             ((function_call
-                (table_argument))
-            ) @function_call
+                (table_argument) @table_argument)
+            )
         )
         """)
 

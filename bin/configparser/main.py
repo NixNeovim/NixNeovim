@@ -1,6 +1,7 @@
 from extract_lua import extract_lua
 from parser import Parser
 from pprint import pprint
+from nix import ToNix
 
 def main():
 
@@ -862,7 +863,7 @@ def main():
     ]
 
     #  for repo in repos[40:41]:
-    i = 14
+    i = 2
     for repo in repos[i:i+1]:
 
         # extract code from readme
@@ -881,12 +882,9 @@ def main():
 
         # output config
 
-        print()
-        print("Current output:")
-        print()
+        ToNix(code, name)
 
-        pprint(code)
-        print()
+        exit()
 
         # TODO: ...
 

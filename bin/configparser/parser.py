@@ -1,23 +1,9 @@
-from dataclasses import dataclass
-from typing import Any
 from pprint import pprint
 import re
+from data import *
 
 from parser_helper import *
 
-
-class Variable: # TODO: rename to LuaCode or similar
-    pass
-
-@dataclass
-class VimOption(Variable):
-    prefix: str # opt, global, etc
-    name: str # termguicolors, etc
-    value: str # true, false, etc
-
-@dataclass
-class VimFunctionCall(Variable):
-    text: str
 
 class Parser:
     text: str
@@ -40,12 +26,20 @@ class Parser:
                 case "function_call":
                     self.code = self._extract_function_call(node)
 
-                case other:
-                    exit(f"{other} not matched in __init__ of Parser")
+                case "table_argument":
+                    self.code = self._extract_table_argument(node)
+
+                case "tableconstructor":
+                    self.code = self._extract_tableconstructor(node)
+
+                # TODO: add other node types
+
+                case _:
+                    exit(f"'{node}, ({tag})' not matched in __init__ of Parser")
 
 
     def _query(self, data) -> list:
-        #  print(data)
+        print(data)
 
         captures = parse_require(data)
 
@@ -69,12 +63,79 @@ class Parser:
         # error state
         exit("Could not parse lua")
 
+    def _extract_table_argument(self, node) -> Table:
+        """
+        <Node type=table_argument, start_point=(0, 0), end_point=(25, 1)>
+        """
+        ret = Table()
+        for child in node.children:
+            match child.type:
+                case "comment":
+                    # TODO:
+                    pass
+                case "fieldlist":
+                    ret.add(self._extract_fieldlist(child))
 
-    def _extract_variable_declaration(self, node) -> Variable|None:
+        return ret
+
+    def _extract_fieldlist(self, node) -> Fieldlist:
+        ret = Fieldlist()
+        for child in node.children:
+            match child.type:
+                case "field":
+                    ret.add(self._extract_field(child))
+                case "comment":
+                    # TODO
+                    pass
+
+
+        return ret
+
+
+    def _extract_field(self, node) -> Field|Text: # idenfitier, type, value
+        """
+        Input: show_jumps = true
+        """
+        n = node.children
+
+        match n[0].type:
+            case "identifier":
+                identifier = self.extract_code(n[0])
+                type_ = n[2].type
+
+                if type_ == "tableconstructor":
+                    value = self._extract_tableconstructor(n[2])
+                else:
+                    value = self.extract_code(n[2])
+
+                return Field(identifier, type_, value)
+            case "function_call":
+                return Text("".join([ self.extract_code(c).text for c in n ]))
+            case _:
+                exit(f"Error: Unknown field type ({n[0].type})")
+
+
+    def _extract_tableconstructor(self, node) -> Table:
+        """
+        Input: { ... }
+        """
+        ret = Table()
+
+        for n in node.children:
+            match n.type:
+                case "comment":
+                    continue # TODO:
+                case "fieldlist":
+                    ret.add(self._extract_fieldlist(n))
+
+        return ret
+
+
+    def _extract_variable_declaration(self, node) -> VimOption|None:
         """
         [<Node type=variable_declarator, start_point=(3, 4), end_point=(3, 25)>, <Node type="=", start_point=(3, 26), end_point=(3, 27)>, <Node type=boolean, start_point=(3, 28), end_point=(3, 32)>]
         """
-        decl = self.extract_code(node.children[0])
+        decl = self.extract_code(node.children[0]).text
         value = self.extract_code(node.children[2])
 
         if decl.startswith("vim"):
@@ -94,7 +155,7 @@ class Parser:
             print(f"Error: _extract_variable_declaration: unknown child variable children {node.children}")
             exit()
 
-    def _extract_function_call(self, node) -> Variable|None:
+    def _extract_function_call(self, node) -> LuaCode|None:
         code = self.extract_code(node)
         return VimFunctionCall(code)
 
@@ -117,8 +178,8 @@ class Parser:
         return output
 
 
-    def extract_code(self, node):
-        return self.text[node.start_byte:node.end_byte]
+    def extract_code(self, node) -> Text:
+        return Text(self.text[node.start_byte:node.end_byte])
 
 
     def print_code(self, node):
