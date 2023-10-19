@@ -38,7 +38,7 @@ class Parser:
                     exit(f"'{node}, ({tag})' not matched in __init__ of Parser")
 
 
-    def _query(self, data) -> list:
+    def _query(self, data) -> list|None:
         print(data)
 
         captures = parse_require(data)
@@ -62,6 +62,7 @@ class Parser:
 
         # error state
         exit("Could not parse lua")
+        return None
 
     def _extract_table_argument(self, node) -> Table:
         """
@@ -111,7 +112,11 @@ class Parser:
                 return Field(identifier, type_, value)
             case "function_call":
                 return Text("".join([ self.extract_code(c).text for c in n ]))
+            case "string" | "number":
+                return self.extract_code(node)
             case _:
+                #  print(node)
+                #  self.print_code(node)
                 exit(f"Error: Unknown field type ({n[0].type})")
 
 
@@ -179,7 +184,13 @@ class Parser:
 
 
     def extract_code(self, node) -> Text:
-        return Text(self.text[node.start_byte:node.end_byte])
+        # tree sitter gives us the byte positions, but python will assume unicode characters as 1
+        # Therfore, we encode the text to match the positions/lengths
+        encoded = self.text.encode('utf8').decode('unicode_escape')
+        extracted = encoded[node.start_byte:node.end_byte]
+        # do some unicode blackmagic (https://stackoverflow.com/a/52461149)
+        t = extracted.encode('latin-1').decode('utf-8')
+        return Text(t)
 
 
     def print_code(self, node):

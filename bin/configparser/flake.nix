@@ -32,6 +32,7 @@
             name = "Paper Tracker Shell";
             packages = [
               python-with-my-packages
+              nixfmt
             ];
           };
       }

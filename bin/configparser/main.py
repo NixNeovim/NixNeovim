@@ -6,6 +6,7 @@ from nix import ToNix
 def main():
 
     repos = [
+        "test"
         "0styx0/abbreinder.nvim",
         "Pocco81/AbbrevMan.nvim",
         "roobert/action-hints.nvim",
@@ -862,10 +863,7 @@ def main():
         "mickael-menu/zk-nvim",
     ]
 
-    #  for repo in repos[40:41]:
-    i = 2
-    for repo in repos[i:i+1]:
-
+    for repo in repos:
         # extract code from readme
 
         lua: list[str]|None = extract_lua(repo)
@@ -877,16 +875,15 @@ def main():
         code = []
         if lua is not None:
             for section in lua:
-                parsed = Parser(section).code
-                code.append(parsed)
+                try:
+                    parsed = Parser(section).code
+                    code.append(parsed)
+                except:
+                    print("Error: parse error")
 
         # output config
 
         ToNix(code, name)
-
-        exit()
-
-        # TODO: ...
 
 if __name__ == "__main__":
     main()
