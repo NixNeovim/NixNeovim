@@ -90,6 +90,7 @@
             in [
               python-with-my-packages
               pkgs.gcc
+              pkgs.nixfmt
             ];
             text = ''
               python ./bin/configparser/main.py

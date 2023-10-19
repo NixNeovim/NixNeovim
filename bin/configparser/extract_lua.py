@@ -32,11 +32,10 @@ def download_readme(repo) -> str|None:
 
         print(f"Downloading readme {repo}")
 
-        # NOTE: use this later
-        #  l = get_language(repo)
-        #  if l != "Lua":
-            #  print(f"Language is not lua: ({l})")
-            #  #  return None
+        l = get_language(repo)
+        if l != "Lua":
+            print(f"Language is not lua: ({l})")
+            return None
 
         # Get the README content from the GitHub API
         response = requests.get(url)

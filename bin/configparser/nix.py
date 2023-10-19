@@ -1,49 +1,26 @@
-from parser import LuaCode
-from pprint import pprint
 from data import *
+import subprocess
 import subprocess
 
 
 class ToNix:
+    code: str = ""
 
-    def __init__(self, code_list: list[LuaCode], repo: str):
-        #  print("====== OUTPUT ======")
+    def __init__(self, code: Table):
 
-        #  pprint(code_list)
+        code_string = ""
 
-        combined = "["
-
-        for code in code_list:
-            combined += "("
-            if isinstance(code, Table):
-                combined += self._table(code)
-            elif isinstance(code, list):
-                if isinstance(code, VimFunctionCall):
-                    combined += f"''{code.text.text}'';"
-
-                else:
-                    combined = combined[:-1]
-                    continue
-                    #  exit(f"Error: unknown code instance {code}")
+        if isinstance(code, Table):
+            code_string += self._table(code)
+        elif isinstance(code, list):
+            if isinstance(code, VimFunctionCall):
+                code_string += f"''{code.text.text}'';"
             else:
-                exit(f"Error: unknown code instance {code}")
+                raise ValueError(f"Error: unknown code instance {code}")
+        else:
+            exit(f"Error: unknown code instance {code}")
 
-            combined += ")"
-
-        combined += "]"
-        #  print("combined:", combined)
-
-        file_path = f"./output/{repo}.nix"
-        with open(file_path, 'w') as file:
-            # Write data to the file
-            file.seek(0)
-            file.write(f"{combined}")
-
-        subprocess.run(
-            ["nixfmt", file_path],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
+        self.code = format_nix(code_string)
 
     def _table(self, code: Table) -> str:
         inner = ""
@@ -85,3 +62,33 @@ class ToNix:
 
         string = f"{code.identifier} = {code.type_}Option {value} \"\";"
         return string
+
+    def __str__(self) -> str:
+        return self.code
+
+    def __repr__(self) -> str:
+        return self.code
+
+
+def format_nix(code: str) -> str:
+    # Command to be executed
+    cmd1 = f"echo \"{code}\""
+
+    # Pipe the output of the first command into another command
+    cmd2 = "nixfmt"
+
+    # Execute the commands
+    p1 = subprocess.Popen(cmd1, shell=True, stdout=subprocess.PIPE)
+    p2 = subprocess.Popen(cmd2, shell=True, stdin=p1.stdout, stdout=subprocess.PIPE)
+
+    if p1.stdout is None:
+        raise RuntimeError(f"Command '{cmd1}' has no stdout")
+
+    p1.stdout.close()
+
+    # Read the output of the second command
+    output = p2.communicate()[0]
+
+    # Decode and print the output
+    return output.decode('utf-8')
+

@@ -1,12 +1,29 @@
 from extract_lua import extract_lua
 from parser import Parser
-from pprint import pprint
 from nix import ToNix
+from create_plugin_file import PluginFile
+from data import Table
+
+def deep_merge(source, destination):
+    """
+    >>> a = { 'first' : { 'all_rows' : { 'pass' : 'dog', 'number' : '1' } } }
+    >>> b = { 'first' : { 'all_rows' : { 'fail' : 'cat', 'number' : '5' } } }
+    >>> merge(b, a) == { 'first' : { 'all_rows' : { 'pass' : 'dog', 'fail' : 'cat', 'number' : '5' } } }
+    True
+    """
+    for key, value in source.items():
+        if isinstance(value, dict):
+            # get node or create one
+            node = destination.setdefault(key, {})
+            deep_merge(value, node)
+        else:
+            destination[key] = value
+
+    return destination
 
 def main():
 
     repos = [
-        "test"
         "0styx0/abbreinder.nvim",
         "Pocco81/AbbrevMan.nvim",
         "roobert/action-hints.nvim",
@@ -863,7 +880,7 @@ def main():
         "mickael-menu/zk-nvim",
     ]
 
-    for repo in repos:
+    for repo in repos[2:3]:
         # extract code from readme
 
         lua: list[str]|None = extract_lua(repo)
@@ -872,18 +889,28 @@ def main():
 
         # parse extracted code block to lua
 
-        code = []
+        code_list = []
         if lua is not None:
             for section in lua:
                 try:
                     parsed = Parser(section).code
-                    code.append(parsed)
+                    code_list.append(parsed)
                 except:
                     print("Error: parse error")
 
-        # output config
 
-        ToNix(code, name)
+        for code in code_list:
+            print(type(code))
+            if isinstance(code, Table):
+
+                # generate config
+
+                nix_options = ToNix(code, name)
+
+                # write new plugin file
+
+                PluginFile(name, f"https://github.com/{repo}", name, nix_options)
+
 
 if __name__ == "__main__":
     main()

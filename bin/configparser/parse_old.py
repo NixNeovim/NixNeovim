@@ -63,9 +63,6 @@ def parse_field(node) -> Output:
     output = Output()
 
     if name is None:
-        #  print("# TODO: Field has no nam cue. Assuming it's a list")
-        #  print(indent, extract(value)) # TODO: print as list
-        #  output.add("# TODO: Field has no nam cue. Assuming it's a list")
         output.add(f"{indent}{extract(value)}")
         output.isList = True
         return output
@@ -204,7 +201,7 @@ def extract_table(table_node) -> dict:
             case "{" | "}":
                 continue
             case "comment":
-                continue # TODO:
+                continue # TODO: handle comments
             case "fieldlist":
                 ret = ret | extract_field_list(n)
 

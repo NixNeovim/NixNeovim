@@ -29,10 +29,9 @@
       in {
         devShells.default =
           pkgs.mkShell {
-            name = "Paper Tracker Shell";
+            name = "Shell";
             packages = [
               python-with-my-packages
-              nixfmt
             ];
           };
       }

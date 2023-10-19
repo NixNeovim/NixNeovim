@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-class LuaCode: # TODO: rename to LuaCode or similar
+class LuaCode:
     pass
 
 @dataclass

@@ -1,4 +1,3 @@
-from pprint import pprint
 import re
 from data import *
 
@@ -8,34 +7,39 @@ from parser_helper import *
 class Parser:
     text: str
     nodes: list
-    code = "" # TODO: make code a list
+    code = ""
 
     def __init__(self, data: str):
         self.text = data
 
         captures = self._query(data)
 
+        if captures is None:
+            raise RuntimeError("Could not query any captures")
+
         # filter hidden captures
         self.nodes = [ cap for cap in captures if not cap[1].startswith("_") ]
 
-        for node, tag in self.nodes:
-            match tag:
-                case "function_body":
-                    self.code = self._extract_function_body(node)
+        if len(self.nodes) != 1:
+            raise ValueError("Found more than 1 node. Expected exactly one")
 
-                case "function_call":
-                    self.code = self._extract_function_call(node)
+        node, tag = self.nodes[0]
 
-                case "table_argument":
-                    self.code = self._extract_table_argument(node)
+        match tag:
+            case "function_body":
+                self.code = self._extract_function_body(node)
 
-                case "tableconstructor":
-                    self.code = self._extract_tableconstructor(node)
+            case "function_call":
+                self.code = self._extract_function_call(node)
 
-                # TODO: add other node types
+            case "table_argument":
+                self.code = self._extract_table_argument(node)
 
-                case _:
-                    exit(f"'{node}, ({tag})' not matched in __init__ of Parser")
+            case "tableconstructor":
+                self.code = self._extract_tableconstructor(node)
+
+            case _:
+                exit(f"'{node}, ({tag})' not matched in __init__ of Parser")
 
 
     def _query(self, data) -> list|None:
@@ -60,8 +64,6 @@ class Parser:
             return captures
 
 
-        # error state
-        exit("Could not parse lua")
         return None
 
     def _extract_table_argument(self, node) -> Table:
@@ -72,7 +74,7 @@ class Parser:
         for child in node.children:
             match child.type:
                 case "comment":
-                    # TODO:
+                    # TODO: handle comments
                     pass
                 case "fieldlist":
                     ret.add(self._extract_fieldlist(child))
@@ -129,7 +131,7 @@ class Parser:
         for n in node.children:
             match n.type:
                 case "comment":
-                    continue # TODO:
+                    continue # TODO: handle comments
                 case "fieldlist":
                     ret.add(self._extract_fieldlist(n))
 
