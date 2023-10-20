@@ -7,10 +7,12 @@ from parser_helper import *
 class Parser:
     text: str
     nodes: list
-    code = ""
+    code: LuaCode|None
 
     def __init__(self, data: str):
         self.text = data
+
+        #  print(data)
 
         captures = self._query(data)
 
@@ -20,9 +22,7 @@ class Parser:
         # filter hidden captures
         self.nodes = [ cap for cap in captures if not cap[1].startswith("_") ]
 
-        if len(self.nodes) != 1:
-            raise ValueError("Found more than 1 node. Expected exactly one")
-
+        assert len(self.nodes) == 1
         node, tag = self.nodes[0]
 
         match tag:
@@ -41,9 +41,8 @@ class Parser:
             case _:
                 exit(f"'{node}, ({tag})' not matched in __init__ of Parser")
 
-
     def _query(self, data) -> list|None:
-        print(data)
+        #  print(data)
 
         captures = parse_require(data)
 
@@ -82,6 +81,10 @@ class Parser:
         return ret
 
     def _extract_fieldlist(self, node) -> Fieldlist:
+        print()
+        self.print_code(node)
+        print(node.children)
+        print()
         ret = Fieldlist()
         for child in node.children:
             match child.type:
@@ -90,12 +93,18 @@ class Parser:
                 case "comment":
                     # TODO
                     pass
+                #  case "fieldlist":
+                    #  re.add(self._extract_fieldlist(child))
+                case ",":
+                    pass
+                case _:
+                    exit(f"Error: unhanled fieldlist type {child}")
 
 
         return ret
 
 
-    def _extract_field(self, node) -> Field|Text: # idenfitier, type, value
+    def _extract_field(self, node) -> Field|Text|Table: # idenfitier, type, value
         """
         Input: show_jumps = true
         """
@@ -103,22 +112,26 @@ class Parser:
 
         match n[0].type:
             case "identifier":
-                identifier = self.extract_code(n[0])
-                type_ = n[2].type
-
-                if type_ == "tableconstructor":
-                    value = self._extract_tableconstructor(n[2])
+                if n[1].type == "=":
+                    identifier = self.extract_code(n[0])
+                    type_ = n[2].type
+                    if type_ == "tableconstructor":
+                        value = self._extract_tableconstructor(n[2])
+                    else:
+                        value = self.extract_code(n[2])
                 else:
-                    value = self.extract_code(n[2])
+                    return Text('"' + self.extract_code(node).text + '"')
 
                 return Field(identifier, type_, value)
             case "function_call":
                 return Text("".join([ self.extract_code(c).text for c in n ]))
             case "string" | "number":
                 return self.extract_code(node)
+            case "tableconstructor":
+                return self._extract_tableconstructor(node)
             case _:
-                #  print(node)
-                #  self.print_code(node)
+                #  print(n[0])
+                #  self.print_code(n[0])
                 exit(f"Error: Unknown field type ({n[0].type})")
 
 
@@ -166,7 +179,7 @@ class Parser:
         code = self.extract_code(node)
         return VimFunctionCall(code)
 
-    def _extract_function_body(self, node) -> list|None:
+    def _extract_function_body(self, node) -> LuaCode|None:
         output = []
         for child in node.children:
             match child.type:
@@ -182,6 +195,7 @@ class Parser:
                     exit()
         print()
 
+        # WARN: type error
         return output
 
 

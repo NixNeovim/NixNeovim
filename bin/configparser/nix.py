@@ -1,7 +1,7 @@
 from data import *
 import subprocess
 import subprocess
-
+import re
 
 class ToNix:
     code: str = ""
@@ -29,8 +29,15 @@ class ToNix:
             if isinstance(c, Fieldlist):
                 text, is_list = self._fieldlist(c)
                 inner += text
+            elif isinstance(c, Field):
+                inner += self._field(c)
+            elif isinstance(c, Text):
+                is_list = True
+                inner += c.text
+            elif isinstance(c, Table):
+                inner += self._table(c)
             else:
-                exit(f"Error: unknown table entry type {c}")
+                print(f"Error: unknown table entry type {c}")
 
         if is_list:
             ret = f"[ {inner} ]"
@@ -72,19 +79,23 @@ class ToNix:
 
 def format_nix(code: str) -> str:
     # Command to be executed
-    cmd1 = f"echo \"{code}\""
+    #  cmd1 = f"echo "{re.escape(code)}\""
 
     # Pipe the output of the first command into another command
     cmd2 = "nixfmt"
 
+    #  code = code.replace('"', '')
+    #  print("code:", code)
+
     # Execute the commands
-    p1 = subprocess.Popen(cmd1, shell=True, stdout=subprocess.PIPE)
-    p2 = subprocess.Popen(cmd2, shell=True, stdin=p1.stdout, stdout=subprocess.PIPE)
+    #  p1 = subprocess.Popen(cmd1, shell=True, stdout=subprocess.PIPE)
+    p2 = subprocess.Popen(cmd2, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+    p2.communicate(input=code)
 
-    if p1.stdout is None:
-        raise RuntimeError(f"Command '{cmd1}' has no stdout")
+    #  if p1.stdout is None:
+        #  raise RuntimeError(f"Command '{cmd1}' has no stdout")
 
-    p1.stdout.close()
+    #  p1.stdout.close()
 
     # Read the output of the second command
     output = p2.communicate()[0]

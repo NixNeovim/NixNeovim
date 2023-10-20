@@ -111,46 +111,37 @@ def extract_lua(repo) -> list[str]|None:
     html = mistune.html(readme_content)
     soup = BeautifulSoup(html, 'html.parser')
 
-    #  print("html:", html)
-    #  lua_code_blocks = extract_sections(readme_content)
-    #  #  lua_code_blocks = lua_code_blocks["Configuration"]
-    #  lua_code_blocks = lua_code_blocks["Usage"]
-    #  pprint(lua_code_blocks)
-
     blocks = soup.find_all(tag_is_title_or_lua)
 
     parsed = {}
     current_header = ""
-    current_content = ""
+    current_content = []
 
     for block in blocks:
         if block.name == "code": # html tag type
-            current_content += block.contents[0] + "\n"
+            current_content.append(block.contents[0])
 
         else: # header
             if current_header != "":
                 parsed.update({current_header: current_content})
-                current_content = ""
+                current_content = []
 
             current_header = block.contents[0]
 
     parsed.update({current_header: current_content})
 
-    config_section = ["Configuration", "Config", "Usage", "Default configuration", "Installation", "Setup"]
-    parsed = { section: content for section, content in parsed.items() if section in config_section and content != "" }
+    config_section = ["Configuration", "Config", "Usage", "Default configuration", "Installation", "Setup", "Example config"]
 
-    if len(parsed.items()) == 0:
+    # combined sections and lua blocks to one list of lua code blocks
+    lua_blocks = []
+    for section, content in parsed.items():
+        if section in config_section and content != []:
+            lua_blocks.extend(content)
+
+    if len(parsed) == 0:
         print("Could not determin config section")
         pprint(parsed)
         print()
         return None
-    else:
-        print()
 
-
-    #  lua = ""
-    #  for section in parsed.values():
-        #  lua += section
-    lua = list(parsed.values())
-
-    return lua
+    return lua_blocks

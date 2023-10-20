@@ -3,6 +3,10 @@ from parser import Parser
 from nix import ToNix
 from create_plugin_file import PluginFile
 from data import Table
+import requests
+import json
+from types import SimpleNamespace
+from pprint import pprint
 
 def deep_merge(source, destination):
     """
@@ -20,6 +24,17 @@ def deep_merge(source, destination):
             destination[key] = value
 
     return destination
+
+def get_plugins_json() -> dict|None:
+    url = "https://raw.githubusercontent.com/NixNeovim/NixNeovimPlugins/main/.plugins.json"
+    response = requests.get(url)
+    if response.status_code == 200:
+        json = response.json()
+        return json
+    else:
+        print("Error: response code is {response.status_code)")
+        return None
+
 
 def main():
 
@@ -880,37 +895,54 @@ def main():
         "mickael-menu/zk-nvim",
     ]
 
-    for repo in repos[2:3]:
-        # extract code from readme
+    plugins = get_plugins_json()
+
+    if plugins is None:
+        raise RuntimeError("Could not fetch plugin data")
+
+    for plugin in plugins:
+        data = json.loads(plugins[plugin], object_hook=lambda d: SimpleNamespace(**d))
+
+        plugin_name = data.name
+        homepage = data.homepage
+        repo = plugin
 
         lua: list[str]|None = extract_lua(repo)
+
+        if lua is None:
+            raise ValueError("Could not extract lua")
 
         name = repo.replace("/", "-")
 
         # parse extracted code block to lua
 
         code_list = []
-        if lua is not None:
-            for section in lua:
-                try:
-                    parsed = Parser(section).code
-                    code_list.append(parsed)
-                except:
-                    print("Error: parse error")
+        for section in lua:
+            try:
+                parsed = Parser(section).code
+                code_list.append(parsed)
+            except Exception as e:
+                print(f"Error: Parser error: {e}")
 
+        final_config = Table()
 
         for code in code_list:
-            print(type(code))
             if isinstance(code, Table):
+                final_config.merge(code)
 
-                # generate config
+        #  pprint(final_config)
 
-                nix_options = ToNix(code, name)
+        if final_config is not None:
 
-                # write new plugin file
+            # generate config
+            nix_options = ToNix(final_config)
 
-                PluginFile(name, f"https://github.com/{repo}", name, nix_options)
+            # write new plugin file
+            exit()
 
+            PluginFile(name, homepage, plugin_name, nix_options)
+
+        exit() # WARN: remove
 
 if __name__ == "__main__":
     main()
