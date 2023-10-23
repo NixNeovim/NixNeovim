@@ -46,9 +46,11 @@ class Table(LuaCode):
                         else:
                             print(f"Field duplicate\n - {code_new}\n - {code}")
                     else:
-                        print(type(code_new))
-                        print(code_new)
-                        print()
+                        pass
+                        # TODO: work needed here?
+                        #  print(type(code_new))
+                        #  print(code_new)
+                        #  print()
 
 @dataclass
 class Fieldlist(LuaCode):

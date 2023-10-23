@@ -938,11 +938,10 @@ def main():
             nix_options = ToNix(final_config)
 
             # write new plugin file
-            exit()
 
             PluginFile(name, homepage, plugin_name, nix_options)
 
-        exit() # WARN: remove
+        #  exit() # WARN: remove
 
 if __name__ == "__main__":
     main()

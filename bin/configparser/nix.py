@@ -35,6 +35,7 @@ class ToNix:
                 is_list = True
                 inner += c.text
             elif isinstance(c, Table):
+                is_list = True
                 inner += self._table(c)
             else:
                 print(f"Error: unknown table entry type {c}")
@@ -101,5 +102,5 @@ def format_nix(code: str) -> str:
     output = p2.communicate()[0]
 
     # Decode and print the output
-    return output.decode('utf-8')
+    return output
 

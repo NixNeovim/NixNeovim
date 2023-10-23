@@ -81,10 +81,10 @@ class Parser:
         return ret
 
     def _extract_fieldlist(self, node) -> Fieldlist:
-        print()
-        self.print_code(node)
-        print(node.children)
-        print()
+        #  print()
+        #  self.print_code(node)
+        #  print(node.children)
+        #  print()
         ret = Fieldlist()
         for child in node.children:
             match child.type:
