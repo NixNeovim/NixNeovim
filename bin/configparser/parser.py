@@ -109,16 +109,23 @@ class Parser:
         Input: show_jumps = true
         """
         n = node.children
+        first_type = n[0].type
 
-        match n[0].type:
+        match first_type:
             case "identifier":
+                """
+                Format: abc = true,
+                """
                 if n[1].type == "=":
                     identifier = self.extract_code(n[0])
-                    type_ = n[2].type
+
+                    value_node = n[2]
+
+                    type_ = value_node.type
                     if type_ == "tableconstructor":
-                        value = self._extract_tableconstructor(n[2])
+                        value = self._extract_tableconstructor(value_node)
                     else:
-                        value = self.extract_code(n[2])
+                        value = self.extract_code(value_node)
                 else:
                     return Text('"' + self.extract_code(node).text + '"')
 
@@ -129,6 +136,24 @@ class Parser:
                 return self.extract_code(node)
             case "tableconstructor":
                 return self._extract_tableconstructor(node)
+            case "field_left_bracket":
+                """
+                Format: [ "abc" ] = true,
+                """
+                if n[3].type == "=":
+                    identifier = self.extract_code(n[1])
+
+                    value_node = n[4]
+
+                    type_ = value_node.type
+                    if type_ == "tableconstructor":
+                        value = self._extract_tableconstructor(value_node)
+                    else:
+                        value = self.extract_code(value_node)
+                else:
+                    return Text('"' + self.extract_code(node).text + '"')
+
+                return Field(identifier, type_, value)
             case _:
                 #  print(n[0])
                 #  self.print_code(n[0])

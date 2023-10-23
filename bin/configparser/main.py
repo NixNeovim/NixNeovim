@@ -37,6 +37,8 @@ def get_plugins_json() -> dict|None:
 
 
 def main():
+    limit = 6
+    counter = 0
 
     repos = [
         "0styx0/abbreinder.nvim",
@@ -901,6 +903,14 @@ def main():
         raise RuntimeError("Could not fetch plugin data")
 
     for plugin in plugins:
+        if counter < limit:
+            counter += 1
+            continue
+        elif counter > limit:
+            exit()
+
+        counter += 1
+
         data = json.loads(plugins[plugin], object_hook=lambda d: SimpleNamespace(**d))
 
         plugin_name = data.name
@@ -920,19 +930,28 @@ def main():
         for section in lua:
             try:
                 parsed = Parser(section).code
+                print("parsed:", parsed)
                 code_list.append(parsed)
             except Exception as e:
                 print(f"Error: Parser error: {e}")
 
         final_config = Table()
 
+        pprint(code_list)
+        print()
         for code in code_list:
             if isinstance(code, Table):
                 final_config.merge(code)
+            else:
+                pass
+                print(f"Error: unknown code type ({code})")
 
-        #  pprint(final_config)
 
-        if final_config is not None:
+        final_config.clean()
+        pprint(final_config)
+        #  exit()
+
+        if final_config.content != []:
 
             # generate config
             nix_options = ToNix(final_config)
@@ -941,7 +960,6 @@ def main():
 
             PluginFile(name, homepage, plugin_name, nix_options)
 
-        #  exit() # WARN: remove
 
 if __name__ == "__main__":
     main()

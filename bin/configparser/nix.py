@@ -33,7 +33,7 @@ class ToNix:
                 inner += self._field(c)
             elif isinstance(c, Text):
                 is_list = True
-                inner += c.text
+                inner += " " + c.text.replace("'", "\"")
             elif isinstance(c, Table):
                 is_list = True
                 inner += self._table(c)

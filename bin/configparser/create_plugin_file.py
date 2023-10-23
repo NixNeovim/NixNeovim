@@ -29,6 +29,7 @@ class PluginFile:
             content = content.replace("# add neovim plugin here", plugin_name)
             print(content)
 
+            return
             # WARN: replace "w" with "x", to not override existing files
             with open(plugin_path, "w") as new_file:
                 new_file.write(content)

@@ -130,7 +130,7 @@ def extract_lua(repo) -> list[str]|None:
 
     parsed.update({current_header: current_content})
 
-    config_section = ["Configuration", "Config", "Usage", "Default configuration", "Installation", "Setup", "Example config"]
+    config_section = ["Configuration", "Config", "Usage", "Default configuration", "Installation", "Setup", "Example config", "Full Configuration"]
 
     # combined sections and lua blocks to one list of lua code blocks
     lua_blocks = []

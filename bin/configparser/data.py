@@ -31,26 +31,31 @@ class Table(LuaCode):
             self.content.append(code)
 
     def merge(self, table):
-        if self.content == []:
-            self.content = table.content
-        elif table.content == []:
-            pass
-        else:
-            for code_new in table.content:
-                for code in self.content:
-                    if isinstance(code_new, Field) and isinstance(code, Field):
-                        if code_new.identifier != code.identifier:
-                            self.content.append(code_new)
-                        elif code_new == code:
-                            pass
-                        else:
-                            print(f"Field duplicate\n - {code_new}\n - {code}")
-                    else:
-                        pass
-                        # TODO: work needed here?
+        self.content += table.content
+        #  if self.content == []:
+            #  self.content = table.content
+        #  elif table.content == []:
+            #  pass
+        #  else:
+            #  for code_new in table.content:
+                #  for code in self.content:
+                    #  if isinstance(code_new, Field) and isinstance(code, Field):
+                        #  if code_new.identifier != code.identifier:
+                            #  self.content.append(code_new)
+                        #  elif code_new == code:
+                            #  pass
+                        #  else:
+                            #  print(f"Field duplicate\n - {code_new}\n - {code}")
+                    #  else:
+                        #  #  print("passing merge")
+                        #  print(type(code))
                         #  print(type(code_new))
                         #  print(code_new)
                         #  print()
+                        #  # TODO: work needed here?
+
+    def clean(self):
+        self.content = list(filter(lambda x: isinstance(x, Field), self.content))
 
 @dataclass
 class Fieldlist(LuaCode):
