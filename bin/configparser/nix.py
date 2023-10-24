@@ -1,7 +1,25 @@
 from data import *
 import subprocess
 import subprocess
-import re
+from logging import info, debug
+from errors import *
+
+def format_nix(code: str) -> str:
+
+    info("Formatting nix output")
+
+    # Pipe the output of the first command into another command
+    cmd2 = "nixfmt"
+
+    p2 = subprocess.Popen(cmd2, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+    p2.communicate(input=code)
+
+    # Read the output of the second command
+    output = p2.communicate()[0]
+
+    # Decode and print the output
+    return output
+
 
 class ToNix:
     code: str = ""
@@ -16,11 +34,15 @@ class ToNix:
             if isinstance(code, VimFunctionCall):
                 code_string += f"''{code.text.text}'';"
             else:
-                raise ValueError(f"Error: unknown code instance {code}")
+                raise Unimplemented(f"Error: unknown code instance {code}")
         else:
-            exit(f"Error: unknown code instance {code}")
+            raise Unimplemented(f"Error: unknown code instance {code}")
 
-        self.code = format_nix(code_string)
+        try:
+            self.code = format_nix(code_string)
+        except:
+            raise RuntimeError("Could not format nix code")
+
 
     def _table(self, code: Table) -> str:
         inner = ""
@@ -66,9 +88,9 @@ class ToNix:
         if isinstance(code.value, Table):
             value = self._table(code.value)
         else:
-            value = f"''{code.value}''"
+            value = f"'' {code.value} ''"
 
-        string = f"{code.identifier} = {code.type_}Option {value} \"\";"
+        string = f"{code.identifier} = {code.type_}Option {value} \"Description text\";"
         return string
 
     def __str__(self) -> str:
@@ -76,31 +98,3 @@ class ToNix:
 
     def __repr__(self) -> str:
         return self.code
-
-
-def format_nix(code: str) -> str:
-    # Command to be executed
-    #  cmd1 = f"echo "{re.escape(code)}\""
-
-    # Pipe the output of the first command into another command
-    cmd2 = "nixfmt"
-
-    #  code = code.replace('"', '')
-    #  print("code:", code)
-
-    # Execute the commands
-    #  p1 = subprocess.Popen(cmd1, shell=True, stdout=subprocess.PIPE)
-    p2 = subprocess.Popen(cmd2, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
-    p2.communicate(input=code)
-
-    #  if p1.stdout is None:
-        #  raise RuntimeError(f"Command '{cmd1}' has no stdout")
-
-    #  p1.stdout.close()
-
-    # Read the output of the second command
-    output = p2.communicate()[0]
-
-    # Decode and print the output
-    return output
-

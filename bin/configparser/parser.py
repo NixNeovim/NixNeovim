@@ -2,6 +2,8 @@ import re
 from data import *
 
 from parser_helper import *
+from logging import debug
+from errors import *
 
 
 class Parser:
@@ -47,19 +49,19 @@ class Parser:
         captures = parse_require(data)
 
         if captures != []:
-            print("Parsed as require")
+            debug("Parsed as require")
             return captures
 
         captures = parse_config_function(data)
 
         if captures != []:
-            print("Parsed as config function")
+            debug("Parsed as config function")
             return captures
 
         captures = parse_config_table(data)
 
         if captures != []:
-            print("Parsed as config table")
+            debug("Parsed as config table")
             return captures
 
 
@@ -197,8 +199,7 @@ class Parser:
 
             return VimOption(prefix, name, value)
         else:
-            print(f"Error: _extract_variable_declaration: unknown child variable children {node.children}")
-            exit()
+            raise Unimplemented(f"Error: _extract_variable_declaration: unknown child variable children {node.children}")
 
     def _extract_function_call(self, node) -> LuaCode|None:
         code = self.extract_code(node)
@@ -218,7 +219,7 @@ class Parser:
                 case other:
                     print(f"Error: _extract_function_body: unknown child type {other}")
                     exit()
-        print()
+        #  print()
 
         # WARN: type error
         return output
@@ -235,4 +236,4 @@ class Parser:
 
 
     def print_code(self, node):
-        print(self.extract_code(node))
+        debug(self.extract_code(node))

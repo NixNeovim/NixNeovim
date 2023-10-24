@@ -5,6 +5,7 @@ from pprint import pprint
 from bs4 import BeautifulSoup
 import mistune
 import os
+from logging import info, debug, warning, error
 
 
 def get_language(repo):
@@ -13,12 +14,12 @@ def get_language(repo):
     if response.status_code == 200:
         return response.json()["language"]
     else:
-        print("url:", url)
+        debug("Fetching language from:", url)
         return f"unknown ({response.status_code})"
 
 def download_readme(repo) -> str|None:
     url = f'https://api.github.com/repos/{repo}/readme'
-    print(f'https://github.com/{repo}')
+    debug(f"https://github.com/{repo}")
 
     repo_file = repo.replace("/", "-")
     file_path = f"./readmes/{repo_file}.txt"
@@ -30,11 +31,11 @@ def download_readme(repo) -> str|None:
             content = file.read()
     else:
 
-        print(f"Downloading readme {repo}")
+        debug(f"Downloading readme {repo}")
 
         l = get_language(repo)
         if l != "Lua":
-            print(f"Language is not lua: ({l})")
+            debug(f"Language is not lua: ({l})")
             return None
 
         # Get the README content from the GitHub API
@@ -51,7 +52,7 @@ def download_readme(repo) -> str|None:
                 file.seek(0)
                 file.write(content)
         else:
-            print(f"Error: status code {response.status_code}")
+            error(f"Status code {response.status_code}")
             return None
 
     return content
@@ -98,10 +99,9 @@ def tag_is_title_or_lua(tag) -> bool:
 
     return title or lua
 
-def extract_lua(repo) -> list[str]|None:
+def parse_readme(repo) -> list[str]|None:
 
-    print()
-    print(f"Checking {repo}")
+    info(f"Parsing {repo}")
 
     readme_content = download_readme(repo)
 
@@ -139,9 +139,9 @@ def extract_lua(repo) -> list[str]|None:
             lua_blocks.extend(content)
 
     if len(parsed) == 0:
-        print("Could not determin config section")
-        pprint(parsed)
-        print()
+        warning("Could not determin config section")
+        #  pprint(parsed)
+        #  print()
         return None
 
     return lua_blocks

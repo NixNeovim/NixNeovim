@@ -72,6 +72,7 @@
                 requests
                 mistune
                 beautifulsoup4
+                coloredlogs
                 (
                   buildPythonPackage rec {
                     pname = "SLPP";
