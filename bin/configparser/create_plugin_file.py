@@ -18,7 +18,6 @@ class PluginFile:
 
         info(f"Writing plugin file for {name}")
 
-
         if name == "" or url == "" or plugin_name == "":
             raise ValueError("name url and plugin_name have to be set")
 
@@ -32,9 +31,9 @@ class PluginFile:
             content = content.replace("# add neovim plugin here", plugin_name)
             print(content[270:-920])
 
-            return
+            #  return
             # WARN: replace "w" with "x", to not override existing files
-            debug("Writing file: ", plugin_path)
+            debug(f"Writing file: {plugin_path}")
             with open(plugin_path, "w") as new_file:
                 new_file.write(content)
 

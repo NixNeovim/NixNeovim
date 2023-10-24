@@ -131,7 +131,7 @@ class Parser:
                 else:
                     return Text('"' + self.extract_code(node).text + '"')
 
-                return Field(identifier, type_, value)
+                return Field(identifier, type_, value, comment=Comment("TODO"))
             case "function_call":
                 return Text("".join([ self.extract_code(c).text for c in n ]))
             case "string" | "number":
@@ -155,7 +155,7 @@ class Parser:
                 else:
                     return Text('"' + self.extract_code(node).text + '"')
 
-                return Field(identifier, type_, value)
+                return Field(identifier, type_, value, comment=Comment("TODO"))
             case _:
                 #  print(n[0])
                 #  self.print_code(n[0])
@@ -201,28 +201,29 @@ class Parser:
         else:
             raise Unimplemented(f"Error: _extract_variable_declaration: unknown child variable children {node.children}")
 
-    def _extract_function_call(self, node) -> LuaCode|None:
+    def _extract_function_call(self, node) -> FunctionCall|None:
         code = self.extract_code(node)
-        return VimFunctionCall(code)
+        return FunctionCall(code)
 
-    def _extract_function_body(self, node) -> LuaCode|None:
-        output = []
-        for child in node.children:
-            match child.type:
-                case "variable_declaration":
-                    code = self._extract_variable_declaration(child)
-                    output.append(code)
-                case "function_call":
-                    code = self._extract_function_call(child)
-                    output.append(code)
+    def _extract_function_body(self, node) -> FunctionBody|None:
+        #  output = []
+        return FunctionBody(self.extract_code(node))
 
-                case other:
-                    print(f"Error: _extract_function_body: unknown child type {other}")
-                    exit()
-        #  print()
+        #  for child in node.children:
+            #  match child.type:
+                #  case "variable_declaration":
+                    #  code = self._extract_variable_declaration(child)
+                    #  output.append(code)
+                #  case "function_call":
+                    #  code = self._extract_function_call(child)
+                    #  output.append(code)
 
-        # WARN: type error
-        return output
+                #  case other:
+                    #  print(f"Error: _extract_function_body: unknown child type {other}")
+                    #  exit()
+
+        #  # WARN: type error
+        #  return output
 
 
     def extract_code(self, node) -> Text:

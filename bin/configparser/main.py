@@ -2,7 +2,7 @@ from readme import parse_readme
 from parser import Parser
 from nix import ToNix
 from create_plugin_file import PluginFile
-from data import Table
+from data import Table, FunctionBody
 import requests
 import json
 from types import SimpleNamespace
@@ -92,11 +92,13 @@ def main():
         for code in code_list:
             if isinstance(code, Table):
                 final_config.merge(code)
+            elif isinstance(code, FunctionBody):
+                debug("Not adding function body to final_config table")
             else:
                 raise Unimplemented(f"Error: unknown code type ({code})")
 
         final_config.clean()
-        #  pprint(final_config)
+        pprint(final_config)
 
         if final_config.content != []:
 

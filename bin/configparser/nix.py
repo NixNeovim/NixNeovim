@@ -29,9 +29,9 @@ class ToNix:
         code_string = ""
 
         if isinstance(code, Table):
-            code_string += self._table(code)
+            code_string += code.to_nix()#self._table(code)
         elif isinstance(code, list):
-            if isinstance(code, VimFunctionCall):
+            if isinstance(code, FunctionCall):
                 code_string += f"''{code.text.text}'';"
             else:
                 raise Unimplemented(f"Error: unknown code instance {code}")
