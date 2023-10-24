@@ -251,6 +251,8 @@ They help improve this project and keep it up to date.
 
 #### Auto generate module options
 
+⚠️ This is script is under active development and is heavily changed and exented in [this PR](https://github.com/NixNeovim/NixNeovim/pull/80). Please be careful ⚠️
+
 - With `nix run .#configparser` you can convert a Lua setup configs to nix module options (you might need to update the submodule with `git submodule update tree-sitter-lua`).
 - For example, you can input the following Lua configs (taken from [NvimTree](https://github.com/nvim-tree/nvim-tree.lua); Example-comment added)
 
