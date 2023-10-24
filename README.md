@@ -1,5 +1,5 @@
 
-# NixNeovim - A Neovim configuration module for NixOs
+# NixNeovim - A Neovim configuration module for NixOS
 
 This flake provides modules for NixOS and Home Manager, which provide the `nixneovim` configuration options.
 Using `nixneovim`, you can configure Neovim, including plugins, through nix.
