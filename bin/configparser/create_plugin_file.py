@@ -1,5 +1,5 @@
 import subprocess
-from logging import debug, info
+from log import *
 
 TEMPLATE_PATH="./plugin_template_minimal.nix"
 PLUGIN_BASE_PATH="./src/plugins/"
@@ -11,10 +11,10 @@ class PluginFile:
     """
 
     def __init__(self,
-                 name,
-                 url,
-                 plugin_name,
-                 options):
+                 name: str,
+                 url: str,
+                 plugin_name: str,
+                 options: str):
 
         info(f"Writing plugin file for {name}")
 
@@ -27,9 +27,11 @@ class PluginFile:
             content = f.read()
             content = content.replace("PLUGIN_NAME", name)
             content = content.replace("PLUGIN_URL", url)
-            content = content.replace("# add module options here", options.code[1:-1])
+            content = content.replace("# add module options here", options[1:-2])
             content = content.replace("# add neovim plugin here", plugin_name)
+            print()
             print(content[270:-920])
+            print()
 
             #  return
             # WARN: replace "w" with "x", to not override existing files

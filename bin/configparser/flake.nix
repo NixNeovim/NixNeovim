@@ -9,6 +9,7 @@
 
         python-with-my-packages = pkgs.python3.withPackages (p: with p; [
           tree-sitter
+          coloredlogs
           (
             buildPythonPackage rec {
               pname = "SLPP";

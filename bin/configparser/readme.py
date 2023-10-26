@@ -5,25 +5,37 @@ from pprint import pprint
 from bs4 import BeautifulSoup
 import mistune
 import os
-from logging import info, debug, warning, error
+from log import *
+
+SECTIONS = [
+    "Configuration",
+    "Config",
+    "Usage",
+    "Default configuration",
+    "Installation",
+    "Setup",
+    "Example config",
+    "Full Configuration",
+    "Options",
+]
 
 
-def get_language(repo):
+def get_language(repo) -> str|None:
     url = f'https://api.github.com/repos/{repo}'
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()["language"]
     else:
-        debug("Fetching language from:", url)
-        return f"unknown ({response.status_code})"
+        debug(f"Failed fetching language from: {response.status_code}")
+        return None
 
 def download_readme(repo) -> str|None:
     url = f'https://api.github.com/repos/{repo}/readme'
-    debug(f"https://github.com/{repo}")
 
     repo_file = repo.replace("/", "-")
     file_path = f"./readmes/{repo_file}.txt"
 
+    # TODO: Put caching behind debug flag
     if os.path.exists(file_path):
         # Open a file for reading
         with open(file_path, 'r') as file:
@@ -31,11 +43,13 @@ def download_readme(repo) -> str|None:
             content = file.read()
     else:
 
-        debug(f"Downloading readme {repo}")
+        debug(f"Repo not cached. Downloading")
 
         l = get_language(repo)
-        if l != "Lua":
-            debug(f"Language is not lua: ({l})")
+        if l is None:
+            return None
+        elif l != "Lua":
+            debug(f"Language of {repo} is not lua: ({l})")
             return None
 
         # Get the README content from the GitHub API
@@ -101,7 +115,8 @@ def tag_is_title_or_lua(tag) -> bool:
 
 def parse_readme(repo) -> list[str]|None:
 
-    info(f"Parsing {repo}")
+    info(f"Parsing http://github.com/{repo}")
+    info("Please read the original README and verify the output!")
 
     readme_content = download_readme(repo)
 
@@ -130,12 +145,10 @@ def parse_readme(repo) -> list[str]|None:
 
     parsed.update({current_header: current_content})
 
-    config_section = ["Configuration", "Config", "Usage", "Default configuration", "Installation", "Setup", "Example config", "Full Configuration"]
-
     # combined sections and lua blocks to one list of lua code blocks
     lua_blocks = []
     for section, content in parsed.items():
-        if section in config_section and content != []:
+        if section in SECTIONS and content != []:
             lua_blocks.extend(content)
 
     if len(parsed) == 0:

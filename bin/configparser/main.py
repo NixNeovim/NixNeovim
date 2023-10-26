@@ -1,6 +1,6 @@
 from readme import parse_readme
 from parser import Parser
-from nix import ToNix
+from nix import format_nix
 from create_plugin_file import PluginFile
 from data import Table, FunctionBody
 import requests
@@ -8,9 +8,7 @@ import json
 from types import SimpleNamespace
 from pprint import pprint
 from errors import *
-import logging
-import coloredlogs
-from logging import debug, warning, info
+from log import *
 
 def deep_merge(source, destination):
     """
@@ -39,9 +37,8 @@ def get_plugins_json() -> dict:
         raise NetworkException(f"Could not fetch plugin data: {response.status_code}")
 
 def main():
-    coloredlogs.install(level='DEBUG')
 
-    limit = 10 #TMP
+    limit = 14 #TMP
     counter = 0 #TMP
 
     # load plugin information
@@ -71,24 +68,21 @@ def main():
         lua: list[str]|None = parse_readme(repo)
 
         if lua is None:
-            raise ExtractionException("Could not extract lua code from README")
-
+            continue
 
         # parse extracted code block to lua
 
         code_list = [] # list of extraced code blocks
         for i, section in enumerate(lua):
             debug(f"Parsing {i+1}/{len(lua)}")
-            try:
-                parsed = Parser(section).code
+            parsed = Parser().parse(section)
+            if parsed is not None:
                 code_list.append(parsed)
-            except Exception as e:
-                warning(f"Could not extract code from this section: {e}")
+
+        # clean up final config
 
         final_config = Table()
 
-        #  pprint(code_list)
-        #  print()
         for code in code_list:
             if isinstance(code, Table):
                 final_config.merge(code)
@@ -100,14 +94,13 @@ def main():
         final_config.clean()
         pprint(final_config)
 
-        if final_config.content != []:
+        # generate config
 
-            # generate config
-            nix_options = ToNix(final_config)
+        nix_options = format_nix(final_config.to_nix())
 
-            # write new plugin file
+        # write new plugin file
 
-            PluginFile(name, homepage, plugin_name, nix_options)
+        PluginFile(name, homepage, plugin_name, nix_options)
 
         info(f"Done {i}/{len(plugins)}")
 

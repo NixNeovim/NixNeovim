@@ -3,7 +3,8 @@ from errors import *
 
 class LuaCode:
     def to_nix(self):
-        raise Unimplemented(f"Please implement the 'to_nix' for subclass '{type(self)}'")
+        raise Unimplemented(f"Please implement the 'to_nix' function for subclass '{type(self)}'")
+
 
 @dataclass
 class Text(LuaCode):
@@ -61,7 +62,6 @@ class Table(LuaCode):
 
         for c in self.content:
             if not isinstance(c, Field):
-                print("Content: ", c)
                 return True
         else:
             return False
@@ -91,13 +91,44 @@ class Table(LuaCode):
 
 @dataclass
 class Field(LuaCode):
+    # content_type can be:
+    # - nil
+    # - boolean
+    # - number
+    # - string
+    # - ellipsis
+    # - function/function_call
+    # - prefix_exp
+    # - tableconstructor
+    # - binary_operation
+    # - unary_operation
     identifier: Text
-    type_: str
+    content_type: str
     value: LuaCode
     comment: Comment
 
     def to_nix(self):
-        return f"{self.identifier} = {self.type_}Option {self.value.to_nix()} \"{self.comment}\";"
+
+        match self.content_type:
+            case "nil":
+                t = "nil"
+            case "boolean":
+                t = "bool"
+            case "number":
+                t = "int"
+            case "string":
+                t = "str"
+            case "function" | "function_call":
+                t = "rawLua"
+            case "tableconstructor":
+                t = "attrs"
+            case other:
+                raise Unimplemented(other)
+
+        if t == "attrs":
+            return f"{self.identifier} = {self.value.to_nix()};" # TODO: add comments to output
+        else:
+            return f"{self.identifier} = {t}Option {self.value.to_nix()} \"{self.comment}\";"
 
 
 @dataclass
