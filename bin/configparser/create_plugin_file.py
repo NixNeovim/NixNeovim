@@ -13,22 +13,27 @@ class PluginFile:
     def __init__(self,
                  name: str,
                  url: str,
-                 plugin_name: str,
                  options: str):
 
         info(f"Writing plugin file for {name}")
 
-        if name == "" or url == "" or plugin_name == "":
+        if name == "" or url == "":
             raise ValueError("name url and plugin_name have to be set")
 
-        plugin_path = PLUGIN_BASE_PATH + name + ".nix"
+
+        module_name = name.lower()
+        if name.endswith("-nvim"):
+            module_name = name[:-5]
+
+
+        plugin_path = PLUGIN_BASE_PATH + module_name.lower() + ".nix"
 
         with open(TEMPLATE_PATH, "r") as f:
             content = f.read()
-            content = content.replace("PLUGIN_NAME", name)
+            content = content.replace("PLUGIN_NAME", module_name)
             content = content.replace("PLUGIN_URL", url)
             content = content.replace("# add module options here", options[1:-2])
-            content = content.replace("# add neovim plugin here", plugin_name)
+            content = content.replace("# add neovim plugin here", name)
             print()
             print(content[270:-920])
             print()

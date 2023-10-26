@@ -59,10 +59,9 @@ def main():
         # convert json to object
         data = json.loads(plugins[plugin], object_hook=lambda d: SimpleNamespace(**d))
 
-        plugin_name = data.name
+        name = data.name
         homepage = data.homepage
         repo = plugin
-        name = plugin.replace("/", "-") # normalize repo name
 
         # extract relevant lua snippets from README
         lua: list[str]|None = parse_readme(repo)
@@ -100,7 +99,7 @@ def main():
 
         # write new plugin file
 
-        PluginFile(name, homepage, plugin_name, nix_options)
+        PluginFile(name, homepage, nix_options)
 
         info(f"Done {i}/{len(plugins)}")
 

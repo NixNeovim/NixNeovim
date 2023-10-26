@@ -107,6 +107,11 @@ class Field(LuaCode):
     value: LuaCode
     comment: Comment
 
+    def __post_init__(self):
+        text = ''.join(word.title() for word in self.identifier.text.split('_'))
+        text = text[0].lower() + text[1:]
+        self.identifier = Text(text)
+
     def to_nix(self):
 
         match self.content_type:
