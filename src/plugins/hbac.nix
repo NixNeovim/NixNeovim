@@ -47,6 +47,9 @@ in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
+    telescope-nvim
     hbac-nvim
+    plenary-nvim
+    nvim-web-devicons
   ];
 }
