@@ -38,8 +38,8 @@ def get_plugins_json() -> dict:
 
 def main():
 
-    limit = 14 #TMP
-    counter = 0 #TMP
+    #  limit = 17 #TMP
+    #  counter = 0 #TMP
 
     # load plugin information
     plugins = get_plugins_json()
@@ -48,13 +48,13 @@ def main():
     for i, plugin in enumerate(plugins):
 
         #TMP
-        if counter < limit:
-            counter += 1
-            continue
-        elif counter > limit:
-            exit()
+        #  if counter < limit:
+            #  counter += 1
+            #  continue
+        #  elif counter > limit:
+            #  exit()
 
-        counter += 1 #TMP
+        #  counter += 1 #TMP
 
         # convert json to object
         data = json.loads(plugins[plugin], object_hook=lambda d: SimpleNamespace(**d))
@@ -73,8 +73,8 @@ def main():
         # parse extracted code block to lua
 
         code_list = [] # list of extraced code blocks
-        for i, section in enumerate(lua):
-            debug(f"Parsing {i+1}/{len(lua)}")
+        for j, section in enumerate(lua):
+            debug(f"Parsing {j+1}/{len(lua)}")
             parsed = Parser().parse(section)
             if parsed is not None:
                 code_list.append(parsed)

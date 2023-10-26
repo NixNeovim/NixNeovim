@@ -33,7 +33,6 @@ class PluginFile:
             print(content[270:-920])
             print()
 
-            #  return
             # WARN: replace "w" with "x", to not override existing files
             debug(f"Writing file: {plugin_path}")
             with open(plugin_path, "w") as new_file:

@@ -104,9 +104,26 @@ def parse_config_table(data):
     # TODO: do not capture non-config tables
     query = LUA_LANGUAGE.query(f"""
         (program
-            ((function_call
+            (function_call
                 (table_argument) @table_argument)
-            )
+        )
+        """)
+
+    #  print(data)
+    tree = parser.parse(bytes(data, "utf8"))
+    #  print(tree.root_node.sexp())
+    #  print()
+    captures = query.captures(tree.root_node)
+    #  print("captures:", captures)
+    #  print()
+    return captures
+
+def parse_opt_variable(data):
+    query = LUA_LANGUAGE.query(f"""
+        (program
+            (variable_declaration
+                (variable_declarator)
+                (tableconstructor) @tableconstructor)
         )
         """)
 

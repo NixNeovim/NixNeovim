@@ -97,7 +97,7 @@ class Field(LuaCode):
     # - number
     # - string
     # - ellipsis
-    # - function/function_call
+    # - function/function_call/identifier
     # - prefix_exp
     # - tableconstructor
     # - binary_operation
@@ -110,23 +110,25 @@ class Field(LuaCode):
     def to_nix(self):
 
         match self.content_type:
-            case "nil":
-                t = "nil"
+            case "ERROR":
+                t = "ERROR"
             case "boolean":
                 t = "bool"
             case "number":
                 t = "int"
             case "string":
                 t = "str"
-            case "function" | "function_call":
+            case "nil" | "function" | "function_call" | "binary_operation" | "identifier":
                 t = "rawLua"
             case "tableconstructor":
                 t = "attrs"
             case other:
-                raise Unimplemented(other)
+                raise Unimplemented(f"{other} ({self.value})")
 
         if t == "attrs":
             return f"{self.identifier} = {self.value.to_nix()};" # TODO: add comments to output
+        elif t == "rawLua":
+            return f"{self.identifier} = {t}Option ''{self.value.to_nix()}'' \"{self.comment}\";"
         else:
             return f"{self.identifier} = {t}Option {self.value.to_nix()} \"{self.comment}\";"
 

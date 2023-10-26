@@ -2,24 +2,24 @@ import re
 from data import *
 
 from parser_helper import *
-from logging import debug
+from log import *
 from errors import *
 
 
 class Parser:
     text: str
     nodes: list
-    code: LuaCode|None
 
-    def __init__(self, data: str):
+    def parse(self, data: str) -> LuaCode|None:
         self.text = data
 
         #  print(data)
 
-        captures = self._query(data)
+        captures = self._run_ts_query(data)
 
         if captures is None:
-            raise RuntimeError("Could not query any captures")
+            warning("Could not query any captures")
+            return None
 
         # filter hidden captures
         self.nodes = [ cap for cap in captures if not cap[1].startswith("_") ]
@@ -29,21 +29,23 @@ class Parser:
 
         match tag:
             case "function_body":
-                self.code = self._extract_function_body(node)
+                code = self._extract_function_body(node)
 
             case "function_call":
-                self.code = self._extract_function_call(node)
+                code = self._extract_function_call(node)
 
             case "table_argument":
-                self.code = self._extract_table_argument(node)
+                code = self._extract_table_argument(node)
 
             case "tableconstructor":
-                self.code = self._extract_tableconstructor(node)
+                code = self._extract_tableconstructor(node)
 
             case _:
                 exit(f"'{node}, ({tag})' not matched in __init__ of Parser")
 
-    def _query(self, data) -> list|None:
+        return code
+
+    def _run_ts_query(self, data) -> list|None:
         #  print(data)
 
         captures = parse_require(data)
@@ -64,6 +66,11 @@ class Parser:
             debug("Parsed as config table")
             return captures
 
+        captures = parse_opt_variable(data)
+
+        if captures != []:
+            debug("Parsed as options variable")
+            return captures
 
         return None
 
@@ -91,22 +98,24 @@ class Parser:
         for child in node.children:
             match child.type:
                 case "field":
-                    ret.add(self._extract_field(child))
+                    field = self._extract_field(child)
+                    if field is not None:
+                        ret.add(field)
                 case "comment":
                     # TODO
                     pass
                 #  case "fieldlist":
                     #  re.add(self._extract_fieldlist(child))
-                case ",":
+                case "," | "ERROR":
                     pass
                 case _:
-                    exit(f"Error: unhanled fieldlist type {child}")
+                    exit(f"Error: Unhandled fieldlist type {child}")
 
 
         return ret
 
 
-    def _extract_field(self, node) -> Field|Text|Table: # idenfitier, type, value
+    def _extract_field(self, node) -> Field|Text|Table|None: # idenfitier, type, value
         """
         Input: show_jumps = true
         """
@@ -131,7 +140,7 @@ class Parser:
                 else:
                     return Text('"' + self.extract_code(node).text + '"')
 
-                return Field(identifier, type_, value, comment=Comment("TODO"))
+                return Field(identifier, type_, value, comment=Comment(""))
             case "function_call":
                 return Text("".join([ self.extract_code(c).text for c in n ]))
             case "string" | "number":
@@ -155,10 +164,13 @@ class Parser:
                 else:
                     return Text('"' + self.extract_code(node).text + '"')
 
-                return Field(identifier, type_, value, comment=Comment("TODO"))
+                return Field(identifier, type_, value, comment=Comment(""))
+            case "ellipsis":
+                return None
             case _:
-                #  print(n[0])
-                #  self.print_code(n[0])
+                print()
+                print(n[0])
+                self.print_code(n[0])
                 exit(f"Error: Unknown field type ({n[0].type})")
 
 
