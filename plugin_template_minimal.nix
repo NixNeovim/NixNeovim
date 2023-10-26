@@ -12,6 +12,7 @@ let
     listOption
     enumOption
     intOption
+    rawLuaOption
     boolOption;
 
   moduleOptions = {
