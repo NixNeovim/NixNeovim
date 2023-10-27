@@ -11,6 +11,7 @@ class Text(LuaCode):
     text: str
 
     def __post_init__(self):
+        self.text = self.text.replace("\"", "\\\"")
         self.text = self.text.replace("'", "\"")
 
     def __str__(self) -> str:
