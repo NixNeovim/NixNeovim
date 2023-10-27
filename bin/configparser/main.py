@@ -38,8 +38,8 @@ def get_plugins_json() -> dict:
 
 def main():
 
-    #  limit = 17 #TMP
-    #  counter = 0 #TMP
+    limit = 1 #TMP
+    counter = 0 #TMP
 
     # load plugin information
     plugins = get_plugins_json()
@@ -48,13 +48,14 @@ def main():
     for i, plugin in enumerate(plugins):
 
         #TMP
-        #  if counter < limit:
-            #  counter += 1
-            #  continue
-        #  elif counter > limit:
-            #  exit()
+        if counter < limit:
+            counter += 1
+            continue
+        elif counter > limit:
+            exit()
+            pass
 
-        #  counter += 1 #TMP
+        counter += 1 #TMP
 
         # convert json to object
         data = json.loads(plugins[plugin], object_hook=lambda d: SimpleNamespace(**d))

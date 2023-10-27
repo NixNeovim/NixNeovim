@@ -52,7 +52,18 @@ class Table(LuaCode):
             self.content.append(code)
 
     def merge(self, table):
-        self.content += table.content
+
+        if self.is_list() and table.is_list():
+            self.content = list(set(self.content + table.content))
+        elif not self.is_list() and not table.is_list():
+            for entry in table.content:
+                if entry in self.content:
+                    print("duplicate")
+                else:
+                    self.content.append(entry)
+        else:
+            raise ValueError("Cannot merge table with list")
+
 
     def clean(self):
         self.content = list(filter(lambda x: isinstance(x, Field), self.content))

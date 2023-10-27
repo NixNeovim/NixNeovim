@@ -30,6 +30,7 @@ class PluginFile:
 
         with open(TEMPLATE_PATH, "r") as f:
             content = f.read()
+            debug(f"module_name: {module_name}")
             content = content.replace("PLUGIN_NAME", module_name)
             content = content.replace("PLUGIN_URL", url)
             content = content.replace("# add module options here", options[1:-2])
@@ -38,10 +39,12 @@ class PluginFile:
             print(content[270:-920])
             print()
 
-            # WARN: replace "w" with "x", to not override existing files
             debug(f"Writing file: {plugin_path}")
-            with open(plugin_path, "w") as new_file:
-                new_file.write(content)
+            try:
+                with open(plugin_path, "x") as new_file:
+                    new_file.write(content)
+            except FileExistsError:
+                warning("File exists. Skipping ...")
 
 
         # TODO: copy file test
