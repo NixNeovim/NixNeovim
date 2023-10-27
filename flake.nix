@@ -69,6 +69,10 @@
             runtimeInputs = let
               python-with-my-packages = pkgs.python3.withPackages (p: with p; [
                 tree-sitter
+                requests
+                mistune
+                beautifulsoup4
+                coloredlogs
                 (
                   buildPythonPackage rec {
                     pname = "SLPP";
@@ -87,6 +91,7 @@
             in [
               python-with-my-packages
               pkgs.gcc
+              pkgs.nixfmt
             ];
             text = ''
               python ./bin/configparser/main.py

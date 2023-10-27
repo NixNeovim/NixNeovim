@@ -1,0 +1,20 @@
+[
+    ({
+        template = tableconstructorOption {
+            definition = tableconstructorOption {
+                text = stringOption " ⊛" "";
+                color = stringOption "#add8e6" "";
+            } "";
+            references = tableconstructorOption {
+                text = stringOption " ↱%s" "";
+                color = stringOption "#ff6666" "";
+            } "";
+        } "";
+        use_virtual_text = booleanOption true "";
+    })
+    ({
+        sections = tableconstructorOption {
+            lualine_x = tableconstructorOption [ ''require("action-hints").statusline'' ] "";
+        } "";
+    })
+]

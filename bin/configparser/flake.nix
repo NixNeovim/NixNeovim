@@ -9,6 +9,7 @@
 
         python-with-my-packages = pkgs.python3.withPackages (p: with p; [
           tree-sitter
+          coloredlogs
           (
             buildPythonPackage rec {
               pname = "SLPP";
@@ -28,7 +29,7 @@
       in {
         devShells.default =
           pkgs.mkShell {
-            name = "Paper Tracker Shell";
+            name = "Shell";
             packages = [
               python-with-my-packages
             ];
