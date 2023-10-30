@@ -1,4 +1,4 @@
-{ lib, pkgs, helpers, ... }:
+{ lib, pkgs, helpers, state }:
 
 
 let
@@ -111,8 +111,12 @@ let
     ruff-lsp = {
       languages = "Python";
       serverName = "ruff_lsp";
-      packages = optional (builtins.hasAttr "ruff-lsp" pkgs) [ ruff-lsp ] # on unstable
-      ++ optional (builtins.hasAttr "ruff-lsp" python310Packages) [ python310Packages.ruff-lsp ]; # on 23.05
+      # packages = [ ruff-lsp ];
+      packages =
+        if state > 2305 then
+          [ ruff-lsp ]
+        else
+          [ python3Packages.ruff-lsp ];
     };
     taplo = {
       languages = "TOML";

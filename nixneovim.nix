@@ -40,7 +40,7 @@ let
       src = haumea.lib.load {
         src = ./src;
         inputs = {
-          inherit helpers config pkgs lib;
+          inherit helpers config pkgs lib state;
         };
       };
     in src.plugins //

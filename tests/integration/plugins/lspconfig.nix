@@ -19,6 +19,7 @@ in {
               rnix-lsp.enable = true;
               clangd.enable = true;
               nil.enable = false; # FIX: throws weired error if activated
+              ruff-lsp.enable = true;
             };
             # extraLua.pre = ''
               # -- test lua pre comment
@@ -28,6 +29,10 @@ in {
             # '';
           };
         };
+
+        # programs.nixneovim.extraPackages = [
+          # pkgs.ruff-lsp
+        # ];
 
         nmt.script = testHelper.moduleTest ''
           assertDiff "$normalizedConfig" ${
@@ -61,6 +66,17 @@ in {
 
                     require('lspconfig')["rnix"].setup(setup)
                   end -- lsp server config rnix-lsp
+                  do -- lsp server config ruff-lsp
+                   local setup =  {
+                     on_attach = function(client, bufnr)
+                       on_attach_global(client, bufnr)
+
+                     end,
+
+                   }
+
+                     require('lspconfig')["ruff_lsp"].setup(setup)
+                   end -- lsp server config ruff-lsp
 
                   do -- lsp server config rust-analyzer
 

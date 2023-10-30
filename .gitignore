@@ -6,3 +6,6 @@ pta
 me
 pta_plugins
 me_plugins
+bin/configparser/__pycache__
+output
+readmes
