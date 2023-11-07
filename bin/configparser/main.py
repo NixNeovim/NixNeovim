@@ -105,4 +105,6 @@ def main():
         info(f"Done {i}/{len(plugins)}")
 
 if __name__ == "__main__":
+    print("running")
+    exit()
     main()

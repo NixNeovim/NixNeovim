@@ -8,7 +8,7 @@ Language.build_library(
 
   # Include one or more languages
   [
-    './bin/configparser/tree-sitter-lua',
+    './tree-sitter-lua',
   ]
 )
 

@@ -29,6 +29,11 @@
       # inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    poetry2nix = {
+      url = "github:nix-community/poetry2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
   };
 
   outputs = { self, nixpkgs, nmd, nmt, nix-flake-tests, flake-utils, haumea, ... }@inputs:
@@ -49,14 +54,16 @@
     } //
     flake-utils.lib.eachDefaultSystem (system:
       let
-        # system = "x86_64-linux";
+
+        inherit (inputs.poetry2nix.lib.mkPoetry2Nix { inherit pkgs; })
+          mkPoetryApplication;
 
         pkgs = import nixpkgs { inherit system; overlays = [ inputs.nixneovimplugins.overlays.default ]; };
 
         lib = pkgs.lib;
 
-      in
-      {
+      in {
+
         packages = {
           docs = import ./docs {
             inherit pkgs;
@@ -64,80 +71,14 @@
             nmd = import nmd { inherit pkgs lib; };
             inherit haumea;
           };
-          configparser = pkgs.writeShellApplication {
-            name = "configparser";
-            runtimeInputs = let
-              python-with-my-packages = pkgs.python3.withPackages (p: with p; [
-                tree-sitter
-                requests
-                mistune
-                beautifulsoup4
-                coloredlogs
-                (
-                  buildPythonPackage rec {
-                    pname = "SLPP";
-                    version = "1.2.3";
-                    src = fetchPypi {
-                      inherit pname version;
-                      sha256 = "sha256-If3ZMoNICQxxpdMnc+juaKq4rX7MMi9eDMAQEUy1Scg=";
-                    };
-                    doCheck = false;
-                    propagatedBuildInputs = [
-                      six
-                    ];
-                  }
-                )
-              ]);
-            in [
-              python-with-my-packages
-              pkgs.gcc
-              pkgs.nixfmt
-            ];
-            text = ''
-              python ./bin/configparser/main.py
-            '';
-          };
-          newplugin = pkgs.writeShellApplication {
-            name = "newplugin";
-            runtimeInputs = with pkgs; [ ed ];
-            text = ''
-            name="$1"
-            url=$(echo "$2" | sed 's/[\&/]/\\&/g')
-            plugin="$3"
+          configparser = mkPoetryApplication {
+            projectDir = ./bin;
+            buildInputs = [ pkgs.nix ];
 
-            [ -z "$name" ] && exit 1
-            [ -z "$url" ] && exit 1
-            [ -z "$plugin" ] && exit 1
-
-            plugin_path="src/plugins/$name.nix"
-            plugin_test_path="tests/integration/plugins/$name.nix"
-
-            echo Copy template
-            cp ./plugin_template_minimal.nix "$plugin_path"
-
-            echo Replace names
-            sed -i "s/PLUGIN_NAME/$name/" "$plugin_path"
-            sed -i "s/PLUGIN_URL/$url/" "$plugin_path"
-
-            echo Insert plugin
-            ed "$plugin_path" <<EOF
-            g/add neovim plugin here/p
-            a
-                $plugin
-            .
-            w
-            q
-            EOF
-
-            echo Copy test template
-            cp ./test_template.nix "$plugin_test_path"
-
-            echo Replace names
-            sed -i "s/NAME/$name/" "$plugin_test_path"
-
-            echo Adding new files to git
-            git add "$plugin_path" "$plugin_test_path"
-            '';
+            # postFixup = ''
+                # wrapProgram $out/bin/update-vim-plugins \
+                  # --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.alejandra ]}
+              # '';
           };
         };
 
