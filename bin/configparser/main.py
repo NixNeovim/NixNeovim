@@ -37,6 +37,8 @@ def get_plugins_json() -> dict:
         raise NetworkException(f"Could not fetch plugin data: {response.status_code}")
 
 def main():
+    print("Main")
+    exit()
 
     limit = 1 #TMP
     counter = 0 #TMP
