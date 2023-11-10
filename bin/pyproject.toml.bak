@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "configparser"
+version = "0.1.0"
+description = "Download plugin README and extract config options"
+authors = []
+packages = [{include = "configparser"}]
+
+[tool.poetry.scripts]
+poetry = "configparser:__main__:main"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+# tree-sitter = "*"
+# coloredlogs = "*"
+# SLPP = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

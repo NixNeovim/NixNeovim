@@ -75,6 +75,13 @@
             projectDir = ./bin;
             buildInputs = [ pkgs.nix ];
 
+            # overrides =
+              # (self: super: {
+                # SLPP = super.SLPP.overridePythonAttrs (old: {
+                  # buildInputs = (old.buildInputs or [ ]) ++ [ super.setuptools ];
+                # });
+              # });
+
             # postFixup = ''
                 # wrapProgram $out/bin/update-vim-plugins \
                   # --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.alejandra ]}
