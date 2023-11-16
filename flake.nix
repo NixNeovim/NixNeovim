@@ -55,9 +55,6 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
 
-        inherit (inputs.poetry2nix.lib.mkPoetry2Nix { inherit pkgs; })
-          mkPoetryApplication;
-
         pkgs = import nixpkgs { inherit system; overlays = [ inputs.nixneovimplugins.overlays.default ]; };
 
         lib = pkgs.lib;
@@ -70,6 +67,43 @@
             lib = nixpkgs.lib;
             nmd = import nmd { inherit pkgs lib; };
             inherit haumea;
+          };
+          configparser = pkgs.writeShellApplication {
+            name = "configparser";
+            runtimeInputs = let
+              python-with-my-packages = pkgs.python3.withPackages (p: with p; [
+                tree-sitter
+                requests
+                mistune
+                beautifulsoup4
+                coloredlogs
+                (
+                  buildPythonPackage rec {
+                    pname = "SLPP";
+                    version = "1.2.3";
+                    src = fetchPypi {
+                      inherit pname version;
+                      sha256 = "sha256-If3ZMoNICQxxpdMnc+juaKq4rX7MMi9eDMAQEUy1Scg=";
+                    };
+                    doCheck = false;
+                    propagatedBuildInputs = [
+                      six
+                    ];
+                  }
+                )
+              ]);
+            in [
+              python-with-my-packages
+              pkgs.gcc
+              pkgs.nixfmt
+            ];
+            text = ''
+
+              # move to configparser dir
+              cd "$(git rev-parse --show-toplevel)/bin/configparser"
+
+              python ./main.py "$@"
+            '';
           };
         };
 

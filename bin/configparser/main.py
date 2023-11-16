@@ -9,6 +9,8 @@ from types import SimpleNamespace
 from pprint import pprint
 from errors import *
 from log import *
+#  import subprocess
+import sys
 
 def deep_merge(source, destination):
     """
@@ -31,82 +33,97 @@ def get_plugins_json() -> dict:
     url = "https://raw.githubusercontent.com/NixNeovim/NixNeovimPlugins/main/.plugins.json"
     response = requests.get(url)
     if response.status_code == 200:
-        json = response.json()
-        return json
+        data = response.json()
+        data = json.loads(json.dumps(data, indent=2, sort_keys=True))
+        return data
     else:
         raise NetworkException(f"Could not fetch plugin data: {response.status_code}")
 
-def main():
-    print("Main")
-    exit()
+#  def check_plugin_used(plugin):
+    #  result = subprocess.run(['rg', plugin], capture_output=False, text=False, check=False)
+    #  exit_code = result.returncode
 
-    limit = 1 #TMP
-    counter = 0 #TMP
+    #  return exit_code == 0
+
+def main(plugin, repo):
+
+    # convert json to object
+    data = json.loads(plugin, object_hook=lambda d: SimpleNamespace(**d))
+
+    name = data.name
+    homepage = data.homepage
+    #  repo = plugin
+
+    #  if check_plugin_used(name):
+        #  print("exists")
+    #  else:
+        #  print("needed")
+
+    # extract relevant lua snippets from README
+    lua: list[str]|None = parse_readme(repo)
+
+    if lua is None:
+        return
+
+    # parse extracted code block to lua
+
+    code_list = [] # list of extraced code blocks
+    for j, section in enumerate(lua):
+        debug(f"Parsing {j+1}/{len(lua)}")
+        parsed = Parser().parse(section)
+        if parsed is not None:
+            code_list.append(parsed)
+
+    # clean up final config
+
+    final_config = Table()
+
+    for code in code_list:
+        if isinstance(code, Table):
+            final_config.merge(code)
+        elif isinstance(code, FunctionBody):
+            debug("Not adding function body to final_config table")
+        else:
+            raise Unimplemented(f"Error: unknown code type ({code})")
+
+    final_config.clean()
+    pprint(final_config)
+
+    # generate config
+
+    nix_options = format_nix(final_config.to_nix())
+
+    # write new plugin file
+
+    PluginFile(name, homepage, nix_options)
+
+    #  info(f"Done {i}/{len(plugins)}")
+    info(f"Done")
+
+if __name__ == "__main__":
+
+    try:
+        input_name = sys.argv[1]
+    except:
+        print("nix run .#configparser -- <plugin-name>")
+        exit()
 
     # load plugin information
     plugins = get_plugins_json()
 
-    # go through all plugins and generate config
-    for i, plugin in enumerate(plugins):
+    plugin = None
 
-        #TMP
-        if counter < limit:
-            counter += 1
-            continue
-        elif counter > limit:
-            exit()
-            pass
+    try:
+        plugin = plugins[input_name]
+    except:
+        print(f"Plugin '{input_name}' unknown")
+        print()
+        print("nix run .#configparser -- <plugin-name>")
+        exit()
 
-        counter += 1 #TMP
+    if plugin:
+        main(plugin, input_name)
 
-        # convert json to object
-        data = json.loads(plugins[plugin], object_hook=lambda d: SimpleNamespace(**d))
-
-        name = data.name
-        homepage = data.homepage
-        repo = plugin
-
-        # extract relevant lua snippets from README
-        lua: list[str]|None = parse_readme(repo)
-
-        if lua is None:
-            continue
-
-        # parse extracted code block to lua
-
-        code_list = [] # list of extraced code blocks
-        for j, section in enumerate(lua):
-            debug(f"Parsing {j+1}/{len(lua)}")
-            parsed = Parser().parse(section)
-            if parsed is not None:
-                code_list.append(parsed)
-
-        # clean up final config
-
-        final_config = Table()
-
-        for code in code_list:
-            if isinstance(code, Table):
-                final_config.merge(code)
-            elif isinstance(code, FunctionBody):
-                debug("Not adding function body to final_config table")
-            else:
-                raise Unimplemented(f"Error: unknown code type ({code})")
-
-        final_config.clean()
-        pprint(final_config)
-
-        # generate config
-
-        nix_options = format_nix(final_config.to_nix())
-
-        # write new plugin file
-
-        PluginFile(name, homepage, nix_options)
-
-        info(f"Done {i}/{len(plugins)}")
-
-if __name__ == "__main__":
-    print("running")
-    exit()
-    main()
+    #  # go through all plugins and generate config
+    #  for plugin in plugins:
+        #  main(plugin)
