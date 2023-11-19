@@ -7,7 +7,8 @@ This makes your Neovim config reproducible, and easier to manage.
 
 #### Forked
 
-This is originally based on [pta2002/nixvim](https://github.com/pta2002/nixvim).
+This was originally based on [pta2002/nixvim](https://github.com/pta2002/nixvim).
+However, today, it shares very little code, approaches problems very differently, and is completely independent.
 
 ## Get Ready
 
