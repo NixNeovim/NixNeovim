@@ -83,6 +83,8 @@ class Parser:
             match child.type:
                 case "comment":
                     # TODO: handle comments
+                    #  print("comment table argument")
+                    #  print(self.extract_code(child))
                     pass
                 case "fieldlist":
                     ret.add(self._extract_fieldlist(child))
@@ -102,10 +104,7 @@ class Parser:
                     if field is not None:
                         ret.add(field)
                 case "comment":
-                    # TODO
-                    pass
-                #  case "fieldlist":
-                    #  re.add(self._extract_fieldlist(child))
+                    ret.add_comment(self.extract_code(child))
                 case "," | "ERROR":
                     pass
                 case _:
@@ -180,13 +179,31 @@ class Parser:
         """
         ret = Table()
 
+        last_comment = None
+
+        print("node.children:", node.children)
         for n in node.children:
             match n.type:
                 case "comment":
-                    continue # TODO: handle comments
-                case "fieldlist":
-                    ret.add(self._extract_fieldlist(n))
+                    # TODO: handle comments
+                    #  print("comment tableconstructor")
+                    #  print(self.extract_code(n))
+                    last_comment = self.extract_code(n)
+                    print("last_comment:", last_comment)
 
+                    continue
+                case "fieldlist":
+                    #  print(self._extract_fieldlist(n))
+                    field_list = self._extract_fieldlist(n)
+                    print("field_list:", field_list)
+                    print(last_comment is None)
+                    if last_comment is not None:
+                        print(f"Adding {last_comment} to {field_list}")
+                        field_list.add_comment(last_comment)
+                        last_comment = None
+                    ret.add(field_list)
+
+        exit()
         return ret
 
 

@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from errors import *
+from log import *
 
 class LuaCode:
     def to_nix(self):
@@ -157,3 +158,10 @@ class Fieldlist(LuaCode):
     def add(self, code: Field|Text|Table|None):
         if code is not None:
             self.content.append(code)
+
+    def add_comment(self, comment: Text):
+        last_entry = self.content[-1]
+        if isinstance(last_entry, Field):
+            last_entry.comment = Comment(comment.text)
+        else:
+            debug(f"Not adding comment '{comment}' because last entry is of type '{type(last_entry)}'")

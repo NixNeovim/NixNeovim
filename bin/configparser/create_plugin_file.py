@@ -1,4 +1,3 @@
-import subprocess
 from log import *
 
 TEMPLATE_PATH="./templates/plugin_template_minimal.nix"
