@@ -44,11 +44,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1700900274,
-        "narHash": "sha256-KWoKDP5I1viHR4bG3ENnJ7H1DD16tXWH4ROvS0IfXw8=",
+        "lastModified": 1701071203,
+        "narHash": "sha256-lQywA7QU/vzTdZ1apI0PfgCWNyQobXUYghVrR5zuIeM=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "a462e7315deaa8194b0821f726709bb7e51a850c",
+        "rev": "db1878f013b52ba5e4034db7c1b63e8d04173a86",
         "type": "github"
       },
       "original": {
@@ -105,11 +105,11 @@
         "poetry2nix": "poetry2nix"
       },
       "locked": {
-        "lastModified": 1701008267,
-        "narHash": "sha256-bZCDtg5HYO3knvYdMVZj/ASQOrD9sS1qdpgEnAtWm0c=",
+        "lastModified": 1701353965,
+        "narHash": "sha256-SPnzAIg/mUhZT7WchTThgZgghPDo0+K8ygIFogl/dcA=",
         "owner": "nixneovim",
         "repo": "nixneovimplugins",
-        "rev": "817fc0ca520c1dee6811e320e66b487933af12b1",
+        "rev": "8cb5553619143190ec5b1d857c5cc93ffb84c4a4",
         "type": "github"
       },
       "original": {
@@ -135,11 +135,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1700794826,
-        "narHash": "sha256-RyJTnTNKhO0yqRpDISk03I/4A67/dp96YRxc86YOPgU=",
+        "lastModified": 1701068326,
+        "narHash": "sha256-vmMceA+q6hG1yrjb+MP8T0YFDQIrW3bl45e7z24IEts=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "5a09cb4b393d58f9ed0d9ca1555016a8543c2ac8",
+        "rev": "8cfef6986adfb599ba379ae53c9f5631ecd2fd9c",
         "type": "github"
       },
       "original": {
