@@ -91,6 +91,10 @@ let
       languages = "Nix";
       serverName = "nil_ls";
     };
+    ocamllsp = {
+      languages = "OCaml";
+      packages = [ pkgs.ocamlPackages.ocaml-lsp ];
+    };
     pyright = {
       languages = "Python";
     };
