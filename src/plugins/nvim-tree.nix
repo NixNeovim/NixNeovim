@@ -52,6 +52,11 @@ in
       default = null;
     };
 
+    syncRootWithCwd = mkOption {
+      type = types.nullOr types.bool;
+      default = null;
+    };
+
     hijackDirectories = {
       enable = mkOption {
         type = types.nullOr types.bool;
@@ -202,6 +207,7 @@ in
         open_on_tab = cfg.openOnTab;
         hijack_cursor = cfg.hijackCursor;
         update_cwd = cfg.updateCwd;
+        sync_root_with_cwd = cfg.syncRootWithCwd;
         hijack_directories = {
           enable = cfg.hijackDirectories.enable;
           auto_open = cfg.hijackDirectories.autoOpen;
