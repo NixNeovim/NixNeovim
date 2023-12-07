@@ -104,10 +104,6 @@ let
       serverName = "rust_analyzer";
       packages = [ cargo rust-analyzer ];
     };
-    statix = {
-      languages = "Nix";
-      packages = [ statix ];
-    };
     ruff-lsp = {
       languages = "Python";
       serverName = "ruff_lsp";
