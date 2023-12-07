@@ -76,7 +76,7 @@ let
       };
     };
     contextCommentstring = {
-      enable = boolOptionStrict false "Enable the nvim-ts-context-commentstring treesitter module";
+      enable = boolOptionStrict false "(Deprecated use ts-context-commentstring plugin) Enable the nvim-ts-context-commentstring treesitter module";
     };
   };
 
@@ -131,7 +131,7 @@ in helpers.generator.mkLuaPlugin {
           [ vimPlugins.nvim-treesitter ];
 
       treesitterModules =
-        optional cfg.contextCommentstring.enable pkgs.vimExtraPlugins.nvim-ts-context-commentstring;
+        optional cfg.contextCommentstring.enable (builtins.throw "contextComment string option is deprecated. Please enable the ts-context-commentstring plugin");
 
     in grammars ++ treesitterModules;
 

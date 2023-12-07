@@ -31,8 +31,8 @@ in {
               };
               navigation.enable = true;
             };
-            contextCommentstring.enable = true;
           };
+          ts-context-commentstring.enable = true;
           comment-frame.enable = true;
           treesitter-context.enable = true;
         };
@@ -42,6 +42,21 @@ in {
             pkgs.writeText "init.lua-expected" ''
               vim.cmd [[source <nix-store-hash>-nvim-init-home-manager.vim]]
               ${testHelper.config.start}
+
+              -- config for plugin: ts-context-commentstring
+              do
+                function setup()
+
+                  require('ts_context_commentstring').setup {}
+                  vim.g.skip_ts_context_commentstring_module = true
+
+                end
+                success, output = pcall(setup) -- execute 'setup()' and catch any errors
+                if not success then
+                  print("Error on setup for plugin: ts-context-commentstring")
+                  print(output)
+                end
+              end
 
               -- config for plugin: treesitter-context
               do
@@ -70,7 +85,7 @@ in {
                 function setup()
                   -- test lua pre comment
                   require('nvim-treesitter.configs').setup({
-                    ["context_commentstring"] = { ["enable"] = true },
+                    ["context_commentstring"] = { ["enable"] = false },
                     ["highlight"] = { ["enable"] = true },
                     ["incremental_selection"] = {
                       ["enable"] = false,

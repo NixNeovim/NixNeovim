@@ -7,6 +7,7 @@ let
      mkLuaPlugin;
 
   name = "ts-context-commentstring";
+  pluginName = "ts_context_commentstring";
   pluginUrl = "https://github.com/JoosepAlviste/nvim-ts-context-commentstring";
 
   inherit (helpers.custom_options) boolOption;
@@ -16,15 +17,16 @@ let
   };
 
 in mkLuaPlugin {
-  inherit name moduleOptions pluginUrl;
+  inherit name moduleOptions pluginUrl pluginName;
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
     nvim-ts-context-commentstring
   ];
-  defaultRequire = false;
+  defaultRequire = true;
 
-  # TODO: implement this
-  # warning = "${name}.enable is deprecated. Please use treesitter.contextCommentstring.enable";
+  extraConfigLua = ''
+    vim.g.skip_ts_context_commentstring_module = true
+  '';
 
   extraNixNeovimConfig = {
     plugins.treesitter.enable = true;
