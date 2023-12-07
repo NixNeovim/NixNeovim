@@ -210,7 +210,7 @@ You can define augroups with the `augroups` option.
 
 ### Supported language servers
 
-Until we find a better way of documenting this, you can find a list of supported language servers here: [servers.nix](https://github.com/NixNeovim/NixNeovim/blob/main/plugins/nvim-lsp/options/servers.nix)
+Until we find a better way of documenting this, you can find a list of supported language servers here: [servers.nix](./src/plugins/_lspconfig-modules/servers.nix)
 
 ## Contribution
 
