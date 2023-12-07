@@ -85,9 +85,15 @@ jobs:
 
             console.log(`Pull Request created: ${pullRequest.html_url}`);
 
+  check-pr:
+    runs-on: ubuntu-latest
+    steps:
       - name: Run checks
         run: nix flake check -L
 
+  merge:
+    runs-on: ubuntu-latest
+    steps:
       - name: Merge Pull Request
         if: success()
         uses: actions/github-script@v5
