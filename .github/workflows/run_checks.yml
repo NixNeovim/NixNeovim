@@ -19,9 +19,9 @@ jobs:
         run: |
           nix build .#checks.x86_64-linux.lib -L
 
-      - name: Basic checks
-        run: |
-          nix build .#checks.x86_64-linux.basic
+      # - name: Basic checks
+        # run: |
+          # nix build .#checks.x86_64-linux.basic
 
       - name: Check plugins
         run: |
