@@ -15,4 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v17
-      - run: nix flake check -L
+      - run: |
+          nix build .#checks.x86_64-linux.lib -L
+          nix build .#checks.x86_64-linux.basic
+          nix build .#checks.x86_64-linux.plugins -L
+          nix build .#checks.x86_64-linux.colorschemes -L
+          nix build .#checks.x86_64-linux.neovim -L

@@ -88,7 +88,12 @@ jobs:
           github_access_token: ${{ github.token }}
 
       - name: Run checks
-        run: nix flake check -L
+        run: |
+          nix build .#checks.x86_64-linux.lib -L
+          nix build .#checks.x86_64-linux.basic -L
+          nix build .#checks.x86_64-linux.plugins -L
+          nix build .#checks.x86_64-linux.colorschemes -L
+          nix build .#checks.x86_64-linux.neovim -L
 
   merge:
     runs-on: ubuntu-latest
