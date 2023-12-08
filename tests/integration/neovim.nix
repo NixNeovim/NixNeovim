@@ -39,7 +39,7 @@
     };
 
     nmt.script = testHelper.moduleTest ''
-    
+
       echo "Starting neovim via 'vi'"
       HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) vi -u $config --headless -c 'qall' 2>&1
 

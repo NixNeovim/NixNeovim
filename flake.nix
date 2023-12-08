@@ -149,10 +149,17 @@
               inherit pkgs;
               tests = import ./tests/function-tests.nix { inherit pkgs lib haumea; };
             };
+
           in
             lib.trace
               "Evaluating for ${system}"
-              lib.recursiveUpdate nmt-tests lib-checks;
+              {
+                lib = lib-checks.basic;
+                basic = nmt-tests.basic;
+                plugins = nmt-tests.plugins;
+                colorschemes = nmt-tests.colorschemes;
+                neovim = nmt-tests.neovim;
+              };
 
       });
 }

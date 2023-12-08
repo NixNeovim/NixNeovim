@@ -59,22 +59,33 @@ let
       (import ./nixneovim.nix { inherit haumea; })
     ];
 
-  tests = import nmt {
+  basicChecks = import nmt {
     inherit lib pkgs modules;
     testedAttrPath = [ "home" "activationPackage" ];
-    tests =
-      let
-        colorschemes = mergeValues integrationTests.colorschemes;
-        plugins = mergeValues integrationTests.plugins;
-
-      in with integrationTests; {
-          inherit (integrationTests)
-            neovim
-            neovim-use-plugin-defaults;
-        } //
-        basic-check //
-        colorschemes //
-        plugins;
+    tests = integrationTests.basic-check;
   };
 
-in tests.build
+  plugins = import nmt {
+    inherit lib pkgs modules;
+    testedAttrPath = [ "home" "activationPackage" ];
+    tests = mergeValues integrationTests.plugins;
+  };
+
+  colorschemes = import nmt {
+    inherit lib pkgs modules;
+    testedAttrPath = [ "home" "activationPackage" ];
+    tests = mergeValues integrationTests.colorschemes;
+  };
+
+  neovim = import nmt {
+    inherit lib pkgs modules;
+    testedAttrPath = [ "home" "activationPackage" ];
+    tests = { inherit (integrationTests) neovim neovim-use-plugin-defaults; };
+  };
+
+in {
+  basic = basicChecks.build.all;
+  plugins = plugins.build.all;
+  colorschemes = colorschemes.build.all;
+  neovim = neovim.build.all;
+}
