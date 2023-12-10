@@ -7,10 +7,24 @@
 
 let
 
+  inherit (builtins)
+    split
+    head;
+
   inherit (lib)
     mapAttrs
     elem
+    stringToCharacters
     filter;
+
+  disabledTests = [
+    "nvim-cmp"
+    "ghosttext" # NOTE: test does not terminate
+  ];
+
+  filterActive = names: filter (name: !(elem name disabledTests)) names;
+
+  ########################
 
   plugins =
     let
@@ -21,27 +35,24 @@ let
       pluginsNames = builtins.attrNames src.plugins;
       colorschemesNames = builtins.attrNames src.colorschemes;
 
+      active = filterActive pluginsNames;
+      group = letters:
+        filter (name: elem (head (stringToCharacters name)) (stringToCharacters letters)) active;
+
     in {
-      # inherit (src)
-        # plugins
-        # colorschemes;
-      # src.plugins; # TODO: add the other plugins
-      plugins = filterActive pluginsNames;
       colorschemes = filterActive colorschemesNames;
+      plugins-group1 = group "abcdefghi";
+      plugins-group2 = group "jklmnopqr";
+      plugins-group3 = group "stuvwxyz";
     };
 
-  disabledTests = [
-    "nvim-cmp"
-    "ghosttext" # NOTE: test does not terminate
-  ];
-
-  filterActive = names: filter (name: !(elem name disabledTests)) names;
-
   tests = mapAttrs
-    (type: set:
+    (group: set:
       map
         (name:
-          {
+          let
+            type = head (split "-" group);
+          in {
             "basic-check-${name}" =
               { ... }: {
                 programs.nixneovim.${type} = { ${name} = { enable = true; }; };
@@ -60,4 +71,9 @@ let
     )
     plugins;
 
-in builtins.foldl' (final: set: final // set) { } (tests.plugins ++ tests.colorschemes)
+in {
+  colorschemes = builtins.foldl' (final: set: final // set) { } tests.colorschemes;
+  group1 = builtins.foldl' (final: set: final // set) { } tests.plugins-group1;
+  group2 = builtins.foldl' (final: set: final // set) { } tests.plugins-group2;
+  group3 = builtins.foldl' (final: set: final // set) { } tests.plugins-group3;
+}

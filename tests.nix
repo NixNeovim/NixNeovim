@@ -30,6 +30,14 @@ let
       literalDocBook = super.literalDocBook or super.literalExample;
     });
 
+  # helper function to build nmt import function
+  nmtCheck = mods:
+    (import nmt {
+      inherit lib pkgs modules;
+      testedAttrPath = [ "home" "activationPackage" ];
+      tests = mods;
+    }).build.all;
+
   # base config; applied for all tests
   modules =
     (import (home-manager.outPath + "/modules/modules.nix") {
@@ -59,22 +67,16 @@ let
       (import ./nixneovim.nix { inherit haumea; })
     ];
 
-  tests = import nmt {
-    inherit lib pkgs modules;
-    testedAttrPath = [ "home" "activationPackage" ];
-    tests =
-      let
-        colorschemes = mergeValues integrationTests.colorschemes;
-        plugins = mergeValues integrationTests.plugins;
+in {
 
-      in with integrationTests; {
-          inherit (integrationTests)
-            neovim
-            neovim-use-plugin-defaults;
-        } //
-        basic-check //
-        colorschemes //
-        plugins;
-  };
+  basic-colorschemes = nmtCheck integrationTests.basic-check.colorschemes;
+  # Running all basic checks together requires a lot of memory. Therefore we split them up in groups
+  # see basic-check.nix
+  basic-group1 = nmtCheck integrationTests.basic-check.group1;
+  basic-group2 = nmtCheck integrationTests.basic-check.group2;
+  basic-group3 = nmtCheck integrationTests.basic-check.group3;
+  plugins = nmtCheck (mergeValues integrationTests.plugins);
+  colorschemes = nmtCheck (mergeValues integrationTests.colorschemes);
+  neovim = nmtCheck ({ inherit (integrationTests) neovim neovim-use-plugin-defaults; });
 
-in tests.build
+}
