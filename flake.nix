@@ -155,7 +155,10 @@
               "Evaluating for ${system}"
               {
                 lib = lib-checks.basic;
-                basic = nmt-tests.basic;
+                basic-colorschemes = nmt-tests.basic-colorschemes;
+                basic-group1 = nmt-tests.basic-group1;
+                basic-group2 = nmt-tests.basic-group2;
+                basic-group3 = nmt-tests.basic-group3;
                 plugins = nmt-tests.plugins;
                 colorschemes = nmt-tests.colorschemes;
                 neovim = nmt-tests.neovim;

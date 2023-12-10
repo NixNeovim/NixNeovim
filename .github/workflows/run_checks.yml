@@ -19,9 +19,11 @@ jobs:
         run: |
           nix build .#checks.x86_64-linux.lib -L
 
-      # - name: Basic checks
-        # run: |
-          # nix build .#checks.x86_64-linux.basic
+      - name: Basic checks
+        run: |
+          nix build .#checks.x86_64-linux.basic-group1 -L
+          nix build .#checks.x86_64-linux.basic-group2 -L
+          nix build .#checks.x86_64-linux.basic-group3 -L
 
       - name: Check plugins
         run: |
@@ -29,6 +31,7 @@ jobs:
 
       - name: Check colorschemes
         run: |
+          nix build .#checks.x86_64-linux.basic-colorschemes -L
           nix build .#checks.x86_64-linux.colorschemes -L
 
       - name: Check neovim module
