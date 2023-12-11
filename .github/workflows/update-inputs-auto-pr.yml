@@ -30,7 +30,7 @@
           # file_pattern: flake.lock
           # push_options: '--force'
 
-name: Update inputs, Create PR, and Run Tests
+name: Update inputs
 
 on:
   schedule:
@@ -53,18 +53,6 @@ jobs:
         run: |
           nix flake update
 
-      # - name: Commit changes
-        # uses: stefanzweifel/git-auto-commit-action@v4
-        # with:
-          # commit_user_name: NixNeovim-CI
-          # commit_user_email: ""
-          # commit_author: ""
-          # commit_message: 'CI: update inputs '
-          # file_pattern: flake.lock
-          # # push_options: '--force'
-          # branch: update-inputs-bot
-          # create_branch: true
-
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
@@ -72,7 +60,7 @@ jobs:
           title: "[BOT] Update inputs"
           branch: update-inputs-bot # merge from this branch
           base: main # merge into this branch
-          delete-branch: false
+          delete-branch: true
           add-paths: flake.lock
           labels: automerge
 

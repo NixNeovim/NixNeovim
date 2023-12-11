@@ -16,7 +16,7 @@ jobs:
         uses: NixNeovim/NixNeovim/.github/actions/checks@main
 
   merge:
-    if:  github.head_ref == 'update-input-bot' # only automatically merge update-input-bot branche
+    if:  github.head_ref == 'update-inputs-bot' # only automatically merge update-input-bot branche
     runs-on: ubuntu-latest
     needs: run-checks
     name: Merge PR
