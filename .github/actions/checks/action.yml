@@ -1,17 +1,9 @@
-name: Run Checks
 
-on:
-  push:
-  workflow_dispatch:
-  pull_request_target:
-    branches:
-      - main
+name: Run all nix checks
 
-
-jobs:
-  update-plugins:
-    runs-on: ubuntu-latest
-    name: Update plugins
+runs:
+  using: 'composite'
+  steps:
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v17
