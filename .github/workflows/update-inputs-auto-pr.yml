@@ -40,7 +40,7 @@ on:
 jobs:
   update-inputs:
     runs-on: ubuntu-latest
-
+    name: Update Inputs
     steps:
       - uses: actions/checkout@v3
         with:
