@@ -1,36 +1,4 @@
-# name: Update inputs
-
-# on:
-  # schedule:
-    # - cron: "5 14 * * 0,4"
-  # workflow_dispatch:
-
-# jobs:
-  # update-plugins:
-    # runs-on: ubuntu-latest
-    # name: Update plugins
-    # steps:
-      # - uses: actions/checkout@v3
-        # with:
-          # token: ${{ github.token }}
-          # ref: ${{ github.head_ref }}
-      # - uses: cachix/install-nix-action@v20
-        # with:
-          # github_access_token: ${{ github.token }}
-      # - name: Update inputs
-        # run: |
-          # nix flake update
-      # - name: Commit changes
-        # uses: stefanzweifel/git-auto-commit-action@v4
-        # with:
-          # commit_user_name: NixNeovim-CI
-          # commit_user_email: ""
-          # commit_author: ""
-          # commit_message: 'CI: update inputs '
-          # file_pattern: flake.lock
-          # push_options: '--force'
-
-name: Update inputs
+name: Update inputs with PR
 
 on:
   schedule:
