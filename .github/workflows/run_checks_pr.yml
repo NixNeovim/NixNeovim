@@ -13,15 +13,3 @@ jobs:
     steps:
       - name: Run checks
         uses: NixNeovim/NixNeovim/.github/actions/checks@main
-
-  merge:
-    if:  github.head_ref == 'update-inputs-bot' # only automatically merge update-input-bot branche
-    runs-on: ubuntu-latest
-    needs: run-checks
-    name: Merge PR
-    steps:
-      - name: Merge PR
-        uses: reitermarkus/automerge@v2.6.0
-        with:
-          token: ${{ github.token }}
-          merge-method: squash
