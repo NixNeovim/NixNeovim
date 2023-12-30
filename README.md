@@ -21,7 +21,7 @@ inputs.nixneovim.url = "github:nixneovim/nixneovim";
 ```
 
 Then, apply the overlay and import the modules.
-This is needed, because NixNeovim uses [nixpkgs-vim-extra-plugins](https://github.com/jooooscha/nixpkgs-vim-extra-plugins) to get access to more Neovim plugins.
+This is needed, because NixNeovim uses [NixNeovimPlugins](https://github.com/NixNeovim/NixNeovimPlugins) to get access to more Neovim plugins.
 
 ```nix
 {
