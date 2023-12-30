@@ -21,7 +21,7 @@ inputs.nixneovim.url = "github:nixneovim/nixneovim";
 ```
 
 Then, apply the overlay and import the modules.
-This is needed, because NixNeovim uses [nixpkgs-vim-extra-plugins](https://github.com/jooooscha/nixpkgs-vim-extra-plugins) to get access to more Neovim plugins.
+This is needed, because NixNeovim uses [NixNeovimPlugins](https://github.com/NixNeovim/NixNeovimPlugins) to get access to more Neovim plugins.
 
 ```nix
 {
@@ -73,10 +73,12 @@ A wiki for all options will be available in the near future.
     
     # to install plugins just activate their modules
     plugins = {
-      lsp = {
+      lspconfig = {
         enable = true;
-        hls.enable = true;
-        rust-analyzer.enable = true;
+        servers = {
+          hls.enable = true;
+          rust-analyzer.enable = true;
+        };
       };
       treesitter = {
         enable = true;
@@ -92,7 +94,7 @@ A wiki for all options will be available in the near future.
     # Not all plugins have own modules
     # You can add missing plugins here
     # `pkgs.vimExtraPlugins` is added by the overlay you added at the beginning
-    # For a list of available plugins, look here: [available plugins](https://github.com/jooooscha/nixpkgs-vim-extra-plugins/blob/main/plugins.md)
+    # For a list of available plugins, look here: [available plugins](https://github.com/NixNeovim/NixNeovimPlugins/blob/main/plugins.md)
     extraPlugins = [ pkgs.vimExtraPlugins.<plugin> ];
   };
 }
