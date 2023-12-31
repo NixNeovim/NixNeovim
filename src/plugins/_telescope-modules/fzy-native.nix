@@ -5,7 +5,7 @@ let
 in
 {
   options.programs.nixneovim.plugins.telescope.extensions.fzy-native = {
-    enable = mkEnableOption "Enable fzy-native";
+    enable = mkEnableOption "fzy-native";
 
     overrideGenericSorter = mkOption {
       type = types.nullOr types.bool;

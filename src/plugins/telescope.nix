@@ -72,7 +72,7 @@ in mkLuaPlugin {
 #   # ];
 
 #   options.programs.nixneovim.plugins.telescope = {
-#     enable = mkEnableOption "Enable telescope.nvim";
+#     enable = mkEnableOption "telescope.nvim";
 
 #     # extensionConfig = mkOption {
 #     #   type = types.attrsOf types.anything;

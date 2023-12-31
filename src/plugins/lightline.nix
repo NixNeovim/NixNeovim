@@ -6,7 +6,7 @@ in
 {
   options = {
     programs.nixneovim.plugins.lightline = {
-      enable = mkEnableOption "Enable lightline";
+      enable = mkEnableOption "lightline";
 
       colorscheme = mkOption {
         type = with types; nullOr str;

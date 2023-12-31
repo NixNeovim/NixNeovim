@@ -8,7 +8,7 @@ in
 
   options = {
     programs.nixneovim.plugins.commentary = {
-      enable = mkEnableOption "Enable commentary";
+      enable = mkEnableOption "commentary";
     };
   };
 

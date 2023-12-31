@@ -6,7 +6,7 @@ in
 {
   options = {
     programs.nixneovim.colorschemes.nord = {
-      enable = mkEnableOption "Enable nord";
+      enable = mkEnableOption "nord";
 
       contrast = mkEnableOption
         "Make sidebars and popup menus like nvim-tree and telescope have a different background";

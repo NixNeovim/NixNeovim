@@ -5,7 +5,7 @@ let
 in
 {
   options.programs.nixneovim.plugins.telescope.extensions.frecency = {
-    enable = mkEnableOption "Enable frecency";
+    enable = mkEnableOption "frecency";
 
     dbRoot = mkOption {
       type = types.nullOr types.str;

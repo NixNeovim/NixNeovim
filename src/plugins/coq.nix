@@ -6,7 +6,7 @@ in
 {
   options = {
     programs.nixneovim.plugins.coq = {
-      enable = mkEnableOption "Enable coq";
+      enable = mkEnableOption "coq";
 
       installArtifacts = mkEnableOption "Install coq-artifacts";
 

@@ -7,7 +7,7 @@ in
 {
   options = {
     programs.nixneovim.plugins.dashboard = {
-      enable = mkEnableOption "Enable dashboard";
+      enable = mkEnableOption "dashboard";
 
       header = mkOption {
         description = "Header text";

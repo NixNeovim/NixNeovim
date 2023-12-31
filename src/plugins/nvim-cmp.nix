@@ -30,7 +30,7 @@ in {
 
   # FIX: rtp attribute is deprecated, use outPath instead
   options.programs.nixneovim.plugins.nvim-cmp = {
-    enable = mkEnableOption "Enable nvim-cmp";
+    enable = mkEnableOption "nvim-cmp";
 
     inherit (super.nvim-cmp-modules)
       performance

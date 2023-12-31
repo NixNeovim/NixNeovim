@@ -6,7 +6,7 @@ in
 {
   options = {
     programs.nixneovim.plugins.undotree = {
-      enable = mkEnableOption "Enable undotree";
+      enable = mkEnableOption "undotree";
 
       windowLayout = mkOption {
         type = types.nullOr types.int;

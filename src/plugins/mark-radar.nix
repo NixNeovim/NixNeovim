@@ -7,7 +7,7 @@ let
 in
 {
   options.programs.nixneovim.plugins.mark-radar = {
-    enable = mkEnableOption "Enable mark-radar";
+    enable = mkEnableOption "mark-radar";
 
     highlight_background = mkOption {
       type = with types; nullOr bool;

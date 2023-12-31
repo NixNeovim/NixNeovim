@@ -27,7 +27,7 @@ let
 in {
   options = {
     programs.nixneovim.plugins.${name} = {
-      enable = mkEnableOption "Enable ${name}";
+      enable = mkEnableOption "${name}";
 
       presets = {
         activeWinsAtTall = boolOption false "";

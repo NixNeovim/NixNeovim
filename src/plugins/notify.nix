@@ -9,7 +9,7 @@ let
 in
 {
   options.programs.nixneovim.plugins.notify = {
-    enable = mkEnableOption "Enable notify";
+    enable = mkEnableOption "notify";
 
     stages = mkOption {
       type = types.nullOr (types.enum [ "fade_in_slide_out" "fade" "slide" "static" ]);

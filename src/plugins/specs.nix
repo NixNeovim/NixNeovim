@@ -8,7 +8,7 @@ let
 in
 {
   options.programs.nixneovim.plugins.specs = {
-    enable = mkEnableOption "Enable specs-nvim";
+    enable = mkEnableOption "specs-nvim";
 
     show_jumps = mkOption {
       type = types.bool;

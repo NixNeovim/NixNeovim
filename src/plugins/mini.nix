@@ -57,7 +57,7 @@ let
   moduleOptions = mapAttrs
     (module: config:
       config // {
-        enable = mkEnableOption "Enable mini.${module}";
+        enable = mkEnableOption "mini.${module}";
         extraConfig = mkOption {
           type = types.attrs;
           default = { };

@@ -10,7 +10,7 @@ in
   ];
 
   options.programs.nixneovim.plugins.null-ls = {
-    enable = mkEnableOption "Enable null-ls";
+    enable = mkEnableOption "null-ls";
 
     debug = mkOption {
       default = null;

@@ -6,7 +6,7 @@ in
 {
   options = {
     programs.nixneovim.plugins.trouble = {
-      enable = mkEnableOption "Enable trouble.nvim";
+      enable = mkEnableOption "trouble.nvim";
 
       position = mkOption {
         description = "position of the list";

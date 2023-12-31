@@ -5,7 +5,7 @@ let
 in
 {
   options.programs.nixneovim.plugins.nvim-autopairs = {
-    enable = mkEnableOption "Enable nvim-autopairs";
+    enable = mkEnableOption "nvim-autopairs";
 
     pairs = mkOption {
       type = types.nullOr (types.attrsOf types.str);

@@ -13,7 +13,7 @@ in
 {
   options = {
     programs.nixneovim.plugins.airline = {
-      enable = mkEnableOption "Enable airline";
+      enable = mkEnableOption "airline";
 
       extensions = mkOption {
         default = null;

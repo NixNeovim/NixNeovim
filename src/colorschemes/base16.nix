@@ -7,7 +7,7 @@ in
 {
   options = {
     programs.nixneovim.colorschemes.base16 = {
-      enable = mkEnableOption "Enable base16";
+      enable = mkEnableOption "base16";
 
       useTruecolor = mkOption {
         type = types.bool;
