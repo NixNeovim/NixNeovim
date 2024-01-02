@@ -60,7 +60,7 @@ in
 {
   options = {
     programs.nixneovim.plugins.lualine = {
-      enable = mkEnableOption "Enable lualine";
+      enable = mkEnableOption "lualine";
 
       theme = mkOption {
         default = config.programs.nixneovim.colorscheme;

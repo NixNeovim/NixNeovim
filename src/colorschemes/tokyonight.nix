@@ -7,7 +7,7 @@ in
 {
   options = {
     programs.nixneovim.colorschemes.tokyonight = {
-      enable = mkEnableOption "Enable tokyonight";
+      enable = mkEnableOption "tokyonight";
       style = mkOption {
         type = types.nullOr style;
         default = null;
@@ -20,7 +20,7 @@ in
       italicFunctions = mkEnableOption "Make functions italic";
       italicVariables = mkEnableOption "Make variables and identifiers italic";
       transparent =
-        mkEnableOption "Enable this to disable setting the background color";
+        mkEnableOption "this to disable setting the background color";
       hideInactiveStatusline = mkEnableOption
         "Enabling this option will hide inactive statuslines and replace them with a thin border";
       transparentSidebar = mkEnableOption

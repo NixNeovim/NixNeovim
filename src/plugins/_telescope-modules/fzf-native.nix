@@ -5,7 +5,7 @@ let
 in
 {
   options.programs.nixneovim.plugins.telescope.extensions.fzf-native = {
-    enable = mkEnableOption "Enable fzf-native";
+    enable = mkEnableOption "fzf-native";
 
     fuzzy = mkOption {
       type = types.nullOr types.bool;

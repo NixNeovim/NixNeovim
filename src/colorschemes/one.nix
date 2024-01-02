@@ -6,7 +6,7 @@ in
 {
   options = {
     programs.nixneovim.colorschemes.one = {
-      enable = mkEnableOption "Enable vim-one";
+      enable = mkEnableOption "vim-one";
     };
   };
 

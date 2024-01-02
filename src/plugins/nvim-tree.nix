@@ -5,7 +5,7 @@ let
 in
 {
   options.programs.nixneovim.plugins.nvim-tree = {
-    enable = mkEnableOption "Enable nvim-tree";
+    enable = mkEnableOption "nvim-tree";
 
     disableNetrw = mkOption {
       type = types.nullOr types.bool;

@@ -40,7 +40,7 @@ let
       options =
         let
           defaultOptions = {
-            enable = mkEnableOption "Enable ${name}";
+            enable = mkEnableOption "${name}";
             extraConfig = mkOption {
               type = types.attrs;
               default = { };

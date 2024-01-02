@@ -6,7 +6,7 @@ in
 {
   options = {
     programs.nixneovim.plugins.gitgutter = {
-      enable = mkEnableOption "Enable gitgutter";
+      enable = mkEnableOption "gitgutter";
 
       recommendedSettings = mkOption {
         type = types.bool;

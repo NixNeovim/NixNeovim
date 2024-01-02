@@ -24,7 +24,7 @@ in
 {
   options = {
     programs.nixneovim.plugins.bufferline = {
-      enable = mkEnableOption "Enable bufferline";
+      enable = mkEnableOption "bufferline";
       numbers = mkOption {
         type = types.nullOr types.lines;
         description = "A lua function customizing the styling of numbers.";

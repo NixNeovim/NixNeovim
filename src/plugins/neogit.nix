@@ -23,7 +23,7 @@ in
 {
   options = {
     programs.nixneovim.plugins.neogit = {
-      enable = mkEnableOption "Enable neogit";
+      enable = mkEnableOption "neogit";
 
       disableSigns = mkOption {
         description = "Disable signs";

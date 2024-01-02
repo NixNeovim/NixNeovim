@@ -7,12 +7,12 @@ in
 {
   options = {
     programs.nixneovim.colorschemes.gruvbox-nvim = {
-      enable = mkEnableOption "Enable gruvbox-nvim";
+      enable = mkEnableOption "gruvbox-nvim";
 
-      italics = mkEnableOption "Enable italics";
-      bold = mkEnableOption "Enable bold";
-      underline = mkEnableOption "Enable underlined text";
-      undercurl = mkEnableOption "Enable undercurled text";
+      italics = mkEnableOption "italics";
+      bold = mkEnableOption "bold";
+      underline = mkEnableOption "underlined text";
+      undercurl = mkEnableOption "undercurled text";
 
       contrastDark = mkOption {
         type = types.nullOr (types.enum [ "soft" "medium" "hard" ]);
@@ -106,7 +106,7 @@ in
 
       transparentBg = mkEnableOption "Transparent background";
 
-      trueColor = mkEnableOption "Enable true color support";
+      trueColor = mkEnableOption "true color support";
 
     };
   };

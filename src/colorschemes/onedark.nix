@@ -6,7 +6,7 @@ in
 {
   options = {
     programs.nixneovim.colorschemes.onedark = {
-      enable = mkEnableOption "Enable onedark";
+      enable = mkEnableOption "onedark";
     };
   };
 

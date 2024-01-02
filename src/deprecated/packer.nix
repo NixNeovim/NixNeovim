@@ -6,7 +6,7 @@ in
 {
   options = {
     programs.nixneovim.plugins.packer = {
-      enable = mkEnableOption "Enable packer.nvim";
+      enable = mkEnableOption "packer.nvim";
 
       plugins = mkOption {
         type = types.listOf (types.oneOf [

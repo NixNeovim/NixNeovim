@@ -6,7 +6,7 @@ in
 {
   options = {
     programs.nixneovim.plugins.floaterm = {
-      enable = mkEnableOption "Enable floaterm";
+      enable = mkEnableOption "floaterm";
       shell = mkOption {
         type = types.nullOr types.str;
         default = null;

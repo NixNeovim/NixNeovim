@@ -6,7 +6,7 @@ in
 {
   options = {
     programs.nixneovim.plugins.easyescape = {
-      enable = mkEnableOption "Enable easyescape";
+      enable = mkEnableOption "easyescape";
     };
   };
   config = mkIf cfg.enable {
