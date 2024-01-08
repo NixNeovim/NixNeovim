@@ -20,6 +20,7 @@ in {
               clangd.enable = true;
               nil.enable = false; # FIX: throws weired error if activated
               ruff-lsp.enable = true;
+              svelte-language-server.enable = true;
             };
             # extraLua.pre = ''
               # -- test lua pre comment
@@ -94,6 +95,17 @@ in {
                     require('lspconfig')["rust_analyzer"].setup(setup)
                   end -- lsp server config rust-analyzer
 
+                  do -- lsp server config svelte-language-server
+
+                    local setup =  {
+                     on_attach = function(client, bufnr)
+                       on_attach_global(client, bufnr)
+                     end,
+                    }
+
+                    require('lspconfig')["svelte"].setup(setup)
+                 end -- lsp server config svelte-language-server
+
                 end
                 success, output = pcall(setup) -- execute 'setup()' and catch any errors
                 if not success then
@@ -104,7 +116,7 @@ in {
               ${testHelper.config.end}
             ''
           }
-          for lang in rust c nix
+          for lang in rust c nix svelte
           do
             echo "Test lsp for filetype $lang"
             start_vim -c "set filetype=$lang" -c 'LspInfo' -c 'silent w! tmp.lsp.out'

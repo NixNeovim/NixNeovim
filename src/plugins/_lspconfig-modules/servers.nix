@@ -134,6 +134,11 @@ let
       serverName = "typst_lsp";
       packages = [ typst-lsp ];
     };
+    svelte-language-server = {
+      languages = "svelte";
+      serverName = "svelte";
+      packages = [ nodePackages.svelte-language-server ];
+    };
     vuels = {
       languages = "Vue";
       packages = [ nodePackages.vue-language-server ];
