@@ -129,6 +129,11 @@ let
     texlab = {
       languages = "latex";
     };
+    typescript-language-server = {
+      languages = "typescript";
+      serverName = "tsserver";
+      packages = [ nodePackages.typescript-language-server ];
+    };
     typst-lsp = {
       languages = "Typst";
       serverName = "typst_lsp";

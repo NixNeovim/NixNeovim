@@ -21,6 +21,7 @@ in {
               nil.enable = false; # FIX: throws weired error if activated
               ruff-lsp.enable = true;
               svelte-language-server.enable = true;
+              typescript-language-server.enable = true;
             };
             # extraLua.pre = ''
               # -- test lua pre comment
@@ -106,6 +107,17 @@ in {
                     require('lspconfig')["svelte"].setup(setup)
                  end -- lsp server config svelte-language-server
 
+                 do -- lsp server config typescript-language-server
+
+                   local setup =  {
+                     on_attach = function(client, bufnr)
+                       on_attach_global(client, bufnr)
+                     end,
+                   }
+
+                   require('lspconfig')["tsserver"].setup(setup)
+                 end -- lsp server config typescript-language-server
+
                 end
                 success, output = pcall(setup) -- execute 'setup()' and catch any errors
                 if not success then
@@ -116,7 +128,8 @@ in {
               ${testHelper.config.end}
             ''
           }
-          for lang in rust c nix svelte
+          # List of all filetypes (as recognised by neovim) this test should check
+          for lang in rust c nix svelte typescript
           do
             echo "Test lsp for filetype $lang"
             start_vim -c "set filetype=$lang" -c 'LspInfo' -c 'silent w! tmp.lsp.out'
