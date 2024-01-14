@@ -26,7 +26,7 @@ let
     background = {
       light = strOption "latte" "";
       dark = strOption "mocha" "";
-    }
+    };
     transparentBackground = boolOption false "Disable setting the background color.";
     showEndOfBuffer = boolOption false "Show '~' character after the end of buffers.";
     termColors = boolOption false "Set terminal colors.";
