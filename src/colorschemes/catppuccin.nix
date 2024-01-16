@@ -11,14 +11,15 @@ let
     toLuaObject;
 
   name = "catppuccin";
-  pluginUrl = "https://github.com/catppuccin/neovim";
+  pluginUrl = "https://github.com/catppuccin/nvim";
 
   cfg = config.programs.nixneovim.colorschemes.${name};
 
   inherit (helpers.custom_options)
     boolOption
     enumOption
-    intOption
+    floatOption
+    listOption
     strOption;
 
   moduleOptions = with helpers; {
@@ -33,7 +34,7 @@ let
     dimInactive = {
       enabled = boolOption false "Dim background color of active window.";
       shade = strOption "dark" "Set shade of dim color.";
-      percentage = intOption 0.15 "Percentage of the shade to apply to inactive window.";
+      percentage = floatOption 0.15 "Percentage of the shade to apply to inactive window.";
     };
     noItalic = boolOption false "Force no italic.";
     noBold = boolOption false "Force no bold.";
@@ -80,11 +81,8 @@ in mkLuaPlugin {
   ];
 
   extraConfigLua = ''
-    require('${name}').setup ${toLuaObject pluginOptions}
-    
     vim.cmd[[colorscheme catppuccin]]
   '';
   
-  defaultRequire = true;
   isColorscheme = true;
 }
