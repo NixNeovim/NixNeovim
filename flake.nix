@@ -5,7 +5,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     nmd = {
-      url = "sourcehut:~rycee/nmd";
+      url = "sourcehut:~rycee/nmd?rev=fb9cf8e991487c6923f3c654b8ae51b6f0f205ce";
       flake = false;
     };
     nmt = {
