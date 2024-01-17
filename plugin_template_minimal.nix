@@ -7,6 +7,11 @@ let
   name = "PLUGIN_NAME";
   pluginUrl = "PLUGIN_URL";
 
+  # only needed when the name of the name of the module/plugin does not match the
+  # name in the 'require("<...>")' call. For example, the plugin 'comment-frame'
+  # has to be called with 'require("nvim-comment-frame")'
+  # pluginName = ""
+
   inherit (helpers.custom_options)
     strOption
     listOption
