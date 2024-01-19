@@ -86,6 +86,7 @@ let
     lua-language-server = {
       languages = "Lua";
       packages = [ pkgs.lua-language-server ];
+      serverName = "lua_ls";
     };
     nil = {
       languages = "Nix";
