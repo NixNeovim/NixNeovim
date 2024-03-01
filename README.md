@@ -310,10 +310,6 @@ In the long term, all modules should be rewritten to use the `mkLuaPlugin` funct
 - I think this project deserves better
 
 
-## Support me personally
-
-<a href="https://www.buymeacoffee.com/jooooscha" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
-
 ## Options
 
 ```nix
@@ -344,3 +340,7 @@ leader key. This is easy with the `globals` attribute:
   };
 }
 ```
+
+## Support me personally
+
+<a href="https://www.buymeacoffee.com/jooooscha" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
