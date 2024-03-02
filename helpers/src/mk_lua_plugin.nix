@@ -26,7 +26,7 @@ let
   validUrl = url:
       hasPrefix "https://" url;
 
-in { name                          # name of the plugin module
+in { name                          # name of the plugin module. Will be used in the config name: `plugins.<name>.enable`
   , pluginName ? name              # name of the plugin as it appears in 'require("<pluginName>")' if different
   , pluginUrl ? ""                 # link to plugin project page
   , extraPlugins                   # plugin packages
@@ -60,6 +60,7 @@ in { name                          # name of the plugin module
 
     pluginOptions = flattenModuleOptions cfg moduleOptions; # rename converModuleOptions to 'addDefaultOptions' or similar
 
+    # Combine the url and other description strings
     fullDescription =
       warnIf (description != "") "${warnString}: 'description' is deprecated, please use extraDescription"
       warnIf (!validUrl pluginUrl) "${warnString}: Please add the 'pluginUrl' (like 'https://...')" (
