@@ -105,11 +105,11 @@
         "poetry2nix": "poetry2nix"
       },
       "locked": {
-        "lastModified": 1709475420,
-        "narHash": "sha256-klVqeDbh0gPsZ8haT411IIbuxIcg5OYN3f59ce5ydiM=",
+        "lastModified": 1709240484,
+        "narHash": "sha256-e7Azz4vD3ogyDbpfEbMunYjPOytBxvcwKblwkIu+Q+M=",
         "owner": "nixneovim",
         "repo": "nixneovimplugins",
-        "rev": "ebb9350a5774b2788f18aa9c7ec5673fd3e5ef99",
+        "rev": "27a92496c702a58705b02193462811b00793ed3c",
         "type": "github"
       },
       "original": {
