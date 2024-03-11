@@ -6,7 +6,7 @@ runs:
   steps:
     steps:
       - uses: actions/checkout@v3
-      - uses: cachix/install-nix-action@v17
+      - uses: cachix/install-nix-action@v26
       - name: Check Libs
         run: |
           nix build .#checks.x86_64-linux.lib -L

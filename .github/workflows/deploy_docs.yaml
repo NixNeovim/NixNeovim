@@ -11,7 +11,7 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
 
-      - uses: cachix/install-nix-action@v18
+      - uses: cachix/install-nix-action@v26
       - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
         run: nix build .#docs
 
@@ -31,7 +31,7 @@ jobs:
 #     runs-on: ubuntu-latest
 #     steps:
 #       - uses: actions/checkout@v3
-#       - uses: cachix/install-nix-action@v18
+#       - uses: cachix/install-nix-action@v26
 #       - name: Build docs
 #         run: nix build .#docs
 #       - name: Upload docs
