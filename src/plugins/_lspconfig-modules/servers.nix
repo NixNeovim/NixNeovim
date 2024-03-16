@@ -17,6 +17,9 @@ let
   inherit (lib.types)
     submodule;
 
+  inherit (builtins)
+    throw;
+
   mkServerOption = server: attr:
     mkOption {
       type = submodule {
@@ -99,11 +102,7 @@ let
     pyright = {
       languages = "Python";
     };
-    rnix-lsp = {
-      languages = "Nix";
-      packages = [ rnix-lsp ];
-      serverName = "rnix";
-    };
+    rnix-lsp = throw "rnix-lsp is unmaintained and deprecated";
     rust-analyzer = {
       languages = "Rust";
       serverName = "rust_analyzer";

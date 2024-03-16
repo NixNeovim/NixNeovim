@@ -16,9 +16,8 @@ in {
                 enable = true;
                 onAttachExtra = "-- test comment extra";
               };
-              rnix-lsp.enable = true;
               clangd.enable = true;
-              nil.enable = false; # FIX: throws weired error if activated
+              nil.enable = false; # FIX: throws '[LSP] No client with id 1' if activated
               ruff-lsp.enable = true;
               svelte-language-server.enable = true;
               typescript-language-server.enable = true;
@@ -59,15 +58,6 @@ in {
                     require('lspconfig')["clangd"].setup(setup)
                   end -- lsp server config clangd
 
-                  do -- lsp server config rnix-lsp
-                    local setup =  {
-                      on_attach = function(client, bufnr)
-                        on_attach_global(client, bufnr)
-                      end,
-                    }
-
-                    require('lspconfig')["rnix"].setup(setup)
-                  end -- lsp server config rnix-lsp
                   do -- lsp server config ruff-lsp
                    local setup =  {
                      on_attach = function(client, bufnr)
@@ -129,7 +119,7 @@ in {
             ''
           }
           # List of all filetypes (as recognised by neovim) this test should check
-          for lang in rust c nix svelte typescript
+          for lang in rust c svelte typescript # TODO: add 'nix'
           do
             echo "Test lsp for filetype $lang"
             start_vim -c "set filetype=$lang" -c 'LspInfo' -c 'silent w! tmp.lsp.out'
