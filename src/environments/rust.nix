@@ -157,6 +157,7 @@ in mkLuaPlugin {
 
   extraPackages = with pkgs; [
     cargo
+    rust-analyzer
   ];
 
   extraNixNeovimConfig = {
