@@ -7,7 +7,6 @@ let
   inherit (lib)
     mkOption
     mkEnableOption
-    optional
     flatten
     mapAttrs
     mapAttrsToList
@@ -16,9 +15,6 @@ let
 
   inherit (lib.types)
     submodule;
-
-  inherit (builtins)
-    throw;
 
   mkServerOption = server: attr:
     mkOption {
@@ -102,7 +98,6 @@ let
     pyright = {
       languages = "Python";
     };
-    rnix-lsp = throw "rnix-lsp is unmaintained and deprecated";
     rust-analyzer = {
       languages = "Rust";
       serverName = "rust_analyzer";
