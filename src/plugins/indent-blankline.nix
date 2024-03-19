@@ -70,13 +70,14 @@ let
   mkList = arg: if builtins.isList arg then arg else [ arg ];
   replaceColorsByName = map (e: if builtins.isList (builtins.match "#[A-Fa-f0-9]{6}" e) then "Ibl${removePrefix "#" e}" else e);
   colors = builtins.filter (e: builtins.isList (builtins.match "#[A-Fa-f0-9]{6}" e));
+  nullToEmpty = a: if a == null then [] else a;
 
   cfg = config.programs.nixneovim.plugins.${name};
   patchedCfg = (flattenModuleOptions cfg moduleOptions) // { 
-    indent = cfg.indent // { highlight = replaceColorsByName (mkList cfg.indent.highlight); };
-    scope = cfg.scope // { highlight = replaceColorsByName (mkList cfg.scope.highlight); };
+    indent = cfg.indent // { highlight = if cfg.indent.highlight == null then null else replaceColorsByName (mkList cfg.indent.highlight); };
+    scope = cfg.scope // { highlight = if cfg.scope.highlight == null then null else replaceColorsByName (mkList cfg.scope.highlight); };
   };
-  setHlStrings = map (color: "vim.api.nvim_set_hl(0, \"Ibl${removePrefix "#" color}\", { fg = \"${color}\" })") (unique (colors (mkList cfg.indent.highlight ++ mkList cfg.scope.highlight)));
+  setHlStrings = map (color: "vim.api.nvim_set_hl(0, \"Ibl${removePrefix "#" color}\", { fg = \"${color}\" })") (unique (colors (mkList (nullToEmpty cfg.indent.highlight) ++ mkList (nullToEmpty cfg.scope.highlight))));
   createHlString = ''
     local hooks = require "ibl.hooks"
     -- create the highlight groups in the highlight setup hook, so they are reset
@@ -90,10 +91,8 @@ in mkLuaPlugin {
   inherit name pluginName moduleOptions pluginUrl;
   defaultRequire = false;
   extraConfigLua = ''
-    ${cfg.extraLua.pre}
-    ${optionalString (true) createHlString}
+    ${optionalString (setHlStrings != []) createHlString}
     require('${pluginName}').setup ${toLuaObjectCustomConverter camelToSnake patchedCfg}
-    ${cfg.extraLua.post}
   '';
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
