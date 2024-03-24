@@ -119,10 +119,10 @@ in {
             ''
           }
           # List of all filetypes (as recognised by neovim) this test should check
-          for lang in rust c svelte typescript # TODO: add 'nix'
+          for lang in c svelte typescript rust # TODO: add 'nix'
           do
             echo "Test lsp for filetype $lang"
-            start_vim -c "set filetype=$lang" -c 'LspInfo' -c 'silent w! tmp.lsp.out'
+            start_vim -c "lua vim.lsp.set_log_level('debug')" -c "set filetype=$lang" -c 'LspInfo' -c 'silent w! tmp.lsp.out'
             if [ "$(grep -oP '(?<=cmd is executable: )true' tmp.lsp.out)" != "true" ]
             then
               echo "Could not execute lsp server for \"$lang\""

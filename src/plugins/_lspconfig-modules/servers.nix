@@ -101,7 +101,7 @@ let
     rust-analyzer = {
       languages = "Rust";
       serverName = "rust_analyzer";
-      packages = [ cargo rust-analyzer ];
+      packages = [ cargo rust-analyzer rustc ];
     };
     ruff-lsp = {
       languages = "Python";
