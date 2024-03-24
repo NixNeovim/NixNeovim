@@ -40,7 +40,7 @@ let
   serversSet = with pkgs; {
     bashls = {
       languages = "Bash";
-      packages = [ nodePackages.bash-language-server ];
+      packages = [ nodePackages.bash-language-server shellcheck ];
     };
     clangd = {
       languages = "C, C++";
