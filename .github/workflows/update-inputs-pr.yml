@@ -20,6 +20,7 @@ jobs:
       - name: Update inputs
         run: |
           nix flake update
+          echo "test" >> test.tmp
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
@@ -29,7 +30,8 @@ jobs:
           branch: update-inputs-bot # merge from this branch
           base: main # merge into this branch
           delete-branch: true
-          add-paths: flake.lock
+          # add-paths: flake.lock
+          add-paths: test.tmp
           labels: automerge
 
   nix-flake-check:
