@@ -17,12 +17,17 @@ jobs:
       - uses: cachix/install-nix-action@v26
         with:
           github_access_token: ${{ github.token }}
+
       - name: Update inputs
         run: |
           nix flake update
 
-      - name: Run checks
-        uses: NixNeovim/NixNeovim/.github/actions/checks@main
+      # - name: Run checks
+        # uses: NixNeovim/NixNeovim/.github/actions/checks@main
+
+      - name: TMP TEST
+        run: |
+          exit 1
 
       - name: Commit changes
         if: success()
