@@ -86,7 +86,7 @@ jobs:
 
       - name: Merge Pull Request
         if: steps.wait_for_checks.outputs.result == 'success'
-        uses: pullreminders/merge-me-action@v5
+        uses: ridedott/merge-me-action@v2.10.75
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           method: 'squash'
