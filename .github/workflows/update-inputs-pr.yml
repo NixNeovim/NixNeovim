@@ -68,30 +68,25 @@ jobs:
         run: |
           nix build .#checks.x86_64-linux.neovim -L
 
-  # merge:
-    # runs-on: ubuntu-latest
-    # needs: nix-flake-check
-    # name: Merge on success
-    # steps:
-      # - name: Merge Pull Request
-        # if: success()
-        # uses: actions/github-script@v5
-        # with:
-          # github-token: ${{ github.token }}
-          # script: |
-            # await github.pulls.merge({
-              # owner: context.repo.owner,
-              # repo: context.repo.repo,
-              # pull_number: context.payload.pull_request.number,
-            # });
+      - name: Wait for checks to complete
+        id: wait_for_checks
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: checks } = await github.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              branch: 'update-inputs-bot',
+              event: 'pull_request',
+              status: 'completed'
+            });
+            const successfulChecks = checks.workflow_runs.filter(run => run.conclusion === 'success');
+            return successfulChecks.length > 0 ? 'success' : 'failure';
 
-  # merge:
-    # runs-on: ubuntu-latest
-    # needs: run-checks
-    # name: Merge PR
-    # steps:
-      # - name: Merge PR
-        # uses: reitermarkus/automerge@v2.6.0
-        # with:
-          # token: ${{ github.token }}
-          # merge-method: squash
+      - name: Merge Pull Request
+        if: steps.wait_for_checks.outputs.result == 'success'
+        uses: pullreminders/merge-me-action@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          method: 'squash'
