@@ -20,75 +20,29 @@ jobs:
       - name: Update inputs
         run: |
           nix flake update
-          echo "test" >> test.tmp
+
+      - name: Run checks
+        uses: NixNeovim/NixNeovim/.github/actions/checks@main
+
+      - name: Commit changes
+        if: success()
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_user_name: NixNeovim-CI
+          commit_user_email: ""
+          commit_author: ""
+          commit_message: 'CI: update inputs'
+          file_pattern: flake.lock
+          push_options: '--force'
 
       - name: Create Pull Request
+        if: failure()
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ github.token }}
-          title: "[BOT] Update inputs"
+          title: "[BOT] Update inputs failed"
           branch: update-inputs-bot # merge from this branch
           base: main # merge into this branch
           delete-branch: true
-          # add-paths: flake.lock
-          add-paths: test.tmp
+          add-paths: flake.lock
           labels: automerge
-
-  nix-flake-check:
-    runs-on: ubuntu-latest
-    needs: update-inputs
-    name: Run checks
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          token: ${{ github.token }}
-          ref: update-inputs-bot
-      - uses: cachix/install-nix-action@v26
-        with:
-          github_access_token: ${{ github.token }}
-
-      - name: Check Libs
-        run: |
-          nix build .#checks.x86_64-linux.lib -L
-
-      - name: Basic checks
-        run: |
-          nix build .#checks.x86_64-linux.basic-group1 -L
-          nix build .#checks.x86_64-linux.basic-group2 -L
-          nix build .#checks.x86_64-linux.basic-group3 -L
-
-      - name: Check plugins
-        run: |
-          nix build .#checks.x86_64-linux.plugins -L
-
-      - name: Check colorschemes
-        run: |
-          nix build .#checks.x86_64-linux.basic-colorschemes -L
-          nix build .#checks.x86_64-linux.colorschemes -L
-
-      - name: Check neovim module
-        run: |
-          nix build .#checks.x86_64-linux.neovim -L
-
-      - name: Wait for checks to complete
-        id: wait_for_checks
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: checks } = await github.actions.listWorkflowRuns({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              branch: 'update-inputs-bot',
-              event: 'pull_request',
-              status: 'completed'
-            });
-            const successfulChecks = checks.workflow_runs.filter(run => run.conclusion === 'success');
-            return successfulChecks.length > 0 ? 'success' : 'failure';
-
-      - name: Merge Pull Request
-        if: steps.wait_for_checks.outputs.result == 'success'
-        uses: ridedott/merge-me-action@v2.10.75
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          method: 'squash'
