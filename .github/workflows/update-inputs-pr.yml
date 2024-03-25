@@ -22,12 +22,8 @@ jobs:
         run: |
           nix flake update
 
-      # - name: Run checks
-        # uses: NixNeovim/NixNeovim/.github/actions/checks@main
-
-      - name: TMP TEST
-        run: |
-          exit 1
+      - name: Run checks
+        uses: NixNeovim/NixNeovim/.github/actions/checks@main
 
       - name: Commit changes
         if: success()
@@ -51,3 +47,4 @@ jobs:
           delete-branch: true
           add-paths: flake.lock
           labels: automerge
+          body: "Updating inputs failed. See ${{ github.workflow }}"
