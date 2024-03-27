@@ -12,38 +12,52 @@ let
 
   inherit (helpers.custom_options)
     attrsOption
-    strOption
     enumOption
     boolOption;
 
-  colors = [ "base" "surface" "overlay" "muted" "subtle" "text" "love" "gold" "rose" "pine" "foam" "iris" "highlight_low" "highlight_med" "highlight_high" "_experimental_nc" ];
+  colors = [ "base" "surface" "overlay" "muted" "subtle" "text" "love" "gold" "rose" "pine" "foam" "iris" "highlight_low" "highlight_med" "highlight_high" ];
 
   moduleOptions = {
     variant = enumOption [ "auto" "main" "moon" "dawn" ] "auto" "";
     dark_variant = enumOption [ "main" "moon" "dawn" ] "main" "";
-    bold_vert_split = boolOption false "Disable bold vertical split";
-    dim_nc_background = boolOption false "Dim the nc background";
-    disable_background = boolOption false "Disable the background";
-    disable_float_background = boolOption false "Disable the float background";
-    disable_italics = boolOption false "Disable italics";
+    dim_inactive_windows = boolOption false;
+    extend_background_behind_borders = boolOption true;
+
+    enable = {
+      terminal = boolOption true;
+      legacy_highlights = boolOption true;
+      migrations = boolOption true;
+    };
+
+    styles = {
+      bold = boolOption true "Enable bold";
+      italic = boolOption true "Enable italics";
+      transparency = boolOption false "Enable transparency";
+    };
 
     groups = {
-      background = enumOption colors "base" "Set the color of the background";
-      background_nc = enumOption colors "_experimental_nc" "Sets the color of the nc background";
-      panel = enumOption colors "surface" "Set the color of the panel";
-      panel_nc = enumOption colors "base" "Set the color of the panel nc";
-      border = enumOption colors "highlight_med" "Set the color of the border";
-      comment = enumOption colors "muted" "Set the color of the comments";
-      link = enumOption colors "iris" "Set the color of the links";
-      punctuation = enumOption colors "subtle" "Set the color of the punctuation";
+      border = enumOption colors "muted" "Set the color of borders";
+      link = enumOption colors "iris" "Set the color of links";
+      panel = enumOption colors "surface" "Set the color of panels";
 
       error = enumOption colors "love" "Set the color of errors";
       hint = enumOption colors "iris" "Set the color of hints";
       info = enumOption colors "foam" "Set the color of info";
+      note = enumOption colors "pine" "Set the color of note";
+      todo = enumOption colors "rose" "Set the color of todo";
       warn = enumOption colors "gold" "Set the color of warnings";
-    };
 
-    headings = {
+      git_add = enumOption colors "foam" "Set the color of Git add";        
+      git_change = enumOption colors "rose" "Set the color of Git change";
+      git_delete = enumOption colors "love" "Set the color of Git delete";
+      git_dirty = enumOption colors "rose" "Set the color of Git dirty";
+      git_ignore = enumOption colors "muted" "Set the color of Git ignore";
+      git_merge = enumOption colors "iris" "Set the color of Git merge";
+      git_rename = enumOption colors "pine" "Set the color of Git rename";
+      git_stage = enumOption colors "iris" "Set the color of Git stage";
+      git_text = enumOption colors "rose" "Set the color of Git text";
+      git_untracked = enumOption colors "subtle" "Set the color of Git untracked";
+
       h1 = enumOption colors "iris" "Set the color of heading 1";
       h2 = enumOption colors "foam" "Set the color of heading 2";
       h3 = enumOption colors "rose" "Set the color of heading 3";
