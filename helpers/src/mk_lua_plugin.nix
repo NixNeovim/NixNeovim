@@ -6,9 +6,11 @@ let
     hasAttr
     mkIf
     optionalString
+    mapAttrsToList
     replaceStrings
     stringLength
     hasPrefix
+    concatStringsSep
     warnIf;
 
   inherit (super.generator)
@@ -16,6 +18,7 @@ let
 
   inherit (super.converter)
     toLuaObjectCustomConverter
+    toLuaObject
     camelToSnake
     flattenModuleOptions;
 
@@ -92,23 +95,32 @@ in { name                          # name of the plugin module. Will be used in 
 
   # function output
   {
-    # add module to 'plugins'/'colorschemes'
-    options.programs.nixneovim.${type}.${name} =
-            (defaultModuleOptions fullDescription) // moduleOptions;
-    # options = (defaultModuleOptions fullDescription) // moduleOptions;
 
-    # new
+    # export all options the module should have, including all general options like 'enable'
     configOptions =
             (defaultModuleOptions fullDescription) // moduleOptions;
 
-    # new
+    # export everything that is placed in the init.lua if the plugin is active
     luaConfigOutput =
+      let
+        extraOptionsConverted =
+          let
+            list = mapAttrsToList
+              (option: value:
+                "vim.o.${option} = ${toLuaObject value}"
+              )
+              extraOptions;
+          in concatStringsSep "\n" list;
+      in
       ''
       -- config for plugin: ${name}
       do
         function setup()
           ${cfg.extraLua.pre}
+
           ${replaceStrings ["\n"] ["\n${indent 2}"] luaConfig}
+          ${extraOptionsConverted}
+
           ${cfg.extraLua.post}
         end
         success, output = pcall(setup) -- execute 'setup()' and catch any errors
@@ -121,26 +133,7 @@ in { name                          # name of the plugin module. Will be used in 
 
     config.programs.nixneovim =
       mkIf cfg.enable (extraNixNeovimConfig // {
-        inherit extraPlugins extraPackages extraConfigVim;
-
-        extraConfigLua = optionalString
-          (cfg.extraLua.pre != "" || cfg.extraLua.post != "" || luaConfig != "\n\n")
-          ''
-
-          -- config for plugin: ${name}
-          do
-            function setup()
-              ${cfg.extraLua.pre}
-              ${replaceStrings ["\n"] ["\n${indent 2}"] luaConfig}
-              ${cfg.extraLua.post}
-            end
-            success, output = pcall(setup) -- execute 'setup()' and catch any errors
-            if not success then
-              print("Error on setup for plugin: ${name}")
-              print(output)
-            end
-          end
-        '';
-        options = extraOptions;
+        inherit extraPlugins extraPackages extraConfigVim; #TODO: port this line
+        # options = extraOptions;
       });
   }
