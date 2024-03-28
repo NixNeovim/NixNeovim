@@ -7,6 +7,7 @@ let
   mappings = helpers.keymapping;
 
   inherit (helpers) augroups;
+  inherit (types) submodule;
 
   pluginWithConfigType = types.submodule {
     options = {
@@ -35,36 +36,30 @@ let
     };
   };
 
-  plugins =
-    let
-      src = haumea.lib.load {
-        src = ./src;
-        inputs = {
-          inherit helpers config pkgs lib state;
-        };
-      };
-    in src.plugins //
-      src.environments //
-      src.colorschemes; # TODO: add the other plugins
 
+  src = haumea.lib.load {
+    src = ./src;
+    inputs = {
+      inherit helpers config pkgs lib state;
+    };
+  };
+
+  # plugins =
+    # let
+      # src = haumea.lib.load {
+        # src = ./src;
+        # inputs = {
+          # inherit helpers config pkgs lib state;
+        # };
+      # };
+    # in src.plugins //
+      # src.environments //
+      # src.colorschemes;
 
 in {
 
   imports = [
-    # manually importing './plugins' prevents infinite loop
-    # (import ./plugins { inherit pkgs lib config helpers plugins; })
-    ({
-      imports = lib.mapAttrsToList
-        (key: value: value)
-          # if key == "numb" || key == "bamboo" then
-            # lib.trace
-              # key
-              # lib.traceSeqN 1 value.options.programs.nixneovim
-                # value
-          # else
-            # value)
-        plugins;
-    })
+    # { imports = lib.mapAttrsToList (key: value: value) plugins; }
   ];
 
   options = {
@@ -93,21 +88,35 @@ in {
         '';
       };
 
+      colorschemes = lib.mapAttrs (_: attrs: attrs.configOptions) src.colorschemes;
+      plugins = lib.mapAttrs (_: attrs: attrs.configOptions) src.environments // src.plugins;
+
       package = mkOption {
         type = types.nullOr types.package;
         default = null;
         description = "The package to use for neovim.";
       };
 
-      # plugins = mkOption {
-        # type = types.attrsOf types.anything;
-        # default = {};
-      # };
+      ftplugin = mkOption {
+        type = types.attrsOf (
+          types.submodule (
+            { name, config, ... }: {
+              options = {
+                enable = mkOption {
+                  type = types.bool;
+                  default = true;
+                };
 
-      # colorschems = mkOption {
-        # type = types.anything;
-        # default = {};
-      # };
+                colorschemes = let
+                  c = lib.mapAttrs (_: attrs: attrs.configOptions) src.colorschemes;
+                in c;
+                # TODO: add all other options
+              };
+            }
+          )
+        );
+        default = {};
+      };
 
       extraPlugins = mkOption {
         type = with types; listOf (either package pluginWithConfigType);
@@ -286,7 +295,14 @@ in {
         in concatStringsSep "\n" list;
 
 
-      luaConfig = ''
+      luaConfig = let
+
+        activeColorschemes =
+          lib.filterAttrs (cs: _: cfg.colorschemes.${cs}.enable == true) src.colorschemes;
+
+        colorschemeConfig = lib.concatStringsSep "\n"
+            (mapAttrsToList (_: attrs: attrs.luaConfigOutput) activeColorschemes);
+      in ''
         ${cfg.extraLuaPreConfig}
         --------------------------------------------------
         --                 Globals                      --
@@ -317,6 +333,7 @@ in {
         --------------------------------------------------
 
         ${cfg.extraConfigLua}
+        ${colorschemeConfig}
 
         ${
           # Set colorscheme after setting globals.
@@ -364,6 +381,27 @@ in {
             extraLuaConfig = luaConfig;
             plugins = cfg.extraPlugins;
           } // (optionalAttrs (state > 2211) { defaultEditor = cfg.defaultEditor; }); # only add defaultEditor when over nixpkgs release 22-11
+
+          xdg.configFile =
+            # take everything defined by the user in 'nixneovim.ftplugins.<filetype>'
+            # and evaluate options (ftpl)
+            lib.mapAttrs'
+              (filetype: attrs:
+                {
+                  # write file as defined in 'nixneovim.ftplugins.<filetype>'
+                  name = "nvim/ftplugin/${filetype}";
+                  value = {
+                    # read lua config as defined by respective mkLuaPlugin call of colorscheme
+                    text = let
+                      # filter active colorschemes
+                      activeColorschemes =
+                        lib.filterAttrs (cs: _: attrs.colorschemes.${cs}.enable == true) src.colorschemes;
+                    in lib.concatStringsSep "\n"
+                      (mapAttrsToList (_: attrs: attrs.luaConfigOutput) activeColorschemes);
+                  };
+                }
+              )
+              cfg.ftplugin;
         }
       else
         {
