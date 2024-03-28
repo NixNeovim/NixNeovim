@@ -45,26 +45,13 @@ let
       };
     in src.plugins //
       src.environments //
-      src.colorschemes; # TODO: add the other plugins
+      src.colorschemes;
 
 
 in {
 
   imports = [
-    # manually importing './plugins' prevents infinite loop
-    # (import ./plugins { inherit pkgs lib config helpers plugins; })
-    ({
-      imports = lib.mapAttrsToList
-        (key: value: value)
-          # if key == "numb" || key == "bamboo" then
-            # lib.trace
-              # key
-              # lib.traceSeqN 1 value.options.programs.nixneovim
-                # value
-          # else
-            # value)
-        plugins;
-    })
+    { imports = lib.mapAttrsToList (key: value: value) plugins; }
   ];
 
   options = {
@@ -98,16 +85,6 @@ in {
         default = null;
         description = "The package to use for neovim.";
       };
-
-      # plugins = mkOption {
-        # type = types.attrsOf types.anything;
-        # default = {};
-      # };
-
-      # colorschems = mkOption {
-        # type = types.anything;
-        # default = {};
-      # };
 
       extraPlugins = mkOption {
         type = with types; listOf (either package pluginWithConfigType);
