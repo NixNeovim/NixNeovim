@@ -97,6 +97,28 @@ in { name                          # name of the plugin module. Will be used in 
             (defaultModuleOptions fullDescription) // moduleOptions;
     # options = (defaultModuleOptions fullDescription) // moduleOptions;
 
+    # new
+    configOptions =
+            (defaultModuleOptions fullDescription) // moduleOptions;
+
+    # new
+    luaConfigOutput =
+      ''
+      -- config for plugin: ${name}
+      do
+        function setup()
+          ${cfg.extraLua.pre}
+          ${replaceStrings ["\n"] ["\n${indent 2}"] luaConfig}
+          ${cfg.extraLua.post}
+        end
+        success, output = pcall(setup) -- execute 'setup()' and catch any errors
+        if not success then
+          print("Error on setup for plugin: ${name}")
+          print(output)
+        end
+      end
+    '';
+
     config.programs.nixneovim =
       mkIf cfg.enable (extraNixNeovimConfig // {
         inherit extraPlugins extraPackages extraConfigVim;

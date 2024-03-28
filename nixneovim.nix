@@ -7,6 +7,7 @@ let
   mappings = helpers.keymapping;
 
   inherit (helpers) augroups;
+  inherit (types) submodule;
 
   pluginWithConfigType = types.submodule {
     options = {
@@ -35,6 +36,14 @@ let
     };
   };
 
+
+  src = haumea.lib.load {
+    src = ./src;
+    inputs = {
+      inherit helpers config pkgs lib state;
+    };
+  };
+
   plugins =
     let
       src = haumea.lib.load {
@@ -47,11 +56,10 @@ let
       src.environments //
       src.colorschemes;
 
-
 in {
 
   imports = [
-    { imports = lib.mapAttrsToList (key: value: value) plugins; }
+    # { imports = lib.mapAttrsToList (key: value: value) plugins; }
   ];
 
   options = {
@@ -80,10 +88,30 @@ in {
         '';
       };
 
+      colorschemes = let
+        c = lib.mapAttrs (_: attrs: attrs.configOptions) src.colorschemes;
+      in c;
+
       package = mkOption {
         type = types.nullOr types.package;
         default = null;
         description = "The package to use for neovim.";
+      };
+
+      ftplugin = mkOption {
+        type = types.attrsOf (
+          types.submodule (
+            { name, config, ... }: {
+              options = {
+                enable = mkOption {
+                  type = types.bool;
+                  default = true;
+                };
+              };
+            }
+          )
+        );
+        default = {};
       };
 
       extraPlugins = mkOption {
@@ -263,7 +291,14 @@ in {
         in concatStringsSep "\n" list;
 
 
-      luaConfig = ''
+      luaConfig = let
+
+        activeColorschemes =
+          lib.filterAttrs (cs: _: cfg.colorschemes.${cs}.enable == true) src.colorschemes;
+
+        colorschemeConfig = lib.concatStringsSep "\n"
+            (mapAttrsToList (_: attrs: attrs.luaConfigOutput) activeColorschemes);
+      in ''
         ${cfg.extraLuaPreConfig}
         --------------------------------------------------
         --                 Globals                      --
@@ -294,6 +329,7 @@ in {
         --------------------------------------------------
 
         ${cfg.extraConfigLua}
+        ${colorschemeConfig}
 
         ${
           # Set colorscheme after setting globals.
@@ -341,6 +377,14 @@ in {
             extraLuaConfig = luaConfig;
             plugins = cfg.extraPlugins;
           } // (optionalAttrs (state > 2211) { defaultEditor = cfg.defaultEditor; }); # only add defaultEditor when over nixpkgs release 22-11
+
+          xdg.configFile = {
+            "nvim/ftplugin/c.lua" = {
+              text = ''
+                
+              '';
+            };
+          };
         }
       else
         {
