@@ -30,6 +30,8 @@ def deep_merge(source, destination):
     return destination
 
 def get_plugins_json() -> dict:
+    """fetch plugins awailable in NixNeovimPlugins"""
+
     url = "https://raw.githubusercontent.com/NixNeovim/NixNeovimPlugins/main/.plugins.json"
     response = requests.get(url)
     if response.status_code == 200:
@@ -39,12 +41,6 @@ def get_plugins_json() -> dict:
     else:
         raise NetworkException(f"Could not fetch plugin data: {response.status_code}")
 
-#  def check_plugin_used(plugin):
-    #  result = subprocess.run(['rg', plugin], capture_output=False, text=False, check=False)
-    #  exit_code = result.returncode
-
-    #  return exit_code == 0
-
 def main(plugin, repo):
 
     # convert json to object
@@ -52,12 +48,6 @@ def main(plugin, repo):
 
     name = data.name
     homepage = data.homepage
-    #  repo = plugin
-
-    #  if check_plugin_used(name):
-        #  print("exists")
-    #  else:
-        #  print("needed")
 
     # extract relevant lua snippets from README
     lua: list[str]|None = parse_readme(repo)
@@ -95,9 +85,9 @@ def main(plugin, repo):
 
     # write new plugin file
 
-    PluginFile(name, homepage, nix_options)
+    print("skipping writing file")
+    #  PluginFile(name, homepage, nix_options)
 
-    #  info(f"Done {i}/{len(plugins)}")
     info(f"Done")
 
 if __name__ == "__main__":
@@ -113,17 +103,11 @@ if __name__ == "__main__":
 
     plugin = None
 
-    try:
+    if input_name in plugins:
         plugin = plugins[input_name]
-    except:
+        main(plugin, input_name)
+    else:
         print(f"Plugin '{input_name}' unknown")
         print()
         print("nix run .#configparser -- <plugin-name>")
         exit()
-
-    if plugin:
-        main(plugin, input_name)
-
-    #  # go through all plugins and generate config
-    #  for plugin in plugins:
-        #  main(plugin)
