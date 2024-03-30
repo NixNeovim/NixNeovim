@@ -11,6 +11,7 @@ from errors import *
 from log import *
 #  import subprocess
 import sys
+import fileinput
 
 def deep_merge(source, destination):
     """
@@ -41,7 +42,7 @@ def get_plugins_json() -> dict:
     else:
         raise NetworkException(f"Could not fetch plugin data: {response.status_code}")
 
-def main(plugin, repo):
+def fetch(plugin, repo):
 
     # convert json to object
     data = json.loads(plugin, object_hook=lambda d: SimpleNamespace(**d))
@@ -50,16 +51,19 @@ def main(plugin, repo):
     homepage = data.homepage
 
     # extract relevant lua snippets from README
-    lua: list[str]|None = parse_readme(repo)
+    lua_blocks: list[str]|None = parse_readme(repo)
 
-    if lua is None:
-        return
+    if lua_blocks is None:
+        exit("Could not find lua blocks")
 
+    return lua_blocks, name, homepage
+
+def parse(lua_blocks: list[str], name, homepage):
     # parse extracted code block to lua
 
     code_list = [] # list of extraced code blocks
-    for j, section in enumerate(lua):
-        debug(f"Parsing {j+1}/{len(lua)}")
+    for j, section in enumerate(lua_blocks):
+        debug(f"Parsing {j+1}/{len(lua_blocks)}")
         parsed = Parser().parse(section)
         if parsed is not None:
             code_list.append(parsed)
@@ -85,8 +89,7 @@ def main(plugin, repo):
 
     # write new plugin file
 
-    print("skipping writing file")
-    #  PluginFile(name, homepage, nix_options)
+    PluginFile(name, homepage, nix_options).write()
 
     info(f"Done")
 
@@ -98,6 +101,12 @@ if __name__ == "__main__":
         print("nix run .#configparser -- <plugin-name>")
         exit()
 
+    if sys.argv[1] == "-":
+        print("Reading from stdin")
+        content = "\n".join([ str(line) for line in fileinput.input()])
+        parse([content])
+
+
     # load plugin information
     plugins = get_plugins_json()
 
@@ -105,7 +114,8 @@ if __name__ == "__main__":
 
     if input_name in plugins:
         plugin = plugins[input_name]
-        main(plugin, input_name)
+        lua_blocks, name, homepage = fetch(plugin, input_name)
+        parse(lua_blocks, name, homepage)
     else:
         print(f"Plugin '{input_name}' unknown")
         print()

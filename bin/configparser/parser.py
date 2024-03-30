@@ -203,7 +203,6 @@ class Parser:
                         last_comment = None
                     ret.add(field_list)
 
-        exit()
         return ret
 
 
