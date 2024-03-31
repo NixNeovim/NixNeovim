@@ -24,8 +24,10 @@ let
 
   moduleOptionsVim = {
     # add module options here
-    maxWidth = intOption 80 "Number of columns to display foldtext";
-    fillString = strOption "    -" "String used to fill the space between account name and amount in the foldtext";
+    maxwidth = intOption 80 "Number of columns to display foldtext";
+    fillstring = strOption "    -" "String used to fill the space between account name and amount in the foldtext";
+    detailedFirst = boolOption true "Account completion sorted by depth instead of alphabetically";
+    foldBlanks = boolOption false "Hide blank lines following a transaction on a fold";
   };
 
 in mkLuaPlugin {
@@ -48,6 +50,4 @@ in mkLuaPlugin {
     vim-ledger
   ];
   defaultRequire = false;
-
-  configConverter = toLower;
 }

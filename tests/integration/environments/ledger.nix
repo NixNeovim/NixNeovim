@@ -12,8 +12,8 @@ in {
         programs.nixneovim.plugins = {
           "${name}" = {
             enable = true;
-            maxWidth = 80;
-            fillString = "   -";
+            maxwidth = 80;
+            fillstring = "   -";
             extraLua.pre = ''
               -- test lua pre comment
             '';
@@ -31,7 +31,9 @@ in {
               do
                 function setup()
                   -- test lua pre comment
+                  vim.g.ledger_detailed_first = true
                   vim.g.ledger_fillstring = "    -"
+                  vim.g.ledger_fold_blanks = false
                   vim.g.ledger_maxwidth = 80
                   -- test lua post comment
                 end
