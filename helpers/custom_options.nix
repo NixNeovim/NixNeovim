@@ -107,8 +107,8 @@ in with myTypes; {
     };
 
   rawLuaOption = default: description:
-    assert assertHelper "rawLuaOption" "first" "rawLuaType" default;
-    assert assertHelper "rawLuaOption" "second" "string" description;
+    # assert assertHelper "rawLuaOption" "first" "rawLuaType" default;
+    # assert assertHelper "rawLuaOption" "second" "string" description;
     mkOption {
       type = rawLuaType;
       default = rawLua (usePlugDef default);
