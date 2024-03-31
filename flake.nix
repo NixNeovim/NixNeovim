@@ -163,6 +163,7 @@
                 basic-group3 = nmt-tests.basic-group3;
                 plugins = nmt-tests.plugins;
                 colorschemes = nmt-tests.colorschemes;
+                environments = nmt-tests.environments;
                 neovim = nmt-tests.neovim;
               };
 
