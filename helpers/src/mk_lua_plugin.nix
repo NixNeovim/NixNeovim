@@ -61,6 +61,7 @@ in { name                          # name of the plugin module. Will be used in 
     cfg = config.programs.nixneovim.${type}.${name};
 
     pluginOptions = flattenModuleOptions cfg moduleOptions; # rename converModuleOptions to 'addDefaultOptions' or similar
+    vimStyleOptions = toVimOptions' configConverter cfg name moduleOptionsVim;
 
     # Combine the url and other description strings
     fullDescription =
@@ -85,8 +86,6 @@ in { name                          # name of the plugin module. Will be used in 
         ${optionalString defaultRequire "require('${pluginName}').setup ${toLuaObjectCustomConverter configConverter pluginOptions}"}
         ${extraConfigLua}
       '';
-
-    vimStyleOptions = toVimOptions' configConverter cfg name moduleOptionsVim;
 
   in
 
