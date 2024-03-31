@@ -1,60 +1,72 @@
-{ pkgs, config, lib }:
-with lib;
+{ pkgs, lib, helpers, ... }:
+
 let
-  cfg = config.programs.nixneovim.colorschemes.tokyonight;
-  style = types.enum [ "storm" "night" "day" ];
-in
-{
-  options = {
-    programs.nixneovim.colorschemes.tokyonight = {
-      enable = mkEnableOption "tokyonight";
-      style = mkOption {
-        type = types.nullOr style;
-        default = null;
-        description = "Theme style";
-      };
-      terminalColors = mkEnableOption
-        "Configure the colors used when opening a :terminal in Neovim";
-      italicComments = mkEnableOption "Make comments italic";
-      italicKeywords = mkEnableOption "Make keywords italic";
-      italicFunctions = mkEnableOption "Make functions italic";
-      italicVariables = mkEnableOption "Make variables and identifiers italic";
-      transparent =
-        mkEnableOption "this to disable setting the background color";
-      hideInactiveStatusline = mkEnableOption
-        "Enabling this option will hide inactive statuslines and replace them with a thin border";
-      transparentSidebar = mkEnableOption
-        "Sidebar like windows like NvimTree get a transparent background";
-      darkSidebar = mkEnableOption
-        "Sidebar like windows like NvimTree get a darker background";
-      darkFloat = mkEnableOption
-        "Float windows like the lsp diagnostics windows get a darker background";
-      lualineBold = mkEnableOption
-        "When true, section headers in the lualine theme will be bold";
-    };
-  };
-  config = mkIf cfg.enable {
-    programs.nixneovim = {
-      colorscheme = "tokyonight";
-      extraPlugins = [ pkgs.vimPlugins.tokyonight-nvim ];
-      options = { termguicolors = true; };
-      globals = {
-        tokyonight_style = mkIf (!isNull cfg.style) cfg.style;
-        tokyonight_terminal_colors = mkIf (!cfg.terminalColors) 0;
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
-        tokyonight_italic_comments = mkIf (!cfg.italicComments) 0;
-        tokyonight_italic_keywords = mkIf (!cfg.italicKeywords) 0;
-        tokyonight_italic_functions = mkIf (cfg.italicFunctions) 1;
-        tokyonight_italic_variables = mkIf (cfg.italicVariables) 1;
+  name = "tokyonight";
+  pluginUrl = "https://github.com/folke/tokyonight.nvim";
 
-        tokyonight_transparent = mkIf (cfg.transparent) 1;
-        tokyonight_hide_inactive_statusline =
-          mkIf (cfg.hideInactiveStatusline) 1;
-        tokyonight_transparent_sidebar = mkIf (cfg.transparentSidebar) 1;
-        tokyonight_dark_sidebar = mkIf (!cfg.darkSidebar) 0;
-        tokyonight_dark_float = mkIf (!cfg.darkFloat) 0;
-        tokyonight_lualine_bold = mkIf (cfg.lualineBold) 1;
-      };
-    };
+  # only needed when the name of the name of the module/plugin does not match the
+  # name in the 'require("<...>")' call. For example, the plugin 'comment-frame'
+  # has to be called with 'require("nvim-comment-frame")'
+  # pluginName = ""
+
+  inherit (helpers.custom_options)
+    strOption
+    listOption
+    enumOption
+    intOption
+    boolOption;
+
+  inherit (lib)
+    mkOption
+    mkEnableOption
+    types;
+
+  moduleOptions = {
+    # add module options here
+    style = enumOption [ "storm" "night" "day" ] "storm" "Theme style";
+    # test = boolOption 1 "hi";
+    terminalColors = mkEnableOption
+      "Configure the colors used when opening a :terminal in Neovim";
+    italicComments = mkEnableOption "Make comments italic";
+    italicKeywords = mkEnableOption "Make keywords italic";
+    italicFunctions = mkEnableOption "Make functions italic";
+    italicVariables = mkEnableOption "Make variables and identifiers italic";
+    transparent =
+      mkEnableOption "this to disable setting the background color";
+    hideInactiveStatusline = mkEnableOption
+      "Enabling this option will hide inactive statuslines and replace them with a thin border";
+    transparentSidebar = mkEnableOption
+      "Sidebar like windows like NvimTree get a transparent background";
+    darkSidebar = mkEnableOption
+      "Sidebar like windows like NvimTree get a darker background";
+    darkFloat = mkEnableOption
+      "Float windows like the lsp diagnostics windows get a darker background";
+    lualineBold = mkEnableOption
+      "When true, section headers in the lualine theme will be bold";
   };
+
+
+in mkLuaPlugin {
+
+# Consider the following additional options:
+#
+# extraDescription ? ""           # description added to the enable function
+# extraPackages ? [ ]             # non-plugin packages
+# extraConfigLua ? ""             # lua config added to the init.vim
+# extraConfigVim ? ""             # vim config added to the init.vim
+# defaultRequire ? true           # add default requrie string?
+# extraOptions ? {}               # extra vim options like line numbers, etc
+# extraNixNeovimConfig ? {}       # extra config applied to 'programs.nixneovim'
+# isColorscheme ? false           # If enabled, plugin will be added to 'nixneovim.colorschemes' instead of 'nixneovim.plugins'
+# configConverter ? camelToSnake  # Specify the config name converter, default expects camelCase and converts that to snake_case
+
+  inherit name moduleOptions pluginUrl;
+  extraPlugins = with pkgs.vimExtraPlugins; [
+    # add neovim plugin here
+    tokyonight-nvim
+  ];
+  isColorscheme = true;
 }
