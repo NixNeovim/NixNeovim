@@ -17,6 +17,7 @@ let
   inherit (super.converter)
     toLuaObjectCustomConverter
     camelToSnake
+    toVimOptions'
     flattenModuleOptions;
 
   inherit (super.utils)
@@ -36,6 +37,7 @@ in { name                          # name of the plugin module. Will be used in 
   , extraConfigLua ? ""            # lua config added to the init.vim
   , extraConfigVim ? ""            # vim config added to the init.vim
   , moduleOptions ? { }            # options available in the module
+  , moduleOptionsVim ? { }            # options available in the module
   , defaultRequire ? true          # add default requrie string?
   , extraOptions ? {}              # extra vim options like line numbers, etc
   , extraNixNeovimConfig ? {}      # extra config applied to 'programs.nixneovim'
@@ -84,6 +86,8 @@ in { name                          # name of the plugin module. Will be used in 
         ${extraConfigLua}
       '';
 
+    vimStyleOptions = toVimOptions' configConverter cfg name moduleOptionsVim;
+
   in
 
   # assert assertMsg (extraPlugins != []) "${errorString}: no plugin specified 'extraPlugins'"; # FIX: this somehow results in infinite recursion
@@ -94,7 +98,7 @@ in { name                          # name of the plugin module. Will be used in 
   {
     # add module to 'plugins'/'colorschemes'
     options.programs.nixneovim.${type}.${name} =
-            (defaultModuleOptions fullDescription) // moduleOptions;
+            (defaultModuleOptions fullDescription) // moduleOptionsVim // moduleOptions;
     # options = (defaultModuleOptions fullDescription) // moduleOptions;
 
     config.programs.nixneovim =
@@ -102,13 +106,14 @@ in { name                          # name of the plugin module. Will be used in 
         inherit extraPlugins extraPackages extraConfigVim;
 
         extraConfigLua = optionalString
-          (cfg.extraLua.pre != "" || cfg.extraLua.post != "" || luaConfig != "\n\n")
+          (cfg.extraLua.pre != "" || cfg.extraLua.post != "" || luaConfig != "\n\n" || vimStyleOptions != "")
           ''
 
           -- config for plugin: ${name}
           do
             function setup()
               ${cfg.extraLua.pre}
+              ${vimStyleOptions}
               ${replaceStrings ["\n"] ["\n${indent 2}"] luaConfig}
               ${cfg.extraLua.post}
             end

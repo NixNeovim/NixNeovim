@@ -103,9 +103,14 @@ in {
 
   # Input: list of vim plugin options
   # Output: vim config string
-  toVimOptions = cfg: prefix: options:
+  toVimOptions = self.toVimOptions' self.camelToSnake;
+
+  # TODO: make converter (camelToSnake) configurable
+  # Input: list of vim plugin options
+  # Output: vim config string
+  toVimOptions' = configConverter: cfg: prefix: options:
     assert builtins.typeOf prefix == "string";
     let
-      f = variable: "vim.g.${prefix}_${self.camelToSnake variable} = ${self.toLuaObject cfg.${variable}}";
+      f = variable: "vim.g.${prefix}_${configConverter variable} = ${self.toLuaObjectCustomConverter configConverter cfg.${variable}}";
     in concatStringsSep "\n" (map f (attrNames options));
 }
