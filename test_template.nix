@@ -2,7 +2,7 @@
 
 let
   name = "NAME";
-  nvimTestCommand = ""; # Test command to check if plugin is loaded
+  nvimTestCommand = ""; # Test command to check if plugin is loaded (optional)
 in {
   "${name}-test" = { config, lib, pkgs, ... }:
 
