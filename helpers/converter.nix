@@ -26,7 +26,7 @@ let
 in {
   # Function to convert nix expressions to their lua equivalent
   # input is either a set like this:
-  #   toLuaObject { nixExpr, depth, configConverter }
+  #   toLuaObject { nixExpr, depth, nameConverter }
   # alternatively it can be called with the nix expressions directly like this
   #   toLuaObject { option1 = true; }
   # which would be equivalent to
@@ -36,11 +36,11 @@ in {
       let
         # add missing inputs
         depth = if args ? "initDepth" then args.initDepth else 0;
-        configConverter = if args ? "configConverter" then args.configConverter else camelToSnake;
+        nameConverter = if args ? "nameConverter" then args.nameConverter else camelToSnake;
       in
         to_lua_object
           depth
-          configConverter
+          nameConverter
           args.nixExpr
     else
       to_lua_object 0 camelToSnake args;
@@ -118,9 +118,9 @@ in {
   # TODO: make converter (camelToSnake) configurable
   # Input: list of vim plugin options
   # Output: vim config string
-  toVimOptions' = configConverter: cfg: prefix: options:
+  toVimOptions' = nameConverter: cfg: prefix: options:
     assert builtins.typeOf prefix == "string";
     let
-     f = variable: "vim.g.${prefix}${configConverter variable} = ${self.toLuaObject { inherit configConverter; nixExpr = cfg.${variable}; }}";
+     f = variable: "vim.g.${prefix}${nameConverter variable} = ${self.toLuaObject { inherit nameConverter; nixExpr = cfg.${variable}; }}";
     in concatStringsSep "\n" (map f (attrNames options));
 }

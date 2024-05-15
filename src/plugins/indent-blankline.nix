@@ -92,7 +92,7 @@ in mkLuaPlugin {
   defaultRequire = false;
   extraConfigLua = ''
     ${optionalString (setHlStrings != []) createHlString}
-    require('${pluginName}').setup ${toLuaObject { configConverter = camelToSnake; nixExpr = patchedCfg; }}
+    require('${pluginName}').setup ${toLuaObject { nameConverter = camelToSnake; nixExpr = patchedCfg; }}
   '';
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
