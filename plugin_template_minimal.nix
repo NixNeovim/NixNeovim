@@ -1,15 +1,17 @@
 { pkgs, lib, helpers, ... }:
 
 let
+
   inherit (helpers.generator)
      mkLuaPlugin;
 
   name = "PLUGIN_NAME";
   pluginUrl = "PLUGIN_URL";
 
-  # only needed when the name of the name of the module/plugin does not match the
+  # only needed when the name of the plugin does not match the
   # name in the 'require("<...>")' call. For example, the plugin 'comment-frame'
   # has to be called with 'require("nvim-comment-frame")'
+  # in such a case add 'pluginName = "nvim-comment-frame"'
   # pluginName = ""
 
   inherit (helpers.custom_options)
