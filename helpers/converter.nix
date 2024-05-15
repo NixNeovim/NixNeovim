@@ -2,6 +2,7 @@
 
 let
   inherit (lib)
+    assertMsg
     elem
     filter
     stringAsChars
@@ -23,17 +24,26 @@ let
   to_lua_object = import ./src/to_lua_object.nix { inherit lib super; };
 
 in {
-  toLuaObject' = initDepth: args: to_lua_object initDepth camelToSnake args;
-
-  # Same as toLuaObject' but with indent set to 0
-  toLuaObject = args: to_lua_object 0 camelToSnake args;
-
-  # same as toLuaObject' but caller can specify custom converter function
-  toLuaObjectCustomConverter' = to_lua_object;
-
-  # same as toLuaObject but caller can specify custom converter function
-  toLuaObjectCustomConverter = to_lua_object 0;
-
+  # Function to convert nix expressions to their lua equivalent
+  # input is either a set like this:
+  #   toLuaObject { nixExpr, depth, configConverter }
+  # alternatively it can be called with the nix expressions directly like this
+  #   toLuaObject { option1 = true; }
+  # which would be equivalent to
+  #   toLuaObject { nixExpr = { option1 = true; }; }
+  toLuaObject = args:
+    if args ? "nixExpr" then
+      let
+        # add missing inputs
+        depth = if args ? "initDepth" then args.initDepth else 0;
+        configConverter = if args ? "configConverter" then args.configConverter else camelToSnake;
+      in
+        to_lua_object
+          depth
+          configConverter
+          args.nixExpr
+    else
+      to_lua_object 0 camelToSnake args;
 
   # vim dictionaries are, in theory, compatible with JSON
   toVimDict = args: builtins.toJSON
@@ -111,6 +121,6 @@ in {
   toVimOptions' = configConverter: cfg: prefix: options:
     assert builtins.typeOf prefix == "string";
     let
-      f = variable: "vim.g.${prefix}${configConverter variable} = ${self.toLuaObjectCustomConverter configConverter cfg.${variable}}";
+     f = variable: "vim.g.${prefix}${configConverter variable} = ${self.toLuaObject { inherit configConverter; nixExpr = cfg.${variable}; }}";
     in concatStringsSep "\n" (map f (attrNames options));
 }

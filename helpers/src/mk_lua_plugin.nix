@@ -15,7 +15,7 @@ let
     defaultModuleOptions;
 
   inherit (super.converter)
-    toLuaObjectCustomConverter
+    toLuaObject
     camelToSnake
     toVimOptions'
     flattenModuleOptions;
@@ -84,7 +84,7 @@ in { name                          # name of the plugin module. Will be used in 
     # else extraConfigLua);
 
     luaConfig = ''
-        ${optionalString defaultRequire "require('${pluginName}').setup ${toLuaObjectCustomConverter configConverter pluginOptions}"}
+        ${optionalString defaultRequire "require('${pluginName}').setup ${toLuaObject { inherit configConverter; nixExpr = pluginOptions; }}"}
         ${extraConfigLua}
       '';
 
