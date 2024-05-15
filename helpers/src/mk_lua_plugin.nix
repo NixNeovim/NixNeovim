@@ -37,7 +37,8 @@ in { name                          # name of the plugin module. Will be used in 
   , extraConfigLua ? ""            # lua config added to the init.vim
   , extraConfigVim ? ""            # vim config added to the init.vim
   , moduleOptions ? { }            # options available in the module
-  , moduleOptionsVim ? { }            # options available in the module
+  , moduleOptionsVim ? { }         # options available in the module (old vim style)
+  , moduleOptionsVimPrefix ? name  # Specify the prefix of the old vim-style configs
   , defaultRequire ? true          # add default requrie string?
   , extraOptions ? {}              # extra vim options like line numbers, etc
   , extraNixNeovimConfig ? {}      # extra config applied to 'programs.nixneovim'
@@ -61,7 +62,7 @@ in { name                          # name of the plugin module. Will be used in 
     cfg = config.programs.nixneovim.${type}.${name};
 
     pluginOptions = flattenModuleOptions cfg moduleOptions; # rename converModuleOptions to 'addDefaultOptions' or similar
-    vimStyleOptions = toVimOptions' configConverter cfg name moduleOptionsVim;
+    vimStyleOptions = toVimOptions' configConverter cfg moduleOptionsVimPrefix moduleOptionsVim;
 
     # Combine the url and other description strings
     fullDescription =

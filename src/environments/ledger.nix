@@ -50,4 +50,5 @@ in mkLuaPlugin {
     vim-ledger
   ];
   defaultRequire = false;
+  moduleOptionsVimPrefix = "ledger_";
 }

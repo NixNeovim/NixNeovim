@@ -89,7 +89,7 @@ in mkLuaPlugin {
 
   defaultRequire = false;
   extraConfigLua = ''
-    ${toVimOptions cfg name moduleOptions}
+    ${toVimOptions cfg "magma_" moduleOptions}
   '';
 
 }

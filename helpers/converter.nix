@@ -111,6 +111,6 @@ in {
   toVimOptions' = configConverter: cfg: prefix: options:
     assert builtins.typeOf prefix == "string";
     let
-      f = variable: "vim.g.${prefix}_${configConverter variable} = ${self.toLuaObjectCustomConverter configConverter cfg.${variable}}";
+      f = variable: "vim.g.${prefix}${configConverter variable} = ${self.toLuaObjectCustomConverter configConverter cfg.${variable}}";
     in concatStringsSep "\n" (map f (attrNames options));
 }
