@@ -25,7 +25,7 @@ in {
 
         nmt.script = testHelper.moduleTest ''
           assertDiff "$normalizedConfig" ${
-            pkgs.writeText "init.lua-expected" ''
+            pkgs.writeText "init.lua-expected" /* lua */ ''
               ${testHelper.config.start}
               -- config for plugin: ${name}
               do
