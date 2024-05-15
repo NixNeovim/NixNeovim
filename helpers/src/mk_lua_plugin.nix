@@ -84,7 +84,7 @@ in { name                          # name of the plugin module. Will be used in 
     # else extraConfigLua);
 
     luaConfig = ''
-        ${optionalString defaultRequire "require('${pluginName}').setup ${toLuaObject { inherit configConverter; nixExpr = pluginOptions; }}"}
+        ${optionalString defaultRequire "require('${pluginName}').setup ${toLuaObject { nameConverter = configConverter; nixExpr = pluginOptions; }}"}
         ${extraConfigLua}
       '';
 

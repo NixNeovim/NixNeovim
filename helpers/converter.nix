@@ -2,7 +2,6 @@
 
 let
   inherit (lib)
-    assertMsg
     elem
     filter
     stringAsChars
