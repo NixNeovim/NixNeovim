@@ -132,6 +132,15 @@ in with myTypes; {
       description = escapeXML description;
     };
 
+  attrsOfOption = type: default: description:
+    assert assertHelper "attrsOption" "second" "set" default;
+    assert assertHelper "attrsOption" "third" "string" description;
+    mkOption {
+      type = types.attrsOf type;
+      default = usePlugDef default;
+      description = escapeXML description;
+    };
+
   listOption = default: description:
     assert assertHelper "listOption" "first" "list" default;
     assert assertHelper "listOption" "second" "string" description;
