@@ -5,12 +5,6 @@ let
   inherit (helpers.generator)
      mkLuaPlugin;
 
-  inherit (lib.types)
-    either
-    int
-    str
-    attrsOf;
-
   name = "emmet";
   pluginUrl = "https://github.com/emmetio/emmet";
 
@@ -22,19 +16,14 @@ let
 
   inherit (helpers.custom_options)
     strOption
-    attrsOfOption
-    enumOption;
-
-  eitherAttrsStrInt =
-    let
-      strInt = either str int;
-    in either strInt (attrsOf (either strInt (attrsOf strInt)));
+    enumOption
+    attrsOption;
 
   moduleOptionsVim = {
     # add module options here
     mode = enumOption [ "i" "n" "v" "a" ] "n" "Mode where emmet will enable";
     leaderKey = strOption "<C-Y>" "Set leader key";
-    settings = attrsOfOption (attrsOf eitherAttrsStrInt) {} "Emmet settings";
+    settings = attrsOption {} "Emmet settings";
   };
 
 in mkLuaPlugin {
