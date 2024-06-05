@@ -36,13 +36,11 @@
       nixosModules = {
         default = self.nixosModules.homeManager;
         homeManager = import ./nixneovim.nix { homeManager = true; inherit haumea; };
-        homeManager-22-11 = import ./nixneovim.nix { homeManager = true; state = 2211; inherit haumea;  };
-        homeManager-23-05 = import ./nixneovim.nix { homeManager = true; state = 2305; inherit haumea;  };
         homeManager-23-11 = import ./nixneovim.nix { homeManager = true; state = 2311; inherit haumea;  };
+        homeManager-24-05 = import ./nixneovim.nix { homeManager = true; state = 2405; inherit haumea;  };
         nixos = import ./nixneovim.nix { homeManager = false; inherit haumea; };
-        nixos-22-11 = import ./nixneovim.nix { homeManager = false; state = 2211; inherit haumea; };
-        nixos-23-05 = import ./nixneovim.nix { homeManager = false; state = 2305; inherit haumea; };
         nixos-23-11 = import ./nixneovim.nix { homeManager = false; state = 2311; inherit haumea; };
+        nixos-24-05 = import ./nixneovim.nix { homeManager = false; state = 2405; inherit haumea; };
       };
 
       overlays.default = inputs.nixneovimplugins.overlays.default;
