@@ -8,6 +8,8 @@ let
   name = "zig-env";
   pluginUrl = "";
 
+  cfg = config.programs.nixneovim.plugins.${name};
+
   # only needed when the name of the plugin does not match the
   # name in the 'require("<...>")' call. For example, the plugin 'comment-frame'
   # has to be called with 'require("nvim-comment-frame")'
@@ -23,7 +25,7 @@ let
 
   moduleOptionsVim = {
     # add module options here
-    zigFmtAutosave = intOption 0 "If set to 1 enabled automatic code formatting on save";
+    fmtAutosave = intOption 0 "If set to 1 enabled automatic code formatting on save";
   };
   moduleOptions = {
     lsp = boolOptionStrict true "Enable the zls language server for zig";
@@ -38,7 +40,10 @@ in mkLuaPlugin {
   defaultRequire = false;
   moduleOptionsVimPrefix = "zig_";
 
-  extraNixNeovimConfig = mkIf config.lsp {
-    plugins.lspconfig.zls.enable = true;
+  extraNixNeovimConfig = {
+    plugins.lspconfig = mkIf cfg.lsp {
+      enable = true;
+      servers.zls.enable = true;
+    };
   };
 }
