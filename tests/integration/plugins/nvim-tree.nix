@@ -1,8 +1,8 @@
 { testHelper, lib }:
 
 let
-  name = "origami";
-  nvimTestCommand = ""; # Test command to check if plugin is loaded
+  name = "nvim-tree";
+  nvimTestCommand = ""; # Test command to check if plugin is loaded (optional)
 in {
   "${name}-test" = { config, lib, pkgs, ... }:
 
@@ -12,9 +12,8 @@ in {
         programs.nixneovim.plugins = {
           "${name}" = {
             enable = true;
-            keepFoldsAcrossSessions = false;
-            pauseFoldsOnSearch = true;
-            setupFoldKeymaps = false;
+            view.width = "10";
+            systemOpen.cmd = "test";
             extraLua.pre = ''
               -- test lua pre comment
             '';
@@ -24,18 +23,23 @@ in {
           };
         };
 
-        nmt.script = testHelper.moduleTest /* bash */ ''
+        nmt.script = testHelper.moduleTest ''
           assertDiff "$normalizedConfig" ${
-            pkgs.writeText "init.lua-expected" /* lua */ ''
+            pkgs.writeText "init.lua-expected" ''
               ${testHelper.config.start}
               -- config for plugin: ${name}
               do
                 function setup()
                   -- test lua pre comment
-                  require('origami').setup {
-                    ["keepFoldsAcrossSessions"] = false,
-                    ["pauseFoldsOnSearch"] = true,
-                    ["setupFoldKeymaps"] = false
+                  require('nvim-tree').setup {
+                    ["diagnostics"] = { ["icons"] = {} },
+                    ["filters"] = {},
+                    ["git"] = {},
+                    ["hijack_directories"] = {},
+                    ["system_open"] = { ["cmd"] = "test" },
+                    ["trash"] = {},
+                    ["update_focused_file"] = {},
+                    ["view"] = { ["width"] = "10" }
                   }
                   -- test lua post comment
                 end

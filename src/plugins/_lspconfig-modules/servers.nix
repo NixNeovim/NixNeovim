@@ -145,6 +145,7 @@ let
     };
     zls = {
       languages = "Zig";
+      packages = [ zig zls ];
     };
   };
 

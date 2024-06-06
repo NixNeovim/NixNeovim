@@ -15,8 +15,9 @@ let
     defaultModuleOptions;
 
   inherit (super.converter)
-    toLuaObjectCustomConverter
+    toLuaObject
     camelToSnake
+    toVimOptions'
     flattenModuleOptions;
 
   inherit (super.utils)
@@ -26,22 +27,24 @@ let
   validUrl = url:
       hasPrefix "https://" url;
 
-in { name                          # name of the plugin module. Will be used in the config name: `plugins.<name>.enable`
-  , pluginName ? name              # name of the plugin as it appears in 'require("<pluginName>")' if different
-  , pluginUrl ? ""                 # link to plugin project page
-  , extraPlugins                   # plugin packages
-  , description ? ""               # deprecated, use extraDescription
-  , extraDescription ? ""          # description added to the enable function
-  , extraPackages ? [ ]            # non-plugin packages
-  , extraConfigLua ? ""            # lua config added to the init.vim
-  , extraConfigVim ? ""            # vim config added to the init.vim
-  , moduleOptions ? { }            # options available in the module
-  , defaultRequire ? true          # add default requrie string?
-  , extraOptions ? {}              # extra vim options like line numbers, etc
-  , extraNixNeovimConfig ? {}      # extra config applied to 'programs.nixneovim'
-  , isColorscheme ? false          # If enabled, plugin will be added to 'nixneovim.colorschemes' instead of 'nixneovim.plugins'
-  # , warning ? ""                 # TODO: This can be used to warn the user when the plugin is used. For example, when the plugin is broken, deprecated, or does not work as expected
-  , configConverter ? camelToSnake # Specify the config name converter, default expects camelCase and converts that to snake_case
+in { name                                # name of the plugin module. Will be used in the config name: `plugins.<name>.enable`
+  , pluginName ? name                    # name of the plugin as it appears in 'require("<pluginName>")' if different
+  , pluginUrl ? ""                       # link to plugin project page
+  , extraPlugins                         # plugin packages
+  , description ? ""                     # deprecated, use extraDescription
+  , extraDescription ? ""                # description added to the enable function
+  , extraPackages ? [ ]                  # non-plugin packages
+  , extraConfigLua ? ""                  # lua config added to the init.vim
+  , extraConfigVim ? ""                  # vim config added to the init.vim
+  , moduleOptions ? { }                  # options available in the module
+  , moduleOptionsVim ? { }               # options available in the module (old vim style)
+  , moduleOptionsVimPrefix ? "${name}_"  # Specify the prefix of the old vim-style configs
+  , defaultRequire ? true                # add default requrie string?
+  , extraOptions ? {}                    # extra vim options like line numbers, etc
+  , extraNixNeovimConfig ? {}            # extra config applied to 'programs.nixneovim'
+  , isColorscheme ? false                # If enabled, plugin will be added to 'nixneovim.colorschemes' instead of 'nixneovim.plugins'
+  # , warning ? ""                       # TODO: This can be used to warn the user when the plugin is used. For example, when the plugin is broken, deprecated, or does not work as expected
+  , configConverter ? camelToSnake       # Specify the config name converter, default expects camelCase and converts that to snake_case
   }:
 
   let
@@ -59,6 +62,7 @@ in { name                          # name of the plugin module. Will be used in 
     cfg = config.programs.nixneovim.${type}.${name};
 
     pluginOptions = flattenModuleOptions cfg moduleOptions; # rename converModuleOptions to 'addDefaultOptions' or similar
+    vimStyleOptions = toVimOptions' configConverter cfg moduleOptionsVimPrefix moduleOptionsVim;
 
     # Combine the url and other description strings
     fullDescription =
@@ -80,7 +84,7 @@ in { name                          # name of the plugin module. Will be used in 
     # else extraConfigLua);
 
     luaConfig = ''
-        ${optionalString defaultRequire "require('${pluginName}').setup ${toLuaObjectCustomConverter configConverter pluginOptions}"}
+        ${optionalString defaultRequire "require('${pluginName}').setup ${toLuaObject { nameConverter = configConverter; nixExpr = pluginOptions; }}"}
         ${extraConfigLua}
       '';
 
@@ -94,7 +98,7 @@ in { name                          # name of the plugin module. Will be used in 
   {
     # add module to 'plugins'/'colorschemes'
     options.programs.nixneovim.${type}.${name} =
-            (defaultModuleOptions fullDescription) // moduleOptions;
+            (defaultModuleOptions fullDescription) // moduleOptionsVim // moduleOptions;
     # options = (defaultModuleOptions fullDescription) // moduleOptions;
 
     config.programs.nixneovim =
@@ -102,13 +106,14 @@ in { name                          # name of the plugin module. Will be used in 
         inherit extraPlugins extraPackages extraConfigVim;
 
         extraConfigLua = optionalString
-          (cfg.extraLua.pre != "" || cfg.extraLua.post != "" || luaConfig != "\n\n")
+          (cfg.extraLua.pre != "" || cfg.extraLua.post != "" || luaConfig != "\n\n" || vimStyleOptions != "")
           ''
 
           -- config for plugin: ${name}
           do
             function setup()
               ${cfg.extraLua.pre}
+              ${vimStyleOptions}
               ${replaceStrings ["\n"] ["\n${indent 2}"] luaConfig}
               ${cfg.extraLua.post}
             end

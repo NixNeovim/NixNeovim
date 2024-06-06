@@ -24,6 +24,7 @@ in mkLuaPlugin {
   inherit name moduleOptions pluginUrl;
   extraPlugins = with pkgs.vimExtraPlugins; [
     nvim-dap-ui
+    nvim-nio
   ];
   extraConfigLua = "require('dapui').setup ${toLuaObject pluginOptions}";
   defaultRequire = false;

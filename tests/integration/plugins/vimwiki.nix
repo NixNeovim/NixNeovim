@@ -1,8 +1,8 @@
 { testHelper, lib }:
 
 let
-  name = "origami";
-  nvimTestCommand = ""; # Test command to check if plugin is loaded
+  name = "vimwiki";
+  nvimTestCommand = ""; # Test command to check if plugin is loaded (optional)
 in {
   "${name}-test" = { config, lib, pkgs, ... }:
 
@@ -12,9 +12,10 @@ in {
         programs.nixneovim.plugins = {
           "${name}" = {
             enable = true;
-            keepFoldsAcrossSessions = false;
-            pauseFoldsOnSearch = true;
-            setupFoldKeymaps = false;
+            list = [
+              {"path" = "~/vimwiki"; "syntax" = "markdown"; "ext" = ".md";}
+            ];
+            globalExt = 1;
             extraLua.pre = ''
               -- test lua pre comment
             '';
@@ -24,7 +25,7 @@ in {
           };
         };
 
-        nmt.script = testHelper.moduleTest /* bash */ ''
+        nmt.script = testHelper.moduleTest ''
           assertDiff "$normalizedConfig" ${
             pkgs.writeText "init.lua-expected" /* lua */ ''
               ${testHelper.config.start}
@@ -32,10 +33,21 @@ in {
               do
                 function setup()
                   -- test lua pre comment
-                  require('origami').setup {
-                    ["keepFoldsAcrossSessions"] = false,
-                    ["pauseFoldsOnSearch"] = true,
-                    ["setupFoldKeymaps"] = false
+                  vim.g.vimwiki_ext2syntax = {
+                    [".markdown"] = "markdown",
+                    [".md"] = "markdown",
+                    [".mdown"] = "markdown",
+                    [".mdwn"] = "markdown",
+                    [".mkdn"] = "markdown",
+                    [".mw"] = "media"
+                  }
+                  vim.g.vimwiki_global_ext = 1
+                  vim.g.vimwiki_list = {
+                    {
+                      ["ext"] = ".md",
+                      ["path"] = "~/vimwiki",
+                      ["syntax"] = "markdown"
+                    }
                   }
                   -- test lua post comment
                 end

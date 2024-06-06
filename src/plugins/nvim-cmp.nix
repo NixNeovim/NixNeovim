@@ -19,7 +19,7 @@ let
     rawLua;
 
   inherit (helpers.converter)
-    toLuaObject'
+    toLuaObject
     toNeovimConfigString;
 
   cfg = config.programs.nixneovim.plugins.nvim-cmp;
@@ -194,9 +194,9 @@ in {
               else
                 mapAttrs
                   (bind: mapping: rawLua (if isString mapping then mapping
-                  else "cmp.mapping(${mapping.action}${optionalString (mapping.modes != null && length mapping.modes >= 1) ("," + (helpers.converter.toLuaObject mapping.modes))})"))
+                  else "cmp.mapping(${mapping.action}${optionalString (mapping.modes != null && length mapping.modes >= 1) ("," + (toLuaObject { nixExpr = mapping.modes; }))})"))
                   cfg.mapping;
-            luaMappings = (helpers.converter.toLuaObject mappings);
+            luaMappings = (toLuaObject { nixExpr = mappings; });
             wrapped = lists.fold (presetName: prevString: ''cmp.mapping.preset.${presetName}(${prevString})'') luaMappings cfg.mappingPresets;
           in
           rawLua wrapped;
@@ -248,13 +248,13 @@ in {
           [ pkgs.vimExtraPlugins.nvim-cmp ]
           ++ sourcesHelper.packages;
 
-        extraConfigLua = ''
+        extraConfigLua = /* lua */ ''
           -- config for plugin: nvim-cmp
           do
             function setup()
               local cmp = require('cmp') -- this is needed
 
-              cmp.setup(${toLuaObject' 1 pluginOptions})
+              cmp.setup(${toLuaObject { nixExpr = pluginOptions; depth = 1; }})
 
               -- extra config of sources
               ${toNeovimConfigString sourcesHelper.extraConfig}

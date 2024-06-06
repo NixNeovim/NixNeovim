@@ -1,42 +1,53 @@
 { lib, pkgs, helpers, config }:
 let
-  inherit (helpers.deprecated)
-      mkDefaultOpt
-      mkPlugin;
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
   inherit (lib)
-    types;
+    toUpper;
 
-in mkPlugin { inherit lib config; } {
+  inherit (builtins)
+    substring
+    stringLength;
+
   name = "nerdcommenter";
-  description = "Enable nercommenter";
-  extraPlugins = [ pkgs.vimPlugins.nerdcommenter ];
+  pluginUrl = "https://github.com/preservim/nerdcommenter";
 
-  options = {
-    createDefaultMappings = mkDefaultOpt {
-      description = "Create default mappings";
-      global = "NERDCreateDefaultMappings";
-      type = types.bool;
-    };
+  # only needed when the name of the plugin does not match the
+  # name in the 'require("<...>")' call. For example, the plugin 'comment-frame'
+  # has to be called with 'require("nvim-comment-frame")'
+  # in such a case add 'pluginName = "nvim-comment-frame"'
+  # pluginName = ""
 
-    spaceDelims = mkDefaultOpt {
-      description = "Add spaces after comment delimiters by default";
-      global = "NERDSpaceDelims";
-      type = types.bool;
-    };
+  inherit (helpers.custom_options)
+    strOption
+    listOption
+    enumOption
+    intOption
+    boolOption;
 
-    compactSexyComs = mkDefaultOpt {
-      description = "Use compact syntax for prettified multi-line comments";
-      global = "NERDCompactSexyComs";
-      type = types.bool;
-    };
-
-    defaultAlign = mkDefaultOpt {
-      description = "Align line-wise comment delimiters flush left instead of following code indentation";
-      global = "NERDDefaultAlign";
-      type = types.enum [ "none" "left" "start" "both" ];
-    };
-
-    # TODO: add all options from :help nerdcommenter
+  moduleOptionsVim = {
+    # add module options here
+    createDefaultMappings = intOption 1 "Create default mappings";
+    spaceDelims = intOption 1 "Add spaces after comment delimiters by default";
+    compactSexyComs = intOption 1 "Use compact syntax for prettified multi-line comments";
+    defaultAlign = enumOption [ "none" "left" "start" "both" ] "left" "Align line-wise comment delimiters flush left instead of following code indentation";
   };
+
+in mkLuaPlugin {
+  inherit name moduleOptionsVim pluginUrl;
+  extraPlugins = with pkgs.vimExtraPlugins; [
+    nerdcommenter
+  ];
+
+  moduleOptionsVimPrefix = "NERD";
+  defaultRequire = false;
+
+  # make first char uppercase
+  configConverter = x:
+    let
+      lastChar = stringLength x - 1;
+      firstChar = toUpper (substring 0 1 x);
+      rest = substring 1 lastChar x;
+    in firstChar + rest;
 }

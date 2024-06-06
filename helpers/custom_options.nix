@@ -18,7 +18,10 @@ let
     mkOption
     mkOptionType
     escapeXML
+    assertMsg
     types;
+  inherit (builtins)
+    typeOf;
 
   inherit (super.utils)
     rawLua
@@ -52,8 +55,14 @@ let
 
   };
 
+  assertHelper = name: position: type: argument:
+    assertMsg (typeOf(argument) == type) "${position} argument of ${name} has to be of type '${type}' (but is ${typeOf(argument)}).\n Usage: ${name} <default> <description>";
+
+
 in with myTypes; {
   boolOption = default: description:
+    assert assertHelper "boolOption" "first" "bool" default;
+    assert assertHelper "boolOption" "second" "string" description;
     mkOption {
       type = bool;
       default = usePlugDef default;
@@ -62,6 +71,8 @@ in with myTypes; {
 
   # This is a version of boolOption that does always have a fixed value
   boolOptionStrict = default: description:
+    assert assertHelper "boolOption" "first" "bool" default;
+    assert assertHelper "boolOption" "second" "string" description;
     mkOption {
       type = bool;
       default = default;
@@ -69,6 +80,8 @@ in with myTypes; {
     };
 
   intOption = default: description:
+    assert assertHelper "intOption" "first" "int" default;
+    assert assertHelper "intOption" "second" "string" description;
     mkOption {
       type = int;
       default = usePlugDef default;
@@ -76,6 +89,8 @@ in with myTypes; {
     };
 
   floatOption = default: description:
+    assert assertHelper "floatOption" "first" "float" default;
+    assert assertHelper "floatOption" "second" "string" description;
     mkOption {
       type = float;
       default = usePlugDef default;
@@ -83,6 +98,8 @@ in with myTypes; {
     };
 
   strOption = default: description:
+    assert assertHelper "strOption" "first" "string" default;
+    assert assertHelper "strOption" "second" "string" description;
     mkOption {
       type = str;
       default = usePlugDef default;
@@ -90,6 +107,8 @@ in with myTypes; {
     };
 
   rawLuaOption = default: description:
+    # assert assertHelper "rawLuaOption" "first" "rawLuaType" default;
+    # assert assertHelper "rawLuaOption" "second" "string" description;
     mkOption {
       type = rawLuaType;
       default = rawLua (usePlugDef default);
@@ -105,13 +124,26 @@ in with myTypes; {
     };
 
   attrsOption = default: description:
+    assert assertHelper "attrsOption" "first" "set" default;
+    assert assertHelper "attrsOption" "second" "string" description;
     mkOption {
       type = attrs;
       default = usePlugDef default;
       description = escapeXML description;
     };
 
+  attrsOfOption = type: default: description:
+    assert assertHelper "attrsOption" "second" "set" default;
+    assert assertHelper "attrsOption" "third" "string" description;
+    mkOption {
+      type = types.attrsOf type;
+      default = usePlugDef default;
+      description = escapeXML description;
+    };
+
   listOption = default: description:
+    assert assertHelper "listOption" "first" "list" default;
+    assert assertHelper "listOption" "second" "string" description;
     mkOption {
       type = list;
       default = usePlugDef default;
@@ -119,6 +151,9 @@ in with myTypes; {
     };
 
   enumOption = enums: default: description:
+    assert assertHelper "enumOption" "first" "list" enums;
+    assert assertHelper "enumOption" "second" "string" default;
+    assert assertHelper "enumOption" "third" "string" default;
     mkOption {
       type = enum enums;
       default = usePlugDef default;

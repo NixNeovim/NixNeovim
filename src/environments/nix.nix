@@ -1,12 +1,14 @@
 { lib, pkgs, helpers, config }:
 let
-  inherit (helpers.deprecated)
-      mkPlugin;
-in mkPlugin { inherit lib config; } {
-  name = "nix";
-  description = "Enable nix";
-  extraPlugins = [ pkgs.vimPlugins.vim-nix ];
 
-  # Possibly add option to disable Treesitter highlighting if this is installed
-  options = { };
+  inherit (helpers.generator)
+    mkLuaPlugin;
+
+in mkLuaPlugin {
+  name = "nix";
+  description = "Enable a set of nix related plugins (this module is in an alpha state)";
+  extraPlugins = [
+    pkgs.vimPlugins.vim-nix
+  ];
+
 }

@@ -1,8 +1,8 @@
 { testHelper, lib }:
 
 let
-  name = "origami";
-  nvimTestCommand = ""; # Test command to check if plugin is loaded
+  name = "startify";
+  nvimTestCommand = ""; # Test command to check if plugin is loaded (optional)
 in {
   "${name}-test" = { config, lib, pkgs, ... }:
 
@@ -12,9 +12,6 @@ in {
         programs.nixneovim.plugins = {
           "${name}" = {
             enable = true;
-            keepFoldsAcrossSessions = false;
-            pauseFoldsOnSearch = true;
-            setupFoldKeymaps = false;
             extraLua.pre = ''
               -- test lua pre comment
             '';
@@ -24,7 +21,7 @@ in {
           };
         };
 
-        nmt.script = testHelper.moduleTest /* bash */ ''
+        nmt.script = testHelper.moduleTest ''
           assertDiff "$normalizedConfig" ${
             pkgs.writeText "init.lua-expected" /* lua */ ''
               ${testHelper.config.start}
@@ -32,11 +29,15 @@ in {
               do
                 function setup()
                   -- test lua pre comment
-                  require('origami').setup {
-                    ["keepFoldsAcrossSessions"] = false,
-                    ["pauseFoldsOnSearch"] = true,
-                    ["setupFoldKeymaps"] = false
-                  }
+                  vim.g.startify_bookmarks = {}
+                  vim.g.startify_change_cmd = "lcd"
+                  vim.g.startify_change_to_dir = 1
+                  vim.g.startify_change_to_vcs_root = 0
+                  vim.g.startify_customheader = "'startify#pad(startify#fortune#cowsay())'"
+                  vim.g.startify_enable_special = 1
+                  vim.g.startify_lists = {}
+                  vim.g.startify_skiplist = {}
+                  vim.g.startify_update_oldfiles = 0
                   -- test lua post comment
                 end
                 success, output = pcall(setup) -- execute 'setup()' and catch any errors

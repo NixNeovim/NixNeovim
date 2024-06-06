@@ -1,38 +1,37 @@
 { lib, pkgs, helpers, config }:
-with lib;
 let
 
-  inherit (helpers.deprecated)
-    mkDefaultOpt
-    mkPlugin;
 
-  eitherAttrsStrInt = with types;
-    let
-      strInt = either str int;
-    in either strInt (attrsOf (either strInt (attrsOf strInt)));
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
-in mkPlugin { inherit config lib; } {
   name = "emmet";
-  description = "Enable emmet";
-  extraPlugins = [ pkgs.vimPlugins.emmet-vim ];
+  pluginUrl = "https://github.com/emmetio/emmet";
 
-  options = {
-    mode = mkDefaultOpt {
-      type = types.enum [ "i" "n" "v" "a" ];
-      global = "user_emmet_mode";
-      description = "Mode where emmet will enable";
-    };
+  # only needed when the name of the plugin does not match the
+  # name in the 'require("<...>")' call. For example, the plugin 'comment-frame'
+  # has to be called with 'require("nvim-comment-frame")'
+  # in such a case add 'pluginName = "nvim-comment-frame"'
+  # pluginName = ""
 
-    leader = mkDefaultOpt {
-      type = types.str;
-      global = "user_emmet_leader_key";
-      description = "Set leader key";
-    };
+  inherit (helpers.custom_options)
+    strOption
+    enumOption
+    attrsOption;
 
-    settings = mkDefaultOpt {
-      type = types.attrsOf (types.attrsOf eitherAttrsStrInt);
-      global = "user_emmet_settings";
-      description = "Emmet settings";
-    };
+  moduleOptionsVim = {
+    # add module options here
+    mode = enumOption [ "i" "n" "v" "a" ] "n" "Mode where emmet will enable";
+    leaderKey = strOption "<C-Y>" "Set leader key";
+    settings = attrsOption {} "Emmet settings";
   };
+
+in mkLuaPlugin {
+  inherit name moduleOptionsVim pluginUrl;
+  extraPlugins = with pkgs.vimExtraPlugins; [
+    # add neovim plugin here
+    emmet-vim
+  ];
+  moduleOptionsVimPrefix = "user_emmet_";
+  defaultRequire = false;
 }
