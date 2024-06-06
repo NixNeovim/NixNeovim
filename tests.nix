@@ -64,7 +64,7 @@ let
       }
 
       # import NixNeovim module
-      (import ./nixneovim.nix { inherit haumea; })
+      (import ./nixneovim.nix { inherit haumea pkgs; })
     ];
 
 in {
