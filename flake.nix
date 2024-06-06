@@ -75,13 +75,11 @@
         nixosModules = {
           default = self.nixosModules.homeManager;
           homeManager = import ./nixneovim.nix withHomemanager;
-          homeManager-22-11 = import ./nixneovim.nix ({ state = 2211; } // withHomemanager);
-          homeManager-23-05 = import ./nixneovim.nix ({ state = 2305; } // withHomemanager);
           homeManager-23-11 = import ./nixneovim.nix ({ state = 2311; } // withHomemanager);
+          homeManager-24-05 = import ./nixneovim.nix ({ state = 2404; } // withHomemanager);
           nixos = import ./nixneovim.nix withoutHomemanager;
-          nixos-22-11 = import ./nixneovim.nix ({ state = 2211; } // withoutHomemanager);
-          nixos-23-05 = import ./nixneovim.nix ({ state = 2305; } // withoutHomemanager);
           nixos-23-11 = import ./nixneovim.nix ({ state = 2311; } // withoutHomemanager);
+          nixos-24-05 = import ./nixneovim.nix ({ state = 2405; } // withoutHomemanager);
         };
 
         packages = {
