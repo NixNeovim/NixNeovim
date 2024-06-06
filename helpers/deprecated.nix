@@ -18,47 +18,47 @@ let
 in {
 
   # WARN: deprecated: use mkLuaPlugin
-  mkPlugin = { config, lib, ... }:
-    { name
-      , description
-      , extraPlugins ? [ ]
-      , extraConfigLua ? ""
-      , extraConfigVim ? ""
-      , options ? { }
-      , ...
-    }:
-    let
-      cfg = config.programs.nixneovim.plugins.${name};
-      # TODO support nested options!
-      moduleOptions = (mapAttrs (k: v: v.option) options);
-      # // {
-      # extraConfig = mkOption {
-      #   type = types.attrs;
-      #   default = {};
-      #   description = "Place any extra config here as an attibute-set";
-      # };
-      # };
+  # mkPlugin = { config, lib, ... }:
+  #   { name
+  #     , description
+  #     , extraPlugins ? [ ]
+  #     , extraConfigLua ? ""
+  #     , extraConfigVim ? ""
+  #     , options ? { }
+  #     , ...
+  #   }:
+  #   let
+  #     cfg = config.programs.nixneovim.plugins.${name};
+  #     # TODO support nested options!
+  #     moduleOptions = (mapAttrs (k: v: v.option) options);
+  #     # // {
+  #     # extraConfig = mkOption {
+  #     #   type = types.attrs;
+  #     #   default = {};
+  #     #   description = "Place any extra config here as an attibute-set";
+  #     # };
+  #     # };
 
-      globals = mapAttrs'
-        (name: opt: {
-          name = opt.global;
-          value = if cfg.${name} != null then opt.value cfg.${name} else null;
-        })
-        options;
-    in
-    {
-      options.programs.nixneovim.plugins.${name} = {
-        enable = mkEnableOption description;
-      } // moduleOptions;
+  #     globals = mapAttrs'
+  #       (name: opt: {
+  #         name = opt.global;
+  #         value = if cfg.${name} != null then opt.value cfg.${name} else null;
+  #       })
+  #       options;
+  #   in
+  #   {
+  #     options.programs.nixneovim.plugins.${name} = {
+  #       enable = mkEnableOption description;
+  #     } // moduleOptions;
 
-      config.programs.nixneovim = mkIf cfg.enable {
-        inherit extraPlugins extraConfigVim globals;
-        extraConfigLua =
-          if stringLength extraConfigLua > 0 then
-            "do -- config scope: ${name}\n" + extraConfigLua + "\nend"
-          else "";
-      };
-    };
+  #     config.programs.nixneovim = mkIf cfg.enable {
+  #       inherit extraPlugins extraConfigVim globals;
+  #       extraConfigLua =
+  #         if stringLength extraConfigLua > 0 then
+  #           "do -- config scope: ${name}\n" + extraConfigLua + "\nend"
+  #         else "";
+  #     };
+  #   };
 
   mkDefaultOpt = { type, global, description ? null, example ? null, default ? null, value ? v: (globalVal v), ... }: {
     option = mkOption {
