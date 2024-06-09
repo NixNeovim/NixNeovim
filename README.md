@@ -23,7 +23,7 @@ inputs.nixneovim.url = "github:nixneovim/nixneovim";
 And import the module to your Home Manager (recommended) or NixOS configuration.
 Depending on your nixos version, you have to import different modules.
 In particular, the `default` and `homeManager` modules only work with the Nixpkgs/HomeManager `unstable` releases.
-When you use a stable Nixos/HomeManager, please import `homeManager-<XX>-<XX>` or `nixos-<XX>-<XX>`.
+When you use a stable Nixos/HomeManager, please import `homeManager-<XX>-<XX>` or `nixos-<XX>-<XX>` (For example `homeManager-24-05`).
 
 ```nix
 {
