@@ -81,19 +81,6 @@ A wiki for all options will be available in the near future.
       };
     };
 
-    # Key bindings
-    mappings = {
-      # equivalent to 'map' command
-      normalVisualOP = {
-        "<LEADER>rn" = ":Lspsaga rename<cr>";
-
-      };
-      # equivalent to 'vmap'
-      visualOnly = {
-        "<" = "<gv";
-      };
-    };
-
     # Not all plugins have own modules
     # You can add missing plugins here
     # `pkgs.vimExtraPlugins` is added by the overlay you added at the beginning
@@ -151,7 +138,7 @@ vim.keymap.set("n", "<leader>h", function() print("hi") end)
 
 First, you specify the mode; you can choose between the keywords below.
 
-| NixNeovim      | NeoVim | Description                                  |
+| NixNeovim      | Neovim | Description                                  |
 |----------------|--------|----------------------------------------------|
 | normalVisualOp | ""     | Normal, visual, select, and operator-pending |
 | normal         | "n"    | Normal                                       |
