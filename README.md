@@ -60,7 +60,7 @@ A wiki for all options will be available in the near future.
         ${lib.strings.fileContents ./init.lua}
       EOF
     '';
-    
+
     # to install plugins just activate their modules
     plugins = {
       lspconfig = {
@@ -78,6 +78,19 @@ A wiki for all options will be available in the near future.
         enable = true;
         ai.enable = true;
         jump.enable = true;
+      };
+    };
+
+    # Key bindings
+    mappings = {
+      # equivalent to 'map' command
+      normalVisualOP = {
+        "<LEADER>rn" = ":Lspsaga rename<cr>";
+
+      };
+      # equivalent to 'vmap'
+      visualOnly = {
+        "<" = "<gv";
       };
     };
 
