@@ -29,8 +29,8 @@ When you use a stable Nixos/HomeManager, please import `homeManager-<XX>-<XX>` o
 {
 imports = [
     nixneovim.nixosModules.<system>.default # with Home Manager unstable; <sytem> can for example be "x86_64-linux"
-    # nixneovim.nixosModules.homeManager-22-11 # with Home Manager 22.11
-    # nixneovim.nixosModules.nixos # without Home Manager
+    # nixneovim.nixosModules.<system>.homeManager-22-11 # with Home Manager 22.11
+    # nixneovim.nixosModules.<system>.nixos # without Home Manager
 ];
 }
 
