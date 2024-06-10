@@ -83,12 +83,12 @@
         };
 
         packages = {
-          docs = import ./docs {
+          docs = (import ./docs {
             inherit pkgs;
             lib = nixpkgs.lib;
             nmd = import nmd { inherit pkgs lib; };
             inherit haumea;
-          };
+          }).docs;
           configparser = pkgs.writeShellApplication {
             name = "configparser";
             runtimeInputs = let
