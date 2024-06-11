@@ -64,7 +64,7 @@ let
       }
 
       # import NixNeovim module
-      (import ./nixneovim.nix { inherit haumea; })
+      (import ./nixneovim.nix { inherit haumea pkgs; })
     ];
 
 in {
@@ -77,6 +77,7 @@ in {
   basic-group3 = nmtCheck integrationTests.basic-check.group3;
   plugins = nmtCheck (mergeValues integrationTests.plugins);
   colorschemes = nmtCheck (mergeValues integrationTests.colorschemes);
+  environments = nmtCheck (mergeValues integrationTests.environments);
   neovim = nmtCheck ({ inherit (integrationTests) neovim neovim-use-plugin-defaults; });
 
 }

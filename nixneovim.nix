@@ -1,6 +1,5 @@
-{ homeManager ? true, isDocsBuild ? false, state ? 9999, haumea }: # function that returns a package
-{ lib, config, pkgs, ... }:
-with lib;
+{ homeManager ? true, isDocsBuild ? false, state ? 9999, haumea, pkgs }: # function that returns a package
+{ config, ... }:
 let
   cfg = config.programs.nixneovim;
 

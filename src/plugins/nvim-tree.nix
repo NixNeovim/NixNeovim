@@ -1,12 +1,29 @@
-{ pkgs, lib, helpers, config }:
-with lib;
-let
-  cfg = config.programs.nixneovim.plugins.nvim-tree;
-in
-{
-  options.programs.nixneovim.plugins.nvim-tree = {
-    enable = mkEnableOption "nvim-tree";
+{ pkgs, lib, helpers, ... }:
 
+let
+  inherit (helpers.generator)
+     mkLuaPlugin;
+
+  name = "nvim-tree";
+  pluginUrl = "https://github.com/nvim-tree/nvim-tree.lua";
+
+  # only needed when the name of the name of the module/plugin does not match the
+  # name in the 'require("<...>")' call. For example, the plugin 'comment-frame'
+  # has to be called with 'require("nvim-comment-frame")'
+  # pluginName = ""
+
+  inherit (helpers.custom_options)
+    strOption
+    listOption
+    enumOption
+    intOption
+    boolOption;
+  inherit (lib)
+    mkOption
+    types;
+
+  moduleOptions = {
+    # add module options here
     disableNetrw = mkOption {
       type = types.nullOr types.bool;
       default = null;
@@ -196,57 +213,26 @@ in
     };
   };
 
-  config =
-    let
-      options = {
-        disable_netrw = cfg.disableNetrw;
-        hijack_netrw = cfg.hijackNetrw;
-        open_on_setup = cfg.openOnSetup;
-        ignore_ft_on_setup = cfg.ignoreFtOnSetup;
-        auto_close = cfg.autoClose;
-        open_on_tab = cfg.openOnTab;
-        hijack_cursor = cfg.hijackCursor;
-        update_cwd = cfg.updateCwd;
-        sync_root_with_cwd = cfg.syncRootWithCwd;
-        hijack_directories = {
-          enable = cfg.hijackDirectories.enable;
-          auto_open = cfg.hijackDirectories.autoOpen;
-        };
-        diagnostics = cfg.diagnostics;
-        update_focused_file = {
-          enable = cfg.updateFocusedFile.enable;
-          update_cwd = cfg.updateFocusedFile.updateCwd;
-          ignore_list = cfg.updateFocusedFile.ignoreList;
-        };
-        system_open = cfg.systemOpen;
-        filters = cfg.filters;
-        git = cfg.git;
-        view = {
-          width = cfg.view.width;
-          height = cfg.view.height;
-          hide_root_folder = cfg.view.hideRootFolder;
-          side = cfg.view.side;
-          auto_resize = cfg.view.autoResize;
-          number = cfg.view.number;
-          relativenumber = cfg.view.relativenumber;
-          signcolumn = cfg.view.signcolumn;
-        };
-        trash = {
-          cmd = cfg.trash.cmd;
-          require_confirm = cfg.trash.requireConfirm;
-        };
-      };
-    in
-    mkIf cfg.enable {
-      programs.nixneovim = {
-        extraPlugins = with pkgs.vimExtraPlugins; [
-          nvim-tree-lua
-          nvim-web-devicons
-        ];
 
-        extraConfigLua = ''
-          require('nvim-tree').setup(${helpers.converter.toLuaObject options})
-        '';
-      };
-    };
+
+in mkLuaPlugin {
+
+# Consider the following additional options:
+#
+# extraDescription ? ""           # description added to the enable function
+# extraPackages ? [ ]             # non-plugin packages
+# extraConfigLua ? ""             # lua config added to the init.vim
+# extraConfigVim ? ""             # vim config added to the init.vim
+# defaultRequire ? true           # add default requrie string?
+# extraOptions ? {}               # extra vim options like line numbers, etc
+# extraNixNeovimConfig ? {}       # extra config applied to 'programs.nixneovim'
+# isColorscheme ? false           # If enabled, plugin will be added to 'nixneovim.colorschemes' instead of 'nixneovim.plugins'
+# configConverter ? camelToSnake  # Specify the config name converter, default expects camelCase and converts that to snake_case
+
+  inherit name moduleOptions pluginUrl;
+  extraPlugins = with pkgs.vimExtraPlugins; [
+    # add neovim plugin here
+    nvim-tree-lua
+    nvim-web-devicons
+  ];
 }

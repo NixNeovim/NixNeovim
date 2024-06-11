@@ -1,7 +1,7 @@
 { testHelper, lib }:
 
 let
-  name = "origami";
+  name = "ledger";
   nvimTestCommand = ""; # Test command to check if plugin is loaded
 in {
   "${name}-test" = { config, lib, pkgs, ... }:
@@ -12,9 +12,8 @@ in {
         programs.nixneovim.plugins = {
           "${name}" = {
             enable = true;
-            keepFoldsAcrossSessions = false;
-            pauseFoldsOnSearch = true;
-            setupFoldKeymaps = false;
+            maxwidth = 80;
+            fillstring = "   -";
             extraLua.pre = ''
               -- test lua pre comment
             '';
@@ -24,19 +23,18 @@ in {
           };
         };
 
-        nmt.script = testHelper.moduleTest /* bash */ ''
+        nmt.script = testHelper.moduleTest ''
           assertDiff "$normalizedConfig" ${
-            pkgs.writeText "init.lua-expected" /* lua */ ''
+            pkgs.writeText "init.lua-expected" ''
               ${testHelper.config.start}
               -- config for plugin: ${name}
               do
                 function setup()
                   -- test lua pre comment
-                  require('origami').setup {
-                    ["keepFoldsAcrossSessions"] = false,
-                    ["pauseFoldsOnSearch"] = true,
-                    ["setupFoldKeymaps"] = false
-                  }
+                  vim.g.ledger_detailed_first = true
+                  vim.g.ledger_fillstring = "    -"
+                  vim.g.ledger_fold_blanks = false
+                  vim.g.ledger_maxwidth = 80
                   -- test lua post comment
                 end
                 success, output = pcall(setup) -- execute 'setup()' and catch any errors

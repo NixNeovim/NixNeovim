@@ -1,42 +1,54 @@
-{ pkgs, lib, helpers, config, ... }@args:
+{ pkgs, lib, helpers, ... }:
 
 let
-  inherit (lib.types)
-    bool
-    int;
+  inherit (helpers.generator)
+     mkLuaPlugin;
 
-  inherit (helpers.deprecated)
-    mkDefaultOpt
-    mkPlugin;
-
-in mkPlugin { inherit config lib; } {
   name = "ledger";
-  description = "Enable ledger language features";
-  extraPlugins = [ pkgs.vimPlugins.vim-ledger ];
+  pluginUrl = "https://github.com/ledger/vim-ledger/";
 
-  options = {
-    maxWidth = mkDefaultOpt {
-      global = "ledger_maxwidth";
-      description = "Number of columns to display foldtext";
-      type = int;
-    };
+  # only needed when the name of the name of the module/plugin does not match the
+  # name in the 'require("<...>")' call. For example, the plugin 'comment-frame'
+  # has to be called with 'require("nvim-comment-frame")'
+  # pluginName = ""
 
-    fillString = mkDefaultOpt {
-      global = "ledger_fillstring";
-      description = "String used to fill the space between account name and amount in the foldtext";
-      type = int;
-    };
+  inherit (lib)
+    toLower;
 
-    detailedFirst = mkDefaultOpt {
-      global = "ledger_detailed_first";
-      description = "Account completion sorted by depth instead of alphabetically";
-      type = bool;
-    };
+  inherit (helpers.custom_options)
+    strOption
+    listOption
+    enumOption
+    intOption
+    boolOption;
 
-    foldBlanks = mkDefaultOpt {
-      global = "ledger_fold_blanks";
-      description = "Hide blank lines following a transaction on a fold";
-      type = bool;
-    };
+  moduleOptionsVim = {
+    # add module options here
+    maxwidth = intOption 80 "Number of columns to display foldtext";
+    fillstring = strOption "    -" "String used to fill the space between account name and amount in the foldtext";
+    detailedFirst = boolOption true "Account completion sorted by depth instead of alphabetically";
+    foldBlanks = boolOption false "Hide blank lines following a transaction on a fold";
   };
+
+in mkLuaPlugin {
+
+# Consider the following additional options:
+#
+# extraDescription ? ""           # description added to the enable function
+# extraPackages ? [ ]             # non-plugin packages
+# extraConfigLua ? ""             # lua config added to the init.vim
+# extraConfigVim ? ""             # vim config added to the init.vim
+# defaultRequire ? true           # add default requrie string?
+# extraOptions ? {}               # extra vim options like line numbers, etc
+# extraNixNeovimConfig ? {}       # extra config applied to 'programs.nixneovim'
+# isColorscheme ? false           # If enabled, plugin will be added to 'nixneovim.colorschemes' instead of 'nixneovim.plugins'
+# configConverter ? camelToSnake  # Specify the config name converter, default expects camelCase and converts that to snake_case
+
+  inherit name moduleOptionsVim pluginUrl;
+  extraPlugins = with pkgs.vimExtraPlugins; [
+    # add neovim plugin here
+    vim-ledger
+  ];
+  defaultRequire = false;
+  moduleOptionsVimPrefix = "ledger_";
 }

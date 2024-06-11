@@ -34,6 +34,12 @@ let
     };
     excludeGrammars = mkOption {
       default = [];
+      example = ''
+        [
+          "latex-grammar"
+          "go-grammar
+        ]
+      '';
     };
 
     incrementalSelection = {
@@ -117,7 +123,7 @@ let
         cfg.grammars
         ++ optionals cfg.installAllGrammars allGrammars;
     in
-      builtins.filter (x: ! elem x.name cfg.excludeGrammars) combinedGrammars;
+      builtins.filter (x: ! elem x.pname cfg.excludeGrammars) combinedGrammars;
 
 in helpers.generator.mkLuaPlugin {
   inherit name moduleOptions pluginUrl;

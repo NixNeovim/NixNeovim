@@ -7,8 +7,8 @@ let
   inherit (helpers.generator)
      mkLuaPlugin;
   inherit (helpers.custom_options) boolOption;
-  inherit (helpers.converter) 
-    toLuaObjectCustomConverter
+  inherit (helpers.converter)
+    toLuaObject
     camelToSnake
     flattenModuleOptions;
 
@@ -73,7 +73,7 @@ let
   nullToEmpty = a: if a == null then [] else a;
 
   cfg = config.programs.nixneovim.plugins.${name};
-  patchedCfg = (flattenModuleOptions cfg moduleOptions) // { 
+  patchedCfg = (flattenModuleOptions cfg moduleOptions) // {
     indent = cfg.indent // { highlight = if cfg.indent.highlight == null then null else replaceColorsByName (mkList cfg.indent.highlight); };
     scope = cfg.scope // { highlight = if cfg.scope.highlight == null then null else replaceColorsByName (mkList cfg.scope.highlight); };
   };
@@ -92,7 +92,7 @@ in mkLuaPlugin {
   defaultRequire = false;
   extraConfigLua = ''
     ${optionalString (setHlStrings != []) createHlString}
-    require('${pluginName}').setup ${toLuaObjectCustomConverter camelToSnake patchedCfg}
+    require('${pluginName}').setup ${toLuaObject { nameConverter = camelToSnake; nixExpr = patchedCfg; }}
   '';
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
