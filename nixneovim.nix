@@ -5,8 +5,21 @@ let
 
   mappings = helpers.keymapping;
 
+  lib = pkgs.lib;
+
   inherit (helpers) augroups;
-  inherit (types) submodule;
+
+  inherit (lib)
+    mkOption
+    mkEnableOption
+    optionalAttrs
+    optionalString
+    concatStringsSep
+    mapAttrsToList
+    makeBinPath
+    filter
+    mkIf
+    types;
 
   pluginWithConfigType = types.submodule {
     options = {
@@ -54,6 +67,16 @@ let
     # in src.plugins //
       # src.environments //
       # src.colorschemes;
+
+    # a set of all relevant information for enabled colorschemes
+    activeColorschemes =
+      let
+        cs = lib.filterAttrs (cs: _: cfg.colorschemes.${cs}.enable == true) src.colorschemes;
+        p = mapAttrsToList (_: attrs: attrs.extraPlugins) cs;
+        plugins = lib.foldl (x: a: x ++ a) [] p;
+      in {
+        plugins = lib.head plugins;
+      };
 
 in {
 
@@ -296,11 +319,9 @@ in {
 
       luaConfig = let
 
-        activeColorschemes =
-          lib.filterAttrs (cs: _: cfg.colorschemes.${cs}.enable == true) src.colorschemes;
-
         colorschemeConfig = lib.concatStringsSep "\n"
             (mapAttrsToList (_: attrs: attrs.luaConfigOutput) activeColorschemes);
+
       in ''
         ${cfg.extraLuaPreConfig}
         --------------------------------------------------
@@ -332,6 +353,11 @@ in {
         --------------------------------------------------
 
         ${cfg.extraConfigLua}
+
+        --------------------------------------------------
+        --                 Colorschemes                 --
+        --------------------------------------------------
+
         ${colorschemeConfig}
 
         ${
@@ -341,6 +367,10 @@ in {
             (cfg.colorscheme != "" && cfg.colorscheme != null)
             "vim.cmd([[colorscheme ${cfg.colorscheme}]])"
         }
+
+        --------------------------------------------------
+        --                    Plugins                   --
+        --------------------------------------------------
 
         ${cfg.extraLuaPostConfig}
       '';
@@ -378,7 +408,7 @@ in {
             extraPackages = cfg.extraPackages;
             extraConfig = cfg.extraConfigVim;
             extraLuaConfig = luaConfig;
-            plugins = cfg.extraPlugins;
+            plugins = activeColorschemes.plugins;
           } // (optionalAttrs (state > 2211) { defaultEditor = cfg.defaultEditor; }); # only add defaultEditor when over nixpkgs release 22-11
 
           xdg.configFile =

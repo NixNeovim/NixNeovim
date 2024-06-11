@@ -17,7 +17,6 @@ let
     defaultModuleOptions;
 
   inherit (super.converter)
-    toLuaObjectCustomConverter
     toLuaObject
     camelToSnake
     toVimOptions'
@@ -100,9 +99,11 @@ in { name                                # name of the plugin module. Will be us
   # function output
   {
 
+    inherit extraPlugins extraPackages;
+
     # export all options the module should have, including all general options like 'enable'
     configOptions =
-            (defaultModuleOptions fullDescription) // moduleOptions;
+            (defaultModuleOptions fullDescription) // moduleOptionsVim // moduleOptions;
 
     # export everything that is placed in the init.lua if the plugin is active
     luaConfigOutput =
@@ -122,6 +123,7 @@ in { name                                # name of the plugin module. Will be us
         function setup()
           ${cfg.extraLua.pre}
 
+          ${vimStyleOptions}
           ${replaceStrings ["\n"] ["\n${indent 2}"] luaConfig}
           ${extraOptionsConverted}
 
@@ -135,9 +137,9 @@ in { name                                # name of the plugin module. Will be us
       end
     '';
 
-    config.programs.nixneovim =
-      mkIf cfg.enable (extraNixNeovimConfig // {
-        inherit extraPlugins extraPackages extraConfigVim; #TODO: port this line
-        # options = extraOptions;
-      });
+    # config.programs.nixneovim =
+    #   mkIf cfg.enable (extraNixNeovimConfig // {
+    #     inherit extraPlugins extraPackages extraConfigVim; #TODO: port this line
+    #     # options = extraOptions;
+    #   });
   }
