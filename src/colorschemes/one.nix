@@ -1,23 +1,41 @@
-{ pkgs, config, lib }:
-with lib;
+{ pkgs, lib, helpers, ... }:
+
 let
-  cfg = config.programs.nixneovim.colorschemes.one;
-in
-{
-  options = {
-    programs.nixneovim.colorschemes.one = {
-      enable = mkEnableOption "vim-one";
-    };
+
+  inherit (helpers.generator)
+     mkLuaPlugin;
+
+  name = "vim-one";
+  pluginUrl = "https://github.com/rakr/vim-one";
+
+  # only needed when the name of the plugin does not match the
+  # name in the 'require("<...>")' call. For example, the plugin 'comment-frame'
+  # has to be called with 'require("nvim-comment-frame")'
+  # in such a case add 'pluginName = "nvim-comment-frame"'
+  # pluginName = ""
+
+  inherit (helpers.custom_options)
+    strOption
+    listOption
+    enumOption
+    intOption
+    boolOption;
+
+  moduleOptions = {
+    # add module options here
   };
 
-  config = mkIf cfg.enable {
-    programs.nixneovim = {
-      colorscheme = "one";
-      extraPlugins = [ pkgs.vimPlugins.vim-one ];
+in mkLuaPlugin {
+  inherit name moduleOptions pluginUrl;
+  extraPlugins = with pkgs.vimExtraPlugins; [
+    # add neovim plugin here
+    vim-one
+  ];
 
-      options = {
-        termguicolors = true;
-      };
-    };
+  extraNixNeovimConfig = {
+    termguicolors = true;
   };
+
+  isColorscheme = true;
+  extraConfigLua = "vim.cmd('colorscheme one')";
 }
