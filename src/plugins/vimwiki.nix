@@ -35,7 +35,7 @@ let
   moduleOptionsVim = {
     # add module options here
     list = listOption [] "Use this to change the syntex to either Markdown or MediaWiki.";
-    globalExt = intOption 0 "Set this to treat all markdown files in your system as part of vimwiki";
+    globalExt = intOption 1 "Set this to treat all markdown files in your system as part of vimwiki";
     ext2syntax = attrsOption ext2syntaxDefault "A many-to-one mapping between file extensions and syntaxes whose purpose is to register the extensions with Vimwiki.";
   };
 
