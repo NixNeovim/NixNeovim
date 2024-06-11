@@ -1,49 +1,55 @@
-{ pkgs, config, lib }:
+{ pkgs, lib, helpers, ... }:
+
 with lib;
+
 let
+
+  name = "nord";
+  pluginUrl = "https://github.com/shaunsingh/nord.nvim";
+
   cfg = config.programs.nixneovim.colorschemes.nord;
-in
-{
-  options = {
-    programs.nixneovim.colorschemes.nord = {
-      enable = mkEnableOption "nord";
 
-      contrast = mkEnableOption
-        "Make sidebars and popup menus like nvim-tree and telescope have a different background";
+  moduleOptions = {
 
-      borders = mkEnableOption
-        "Enable the border between verticaly split windows visable";
+    contrast = mkEnableOption
+      "Make sidebars and popup menus like nvim-tree and telescope have a different background";
 
-      disable_background = mkEnableOption
-        "Disable the setting of background color so that NeoVim can use your terminal background";
+    borders = mkEnableOption
+      "Enable the border between verticaly split windows visable";
 
-      cursorline_transparent = mkEnableOption
-        "Set the cursorline transparent/visible";
+    disable_background = mkEnableOption
+      "Disable the setting of background color so that NeoVim can use your terminal background";
 
-      enable_sidebar_background = mkEnableOption
-        "Re-enables the background of the sidebar if you disabled the background of everything";
+    cursorline_transparent = mkEnableOption
+      "Set the cursorline transparent/visible";
 
-      italic = mkOption {
-        description = "enables/disables italics";
-        type = types.nullOr types.bool;
-        default = null;
-      };
+    enable_sidebar_background = mkEnableOption
+      "Re-enables the background of the sidebar if you disabled the background of everything";
+
+    italic = mkOption {
+      description = "enables/disables italics";
+      type = types.nullOr types.bool;
+      default = null;
     };
   };
 
-  config = mkIf cfg.enable {
-    programs.nixneovim = {
-      colorscheme = "nord";
-      extraPlugins = [ pkgs.vimPlugins.nord-nvim ];
+in helpers.generator.mkLuaPlugin {
+  inherit name moduleOptions pluginUrl;
+  extraPlugins = with pkgs.vimExtraPlugins; [
+    # add neovim plugin here
+    shaunsingh-nord-nvim
+  ];
+  isColorscheme = true;
+  extraConfigLua = ''
+    vim.cmd[[ colorscheme nord ]]
+  '';
 
-      globals = {
-        nord_contrast = mkIf cfg.contrast 1;
-        nord_borders = mkIf cfg.borders 1;
-        nord_disable_background = mkIf cfg.disable_background 1;
-        nord_cursoline_transparent = mkIf cfg.cursorline_transparent 1;
-        nord_enable_sidebar_background = mkIf cfg.enable_sidebar_background 1;
-        nord_italic = mkIf (cfg.italic != null) cfg.italic;
-      };
-    };
+  extraOptions = {
+    nord_contrast = mkIf cfg.contrast 1;
+    nord_borders = mkIf cfg.borders 1;
+    nord_disable_background = mkIf cfg.disable_background 1;
+    nord_cursoline_transparent = mkIf cfg.cursorline_transparent 1;
+    nord_enable_sidebar_background = mkIf cfg.enable_sidebar_background 1;
+    nord_italic = mkIf (cfg.italic != null) cfg.italic;
   };
 }

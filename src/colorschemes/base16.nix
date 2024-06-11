@@ -1,43 +1,55 @@
-{ pkgs, config, lib, super }:
-with lib;
+{ pkgs, lib, helpers, config, super }:
+
 let
-  cfg = config.programs.nixneovim.colorschemes.base16;
+
+  inherit (lib)
+    mkIf;
+
+  inherit (helpers.generator)
+     mkLuaPlugin;
+
+  name = "base16-vim";
+  pluginUrl = "https://github.com/chriskempson/base16-vim";
+
+  cfg = config.programs.nixneovim.plugins.${name};
+
+  # only needed when the name of the plugin does not match the
+  # name in the 'require("<...>")' call. For example, the plugin 'comment-frame'
+  # has to be called with 'require("nvim-comment-frame")'
+  # in such a case add 'pluginName = "nvim-comment-frame"'
+  # pluginName = ""
+
+  inherit (helpers.custom_options)
+    enumOption
+    intOption
+    intOptionStrict;
+
   themes = super.base16-list;
-in
-{
-  options = {
-    programs.nixneovim.colorschemes.base16 = {
-      enable = mkEnableOption "base16";
 
-      useTruecolor = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Whether to use truecolor for the colorschemes. If set to false, you'll need to set up base16 in your shell.";
-      };
+  moduleOptions = {
+    # add module options here
+    useTruecolor = intOption 0 "Whether to use truecolor for the colorschemes. If set to false, you'll need to set up base16 in your shell.";
+    colorscheme = enumOption themes "default-dark" "The base16 colorscheme to use";
 
-      colorscheme = mkOption {
-        type = types.enum themes;
-        description = "The base16 colorscheme to use";
-        default = "default-dark";
-      };
-
-      setUpBar = mkOption {
-        type = types.bool;
-        default = true;
-        description = "Whether to install the matching plugin for your statusbar. This does nothing as of yet, waiting for upstream support.";
-      };
-    };
+    setUpBar = intOptionStrict 0 "Whether to install the matching plugin for your statusbar. This does nothing as of yet, waiting for upstream support.";
   };
 
-  config = mkIf cfg.enable {
-    programs.nixneovim = {
-      colorscheme = "base16-${cfg.colorscheme}";
-      extraPlugins = [ pkgs.vimPlugins.base16-vim ];
+in mkLuaPlugin {
 
-      plugins.airline.theme = mkIf (cfg.setUpBar) "base16";
-      plugins.lightline.colorscheme = null;
+  inherit name moduleOptions pluginUrl;
+  extraPlugins = with pkgs.vimExtraPlugins; [
+    # add neovim plugin here
+    base16-vim
+  ];
 
-      options.termguicolors = mkIf cfg.useTruecolor true;
-    };
+  defaultRequire = false;
+
+  extraNixNeovimConfig = {
+    colorscheme = "base16-${cfg.colorscheme}";
+
+    plugins.airline.theme = mkIf (cfg.setUpBar == 0) "base16";
+    plugins.lightline.colorscheme = null;
+
+    options.termguicolors = cfg.useTruecolor;
   };
 }

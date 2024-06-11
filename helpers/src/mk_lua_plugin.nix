@@ -6,9 +6,11 @@ let
     hasAttr
     mkIf
     optionalString
+    mapAttrsToList
     replaceStrings
     stringLength
     hasPrefix
+    concatStringsSep
     warnIf;
 
   inherit (super.generator)
@@ -96,34 +98,48 @@ in { name                                # name of the plugin module. Will be us
 
   # function output
   {
-    # add module to 'plugins'/'colorschemes'
-    options.programs.nixneovim.${type}.${name} =
+
+    inherit extraPlugins extraPackages;
+
+    # export all options the module should have, including all general options like 'enable'
+    configOptions =
             (defaultModuleOptions fullDescription) // moduleOptionsVim // moduleOptions;
-    # options = (defaultModuleOptions fullDescription) // moduleOptions;
 
-    config.programs.nixneovim =
-      mkIf cfg.enable (extraNixNeovimConfig // {
-        inherit extraPlugins extraPackages extraConfigVim;
+    # export everything that is placed in the init.lua if the plugin is active
+    luaConfigOutput =
+      let
+        extraOptionsConverted =
+          let
+            list = mapAttrsToList
+              (option: value:
+                "vim.o.${option} = ${toLuaObject value}"
+              )
+              extraOptions;
+          in concatStringsSep "\n" list;
+      in
+      ''
+      -- config for plugin: ${name}
+      do
+        function setup()
+          ${cfg.extraLua.pre}
 
-        extraConfigLua = optionalString
-          (cfg.extraLua.pre != "" || cfg.extraLua.post != "" || luaConfig != "\n\n" || vimStyleOptions != "")
-          ''
+          ${vimStyleOptions}
+          ${replaceStrings ["\n"] ["\n${indent 2}"] luaConfig}
+          ${extraOptionsConverted}
 
-          -- config for plugin: ${name}
-          do
-            function setup()
-              ${cfg.extraLua.pre}
-              ${vimStyleOptions}
-              ${replaceStrings ["\n"] ["\n${indent 2}"] luaConfig}
-              ${cfg.extraLua.post}
-            end
-            success, output = pcall(setup) -- execute 'setup()' and catch any errors
-            if not success then
-              print("Error on setup for plugin: ${name}")
-              print(output)
-            end
-          end
-        '';
-        options = extraOptions;
-      });
+          ${cfg.extraLua.post}
+        end
+        success, output = pcall(setup) -- execute 'setup()' and catch any errors
+        if not success then
+          print("Error on setup for plugin: ${name}")
+          print(output)
+        end
+      end
+    '';
+
+    # config.programs.nixneovim =
+    #   mkIf cfg.enable (extraNixNeovimConfig // {
+    #     inherit extraPlugins extraPackages extraConfigVim; #TODO: port this line
+    #     # options = extraOptions;
+    #   });
   }
