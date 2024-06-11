@@ -69,10 +69,10 @@ in with myTypes; {
       description = escapeXML description;
     };
 
-  # This is a version of boolOption that does always have a fixed value
+  # This is a version of boolOption that always has a defined value
   boolOptionStrict = default: description:
-    assert assertHelper "boolOption" "first" "bool" default;
-    assert assertHelper "boolOption" "second" "string" description;
+    assert assertHelper "boolOptionStrict" "first" "bool" default;
+    assert assertHelper "boolOptionStrict" "second" "string" description;
     mkOption {
       type = bool;
       default = default;
@@ -85,6 +85,16 @@ in with myTypes; {
     mkOption {
       type = int;
       default = usePlugDef default;
+      description = escapeXML description;
+    };
+
+  # This is a version of boolOption that always has a defined value
+  inOptionStrict = default: description:
+    assert assertHelper "intOptionStrict" "first" "int" default;
+    assert assertHelper "intOptionStrict" "second" "string" description;
+    mkOption {
+      type = bool;
+      default = default;
       description = escapeXML description;
     };
 
