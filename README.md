@@ -15,9 +15,7 @@ However, today, it shares very little code, approaches problems very differently
 To use the modules, add this flake to the inputs of your nix configuration.
 
 ```nix
-{
 inputs.nixneovim.url = "github:nixneovim/nixneovim";
-}
 ```
 
 And import the module to your Home Manager (recommended) or NixOS configuration.
@@ -25,15 +23,23 @@ Depending on your nixos version, you have to import different modules.
 In particular, the `default` and `homeManager` modules only work with the Nixpkgs/HomeManager `unstable` releases.
 When you use a stable Nixos/HomeManager, please import `homeManager-<XX>-<XX>` or `nixos-<XX>-<XX>` (For example `homeManager-24-05`).
 
+For example, when using Home Manager please use:
 ```nix
-{
+home-manager = {
+  users.<user> = {
+    imports = [
+      nixneovim.nixosModules.<system>.default # with Home Manager unstable; <sytem> can for example be "x86_64-linux"
+      # nixneovim.nixosModules.<system>.homeManager-24-05 # with Home Manager 22.11
+    ];
+    programs.nixneovim.enable = true;.
+  };
+};
+```
+and when you do not use Home Manager please use:
+```nix
 imports = [
-    nixneovim.nixosModules.<system>.default # with Home Manager unstable; <sytem> can for example be "x86_64-linux"
-    # nixneovim.nixosModules.<system>.homeManager-22-11 # with Home Manager 22.11
-    # nixneovim.nixosModules.<system>.nixos # without Home Manager
+    nixneovim.nixosModules.<system>.nixos # without Home Manager
 ];
-}
-
 ```
 
 ## Documentation
