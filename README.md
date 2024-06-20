@@ -18,10 +18,21 @@ To use the modules, add this flake to the inputs of your nix configuration.
 inputs.nixneovim.url = "github:nixneovim/nixneovim";
 ```
 
+Then, apply the overlay and import the modules.
+This is needed, because NixNeovim uses [NixNeovimPlugins](https://github.com/NixNeovim/NixNeovimPlugins) to get access to more Neovim plugins.
+
+```nix
+{
+nixpkgs.overlays = [
+    nixneovim.overlays.default
+];
+}
+```
+
 And import the module to your Home Manager (recommended) or NixOS configuration.
 Depending on your nixos version, you have to import different modules.
 In particular, the `default` and `homeManager` modules only work with the Nixpkgs/HomeManager `unstable` releases.
-When you use a stable Nixos/HomeManager, please import `homeManager-<XX>-<XX>` or `nixos-<XX>-<XX>` (For example `homeManager-24-05`).
+When you use Nixos/HomeManager 22.11, please import `homeManager-22-11` or `nixos-22-11`.
 
 For example, when using Home Manager please use:
 ```nix
@@ -38,8 +49,11 @@ home-manager = {
 and when you do not use Home Manager please use:
 ```nix
 imports = [
-    nixneovim.nixosModules.<system>.nixos # without Home Manager
+    nixneovim.nixosModules.default # with Home Manager unstable
+    # nixneovim.nixosModules.homeManager-22-11 # with Home Manager 22.11
+    # nixneovim.nixosModules.nixos # without Home Manager
 ];
+}
 ```
 
 ## Documentation
@@ -66,7 +80,7 @@ A wiki for all options will be available in the near future.
         ${lib.strings.fileContents ./init.lua}
       EOF
     '';
-
+    
     # to install plugins just activate their modules
     plugins = {
       lspconfig = {
@@ -144,7 +158,7 @@ vim.keymap.set("n", "<leader>h", function() print("hi") end)
 
 First, you specify the mode; you can choose between the keywords below.
 
-| NixNeovim      | Neovim | Description                                  |
+| NixNeovim      | NeoVim | Description                                  |
 |----------------|--------|----------------------------------------------|
 | normalVisualOp | ""     | Normal, visual, select, and operator-pending |
 | normal         | "n"    | Normal                                       |
@@ -198,6 +212,14 @@ You can define augroups with the `augroups` option.
   };
 }
 ```
+
+## Roadmap
+
+- [ ] Further cleanup code
+- [ ] Port more modules to `mkLuaPlugin` function
+- [x] Add some form of tests
+- [ ] Integrate tests with `mkLuaPlugin`
+
 ### Supported language servers
 
 Until we find a better way of documenting this, you can find a list of supported language servers here: [servers.nix](./src/plugins/_lspconfig-modules/servers.nix)
@@ -286,6 +308,17 @@ EOF
 The output is best-effort and will likely contain errors.
 For example, the script cannot detect if a variable is a string or an `enum`.
 Therefore, you likely have to edit and correct the output before you add it to the module.
+
+### Rewrite module to new `mkLuaPlugin` api
+
+The `mkLuaPlugin` functions helps reduce boiler code and has some checks to improve the quality of the modules.
+In the long term, all modules should be rewritten to use the `mkLuaPlugin` function.
+
+### Create a better logo
+
+- The current logo took me 20 seconds to make.
+- I think this project deserves better
+
 
 ## Options
 

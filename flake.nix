@@ -32,56 +32,31 @@
   };
 
   outputs = { self, nixpkgs, nmd, nmt, nix-flake-tests, flake-utils, haumea, ... }@inputs:
-    let
-      # WARN: remove after 24.11 or sometime in future
-      pkgs = import nixpkgs { system = "x86_64-linux"; };
-    in pkgs.lib.recursiveUpdate {
+    {
+      nixosModules = {
+        default = self.nixosModules.homeManager;
+        homeManager = import ./nixneovim.nix { homeManager = true; inherit haumea; };
+        homeManager-23-11 = import ./nixneovim.nix { homeManager = true; state = 2311; inherit haumea;  };
+        homeManager-24-05 = import ./nixneovim.nix { homeManager = true; state = 2405; inherit haumea;  };
+        nixos = import ./nixneovim.nix { homeManager = false; inherit haumea; };
+        nixos-23-11 = import ./nixneovim.nix { homeManager = false; state = 2311; inherit haumea; };
+        nixos-24-05 = import ./nixneovim.nix { homeManager = false; state = 2405; inherit haumea; };
+      };
 
-      # WARN: remove after 24.11 or sometime in future
-      nixosModules =
-          let
-            f = throw "Breaking Change: Please specify your system like this: 'nixneovim.nixosModules.\${system}.default'";
-          in {
-            default = f;
-            homeManager = f;
-            homeManager-22-11 = f;
-            homeManager-23-05 = f;
-            homeManager-23-11 = f;
-            nixos = f;
-            nixos-22-11 = f;
-            nixos-23-05 = f;
-            nixos-23-11 = f;
-          };
-
-      # WARN: remove after 24.11 or sometime in future
-      overlays.default =
-        throw "Breaking Change: The NixNeovim overlay is now applied internally. Please remove it from your config";
+      overlays.default = inputs.nixneovimplugins.overlays.default;
 
       lib = import ./lib.nix;
-
-    }
-    (flake-utils.lib.eachDefaultSystem (system:
+    } //
+    flake-utils.lib.eachDefaultSystem (system:
       let
+        # system = "x86_64-linux";
 
         pkgs = import nixpkgs { inherit system; overlays = [ inputs.nixneovimplugins.overlays.default ]; };
 
         lib = pkgs.lib;
 
-        withHomemanager = { homeManager = true; inherit haumea pkgs; };
-        withoutHomemanager = { homeManager = false; inherit haumea pkgs; };
-
-      in {
-
-        nixosModules = {
-          default = import ./nixneovim.nix withHomemanager;
-          homeManager = import ./nixneovim.nix withHomemanager;
-          homeManager-23-11 = import ./nixneovim.nix ({ state = 2311; } // withHomemanager);
-          homeManager-24-05 = import ./nixneovim.nix ({ state = 2404; } // withHomemanager);
-          nixos = import ./nixneovim.nix withoutHomemanager;
-          nixos-23-11 = import ./nixneovim.nix ({ state = 2311; } // withoutHomemanager);
-          nixos-24-05 = import ./nixneovim.nix ({ state = 2405; } // withoutHomemanager);
-        };
-
+      in
+      {
         packages = {
           docs = import ./docs {
             inherit pkgs;
@@ -190,5 +165,5 @@
                 neovim = nmt-tests.neovim;
               };
 
-      }));
+      });
 }
