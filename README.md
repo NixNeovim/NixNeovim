@@ -39,7 +39,7 @@ For example, when using Home Manager please use:
 home-manager = {
   users.<user> = {
     imports = [
-      nixneovim.nixosModules.default # with Home Manager unstable; <sytem> can for example be "x86_64-linux"
+      nixneovim.nixosModules.default # with Home Manager unstable
       # nixneovim.nixosModules.homeManager-XX-XX # with Home Manager XX.XX
     ];
     programs.nixneovim.enable = true;.
