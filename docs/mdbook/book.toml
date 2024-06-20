@@ -1,9 +1,10 @@
 [book]
-authors = []
+title = "NixNeovim Documentation"
+authors = ["Joscha Loos"]
+description = "Official documentation for NixNeoim."
 language = "en"
 multilingual = false
 src = "."
-title = "NixNeovim Documentation"
 
 [output.html.fold]
 enable = true

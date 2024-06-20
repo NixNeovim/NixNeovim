@@ -41,24 +41,35 @@ let
         inputs = { inherit helpers lib; };
       };
 
-      # colorschemes = lib.mapAttrsToList (name: _: name) src.colorschemes;
-      plugins = lib.mapAttrsToList (name: opt:
+      names =
+        lib.mapAttrsToList
+        (name: opt:
           let
-          # ''
-          #   ## ${name}
+            module = opt.options.programs.nixneovim.plugins.${name};
+            configOptions = lib.mapAttrsToList (k: v: "programs.nixneovim.plugins.${name}.${k}") module;
+          in ''
+              cat << EOF > ./${name}-options.md
+                ${module.enable.description}
 
-          #   ${opt.options.programs.nixneovim.plugins.${name}.enable.description}
-          # ''
-          in "  - [${name}](./SUMMARY.md#${name})"
-        ) src.plugins;
+                ${builtins.concatStringsSep "\n\n" configOptions}
+              EOF
+            '')
+        src.plugins;
 
-      # out_colorschemes = builtins.concatStringsSep "\n\n" colorschemes;
-      out_plugins = builtins.concatStringsSep "\n\n" plugins;
-    in out_plugins;
+      paths =
+        lib.mapAttrsToList
+        (name: opt: "  - [${name}](./${name}-options.md)")
+        src.plugins;
+
+    in {
+      names = names;
+      paths = paths;
+    };
+
+  writePaths = builtins.concatStringsSep "\n" modules.names;
 
   nixneovim-docs = ''
-  OPTIONS
-  ${modules}
+    ${builtins.concatStringsSep "\n" modules.paths}
   '';
 
   nixneovim-mdbook = pkgs.stdenv.mkDerivation {
@@ -80,9 +91,11 @@ let
       # copy all needed documentation into scope
       cp -r --no-preserve=all $inputs/* ./
 
+      ${writePaths}
+
       # insert module information
       substituteInPlace ./SUMMARY.md \
-        --replace-fail "@NIXNEOVIM_OPTIONS@" "$(cat ${pkgs.writeText "nixvim-options-summary.md" nixneovim-docs})"
+        --replace-fail "@NIXNEOVIM_PLUGINS@" "$(cat ${pkgs.writeText "nixvim-options-summary.md" nixneovim-docs})"
 
       mdbook build
       cp -r ./book/* $dest
