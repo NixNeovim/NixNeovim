@@ -158,7 +158,7 @@ vim.keymap.set("n", "<leader>h", function() print("hi") end)
 
 First, you specify the mode; you can choose between the keywords below.
 
-| NixNeovim      | NeoVim | Description                                  |
+| NixNeovim      | Neovim | Description                                  |
 |----------------|--------|----------------------------------------------|
 | normalVisualOp | ""     | Normal, visual, select, and operator-pending |
 | normal         | "n"    | Normal                                       |
@@ -212,13 +212,6 @@ You can define augroups with the `augroups` option.
   };
 }
 ```
-
-## Roadmap
-
-- [ ] Further cleanup code
-- [ ] Port more modules to `mkLuaPlugin` function
-- [x] Add some form of tests
-- [ ] Integrate tests with `mkLuaPlugin`
 
 ### Supported language servers
 
@@ -308,17 +301,6 @@ EOF
 The output is best-effort and will likely contain errors.
 For example, the script cannot detect if a variable is a string or an `enum`.
 Therefore, you likely have to edit and correct the output before you add it to the module.
-
-### Rewrite module to new `mkLuaPlugin` api
-
-The `mkLuaPlugin` functions helps reduce boiler code and has some checks to improve the quality of the modules.
-In the long term, all modules should be rewritten to use the `mkLuaPlugin` function.
-
-### Create a better logo
-
-- The current logo took me 20 seconds to make.
-- I think this project deserves better
-
 
 ## Options
 

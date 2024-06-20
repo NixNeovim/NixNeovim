@@ -20,7 +20,7 @@ let
 
   nixneovimDocs = buildModulesDocs {
     modules = [
-      (import ../nixneovim.nix { isDocsBuild = true; inherit haumea pkgs; })
+      (import ../nixneovim.nix { isDocsBuild = true; inherit haumea; })
       scrubbedPkgsModule
     ];
     docBook.id = "nixneovim-options";
