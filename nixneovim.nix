@@ -1,23 +1,12 @@
-{ homeManager ? true, isDocsBuild ? false, state ? 9999, haumea, pkgs }: # function that returns a package
-{ config, ... }:
+{ homeManager ? true, isDocsBuild ? false, state ? 9999, haumea }: # function that returns a package
+{ lib, config, pkgs, ... }:
+with lib;
 let
   cfg = config.programs.nixneovim;
 
   mappings = helpers.keymapping;
 
   inherit (helpers) augroups;
-  inherit (pkgs) lib;
-  inherit (lib)
-    mkOption
-    mkEnableOption
-    optionalAttrs
-    optionalString
-    concatStringsSep
-    mapAttrsToList
-    makeBinPath
-    filter
-    mkIf
-    types;
 
   pluginWithConfigType = types.submodule {
     options = {
