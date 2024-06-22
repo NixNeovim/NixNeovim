@@ -5,6 +5,9 @@ let
   inherit (helpers.generator)
      mkLuaPlugin;
 
+  inherit (lib)
+    optional;
+
   name = "airline";
   pluginUrl = "https://github.com/vim-airline/vim-airline";
 
@@ -71,7 +74,7 @@ in mkLuaPlugin {
   extraPlugins = with pkgs.vimExtraPlugins; [
     # add neovim plugin here
     vim-airline
-  ] ++ optional (!isNull cfg.theme) vim-airline-themes;
+  ] ++ optional (cfg.theme != "") vim-airline-themes;
 }
   # config =
   #     programs.nixneovim = {

@@ -58,7 +58,7 @@ let
   };
 
   # remove all plugins that are not enabled
-  enabledPlugins = lib.filterAttrs (cs: _: cfg.plugins.${cs}.enable == true) src.environments // src.plugins;
+  enabledPlugins = lib.filterAttrs (cs: _: cfg.plugins.${cs}.enable == true) (src.environments // src.plugins);
   enabledColorschemes = lib.filterAttrs (cs: _: cfg.colorschemes.${cs}.enable == true) src.colorschemes;
 
   # a set of all relevant information for enabled plugins and colorschemes
@@ -70,7 +70,7 @@ let
 
       getLuaConfig = attrs:
         lib.concatStringsSep "\n"
-          (mapAttrsToList (name: attrs: lib.trace name attrs.luaConfigOutput) attrs);
+          (mapAttrsToList (_: attrs: attrs.luaConfigOutput) attrs);
     in {
       pluginPackages = getExtraPlugins enabledPlugins ++ getExtraPlugins enabledColorschemes;
       lua = { # all lua code we have to include in the Neovim config file
@@ -119,7 +119,7 @@ in {
       };
 
       colorschemes = lib.mapAttrs (_: attrs: attrs.configOptions) src.colorschemes;
-      plugins = lib.mapAttrs (_: attrs: attrs.configOptions) src.environments // src.plugins;
+      plugins = lib.mapAttrs (_: attrs: attrs.configOptions) (src.environments // src.plugins);
 
       ftplugin = mkOption {
         type = types.attrsOf (
