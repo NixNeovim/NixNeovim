@@ -19,6 +19,7 @@ let
     makeBinPath
     filter
     mkIf
+    flatten
     types;
 
   pluginWithConfigType = types.submodule {
@@ -56,27 +57,28 @@ let
     };
   };
 
-  # plugins =
-    # let
-      # src = haumea.lib.load {
-        # src = ./src;
-        # inputs = {
-          # inherit helpers config pkgs lib state;
-        # };
-      # };
-    # in src.plugins //
-      # src.environments //
-      # src.colorschemes;
+  # remove all plugins that are not enabled
+  enabledPlugins = lib.filterAttrs (cs: _: cfg.plugins.${cs}.enable == true) src.environments // src.plugins;
+  enabledColorschemes = lib.filterAttrs (cs: _: cfg.colorschemes.${cs}.enable == true) src.colorschemes;
 
-    # a set of all relevant information for enabled colorschemes
-    activeColorschemes =
-      let
-        cs = lib.filterAttrs (cs: _: cfg.colorschemes.${cs}.enable == true) src.colorschemes;
-        p = mapAttrsToList (_: attrs: attrs.extraPlugins) cs;
-        plugins = lib.foldl (x: a: x ++ a) [] p;
-      in {
-        plugins = lib.head plugins;
+  # a set of all relevant information for enabled plugins and colorschemes
+  userConfig =
+    let
+      # extract a list of all plugins we have to include in the Neovim install
+      getExtraPlugins = attrs:
+        flatten (mapAttrsToList (_: attrs: [] /* attrs.extraPlugins */) attrs);
+
+      getLuaConfig = attrs:
+        lib.concatStringsSep "\n"
+          (mapAttrsToList (name: attrs: lib.trace name attrs.luaConfigOutput) attrs);
+    in {
+      pluginPackages = getExtraPlugins enabledPlugins ++ getExtraPlugins enabledColorschemes;
+      lua = { # all lua code we have to include in the Neovim config file
+        plugins = getLuaConfig enabledPlugins;
+        colorschemes = getLuaConfig enabledColorschemes;
       };
+    };
+
 
 in {
 
@@ -110,14 +112,14 @@ in {
         '';
       };
 
-      colorschemes = lib.mapAttrs (_: attrs: attrs.configOptions) src.colorschemes;
-      plugins = lib.mapAttrs (_: attrs: attrs.configOptions) src.environments // src.plugins;
-
       package = mkOption {
         type = types.nullOr types.package;
         default = null;
         description = "The package to use for neovim.";
       };
+
+      colorschemes = lib.mapAttrs (_: attrs: attrs.configOptions) src.colorschemes;
+      plugins = lib.mapAttrs (_: attrs: attrs.configOptions) src.environments // src.plugins;
 
       ftplugin = mkOption {
         type = types.attrsOf (
@@ -317,12 +319,7 @@ in {
         in concatStringsSep "\n" list;
 
 
-      luaConfig = let
-
-        colorschemeConfig = lib.concatStringsSep "\n"
-            (mapAttrsToList (_: attrs: attrs.luaConfigOutput) activeColorschemes);
-
-      in ''
+      luaConfig = ''
         ${cfg.extraLuaPreConfig}
         --------------------------------------------------
         --                 Globals                      --
@@ -354,11 +351,7 @@ in {
 
         ${cfg.extraConfigLua}
 
-        --------------------------------------------------
-        --                 Colorschemes                 --
-        --------------------------------------------------
-
-        ${colorschemeConfig}
+        ${userConfig.lua.colorschemes}
 
         ${
           # Set colorscheme after setting globals.
@@ -368,9 +361,7 @@ in {
             "vim.cmd([[colorscheme ${cfg.colorscheme}]])"
         }
 
-        --------------------------------------------------
-        --                    Plugins                   --
-        --------------------------------------------------
+        ${userConfig.lua.plugins}
 
         ${cfg.extraLuaPostConfig}
       '';
@@ -408,7 +399,7 @@ in {
             extraPackages = cfg.extraPackages;
             extraConfig = cfg.extraConfigVim;
             extraLuaConfig = luaConfig;
-            plugins = activeColorschemes.plugins;
+            plugins = userConfig.pluginPackages;
           } // (optionalAttrs (state > 2211) { defaultEditor = cfg.defaultEditor; }); # only add defaultEditor when over nixpkgs release 22-11
 
           xdg.configFile =
