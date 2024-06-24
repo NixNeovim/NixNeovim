@@ -1,7 +1,7 @@
 { testHelper, ... }:
 
 {
-  oil-nvim-test = { config, lib, pkgs, ... }:
+  oil-test = { config, lib, pkgs, ... }:
     {
       config = {
 

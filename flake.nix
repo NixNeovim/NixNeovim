@@ -139,7 +139,7 @@
         checks =
           let
             nmt-tests = import ./tests.nix {
-              inherit nmt pkgs;
+              inherit nmt pkgs lib;
               nixneovim = self.nixosModules.homeManager;
               inherit (inputs) home-manager;
               inherit haumea;
@@ -153,17 +153,6 @@
           in
             lib.trace
               "Evaluating for ${system}"
-              {
-                lib = lib-checks.basic;
-                basic-colorschemes = nmt-tests.basic-colorschemes;
-                basic-group1 = nmt-tests.basic-group1;
-                basic-group2 = nmt-tests.basic-group2;
-                basic-group3 = nmt-tests.basic-group3;
-                plugins = nmt-tests.plugins;
-                colorschemes = nmt-tests.colorschemes;
-                environments = nmt-tests.environments;
-                neovim = nmt-tests.neovim;
-              };
-
+              nmt-tests // { lib = lib-checks.basic; };
       });
 }

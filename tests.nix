@@ -1,4 +1,4 @@
-{ pkgs, home-manager, nmt, nixneovim, haumea }:
+{ pkgs, lib, home-manager, nmt, nixneovim, haumea }:
 
 let
 
@@ -67,6 +67,8 @@ let
       (import ./nixneovim.nix { inherit haumea; })
     ];
 
+    # pluginTests = lib.mapAttrs (name: plugin: nmtCheck { "${name}-test" = plugin."${name}-test";}) integrationTests.plugins;
+
 in {
 
   basic-colorschemes = nmtCheck integrationTests.basic-check.colorschemes;
@@ -75,9 +77,9 @@ in {
   basic-group1 = nmtCheck integrationTests.basic-check.group1;
   basic-group2 = nmtCheck integrationTests.basic-check.group2;
   basic-group3 = nmtCheck integrationTests.basic-check.group3;
-  plugins = nmtCheck (mergeValues integrationTests.plugins);
   colorschemes = nmtCheck (mergeValues integrationTests.colorschemes);
   environments = nmtCheck (mergeValues integrationTests.environments);
   neovim = nmtCheck ({ inherit (integrationTests) neovim neovim-use-plugin-defaults; });
-
+  plugins = nmtCheck (mergeValues integrationTests.plugins);
+  # plugins = pluginTests;
 }

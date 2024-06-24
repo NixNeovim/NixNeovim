@@ -3,7 +3,7 @@
 let
   name = "zk";
 in {
-  config = {
+  zk-test = {
 
     programs.nixneovim.plugins = {
       "${name}" = {
