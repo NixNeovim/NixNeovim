@@ -122,7 +122,7 @@ in {
           for lang in c svelte typescript rust # TODO: add 'nix'
           do
             echo "Test lsp for filetype $lang"
-            check_nvim_start -c "lua vim.lsp.set_log_level('debug')" -c "set filetype=$lang" -c 'LspInfo' -c 'silent w! tmp.lsp.out'
+            start_nvim -c "lua vim.lsp.set_log_level('debug')" -c "set filetype=$lang" -c 'LspInfo' -c 'silent w! tmp.lsp.out'
             if [ "$(grep -oP '(?<=cmd is executable: )true' tmp.lsp.out)" != "true" ]
             then
               echo "Could not execute lsp server for \"$lang\""

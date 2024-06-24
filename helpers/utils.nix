@@ -172,7 +172,11 @@ in {
         exit 1
       }
 
-      start_vim () {
+      start_nvim () {
+        HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) nvim -u $config --headless "$@" -c 'qall'
+      }
+
+      check_nvim_start () {
         OUTPUT=$(HOME=$(realpath .) XDG_CACHE_HOME=$(realpath ./cache) nvim -u $config --headless "$@" -c 'qall' 2>&1)
         if [ "$OUTPUT" != "" ]
         then
@@ -189,22 +193,22 @@ in {
       }
 
       echo Start Vim tests
-      start_vim
+      check_nvim_start
 
       echo Testing some common file types
 
       echo "# test" > tmp.md
-      start_vim tmp.md
+      check_nvim_start tmp.md
 
       echo "print(\"works\")" > tmp.py
-      start_vim tmp.py
+      check_nvim_start tmp.py
 
       cat << EOF > tmp.rs
         fn main() {
           println!("Hello, world!");
         }
       EOF
-      start_vim tmp.rs
+      check_nvim_start tmp.rs
 
       echo Vim tests done
 
