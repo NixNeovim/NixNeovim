@@ -147,7 +147,7 @@ in {
             ''
           }
 
-          start_vim -c "${nvimTestCommand}"
+          check_nvim_start -c "${nvimTestCommand}"
         '';
       };
     };

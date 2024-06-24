@@ -66,11 +66,11 @@ in {
             ''
           }
 
-          start_vim -c "${nvimTestCommand}"
+          check_nvim_start -c "${nvimTestCommand}"
 
           lang=zig
           echo "Test lsp for filetype $lang"
-          start_vim -c "lua vim.lsp.set_log_level('debug')" -c "set filetype=$lang" -c 'LspInfo' -c 'silent w! tmp.lsp.out'
+          check_nvim_start -c "lua vim.lsp.set_log_level('debug')" -c "set filetype=$lang" -c 'LspInfo' -c 'silent w! tmp.lsp.out'
           if [ "$(grep -oP '(?<=cmd is executable: )true' tmp.lsp.out)" != "true" ]
           then
             echo "Could not execute lsp server for \"$lang\""

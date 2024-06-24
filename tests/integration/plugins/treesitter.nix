@@ -157,7 +157,7 @@ in {
             ''
           }
 
-          start_vim -c "silent checkhealth nvim-treesitter" -c 'silent w test.tmp'
+          check_nvim_start -c "silent checkhealth nvim-treesitter" -c 'silent w test.tmp'
           if grep -c 'ERROR' test.tmp # the -c flag counts mathing lines, simulates error code
           then
             neovim_error "$(cat test.tmp)"
