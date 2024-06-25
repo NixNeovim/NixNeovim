@@ -38,7 +38,7 @@ in { name                                # name of the plugin module. Will be us
   , extraConfigVim ? ""                  # vim config added to the init.vim
   , moduleOptions ? { }                  # options available in the module
   , moduleOptionsVim ? { }               # options available in the module (old vim style)
-  , moduleOptionsVimPrefix ? "${name}_"  # Specify the prefix of the old vim-style configs
+  , moduleOptionsVimPrefix ? "${pluginName}_"  # Specify the prefix of the old vim-style configs
   , defaultRequire ? true                # add default requrie string?
   , extraOptions ? {}                    # extra vim options like line numbers, etc
   , extraNixNeovimConfig ? {}            # extra config applied to 'programs.nixneovim'
