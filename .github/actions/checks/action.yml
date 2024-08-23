@@ -8,27 +8,43 @@ runs:
     - name: Check Libs
       shell: bash
       run: |
+        echo "::group::Library Checks"
         nix build .#checks.x86_64-linux.lib -L
+        echo "::endgroup::"
 
     - name: Basic checks
       shell: bash
       run: |
+        echo "::group::Basic Checks 1"
         nix build .#checks.x86_64-linux.basic-group1 -L
+        echo "::endgroup::"
+        echo "::group::Basic Checks 2"
         nix build .#checks.x86_64-linux.basic-group2 -L
+        echo "::endgroup::"
+        echo "::group::Basic Checks 3"
         nix build .#checks.x86_64-linux.basic-group3 -L
+        echo "::endgroup::"
 
     - name: Check plugins
       shell: bash
       run: |
+        echo "::group::Plugin module checks"
         nix build .#checks.x86_64-linux.plugins -L
+        echo "::endgroup::"
 
     - name: Check colorschemes
       shell: bash
       run: |
+        echo "::group::Basic colorscheme checks"
         nix build .#checks.x86_64-linux.basic-colorschemes -L
+        echo "::endgroup::"
+        echo "::group::Coloscheme module checks"
         nix build .#checks.x86_64-linux.colorschemes -L
+        echo "::endgroup::"
 
     - name: Check neovim module
       shell: bash
       run: |
+        echo "::group::Neovim module check"
         nix build .#checks.x86_64-linux.neovim -L
+        echo "::endgroup::"
