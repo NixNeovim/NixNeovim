@@ -338,7 +338,7 @@ in {
             package = mkIf (cfg.package != null) cfg.package;
             extraPackages = cfg.extraPackages;
             extraConfig = cfg.extraConfigVim;
-            extraLuaConfig = luaConfig;
+            initLua = luaConfig;
             plugins = cfg.extraPlugins;
           } // (optionalAttrs (state > 2211) { defaultEditor = cfg.defaultEditor; }); # only add defaultEditor when over nixpkgs release 22-11
         }
